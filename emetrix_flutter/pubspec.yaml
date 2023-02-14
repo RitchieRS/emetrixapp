@@ -1,10 +1,10 @@
 name: emetrix_flutter
 description: A new Flutter project.
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: ">=2.18.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -17,3 +17,31 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: fonts/Montserrat/Montserrat-Regular.ttf
+        - asset: fonts/Montserrat/Montserrat-Bold.ttf
+        - asset: fonts/Montserrat/Montserrat-Light.ttf
+        - asset: fonts/Montserrat/Montserrat-Medium.ttf
+        - asset: fonts/Montserrat/Montserrat-Italic.ttf
+          style: italic
+    - family: Poppins
+      fonts:
+        - asset: fonts/Poppins/Poppins-Regular.ttf
+        - asset: fonts/Poppins/Poppins-Bold.ttf
+        - asset: fonts/Poppins/Poppins-Light.ttf
+        - asset: fonts/Poppins/Poppins-Medium.ttf
+        - asset: fonts/Poppins/Poppins-Italic.ttf
+          style: italic
+    - family: Raleway
+      fonts:
+        - asset: fonts/Raleway/Raleway-Regular.ttf
+        - asset: fonts/Raleway/Raleway-Bold.ttf
+        - asset: fonts/Raleway/Raleway-Light.ttf
+        - asset: fonts/Raleway/Raleway-Medium.ttf
+        - asset: fonts/Raleway/Raleway-Italic.ttf
+          style: italic
+
+  assets:
+    - assets/

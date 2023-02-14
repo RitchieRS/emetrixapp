@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/ui/login/login.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -9,12 +10,25 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp(
+      home: const LoginPage(),
+      debugShowCheckedModeBanner: false,
+
+      //Theme of the app
+      theme: ThemeData(
+          fontFamily: 'Poppins',
+          colorScheme: const ColorScheme(
+              brightness: Brightness.light,
+              primary: Colors.blue,
+              onPrimary: Colors.blue,
+              secondary: Colors.white,
+              onSecondary: Colors.white,
+              error: Colors.red,
+              onError: Colors.red,
+              background: Colors.transparent,
+              onBackground: Colors.transparent,
+              surface: Colors.transparent,
+              onSurface: Colors.transparent)),
     );
   }
 }
