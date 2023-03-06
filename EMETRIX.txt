@@ -1,0 +1,10 @@
+
+
+POST
+https://emetrix.com.mx/tracker/login.php
+
+{password=wer, dispositivo=1, appProhibida=0, usuario=gpoevogto , pendientes_total=preparado : 6 , lang=es, version=0.76, fcmToken=fb2IwRNQiQs:APA91bE7MFaHGINRSc_993ov_9O9nqZ4-6g3F9uoDFQIgSaJ4YWzuAdTq754hqaTeqaS2i11oPXUW930auKl98yH3tdEGYQCHJpkI3L_xit2AVkneehhyrMIVVy0uSCOAjaK_CMHtXIB, info={*info* : {*hotspot* : *false*,*conexion* : *WIFI*,*brillo* : *78*,*bateria* : *18.0*,*gps* : *1*,*imei* : *9c36f53419734318*,*tag* : *LOGIN*,*gps2* : *0*,*version* : *0.76*,*datos* : *--Sin permiso?--*}}}
+
+
+GET
+https://emetrix.com.mx/tracker/descargar_sondeos.php?idProyecto=366&idUsuario=8779&idTienda=87687

@@ -1,8 +1,10 @@
 import 'package:emetrix_flutter/app/ui/login/login.dart';
+import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatelessWidget {
@@ -11,18 +13,18 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const LoginPage(),
+      home: const LoginPage(), //Splash or Home
       debugShowCheckedModeBanner: false,
 
       //Theme of the app
       theme: ThemeData(
           fontFamily: 'Poppins',
-          colorScheme: const ColorScheme(
+          colorScheme: ColorScheme(
               brightness: Brightness.light,
-              primary: Colors.blue,
-              onPrimary: Colors.blue,
-              secondary: Colors.white,
-              onSecondary: Colors.white,
+              primary: c.primary,
+              onPrimary: c.primary,
+              secondary: c.secondary,
+              onSecondary: c.onSecondary,
               error: Colors.red,
               onError: Colors.red,
               background: Colors.transparent,
