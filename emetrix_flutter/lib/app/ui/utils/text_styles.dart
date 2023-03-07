@@ -27,7 +27,7 @@ class _TextStylesMain implements IText {
   @override
   TextStyle mediumBlue = TextStyle(
       fontFamily: 'Poppins',
-      fontSize: 18,
+      fontSize: 20,
       fontWeight: FontWeight.bold,
       color: c.primary);
 

@@ -10,18 +10,22 @@ class BackImage extends StatelessWidget {
 
     return Container(
       height: size.height,
+      width: size.width,
       decoration: BoxDecoration(
           gradient: LinearGradient(
         begin: Alignment.topRight,
         end: Alignment.bottomLeft,
-        stops: const [0.1, 0.55],
-        colors: [c.primary, c.secondary.withOpacity(0.95)],
+        stops: const [0.1, 0.5],
+        colors: [
+          c.secondary,
+          c.primary.withOpacity(0.55),
+        ],
       )),
       child: Padding(
         padding: EdgeInsets.only(
             bottom: size.height * 0.5,
-            left: size.width * 0.2,
-            right: size.width * 0.2),
+            left: size.width * 0.27,
+            right: size.width * 0.27),
         child: Image.asset('assets/images/logo_blanco.png'),
       ),
     );
