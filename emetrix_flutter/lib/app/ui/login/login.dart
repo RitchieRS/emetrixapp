@@ -1,4 +1,5 @@
 import 'package:emetrix_flutter/app/ui/home/home.dart';
+import 'package:emetrix_flutter/app/ui/login/controller.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/button_dimentions.dart';
@@ -25,6 +26,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void initState() {
     super.initState();
     switchButton = false;
+  }
+
+  @override
+  void dispose() {
+    user.dispose();
+    password.dispose();
+    super.dispose();
   }
 
   @override
@@ -56,15 +64,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         //
                         Padding(
                             padding: EdgeInsets.only(
-                                top: size.height * 0.04,
-                                left: size.width * 0.07),
+                              top: size.height * 0.04,
+                              //left: size.width * 0.07
+                            ),
                             child: Align(
-                                alignment: Alignment.centerLeft,
+                                alignment: Alignment.center,
                                 child: Text('Inicia Sesión'.toUpperCase(),
                                     style: t.mediumBlue))),
                         Padding(
                             padding: EdgeInsets.only(
-                                top: size.height * 0.03,
+                                top: size.height * 0.01,
                                 left: size.width * 0.07),
                             child: Align(
                                 alignment: Alignment.centerLeft,
@@ -95,25 +104,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     title: 'Entrar',
                                     style: t.mediumLight,
                                     onTap: () {
-                                      //Service to access
-                                      debugPrint(
-                                          'USER ${user.text}\nPASSWORD ${password.text}');
-                                      setState(() {
-                                        switchButton = !switchButton;
-                                      });
+                                      setState(
+                                          () => switchButton = !switchButton);
 
-                                      Future.delayed(const Duration(seconds: 1))
-                                          .whenComplete(() {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const HomePage()));
-
-                                        setState(() {
-                                          switchButton = false;
-                                        });
-                                      });
+                                      if (user.text.isEmpty ||
+                                          password.text.isEmpty) {
+                                        showMsj('Casi...',
+                                            'El usuario y la contraseña no pueden estar vacios. Ingresa un usuario  y contraseña.');
+                                        setState(() => switchButton = false);
+                                      } else {
+                                        requestAccess();
+                                      }
                                     },
                                     width: size.width * 0.9,
                                     height: size.height * 0.06))
@@ -137,6 +138,51 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           ),
         ),
       ),
+    );
+  }
+
+  requestAccess() async {
+    bool userLoggedIn = await ref
+        .read(loginControllerProvider.notifier)
+        .init(user.text, password.text);
+    setState(() {});
+
+    if (userLoggedIn) {
+      Future.delayed(const Duration(seconds: 2)).whenComplete(() {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const HomePage()));
+        user.clear();
+        password.clear();
+        setState(() => switchButton = false);
+      });
+    } else {
+      Future.delayed(const Duration(seconds: 1)).whenComplete(() {
+        setState(() => switchButton = false);
+        user.clear();
+        password.clear();
+        showMsj('Error',
+            'El usuario y la contraseña no existen. Intentalo de nuevo');
+      });
+    }
+  }
+
+  showMsj(String title, String content) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          title: Text(title, style: t.mediumBlue),
+          content: Text(content, style: t.text2, textAlign: TextAlign.justify),
+          actions: [
+            OutlinedButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Entendido')),
+          ],
+        );
+      },
     );
   }
 }
