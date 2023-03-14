@@ -1,5 +1,5 @@
-import 'package:emetrix_flutter/app/ui/home/home.dart';
 import 'package:emetrix_flutter/app/ui/login/controller.dart';
+import 'package:emetrix_flutter/app/ui/main/mainScreen.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/button_dimentions.dart';
@@ -141,7 +141,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 
-  requestAccess() async {
+  Future requestAccess() async {
     bool userLoggedIn = await ref
         .read(loginControllerProvider.notifier)
         .init(user.text, password.text);
@@ -150,7 +150,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (userLoggedIn) {
       Future.delayed(const Duration(seconds: 2)).whenComplete(() {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const HomePage()));
+            context, MaterialPageRoute(builder: (context) => const MainPage()));
         user.clear();
         password.clear();
         setState(() => switchButton = false);

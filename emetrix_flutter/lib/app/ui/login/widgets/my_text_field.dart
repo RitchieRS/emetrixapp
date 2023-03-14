@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TxtField extends ConsumerStatefulWidget {
-  TxtField({
-    super.key,
-    required this.controller,
-    required this.isPassword,
-    required this.obscurePassword,
-    // required this.onChanged
-  });
+  TxtField(
+      {super.key,
+      required this.controller,
+      required this.isPassword,
+      required this.obscurePassword
+      // required this.onChanged
+      });
   final TextEditingController controller;
   final bool isPassword;
   bool obscurePassword;
