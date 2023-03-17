@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:emetrix_flutter/app/ui/login/controller.dart';
 import 'package:emetrix_flutter/app/ui/main/mainScreen.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
@@ -49,85 +50,87 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               const BackImage(),
 
               //Form
-              Padding(
-                padding: EdgeInsets.only(top: size.height * 0.5),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40)),
-                  child: Container(
-                    height: size.height * 0.5,
-                    width: size.width,
-                    color: Colors.white,
-                    child: Column(
-                      children: [
-                        //
-                        Padding(
-                            padding: EdgeInsets.only(
-                              top: size.height * 0.04,
-                              //left: size.width * 0.07
-                            ),
-                            child: Align(
-                                alignment: Alignment.center,
-                                child: Text('Inicia Sesión'.toUpperCase(),
-                                    style: t.mediumBlue))),
-                        Padding(
-                            padding: EdgeInsets.only(
-                                top: size.height * 0.01,
-                                left: size.width * 0.07),
-                            child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text('Usuario', style: t.text2))),
-                        TxtField(
-                            controller: user,
-                            isPassword: false,
-                            obscurePassword: false),
+              FadeInUp(
+                child: Padding(
+                  padding: EdgeInsets.only(top: size.height * 0.5),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(40),
+                        topRight: Radius.circular(40)),
+                    child: Container(
+                      height: size.height * 0.5,
+                      width: size.width,
+                      color: Colors.white,
+                      child: Column(
+                        children: [
+                          //
+                          Padding(
+                              padding: EdgeInsets.only(
+                                top: size.height * 0.04,
+                                //left: size.width * 0.07
+                              ),
+                              child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text('Inicia Sesión'.toUpperCase(),
+                                      style: t.mediumBlue))),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  top: size.height * 0.01,
+                                  left: size.width * 0.07),
+                              child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text('Usuario', style: t.text2))),
+                          TxtField(
+                              controller: user,
+                              isPassword: false,
+                              obscurePassword: false),
 
-                        Padding(
-                            padding: EdgeInsets.only(
-                                top: size.height * 0.01,
-                                left: size.width * 0.07),
-                            child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text('Contraseña', style: t.text2))),
-                        TxtField(
-                            controller: password,
-                            isPassword: true,
-                            obscurePassword: obscurePassword),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  top: size.height * 0.01,
+                                  left: size.width * 0.07),
+                              child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text('Contraseña', style: t.text2))),
+                          TxtField(
+                              controller: password,
+                              isPassword: true,
+                              obscurePassword: obscurePassword),
 
-                        switchButton == false
-                            ? Padding(
-                                padding:
-                                    EdgeInsets.only(top: size.height * 0.05),
-                                child: ButonDimentions(
-                                    background: c.primary,
-                                    title: 'Entrar',
-                                    style: t.mediumLight,
-                                    onTap: () {
-                                      setState(
-                                          () => switchButton = !switchButton);
+                          switchButton == false
+                              ? Padding(
+                                  padding:
+                                      EdgeInsets.only(top: size.height * 0.05),
+                                  child: ButonDimentions(
+                                      background: c.primary,
+                                      title: 'Entrar',
+                                      style: t.mediumLight,
+                                      onTap: () {
+                                        setState(
+                                            () => switchButton = !switchButton);
 
-                                      if (user.text.isEmpty ||
-                                          password.text.isEmpty) {
-                                        showMsj('Casi...',
-                                            'El usuario y la contraseña no pueden estar vacios. Ingresa un usuario  y contraseña.');
-                                        setState(() => switchButton = false);
-                                      } else {
-                                        requestAccess();
-                                      }
-                                    },
-                                    width: size.width * 0.9,
-                                    height: size.height * 0.06))
-                            : Padding(
-                                padding:
-                                    EdgeInsets.only(top: size.height * 0.05),
-                                child: const Center(
-                                  child: CircularProgressIndicator.adaptive(),
-                                ),
-                              )
+                                        if (user.text.isEmpty ||
+                                            password.text.isEmpty) {
+                                          showMsj('Casi...',
+                                              'El usuario y la contraseña no pueden estar vacios. Ingresa un usuario  y contraseña.');
+                                          setState(() => switchButton = false);
+                                        } else {
+                                          requestAccess();
+                                        }
+                                      },
+                                      width: size.width * 0.9,
+                                      height: size.height * 0.06))
+                              : Padding(
+                                  padding:
+                                      EdgeInsets.only(top: size.height * 0.05),
+                                  child: const Center(
+                                    child: CircularProgressIndicator.adaptive(),
+                                  ),
+                                )
 
-                        //
-                      ],
+                          //
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -148,7 +151,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     setState(() {});
 
     if (userLoggedIn) {
-      Future.delayed(const Duration(seconds: 2)).whenComplete(() {
+      Future.delayed(const Duration(seconds: 1)).whenComplete(() {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const MainPage()));
         user.clear();

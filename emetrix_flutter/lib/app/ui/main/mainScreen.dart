@@ -1,5 +1,6 @@
 import 'package:emetrix_flutter/app/ui/home/home.dart';
 import 'package:emetrix_flutter/app/ui/pendings/pendings.dart';
+import 'package:emetrix_flutter/app/ui/settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,7 +16,11 @@ class _HomePageState extends ConsumerState<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screens = [const HomePage(), const PendingsPage()];
+    final screens = [
+      const HomePage(),
+      const PendingsPage(),
+      const SettingsPage()
+    ];
 
     return Scaffold(
         body: IndexedStack(
@@ -34,6 +39,8 @@ class _HomePageState extends ConsumerState<MainPage> {
                 icon: Icon(Icons.route), label: 'Ruta del dia'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.task), label: 'Pendientes'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings), label: 'Ajustes'),
           ],
         ));
   }

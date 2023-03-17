@@ -1,4 +1,4 @@
-import 'package:emetrix_flutter/app/ui/login/login.dart';
+import 'package:emetrix_flutter/app/ui/splash/splash.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,7 +13,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const LoginPage(), //Splash or Home
+      home: const SplashPage(), //Splash or Home
       debugShowCheckedModeBanner: false,
 
       //Theme of the app

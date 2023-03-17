@@ -1,8 +1,10 @@
+import 'package:emetrix_flutter/app/core/login/login.dart';
 import 'package:emetrix_flutter/app/core/login/service.dart';
 import 'package:emetrix_flutter/app/core/providers/providers.dart';
 import 'package:emetrix_flutter/app/ui/login/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final loginControllerProvider =
     StateNotifierProvider<LoginControllerNotifier, LoginState>((ref) {
@@ -25,16 +27,33 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
 
   Future<bool> _sendRequest(String name, String pass) async {
     //obtener el listado de accesos
-    final response = await loginService.sendAccess(name, pass);
+    final Login response = await loginService.sendAccess(name, pass);
     if (response.idError != 0) {
       state = state.copyWith(state: States.error);
       debugPrint('ERROR: ${response.idError}');
       return false;
     } else {
+      //Guardar la data en shared
+      final obj = response.toRawJson();
+      await _saveUserData(obj);
       state = state.copyWith(state: States.succes, loginData: response);
-      debugPrint('LOGIN: ${response.idError}');
+      debugPrint('Login Success save to DB');
       return true;
     }
+  }
+
+  Future _saveUserData(String objToString) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? userData = prefs.getString('loginInfo');
+
+    if (userData == null) {
+      prefs.setString('loginInfo', objToString);
+      debugPrint('LoginInfo added FIRST TIME SHARED');
+    } else {
+      debugPrint('LoginInfo EXIST');
+      return;
+    }
+    state = state.copyWith(state: States.succes);
   }
 
   // _saveUserData(String objToString) async {

@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$HomeState {
-  SondeoModel? get homeData => throw _privateConstructorUsedError;
+  Stores? get homeData => throw _privateConstructorUsedError;
   States get state => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -29,7 +29,7 @@ abstract class $HomeStateCopyWith<$Res> {
   factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) then) =
       _$HomeStateCopyWithImpl<$Res, HomeState>;
   @useResult
-  $Res call({SondeoModel? homeData, States state});
+  $Res call({Stores? homeData, States state});
 }
 
 /// @nodoc
@@ -52,7 +52,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
       homeData: freezed == homeData
           ? _value.homeData
           : homeData // ignore: cast_nullable_to_non_nullable
-              as SondeoModel?,
+              as Stores?,
       state: null == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -68,7 +68,7 @@ abstract class _$$_HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Res> {
       __$$_HomeStateCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({SondeoModel? homeData, States state});
+  $Res call({Stores? homeData, States state});
 }
 
 /// @nodoc
@@ -89,7 +89,7 @@ class __$$_HomeStateCopyWithImpl<$Res>
       homeData: freezed == homeData
           ? _value.homeData
           : homeData // ignore: cast_nullable_to_non_nullable
-              as SondeoModel?,
+              as Stores?,
       state: null == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -104,7 +104,7 @@ class _$_HomeState implements _HomeState {
   const _$_HomeState({this.homeData, this.state = States.loading});
 
   @override
-  final SondeoModel? homeData;
+  final Stores? homeData;
   @override
   @JsonKey()
   final States state;
@@ -135,11 +135,11 @@ class _$_HomeState implements _HomeState {
 }
 
 abstract class _HomeState implements HomeState {
-  const factory _HomeState({final SondeoModel? homeData, final States state}) =
+  const factory _HomeState({final Stores? homeData, final States state}) =
       _$_HomeState;
 
   @override
-  SondeoModel? get homeData;
+  Stores? get homeData;
   @override
   States get state;
   @override

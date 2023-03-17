@@ -31,8 +31,7 @@ class _TxtFieldState extends ConsumerState<TxtField> {
             child: TextField(
                 controller: widget.controller,
                 keyboardType: TextInputType.emailAddress,
-                autocorrect: true,
-                textCapitalization: TextCapitalization.sentences,
+                textCapitalization: TextCapitalization.none,
                 decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(
                         left: 12, bottom: 0, top: size.height * 0.055 / 3),
@@ -56,6 +55,7 @@ class _TxtFieldState extends ConsumerState<TxtField> {
                 controller: widget.controller,
                 keyboardType: TextInputType.emailAddress,
                 obscureText: widget.obscurePassword,
+                textCapitalization: TextCapitalization.none,
                 decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(
                         left: 12, bottom: 0, top: size.height * 0.055 / 3),
