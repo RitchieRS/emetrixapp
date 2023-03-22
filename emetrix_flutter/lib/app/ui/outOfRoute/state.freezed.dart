@@ -15,27 +15,28 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$HomeState {
+mixin _$OutOfRouteState {
   Stores? get homeData => throw _privateConstructorUsedError;
   States get state => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $HomeStateCopyWith<HomeState> get copyWith =>
+  $OutOfRouteStateCopyWith<OutOfRouteState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $HomeStateCopyWith<$Res> {
-  factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) then) =
-      _$HomeStateCopyWithImpl<$Res, HomeState>;
+abstract class $OutOfRouteStateCopyWith<$Res> {
+  factory $OutOfRouteStateCopyWith(
+          OutOfRouteState value, $Res Function(OutOfRouteState) then) =
+      _$OutOfRouteStateCopyWithImpl<$Res, OutOfRouteState>;
   @useResult
   $Res call({Stores? homeData, States state});
 }
 
 /// @nodoc
-class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
-    implements $HomeStateCopyWith<$Res> {
-  _$HomeStateCopyWithImpl(this._value, this._then);
+class _$OutOfRouteStateCopyWithImpl<$Res, $Val extends OutOfRouteState>
+    implements $OutOfRouteStateCopyWith<$Res> {
+  _$OutOfRouteStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -62,21 +63,22 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
 }
 
 /// @nodoc
-abstract class _$$_HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Res> {
-  factory _$$_HomeStateCopyWith(
-          _$_HomeState value, $Res Function(_$_HomeState) then) =
-      __$$_HomeStateCopyWithImpl<$Res>;
+abstract class _$$_OutOfRouteCopyWith<$Res>
+    implements $OutOfRouteStateCopyWith<$Res> {
+  factory _$$_OutOfRouteCopyWith(
+          _$_OutOfRoute value, $Res Function(_$_OutOfRoute) then) =
+      __$$_OutOfRouteCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({Stores? homeData, States state});
 }
 
 /// @nodoc
-class __$$_HomeStateCopyWithImpl<$Res>
-    extends _$HomeStateCopyWithImpl<$Res, _$_HomeState>
-    implements _$$_HomeStateCopyWith<$Res> {
-  __$$_HomeStateCopyWithImpl(
-      _$_HomeState _value, $Res Function(_$_HomeState) _then)
+class __$$_OutOfRouteCopyWithImpl<$Res>
+    extends _$OutOfRouteStateCopyWithImpl<$Res, _$_OutOfRoute>
+    implements _$$_OutOfRouteCopyWith<$Res> {
+  __$$_OutOfRouteCopyWithImpl(
+      _$_OutOfRoute _value, $Res Function(_$_OutOfRoute) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -85,7 +87,7 @@ class __$$_HomeStateCopyWithImpl<$Res>
     Object? homeData = freezed,
     Object? state = null,
   }) {
-    return _then(_$_HomeState(
+    return _then(_$_OutOfRoute(
       homeData: freezed == homeData
           ? _value.homeData
           : homeData // ignore: cast_nullable_to_non_nullable
@@ -100,8 +102,8 @@ class __$$_HomeStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_HomeState implements _HomeState {
-  const _$_HomeState({this.homeData, this.state = States.loading});
+class _$_OutOfRoute implements _OutOfRoute {
+  const _$_OutOfRoute({this.homeData, this.state = States.loading});
 
   @override
   final Stores? homeData;
@@ -111,14 +113,14 @@ class _$_HomeState implements _HomeState {
 
   @override
   String toString() {
-    return 'HomeState(homeData: $homeData, state: $state)';
+    return 'OutOfRouteState(homeData: $homeData, state: $state)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_HomeState &&
+            other is _$_OutOfRoute &&
             (identical(other.homeData, homeData) ||
                 other.homeData == homeData) &&
             (identical(other.state, state) || other.state == state));
@@ -130,13 +132,13 @@ class _$_HomeState implements _HomeState {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_HomeStateCopyWith<_$_HomeState> get copyWith =>
-      __$$_HomeStateCopyWithImpl<_$_HomeState>(this, _$identity);
+  _$$_OutOfRouteCopyWith<_$_OutOfRoute> get copyWith =>
+      __$$_OutOfRouteCopyWithImpl<_$_OutOfRoute>(this, _$identity);
 }
 
-abstract class _HomeState implements HomeState {
-  const factory _HomeState({final Stores? homeData, final States state}) =
-      _$_HomeState;
+abstract class _OutOfRoute implements OutOfRouteState {
+  const factory _OutOfRoute({final Stores? homeData, final States state}) =
+      _$_OutOfRoute;
 
   @override
   Stores? get homeData;
@@ -144,6 +146,6 @@ abstract class _HomeState implements HomeState {
   States get state;
   @override
   @JsonKey(ignore: true)
-  _$$_HomeStateCopyWith<_$_HomeState> get copyWith =>
+  _$$_OutOfRouteCopyWith<_$_OutOfRoute> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/route_of_the_day.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,6 +22,16 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
               child: Image.asset('assets/images/logo_blancoE.png'),
             ),
           )),
+          ListTile(
+            title: const Text('Ruta del Dia'),
+            leading: const Icon(Icons.route),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const RouteOfTheDayPage()));
+            },
+          ),
           ListTile(
             title: const Text('Actividades Adicionales'),
             leading: const Icon(Icons.task_outlined),

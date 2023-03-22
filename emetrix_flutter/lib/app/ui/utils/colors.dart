@@ -20,13 +20,13 @@ abstract class IColors {
   Color get background;
   Color get disabled;
   Color get error;
+  Color get ok;
 
   Color get backgroundTres;
   Color get backgroundSeis;
   Color get textBlanco;
   Color get textUno;
   Color get textDos;
-  Color get textTres;
   Color get textCuatro;
   Color get textCinco;
   Color get textSeis;
@@ -54,6 +54,10 @@ class _ColorsMain implements IColors {
   @override
   Color error = const Color(0xffd42929);
 
+  @override
+  Color ok = const Color(0xff29d429);
+
+  //
   @override
   Color backgroundSeis = const Color(0xffc10000);
 
@@ -83,9 +87,6 @@ class _ColorsMain implements IColors {
 
   @override
   Color textSiete = const Color(0xff0070bf);
-
-  @override
-  Color textTres = const Color(0xff29d429);
 
   @override
   Color textUno = const Color(0xffd42929);

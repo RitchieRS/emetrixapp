@@ -22,10 +22,20 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         children: [
           const Center(child: Text('Settings')),
           ListTile(
+            title: const Text('Capacitaciones'),
+            onTap: () {},
+            trailing: const Icon(Icons.info),
+          ),
+          ListTile(
+            title: const Text('FAQs'),
+            onTap: () {},
+            trailing: const Icon(Icons.question_answer),
+          ),
+          ListTile(
             title: const Text('Cerrar Sesión'),
             onTap: () => showModal(size),
             trailing: const Icon(Icons.exit_to_app),
-          )
+          ),
         ],
       ),
     );
@@ -61,6 +71,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final navigator = Navigator.of(context);
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('loginInfo');
+    //Borrar toda la info guardada
     setState(() {});
     navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) {
       return const LoginPage();
