@@ -1,6 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:emetrix_flutter/app/ui/login/controller.dart';
-import 'package:emetrix_flutter/app/ui/main/mainScreen.dart';
+import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/button_dimentions.dart';

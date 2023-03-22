@@ -8,6 +8,7 @@ abstract class IText {
   TextStyle get titleBlue;
   TextStyle get medium;
   TextStyle get mediumBlue;
+  TextStyle get mediumBlue2;
   TextStyle get mediumLight;
   TextStyle get text;
   TextStyle get text2;
@@ -35,7 +36,14 @@ class _TextStylesMain implements IText {
   @override
   TextStyle mediumBlue = TextStyle(
       fontFamily: 'Poppins',
-      fontSize: 20,
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      color: c.primary);
+
+  @override
+  TextStyle mediumBlue2 = TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 16,
       fontWeight: FontWeight.bold,
       color: c.primary);
 

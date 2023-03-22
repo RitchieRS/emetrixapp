@@ -16,16 +16,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Center(child: Text('Settings')),
-        ListTile(
-          title: const Text('Cerrar Sesión'),
-          onTap: () => showModal(size),
-          trailing: const Icon(Icons.exit_to_app),
-        )
-      ],
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Center(child: Text('Settings')),
+          ListTile(
+            title: const Text('Cerrar Sesión'),
+            onTap: () => showModal(size),
+            trailing: const Icon(Icons.exit_to_app),
+          )
+        ],
+      ),
     );
   }
 
@@ -59,9 +61,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final navigator = Navigator.of(context);
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('loginInfo');
-    navigator.pushReplacement(MaterialPageRoute(builder: (context) {
+    setState(() {});
+    navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) {
       return const LoginPage();
-    }));
+    }), (route) => false);
   }
 
   //

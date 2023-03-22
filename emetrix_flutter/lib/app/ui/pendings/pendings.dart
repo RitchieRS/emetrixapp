@@ -11,11 +11,10 @@ class PendingsPage extends ConsumerStatefulWidget {
 class _PendingsPageState extends ConsumerState<PendingsPage> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        color: Colors.blue,
-        child: const Text('Pendings'),
-      ),
+    final size = MediaQuery.of(context).size;
+
+    return const Scaffold(
+      body: Center(child: Text('Pendings')),
     );
   }
 }

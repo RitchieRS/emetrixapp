@@ -1,6 +1,7 @@
 import 'package:emetrix_flutter/app/ui/home/home.dart';
-import 'package:emetrix_flutter/app/ui/pendings/pendings.dart';
+import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/route_of_the_day.dart';
 import 'package:emetrix_flutter/app/ui/settings/settings.dart';
+import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,10 +17,12 @@ class _HomePageState extends ConsumerState<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screens = [
+    List<Widget> screens = [
       const HomePage(),
-      const PendingsPage(),
-      const SettingsPage()
+      // const AditionalActivitiesPage(),
+      const RouteOfTheDayPage(),
+      // const PendingsPage(),
+      const SettingsPage(),
     ];
 
     return Scaffold(
@@ -34,11 +37,19 @@ class _HomePageState extends ConsumerState<MainPage> {
               _currentIndex = value;
             });
           },
+          elevation: 0,
+          selectedItemColor: c.primary,
+          unselectedItemColor: c.disabled.withOpacity(0.5),
+          showUnselectedLabels: true,
           items: const [
             BottomNavigationBarItem(
-                icon: Icon(Icons.route), label: 'Ruta del dia'),
+                icon: Icon(Icons.alt_route), label: 'Fuera de Ruta'),
+            // BottomNavigationBarItem(
+            //     icon: Icon(Icons.task_outlined), label: 'Adicionales'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.task), label: 'Pendientes'),
+                icon: Icon(Icons.route), label: 'Ruta del dia'),
+            // BottomNavigationBarItem(
+            //     icon: Icon(Icons.task), label: 'Pendientes'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.settings), label: 'Ajustes'),
           ],
