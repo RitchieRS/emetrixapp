@@ -27,11 +27,10 @@ class _MyCardState extends ConsumerState<MyCard> {
     final size = MediaQuery.of(context).size;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: size.height * 0.01),
+      padding: EdgeInsets.only(bottom: size.height * 0.005),
       child: Center(
         child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
+          borderRadius: const BorderRadius.all(Radius.circular(14)),
           child: InkWell(
             onTap: () {
               setState(() {
@@ -44,31 +43,19 @@ class _MyCardState extends ConsumerState<MyCard> {
               height: size.height * 0.107,
               width: size.width * 0.95,
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        blurRadius: 10.0,
-                        offset: const Offset(1, 1))
-                  ],
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      width: 2,
-                      color: isBlue
-                          ? c.primary.withOpacity(0.35)
-                          : Colors.transparent)),
+                color: isBlue ? c.primary.withOpacity(0.1) : Colors.white,
+                borderRadius: BorderRadius.circular(14),
+              ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Container(
-                      color: isBlue ? c.primary : Colors.grey,
-                      width: size.width * 0.011),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(
-                      Icons.storefront_sharp,
-                      color: isBlue ? c.primary : Colors.grey,
+                      Icons.store,
+                      color:
+                          isBlue ? c.secondary.withOpacity(0.7) : Colors.grey,
                     ),
                   ),
                   Column(

@@ -22,7 +22,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
     final size = MediaQuery.of(context).size;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: size.height * 0.01),
+      padding: EdgeInsets.only(bottom: size.height * 0.005),
       child: Center(
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
@@ -51,7 +51,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Container(color: c.primary, width: size.width * 0.011),
+                  // Container(color: c.primary, width: size.width * 0.011),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(

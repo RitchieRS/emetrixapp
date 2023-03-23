@@ -6,6 +6,7 @@ final IText t = _TextStylesMain();
 
 abstract class IText {
   TextStyle get titleBlue;
+  TextStyle get titleLight;
   TextStyle get medium;
   TextStyle get mediumBlue;
   TextStyle get mediumBlue2;
@@ -25,6 +26,13 @@ class _TextStylesMain implements IText {
       fontSize: 24,
       fontWeight: FontWeight.bold,
       color: c.primary);
+
+  @override
+  TextStyle titleLight = TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+      color: c.background);
 
   @override
   TextStyle medium = const TextStyle(

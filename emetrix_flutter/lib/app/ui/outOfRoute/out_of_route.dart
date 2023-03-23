@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
+import 'package:emetrix_flutter/app/ui/outOfRoute/widgets/title_gradient.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/route_of_the_day.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,6 +25,7 @@ class OutOfRoutePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<OutOfRoutePage> {
   List<Store?>? storesMain = [];
   List<String> stores = [];
+
   @override
   void initState() {
     super.initState();
@@ -42,36 +44,48 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     switch (state.state) {
       case States.succes:
         return Scaffold(
-          appBar: AppBar(
-              title: Text('Visita fuera de ruta', style: t.mediumBlue2),
-              elevation: 0,
-              backgroundColor: ThemeData().scaffoldBackgroundColor,
-              centerTitle: true),
           body: Stack(
+            alignment: Alignment.bottomCenter,
             children: [
-              ListView.builder(
-                // padding: EdgeInsets.only(top: size.height * 0.02),
-                addAutomaticKeepAlives: false,
-                addRepaintBoundaries: false,
-                addSemanticIndexes: false,
-                physics: const BouncingScrollPhysics(),
-                itemCount: storesMain?.length,
-                itemBuilder: (context, index) => KeepAlive(
-                  keepAlive: true,
-                  child: IndexedSemantics(
-                    index: index,
-                    child: MyCard(
-                        onChanged: (index) {
-                          if (index != null) {
-                            stores
-                                .add(jsonEncode(state.homeData?.resp?[index]));
-                          } else {
-                            stores.removeAt(index ?? 0);
-                          }
-                          setState(() {});
-                        },
-                        index: index,
-                        resp: state.homeData?.resp?[index]),
+              const GradientTitle(),
+
+              //
+              ClipRRect(
+                borderRadius:
+                    const BorderRadius.only(topLeft: Radius.circular(35)),
+                child: Container(
+                  height: size.height * 0.75,
+                  width: size.width,
+                  color: ThemeData().scaffoldBackgroundColor,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: size.height * 0.02),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.only(top: 0),
+                      shrinkWrap: true,
+                      addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: false,
+                      addSemanticIndexes: false,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: state.homeData?.resp?.length,
+                      itemBuilder: (context, index) => KeepAlive(
+                        keepAlive: true,
+                        child: IndexedSemantics(
+                          index: index,
+                          child: MyCard(
+                              onChanged: (index) {
+                                if (index != null) {
+                                  stores.add(
+                                      jsonEncode(state.homeData?.resp?[index]));
+                                } else {
+                                  stores.removeAt(index ?? 0);
+                                }
+                                setState(() {});
+                              },
+                              index: index,
+                              resp: state.homeData?.resp?[index]),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -79,7 +93,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                   ? FadeIn(
                       duration: const Duration(milliseconds: 100),
                       child: Padding(
-                        padding: EdgeInsets.only(top: size.height * 0.7),
+                        padding: EdgeInsets.only(top: size.height * 0.8),
                         child: Center(
                           child: ButonDimentions(
                               background: c.primary,
@@ -118,23 +132,32 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
         );
       case States.loading:
         return Scaffold(
-          appBar: AppBar(
-              title: Text('Visita fuera de ruta', style: t.mediumBlue2),
-              elevation: 0,
-              backgroundColor: ThemeData().scaffoldBackgroundColor,
-              centerTitle: true),
-          body: ListView.builder(
-              shrinkWrap: true,
-              itemCount: 10,
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (context, index) {
-                return const LoadingCard();
-              }),
+          body: Stack(
+            children: [
+              const GradientTitle(),
+              ClipRRect(
+                borderRadius:
+                    const BorderRadius.only(topLeft: Radius.circular(35)),
+                child: Container(
+                  height: size.height * 0.75,
+                  width: size.width,
+                  color: ThemeData().scaffoldBackgroundColor,
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: 10,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return const LoadingCard();
+                      }),
+                ),
+              ),
+            ],
+          ),
         );
     }
   }
 
-  showSnack() {
+  void showSnack() {
     final snackBar = SnackBar(
         content: const Text('Agregados a Ruta del Dia!'),
         backgroundColor: c.ok);

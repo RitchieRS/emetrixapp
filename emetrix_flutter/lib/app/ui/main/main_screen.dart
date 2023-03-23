@@ -34,6 +34,8 @@ class _HomePageState extends ConsumerState<MainPage> {
           selectedItemColor: c.primary,
           unselectedItemColor: c.disabled.withOpacity(0.5),
           showUnselectedLabels: true,
+          selectedFontSize: 12,
+          unselectedFontSize: 12,
           items: const [
             BottomNavigationBarItem(
                 icon: Icon(Icons.alt_route), label: 'Fuera de Ruta'),

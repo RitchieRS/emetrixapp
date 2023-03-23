@@ -43,8 +43,18 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
             onTap: () {},
           ),
           ListTile(
-            title: const Text('SKUs'),
+            title: const Text('KPIs'),
             leading: const Icon(Icons.workspace_premium),
+            onTap: () {},
+          ),
+          ListTile(
+            title: const Text('Tareas'),
+            leading: const Icon(Icons.task),
+            onTap: () {},
+          ),
+          ListTile(
+            title: const Text('Ventas'),
+            leading: const Icon(Icons.monetization_on_sharp),
             onTap: () {},
           ),
         ],

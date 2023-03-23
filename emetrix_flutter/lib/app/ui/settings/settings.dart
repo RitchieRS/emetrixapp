@@ -18,24 +18,48 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     return Scaffold(
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          const Center(child: Text('Settings')),
-          ListTile(
-            title: const Text('Capacitaciones'),
-            onTap: () {},
-            trailing: const Icon(Icons.info),
-          ),
-          ListTile(
-            title: const Text('FAQs'),
-            onTap: () {},
-            trailing: const Icon(Icons.question_answer),
-          ),
-          ListTile(
-            title: const Text('Cerrar Sesión'),
-            onTap: () => showModal(size),
-            trailing: const Icon(Icons.exit_to_app),
-          ),
+          Expanded(
+              child: Container(
+                  color: Colors.transparent,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        left: size.height * 0.018, top: size.height * 0.03),
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Ajustes', style: t.titleBlue)),
+                  ))),
+          SizedBox(
+            height: size.height * 0.77,
+            width: size.width,
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.only(top: 0),
+              children: [
+                ListTile(
+                  title: const Text('Capacitaciones'),
+                  onTap: () {},
+                  trailing: const Icon(Icons.info),
+                ),
+                ListTile(
+                  title: const Text('FAQs'),
+                  onTap: () {},
+                  trailing: const Icon(Icons.question_answer),
+                ),
+                ListTile(
+                  title: const Text('Soporte Técnico'),
+                  onTap: () {},
+                  trailing: const Icon(Icons.contact_support),
+                ),
+                ListTile(
+                  title: const Text('Cerrar Sesión'),
+                  onTap: () => showModal(size),
+                  trailing: const Icon(Icons.exit_to_app),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );
@@ -71,6 +95,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final navigator = Navigator.of(context);
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('loginInfo');
+    prefs.remove('routes');
     //Borrar toda la info guardada
     setState(() {});
     navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) {

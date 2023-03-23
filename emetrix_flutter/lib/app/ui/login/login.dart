@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:emetrix_flutter/app/ui/login/controller.dart';
 import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
+import 'package:emetrix_flutter/app/ui/outOfRoute/controller.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/button_dimentions.dart';
@@ -105,7 +106,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       background: c.primary,
                                       title: 'Entrar',
                                       style: t.mediumLight,
-                                      onTap: () {
+                                      onTap: () async {
                                         setState(
                                             () => switchButton = !switchButton);
 
@@ -115,7 +116,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                               'El usuario y la contraseña no pueden estar vacios. Ingresa un usuario  y contraseña.');
                                           setState(() => switchButton = false);
                                         } else {
-                                          requestAccess();
+                                          await requestAccess();
+                                          await getStores();
                                         }
                                       },
                                       width: size.width * 0.9,
@@ -167,6 +169,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             'El usuario y la contraseña no existen. Intentalo de nuevo');
       });
     }
+  }
+
+  Future getStores() async {
+    await ref.read(outORControllerProvider.notifier).init();
   }
 
   showMsj(String title, String content) {
