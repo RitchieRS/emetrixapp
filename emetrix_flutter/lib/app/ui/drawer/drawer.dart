@@ -26,6 +26,7 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
             title: const Text('Ruta del Dia'),
             leading: const Icon(Icons.route),
             onTap: () {
+              Scaffold.of(context).closeDrawer();
               Navigator.push(
                   context,
                   MaterialPageRoute(

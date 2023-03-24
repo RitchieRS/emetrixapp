@@ -1,9 +1,10 @@
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
+import 'package:emetrix_flutter/app/ui/outOfRoute/controller.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/controller.dart';
-import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/empty.dart';
+import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/widgets/empty.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/state.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/widgets/my_card2.dart';
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
+import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/widgets/title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,7 +22,10 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(card.notifier).refreshState();
+
       final provider = ref.read(routeOTD.notifier);
       provider.getStores();
       stores = ref.watch(routeOTD).data;
@@ -30,28 +34,38 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     RouteOTDState state = ref.watch(routeOTD);
     stores = state.data;
 
     switch (state.state) {
       case States.succes:
         return Scaffold(
-            appBar: AppBar(
-              title: Text('Ruta', style: t.titleBlue),
-              backgroundColor: ThemeData().scaffoldBackgroundColor,
-              elevation: 0,
-            ),
-            body: FutureBuilder(
-              future: ref.read(routeOTD.notifier).getStores(),
-              builder: (context, snapshot) {
-                return ListView.builder(
+            body: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            const MyTitle(),
+
+            //
+            Container(
+              height: size.height * 0.85,
+              width: size.width,
+              color: ThemeData().scaffoldBackgroundColor,
+              child: Padding(
+                padding: EdgeInsets.only(top: size.height * 0.02),
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.only(top: 0),
                     physics: const BouncingScrollPhysics(),
                     itemCount: stores.length,
                     itemBuilder: (context, index) {
+                      // int reverseIndex = stores.length - 1 - index;
                       return MyCard2(index: index, resp: state.data[index]);
-                    });
-              },
-            ));
+                    }),
+              ),
+            ),
+          ],
+        ));
       case States.error:
         return Scaffold(
           body: RefreshIndicator(

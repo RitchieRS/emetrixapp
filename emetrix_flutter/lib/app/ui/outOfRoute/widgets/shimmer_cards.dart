@@ -16,7 +16,8 @@ class LoadingCard extends StatelessWidget {
           child: Shimmer.fromColors(
             baseColor: Colors.grey.withOpacity(0.7),
             highlightColor: Colors.white,
-            loop: 3,
+            loop: 1000000000000000000,
+            period: const Duration(milliseconds: 750),
             child: Container(
               height: size.height * 0.11,
               width: size.width * 0.95,

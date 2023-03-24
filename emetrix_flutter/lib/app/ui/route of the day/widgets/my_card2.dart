@@ -27,71 +27,65 @@ class _MyCardState extends ConsumerState<MyCard2> {
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(8), bottomLeft: Radius.circular(8)),
-          child: InkWell(
-            onTap: () {
-              // setState(() {
-              //   isBlue = !isBlue;
-              // });
-            },
-            borderRadius: BorderRadius.circular(10),
-            child: Ink(
-              height: size.height * 0.107,
-              width: size.width * 0.95,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      blurRadius: 10.0,
-                      offset: const Offset(1, 1))
-                ],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  // Container(color: c.primary, width: size.width * 0.011),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.storefront_sharp,
-                      color: c.secondary,
+          child: Material(
+            child: InkWell(
+              onTap: () {
+                // setState(() {
+                //   isBlue = !isBlue;
+                // });
+              },
+              borderRadius: BorderRadius.circular(10),
+              child: Ink(
+                height: size.height * 0.107,
+                width: size.width * 0.95,
+                decoration: BoxDecoration(
+                  color: c.disabled.withOpacity(0.07),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.storefront_sharp,
+                        color: c.secondary.withOpacity(0.7),
+                      ),
                     ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                          padding: EdgeInsets.only(left: size.width * 0.02),
-                          child: AnimatedContainer(
-                              width: size.width * 0.65,
-                              duration: const Duration(milliseconds: 400),
-                              color: Colors.transparent,
-                              child: Text('${widget.resp?.tienda}',
-                                  style: t.medium,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis))),
-                      Padding(
-                          padding: EdgeInsets.only(left: size.width * 0.02),
-                          child: Text('Cadena: ${widget.resp?.idCadena}',
-                              style: t.text)),
-                      Padding(
-                          padding: EdgeInsets.only(left: size.width * 0.02),
-                          child: Text('Grupo: ${widget.resp?.idGrupo}',
-                              style: t.text)),
-                    ],
-                  ),
-                  const Spacer(),
-                  IconButton(
-                      onPressed: () => goMaps(),
-                      icon: Icon(Icons.location_on,
-                          color: c.error.withOpacity(0.75),
-                          size: size.height * 0.03))
-                  //
-                ],
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                            padding: EdgeInsets.only(left: size.width * 0.02),
+                            child: Container(
+                                width: size.width * 0.65,
+                                color: Colors.transparent,
+                                child: Text('${widget.resp?.tienda}',
+                                    style: t.medium,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis))),
+                        Padding(
+                            padding: EdgeInsets.only(left: size.width * 0.02),
+                            child: Text('Cadena: ${widget.resp?.idCadena}',
+                                style: t.text)),
+                        Padding(
+                            padding: EdgeInsets.only(left: size.width * 0.02),
+                            child: Text('Grupo: ${widget.resp?.idGrupo}',
+                                style: t.text)),
+                      ],
+                    ),
+                    const Spacer(),
+                    IconButton(
+                        onPressed: () => goMaps(),
+                        icon: Icon(Icons.location_on,
+                            color: c.primary.withOpacity(0.8),
+                            size: size.height * 0.03))
+                    //
+                  ],
+                ),
               ),
             ),
           ),

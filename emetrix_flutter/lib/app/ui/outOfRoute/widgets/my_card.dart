@@ -6,14 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyCard extends ConsumerStatefulWidget {
-  const MyCard(
+  MyCard(
       {super.key,
       required this.index,
       required this.resp,
-      required this.onChanged});
+      required this.onChanged,
+      required this.canceled});
   final int index;
   final Store? resp;
   final Function(int?) onChanged;
+  bool canceled;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MyCardState();
@@ -25,6 +27,7 @@ class _MyCardState extends ConsumerState<MyCard> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    cancelColor();
 
     return Padding(
       padding: EdgeInsets.only(bottom: size.height * 0.005),
@@ -96,6 +99,16 @@ class _MyCardState extends ConsumerState<MyCard> {
         ),
       ),
     );
+  }
+
+  cancelColor() {
+    if (widget.canceled != true) {
+      return;
+    } else {
+      setState(() {
+        isBlue = false;
+      });
+    }
   }
 
   Future goMaps() async {

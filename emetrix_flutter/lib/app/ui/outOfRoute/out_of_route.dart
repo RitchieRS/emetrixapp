@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
+import 'package:emetrix_flutter/app/ui/outOfRoute/loading_view.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/widgets/title_gradient.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/route_of_the_day.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,6 @@ import 'package:emetrix_flutter/app/ui/outOfRoute/widgets/my_card.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/button_dimentions.dart';
-import 'widgets/shimmer_cards.dart';
 
 class OutOfRoutePage extends ConsumerStatefulWidget {
   const OutOfRoutePage({super.key});
@@ -23,17 +23,14 @@ class OutOfRoutePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<OutOfRoutePage> {
-  List<Store?>? storesMain = [];
+  List<Store> storesMain = [];
   List<String> stores = [];
+  bool cardSelected = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = ref.read(outORControllerProvider.notifier);
-      provider.init();
-      storesMain = ref.watch(outORControllerProvider).homeData?.resp;
-    });
+    getStoresDB();
   }
 
   @override
@@ -66,7 +63,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                       addRepaintBoundaries: false,
                       addSemanticIndexes: false,
                       physics: const BouncingScrollPhysics(),
-                      itemCount: state.homeData?.resp?.length,
+                      itemCount: storesMain.length,
                       itemBuilder: (context, index) => KeepAlive(
                         keepAlive: true,
                         child: IndexedSemantics(
@@ -74,15 +71,15 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                           child: MyCard(
                               onChanged: (index) {
                                 if (index != null) {
-                                  stores.add(
-                                      jsonEncode(state.homeData?.resp?[index]));
+                                  stores.add(jsonEncode(storesMain[index]));
                                 } else {
                                   stores.removeAt(index ?? 0);
                                 }
                                 setState(() {});
                               },
+                              canceled: ref.watch(card),
                               index: index,
-                              resp: state.homeData?.resp?[index]),
+                              resp: storesMain[index]),
                         ),
                       ),
                     ),
@@ -102,10 +99,19 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                                   : 'Agregar Rutas',
                               style: t.mediumLight,
                               onTap: () {
+                                // setState(() {
+                                //   cardSelected = false;
+                                // });
+
                                 ref
                                     .read(outORControllerProvider.notifier)
                                     .setRoutesOTD(stores)
                                     .whenComplete(() {
+                                  setState(() {
+                                    ref.read(card.notifier).refreshState();
+                                    stores.clear();
+                                  });
+
                                   showSnack();
                                   Navigator.push(
                                       context,
@@ -131,30 +137,13 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
           ],
         );
       case States.loading:
-        return Scaffold(
-          body: Stack(
-            children: [
-              const GradientTitle(),
-              ClipRRect(
-                borderRadius:
-                    const BorderRadius.only(topLeft: Radius.circular(35)),
-                child: Container(
-                  height: size.height * 0.75,
-                  width: size.width,
-                  color: ThemeData().scaffoldBackgroundColor,
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: 10,
-                      physics: const BouncingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return const LoadingCard();
-                      }),
-                ),
-              ),
-            ],
-          ),
-        );
+        return const LoadingView();
     }
+  }
+
+  Future getStoresDB() async {
+    storesMain = await ref.read(outORControllerProvider.notifier).getStoresDB();
+    setState(() {});
   }
 
   void showSnack() {

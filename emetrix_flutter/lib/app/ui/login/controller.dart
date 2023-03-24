@@ -1,6 +1,8 @@
 import 'package:emetrix_flutter/app/core/login/login.dart';
 import 'package:emetrix_flutter/app/core/login/service.dart';
 import 'package:emetrix_flutter/app/core/providers/providers.dart';
+import 'package:emetrix_flutter/app/core/stores/service.dart';
+import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/login/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,13 +11,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 final loginControllerProvider =
     StateNotifierProvider<LoginControllerNotifier, LoginState>((ref) {
   final service = ref.watch(loginServiceProvider);
-  return LoginControllerNotifier(service);
+  final service2 = ref.watch(storesServiceProvider);
+  return LoginControllerNotifier(service, service2);
 });
 
 class LoginControllerNotifier extends StateNotifier<LoginState> {
   final LoginService loginService;
+  final StoresService homeService;
 
-  LoginControllerNotifier(this.loginService) : super(const LoginState());
+  LoginControllerNotifier(this.loginService, this.homeService)
+      : super(const LoginState());
 
   Future<bool> init(String name, String pass) async {
     return _sendRequest(name, pass);
@@ -54,6 +59,23 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
       return;
     }
     state = state.copyWith(state: States.succes);
+  }
+
+  Future<Stores> getStores() async {
+    final response = await homeService.getStores();
+    if (response.idError != 0) {
+      state = state.copyWith(state: States.error);
+      return Stores(idError: 1, resp: []);
+    } else {
+      state = state.copyWith(state: States.succes);
+      return response;
+    }
+  }
+
+  Future saveStoresData(List<String> stores) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('storesData', stores);
+    debugPrint('STORES SET ON SHARED');
   }
 
   // _saveUserData(String objToString) async {

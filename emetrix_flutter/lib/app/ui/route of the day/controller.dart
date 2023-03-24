@@ -22,10 +22,9 @@ class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
     final prefs = await SharedPreferences.getInstance();
     final List<String>? routes = prefs.getStringList('routes');
     final List<Store> stores = [];
-    debugPrint('Stores on shared: $routes');
 
     if (routes != null) {
-      print('Stores saved on shared: $routes ${routes.length}');
+      debugPrint('Stores saved on shared: $routes ${routes.length}');
       for (var element in routes) {
         stores.add(Store.fromJson(jsonDecode(element)));
       }

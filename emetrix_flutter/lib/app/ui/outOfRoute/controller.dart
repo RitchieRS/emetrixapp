@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:emetrix_flutter/app/core/providers/providers.dart';
 import 'package:emetrix_flutter/app/core/stores/service.dart';
+import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,18 +20,20 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
   OutOfRouteControllerNotifier(this.homeService)
       : super(const OutOfRouteState());
 
-  Future<bool> init() async {
-    return _getStores();
-  }
+  Future<List<Store>> getStoresDB() async {
+    List<Store> stores = [];
+    final prefs = await SharedPreferences.getInstance();
+    final List<String>? storesData = prefs.getStringList('storesData');
 
-  Future<bool> _getStores() async {
-    final response = await homeService.getStores();
-    if (response.idError != 0) {
-      state = state.copyWith(state: States.error);
-      return false;
+    if (storesData != null) {
+      for (var store in storesData) {
+        stores.add(Store.fromJson(jsonDecode(store)));
+      }
+      state = state.copyWith(state: States.succes);
+      return stores;
     } else {
-      state = state.copyWith(state: States.succes, homeData: response);
-      return true;
+      state = state.copyWith(state: States.error);
+      return [];
     }
   }
 
@@ -52,4 +57,22 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
   }
 
 //
+}
+
+final card = StateNotifierProvider<Auth, bool>((_) => Auth(false));
+
+class Auth extends StateNotifier<bool> {
+  Auth(super.state);
+
+  bool show() {
+    return state = true;
+  }
+
+  bool hide() {
+    return state = false;
+  }
+
+  bool refreshState() {
+    return state = !state;
+  }
 }

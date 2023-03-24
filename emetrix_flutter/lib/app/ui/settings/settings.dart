@@ -1,4 +1,5 @@
 import 'package:emetrix_flutter/app/ui/login/login.dart';
+import 'package:emetrix_flutter/app/ui/main/controller.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -92,11 +93,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   Future closeSession() async {
+    //Borrar toda la info guardada y set to Default
     final navigator = Navigator.of(context);
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('loginInfo');
     prefs.remove('routes');
-    //Borrar toda la info guardada
+    prefs.remove('storesData');
+    ref.read(mainIndex.notifier).setIndex(0);
+    //
     setState(() {});
     navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) {
       return const LoginPage();
