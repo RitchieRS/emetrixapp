@@ -25,7 +25,6 @@ class OutOfRoutePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<OutOfRoutePage> {
   List<Store> storesMain = [];
   List<String> stores = [];
-  bool cardSelected = false;
 
   @override
   void initState() {
@@ -94,15 +93,10 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                         child: Center(
                           child: ButonDimentions(
                               background: c.primary,
-                              title: stores.length <= 1
-                                  ? 'Agregar Ruta'
-                                  : 'Agregar Rutas',
+                              title:
+                                  'Agregar Ruta${stores.length <= 1 ? '' : 's'}',
                               style: t.mediumLight,
                               onTap: () {
-                                // setState(() {
-                                //   cardSelected = false;
-                                // });
-
                                 ref
                                     .read(outORControllerProvider.notifier)
                                     .setRoutesOTD(stores)

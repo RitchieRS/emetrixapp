@@ -17,26 +17,23 @@ class RouteOfTheDayPage extends ConsumerStatefulWidget {
 }
 
 class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
-  List<Store> stores = [];
+  List<Store> list = [];
 
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       ref.read(card.notifier).refreshState();
-
-      final provider = ref.read(routeOTD.notifier);
-      provider.getStores();
-      stores = ref.watch(routeOTD).data;
+      list = await ref.read(routeOTD.notifier).getStores();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    RouteOTDState state = ref.watch(routeOTD);
-    stores = state.data;
+    final state = ref.watch(routeOTD);
+    // List<Store> list = state.data;
 
     switch (state.state) {
       case States.succes:
@@ -57,10 +54,14 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
                     shrinkWrap: true,
                     padding: const EdgeInsets.only(top: 0),
                     physics: const BouncingScrollPhysics(),
-                    itemCount: stores.length,
+                    itemCount: state.data.length,
                     itemBuilder: (context, index) {
                       // int reverseIndex = stores.length - 1 - index;
-                      return MyCard2(index: index, resp: state.data[index]);
+                      return MyCard2(
+                        index: index,
+                        resp: state.data[index],
+                        onDeleted: onDeleted,
+                      );
                     }),
               ),
             ),
@@ -77,5 +78,12 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
         return const Scaffold(
             body: Center(child: CircularProgressIndicator.adaptive()));
     }
+  }
+
+  void onDeleted(int index) {
+    setState(() {
+      list.removeAt(index);
+    });
+    ref.read(routeOTD.notifier).deleteItem(index);
   }
 }

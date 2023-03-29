@@ -2,17 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
-import 'home.dart';
+import 'sondeo.dart';
 
 class HomeRepository {
-  Future<SondeoModel> getStores() async {
+  Future<SondeoModel> getStores(
+      String proyect, String user, String store) async {
     try {
       final url =
           Uri.parse('https://emetrix.com.mx/tracker/descargar_sondeos.php?')
               .replace(queryParameters: {
-        'idProyecto': '366',
-        'idUsuario': '8779',
-        'idTienda': '87687',
+        // 'idProyecto': '366',
+        // 'idUsuario': '8779',
+        // 'idTienda': '87687',
+        'idProyecto': proyect,
+        'idUsuario': user,
+        'idTienda': store,
       });
       final response = await http.get(url);
 

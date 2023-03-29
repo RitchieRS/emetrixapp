@@ -1,5 +1,5 @@
-import 'package:emetrix_flutter/app/core/home/repository.dart';
-import 'package:emetrix_flutter/app/core/home/service.dart';
+import 'package:emetrix_flutter/app/core/sondeo/repository.dart';
+import 'package:emetrix_flutter/app/core/sondeo/service.dart';
 import 'package:emetrix_flutter/app/core/login/repository.dart';
 import 'package:emetrix_flutter/app/core/login/service.dart';
 import 'package:emetrix_flutter/app/core/stores/repository.dart';

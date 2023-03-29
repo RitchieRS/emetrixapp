@@ -5,8 +5,10 @@ import 'colors.dart';
 final IText t = _TextStylesMain();
 
 abstract class IText {
+  TextStyle get title;
   TextStyle get titleBlue;
   TextStyle get titleLight;
+  TextStyle get subtitle;
   TextStyle get medium;
   TextStyle get mediumBlue0;
   TextStyle get mediumBlue;
@@ -18,9 +20,17 @@ abstract class IText {
   TextStyle get textBlue;
   TextStyle get textError;
   TextStyle get textDisabled;
+  TextStyle get textDisabledBold;
 }
 
 class _TextStylesMain implements IText {
+  @override
+  TextStyle title = TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+      color: c.black);
+
   @override
   TextStyle titleBlue = TextStyle(
       fontFamily: 'Poppins',
@@ -34,6 +44,13 @@ class _TextStylesMain implements IText {
       fontSize: 24,
       fontWeight: FontWeight.bold,
       color: c.background);
+
+  @override
+  TextStyle subtitle = TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      color: c.black);
 
   @override
   TextStyle medium = const TextStyle(
@@ -95,4 +112,10 @@ class _TextStylesMain implements IText {
   @override
   TextStyle textDisabled =
       const TextStyle(fontFamily: 'Poppins', fontSize: 14, color: Colors.grey);
+  @override
+  TextStyle textDisabledBold = const TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 14,
+      color: Colors.grey,
+      fontWeight: FontWeight.bold);
 }
