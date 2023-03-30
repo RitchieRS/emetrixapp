@@ -13,13 +13,6 @@ class MyTitle extends StatelessWidget {
       height: size.height,
       width: size.width,
       color: ThemeData().scaffoldBackgroundColor,
-      // decoration: BoxDecoration(
-      //     gradient: LinearGradient(
-      //   begin: Alignment.topRight,
-      //   end: Alignment.bottomLeft,
-      //   stops: const [0.1, 0.5],
-      //   colors: [c.secondary.withOpacity(0.45), c.primary.withOpacity(0.15)],
-      // )),
       child: Padding(
         padding: EdgeInsets.only(top: size.height * 0.035),
         child: AppBar(

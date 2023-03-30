@@ -17,12 +17,12 @@ final loginServiceProvider = Provider<LoginService>((ref) {
 
 //-----------------------------------
 
-final homeRepoProvider = Provider<HomeRepository>((ref) {
+final sondeoRepoProvider = Provider<HomeRepository>((ref) {
   return HomeRepository();
 });
 
-final homeServiceProvider = Provider<HomeService>((ref) {
-  final respository = ref.watch(homeRepoProvider);
+final sondeoServiceProvider = Provider<HomeService>((ref) {
+  final respository = ref.watch(sondeoRepoProvider);
   return HomeService(respository);
 });
 

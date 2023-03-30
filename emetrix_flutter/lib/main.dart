@@ -2,9 +2,13 @@ import 'package:emetrix_flutter/app/ui/splash/splash.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+
+import 'app/core/services/main.dart';
 
 void main() {
   runApp(const ProviderScope(child: MainApp()));
+  Services.checkConectivity();
 }
 
 class MainApp extends StatelessWidget {
@@ -12,7 +16,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       home: const SplashPage(), //Splash or Home
       debugShowCheckedModeBanner: false,
 
@@ -25,8 +29,8 @@ class MainApp extends StatelessWidget {
               onPrimary: c.primary,
               secondary: c.secondary,
               onSecondary: c.onSecondary,
-              error: Colors.red,
-              onError: Colors.red,
+              error: c.error,
+              onError: c.error,
               background: Colors.transparent,
               onBackground: Colors.transparent,
               surface: Colors.transparent,

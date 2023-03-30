@@ -142,8 +142,9 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
 
   void showSnack() {
     final snackBar = SnackBar(
+        duration: const Duration(seconds: 4),
         content: const Text('Agregados a Ruta del Dia!'),
-        backgroundColor: c.ok);
+        backgroundColor: c.ok.withOpacity(0.8));
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

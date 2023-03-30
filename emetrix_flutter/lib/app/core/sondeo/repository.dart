@@ -22,10 +22,10 @@ class HomeRepository {
 
       if (response.statusCode == 200) {
         debugPrint('SUCCES HOME${response.statusCode}');
-        print('SUCCES HOME${response.body}');
+        debugPrint('SUCCES HOME${response.body}');
 
         SondeoModel home = SondeoModel.fromJson(json.decode(response.body));
-        print('HOME PARSEDs: ${home.toString()}');
+        debugPrint('HOME PARSEDs: ${home.toString()}');
         return home;
       } else {
         debugPrint('Failed get Stores${response.statusCode}');

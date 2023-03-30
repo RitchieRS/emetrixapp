@@ -1,4 +1,7 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
+import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/controller.dart';
+import 'package:emetrix_flutter/app/ui/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -24,69 +27,79 @@ class _MyCardState extends ConsumerState<MyCard2> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Dismissible(
-      // key: ValueKey<int>(widget.index),
-      key: UniqueKey(),
-      background: Padding(
-        padding: EdgeInsets.only(bottom: size.height * 0.01),
-        child: Container(
-            padding: EdgeInsets.only(right: size.height * 0.01),
-            color: Colors.red,
-            alignment: Alignment.centerRight,
-            child: const Icon(Icons.delete, color: Colors.white)),
-      ),
-      direction: DismissDirection.endToStart,
-      confirmDismiss: (direction) async {
-        var result = await showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-                title: Text('Cuidado',
-                    style: t.subtitle, textAlign: TextAlign.center),
-                content: Text(
-                    '¿Seguro que deseas eliminar esta tienda de Ruta del Dia?',
-                    style: t.text2),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      style: TextButton.styleFrom(foregroundColor: c.disabled),
-                      child: Text('Cancelar', style: t.textDisabledBold)),
-                  OutlinedButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      style: OutlinedButton.styleFrom(
-                          foregroundColor: c.error,
-                          side: BorderSide(color: c.error)),
-                      child: Text('Eliminar', style: t.textError))
-                ],
-              );
-            });
-        return Future.value(result);
-      },
-      onDismissed: (direction) {
-        widget.onDeleted(widget.index);
-      },
-      child: Padding(
-        padding: EdgeInsets.only(bottom: size.height * 0.005),
-        child: Center(
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8), bottomLeft: Radius.circular(8)),
+    return FadeIn(
+      child: Dismissible(
+        // key: ValueKey<int>(widget.index),
+        key: UniqueKey(),
+        background: Padding(
+          padding: EdgeInsets.only(bottom: size.height * 0.01),
+          child: Container(
+              padding: EdgeInsets.only(right: size.height * 0.01),
+              decoration: const BoxDecoration(
+                // borderRadius: BorderRadius.circular(14),
+                color: Colors.red,
+              ),
+              alignment: Alignment.centerRight,
+              child: const Icon(Icons.delete, color: Colors.white)),
+        ),
+        direction: DismissDirection.endToStart,
+        confirmDismiss: (direction) async {
+          var result = await showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                  title: Text('Cuidado',
+                      style: t.subtitle, textAlign: TextAlign.center),
+                  content: Text(
+                      '¿Seguro que deseas eliminar esta tienda de Ruta del Dia?',
+                      style: t.text2),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        style:
+                            TextButton.styleFrom(foregroundColor: c.disabled),
+                        child: Text('Cancelar', style: t.textDisabledBold)),
+                    OutlinedButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        style: OutlinedButton.styleFrom(
+                            foregroundColor: c.error,
+                            side: BorderSide(color: c.error)),
+                        child: Text('Eliminar', style: t.textError))
+                  ],
+                );
+              });
+          return Future.value(result);
+        },
+        onDismissed: (direction) {
+          widget.onDeleted(widget.index);
+        },
+        child: Padding(
+          padding: EdgeInsets.only(bottom: size.height * 0.005),
+          child: Center(
             child: Material(
               child: InkWell(
-                onTap: () {
-                  //Entrar a pantalla para sondeo correspondiente
+                onTap: () async {
+                  final navigator = Navigator.of(context);
+                  debugPrint('STORE ID--> ${widget.resp?.id ?? ''}');
+
+                  final sondeo = await ref
+                      .read(routeOTD.notifier)
+                      .getSondeo(widget.resp?.id ?? '');
+
+                  navigator.push(MaterialPageRoute(builder: (context) {
+                    return SondeoPage(sondeo: sondeo);
+                  }));
                 },
                 borderRadius: BorderRadius.circular(10),
                 child: Ink(
                   height: size.height * 0.107,
                   width: size.width * 0.95,
                   decoration: BoxDecoration(
-                    color: c.disabled.withOpacity(0.07),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                      color: c.disabled.withOpacity(0.07),
+                      borderRadius: BorderRadius.circular(8)),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.start,

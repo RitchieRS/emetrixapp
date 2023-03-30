@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:emetrix_flutter/app/core/providers/providers.dart';
+import 'package:emetrix_flutter/app/core/sondeo/service.dart';
+import 'package:emetrix_flutter/app/core/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/state.dart';
 import 'package:flutter/material.dart';
@@ -8,15 +11,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final routeOTD =
     StateNotifierProvider<RouteOTDControllerNotifier, RouteOTDState>((ref) {
-  // final service = ref.watch(storesServiceProvider);
-  // return RouteOTDControllerNotifier(service);
-  return RouteOTDControllerNotifier();
+  final service = ref.watch(sondeoServiceProvider);
+  return RouteOTDControllerNotifier(service);
+  // return RouteOTDControllerNotifier();
 });
 
 class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
-  // final StoresService homeService;
+  final HomeService sondeoService;
 
-  RouteOTDControllerNotifier() : super(const RouteOTDState());
+  RouteOTDControllerNotifier(this.sondeoService) : super(const RouteOTDState());
 
   Future<List<Store>> getStores() async {
     final prefs = await SharedPreferences.getInstance();
@@ -54,6 +57,11 @@ class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
       debugPrint('SHARED ERROR: Error deleting in db');
     }
     return;
+  }
+
+  Future<SondeoModel> getSondeo(String idTienda) async {
+    final sondeo = sondeoService.getStores(idTienda);
+    return sondeo;
   }
 
 //
