@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:emetrix_flutter/app/core/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/controller.dart';
 import 'package:emetrix_flutter/app/ui/sondeo/sondeo.dart';
@@ -89,9 +90,16 @@ class _MyCardState extends ConsumerState<MyCard2> {
                       .read(routeOTD.notifier)
                       .getSondeo(widget.resp?.id ?? '');
 
-                  navigator.push(MaterialPageRoute(builder: (context) {
-                    return SondeoPage(sondeo: sondeo);
-                  }));
+                  if (sondeo.idError != 0) {
+                    showMyMessage(
+                        title: 'Error',
+                        content:
+                            'Se produjo un error inesperado. Ten en cuenta que para realizar un sondeo se requiere acceso a la red. Intenta nuevamente. Si el error persiste, verifica tu conexión a Internet. ');
+                  } else {
+                    navigator.push(MaterialPageRoute(builder: (context) {
+                      return SondeoPage(sondeo: sondeo.resp?.first ?? RespM());
+                    }));
+                  }
                 },
                 borderRadius: BorderRadius.circular(10),
                 child: Ink(
@@ -161,4 +169,33 @@ class _MyCardState extends ConsumerState<MyCard2> {
     debugPrint(url.toString());
     await launchUrl(url, mode: LaunchMode.externalApplication);
   }
+
+  Future showMyMessage({required String title, required String content}) async {
+    // var result =
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            title: Text(title, style: t.subtitle, textAlign: TextAlign.center),
+            content: Text(content, style: t.text2),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  style: TextButton.styleFrom(foregroundColor: c.disabled),
+                  child: Text('Cancelar', style: t.textDisabledBold)),
+              OutlinedButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: OutlinedButton.styleFrom(
+                      foregroundColor: c.primary,
+                      side: BorderSide(color: c.primary)),
+                  child: Text('Aceptar', style: t.textBlue))
+            ],
+          );
+        });
+  }
+
+  //
 }

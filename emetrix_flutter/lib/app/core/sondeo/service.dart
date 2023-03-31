@@ -1,9 +1,8 @@
 import 'package:emetrix_flutter/app/core/login/login.dart';
+import 'package:emetrix_flutter/app/core/sondeo/repository.dart';
+import 'package:emetrix_flutter/app/core/sondeo/sondeo.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'sondeo.dart';
-import 'repository.dart';
 
 class HomeService {
   final HomeRepository repository;
@@ -12,13 +11,15 @@ class HomeService {
   Future<SondeoModel> getStores(String idTienda) async {
     final prefs = await SharedPreferences.getInstance();
     final data = prefs.getString('loginInfo');
-    final obj = Login.fromRawJson(data ?? '');
+    final obj = Resp.fromRawJson(data ?? '');
 
-    debugPrint('USER ID--> ${obj.resp.usuario.id}');
-    debugPrint('PROYECT ID--> ${obj.resp.proyectos.first.id}');
+    debugPrint('USER ID--> ${obj.usuario.id}');
+    debugPrint('PROYECT ID--> ${obj.proyectos.first.id}');
 
-    final resp = await repository.getStores(obj.resp.usuario.id,
-        obj.resp.proyectos.first.id, idTienda); //Mandar los ids para el sondeo
+    final resp = await repository.getStores(
+        user: obj.usuario.id,
+        proyect: obj.proyectos.first.id,
+        store: idTienda); //Mandar los ids para el sondeo
     return resp;
   }
 }

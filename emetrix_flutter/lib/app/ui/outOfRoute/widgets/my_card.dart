@@ -1,5 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
+import 'package:emetrix_flutter/app/ui/outOfRoute/controller.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -7,28 +8,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyCard extends ConsumerStatefulWidget {
-  MyCard(
-      {super.key,
-      required this.index,
-      required this.resp,
-      required this.onChanged,
-      required this.canceled});
+  const MyCard({
+    super.key,
+    required this.index,
+    required this.resp,
+    required this.onChanged,
+  });
   final int index;
   final Store? resp;
   final Function(int?) onChanged;
-  bool canceled;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MyCardState();
 }
 
 class _MyCardState extends ConsumerState<MyCard> {
-  bool isBlue = false;
+  // bool isBlue = false;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    cancelColor();
+    // cancelColor();
 
     return FadeIn(
       child: Padding(
@@ -39,16 +39,18 @@ class _MyCardState extends ConsumerState<MyCard> {
             child: InkWell(
               onTap: () {
                 setState(() {
-                  isBlue = !isBlue;
+                  ref.read(card.notifier).refreshState();
                 });
-                widget.onChanged(isBlue ? widget.index : null);
+                widget.onChanged(ref.watch(card) == true ? widget.index : null);
               },
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 height: size.height * 0.107,
                 width: size.width * 0.95,
                 decoration: BoxDecoration(
-                  color: isBlue ? c.primary.withOpacity(0.1) : Colors.white,
+                  color: ref.watch(card) == true
+                      ? c.primary.withOpacity(0.1)
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Row(
@@ -59,8 +61,9 @@ class _MyCardState extends ConsumerState<MyCard> {
                       padding: const EdgeInsets.all(8.0),
                       child: Icon(
                         Icons.store,
-                        color:
-                            isBlue ? c.secondary.withOpacity(0.7) : Colors.grey,
+                        color: ref.watch(card) == true
+                            ? c.secondary.withOpacity(0.7)
+                            : Colors.grey,
                       ),
                     ),
                     Column(
@@ -90,7 +93,7 @@ class _MyCardState extends ConsumerState<MyCard> {
                     IconButton(
                         onPressed: () => goMaps(),
                         icon: Icon(Icons.location_on,
-                            color: isBlue
+                            color: ref.watch(card) == true
                                 ? c.error.withOpacity(0.75)
                                 : Colors.grey,
                             size: size.height * 0.03))
@@ -105,15 +108,15 @@ class _MyCardState extends ConsumerState<MyCard> {
     );
   }
 
-  cancelColor() {
-    if (widget.canceled != true) {
-      return;
-    } else {
-      setState(() {
-        isBlue = false;
-      });
-    }
-  }
+  // cancelColor() {
+  //   if (widget.canceled != true) {
+  //     return;
+  //   } else {
+  //     setState(() {
+  //       isBlue = false;
+  //     });
+  //   }
+  // }
 
   Future goMaps() async {
     final lat = widget.resp?.latitud;

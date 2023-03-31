@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:animate_do/animate_do.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:emetrix_flutter/app/ui/login/controller.dart';
 import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
@@ -108,6 +109,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       title: 'Entrar',
                                       style: t.mediumLight,
                                       onTap: () async {
+                                        final networkResult =
+                                            await (Connectivity()
+                                                .checkConnectivity());
                                         setState(
                                             () => switchButton = !switchButton);
 
@@ -115,6 +119,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                             password.text.isEmpty) {
                                           showMsj('Casi...',
                                               'El usuario y la contraseña no pueden estar vacios. Ingresa un usuario  y contraseña.');
+                                          setState(() => switchButton = false);
+                                        } else if (networkResult ==
+                                            ConnectivityResult.none) {
+                                          showMsj('Sin Conexión',
+                                              'Conéctate a internet para poder iniciar sesión correctamente.');
                                           setState(() => switchButton = false);
                                         } else {
                                           await requestAccess()

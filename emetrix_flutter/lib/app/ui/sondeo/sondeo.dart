@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SondeoPage extends ConsumerStatefulWidget {
   const SondeoPage({super.key, required this.sondeo});
-  final SondeoModel sondeo;
+  final RespM sondeo;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SondeoPageState();
@@ -20,34 +20,30 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
       body: ListView(
         children: [
           Padding(
-            padding: EdgeInsets.only(
-                left: size.height * 0.018, top: size.height * 0.03),
-            child: Text('Sondeo: ${widget.sondeo.resp?.first.sondeo}',
-                style: t.titleBlue),
-          ),
+              padding: EdgeInsets.only(
+                  left: size.height * 0.018, top: size.height * 0.03),
+              child:
+                  Text('Sondeo: ${widget.sondeo.sondeo}', style: t.titleBlue)),
 
           //
-          Padding(
-            padding: EdgeInsets.only(top: size.height * 0.02),
-            child: ListView.builder(
-              itemCount: widget.sondeo.resp?.first.preguntas?.length ?? 2,
-              shrinkWrap: true,
-              // separatorBuilder: (BuildContext context, int index) {
-              //   return const Divider(color: Colors.transparent);
-              // },
-              itemBuilder: (BuildContext context, int index) {
-                debugPrint(
-                    'length --->${widget.sondeo.resp?[index].preguntas?.length.toString()}');
-                return Text(
-                    'Preguntas: ${widget.sondeo.resp?.first.preguntas?[index].pregunta}');
-              },
-            ),
+          ListView.builder(
+            padding: EdgeInsets.only(
+                top: size.height * 0.02,
+                left: size.height * 0.01,
+                right: size.height * 0.01),
+            itemCount: widget.sondeo.preguntas?.length ?? 2,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (BuildContext context, int index) {
+              debugPrint('length --->${widget.sondeo.toString()}');
+              return Text(
+                  '${index + 1}.- ${widget.sondeo.preguntas?[index].pregunta}');
+            },
           ),
           //
-          Text(
-              'Info: ${widget.sondeo.resp?.first.preguntas?.length.toString()}'),
-          Text('Info: ${widget.sondeo.resp?.first.preguntas?.first.pregunta}'),
-          Text('Info: ${widget.sondeo.resp?.first.preguntas?.first.tipo}'),
+          // Text('Info: ${widget.sondeo.preguntas?.length.toString()}'),
+          // Text('Info: ${widget.sondeo.preguntas?.first.pregunta}'),
+          // Text('Info: ${widget.sondeo.preguntas?.first.tipo}'),
         ],
       ),
     );

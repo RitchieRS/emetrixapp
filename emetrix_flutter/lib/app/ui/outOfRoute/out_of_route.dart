@@ -76,7 +76,6 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                                 }
                                 setState(() {});
                               },
-                              canceled: ref.watch(card),
                               index: index,
                               resp: storesMain[index]),
                         ),
@@ -102,7 +101,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                                     .setRoutesOTD(stores)
                                     .whenComplete(() {
                                   setState(() {
-                                    ref.read(card.notifier).refreshState();
+                                    ref.read(card.notifier).hide();
                                     stores.clear();
                                   });
 

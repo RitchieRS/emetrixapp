@@ -13,6 +13,8 @@ class LoginRepository {
 
       if (response.statusCode == 200) {
         debugPrint('Success Login${response.statusCode}');
+        debugPrint(
+            'Response type: ${response.body.runtimeType} ${response.body}');
         final responseLogin = Login.fromRawJson(response.body);
         return responseLogin;
       } else {

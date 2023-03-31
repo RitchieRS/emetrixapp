@@ -1,15 +1,15 @@
 class SondeoModel {
   int? idError;
-  List<Resp>? resp;
+  List<RespM>? resp;
 
   SondeoModel({this.idError, this.resp});
 
   SondeoModel.fromJson(Map<String, dynamic> json) {
     idError = json['idError'];
     if (json['resp'] != null) {
-      resp = <Resp>[];
+      resp = <RespM>[];
       json['resp'].forEach((v) {
-        resp!.add(Resp.fromJson(v));
+        resp!.add(RespM.fromJson(v));
       });
     }
   }
@@ -24,7 +24,7 @@ class SondeoModel {
   }
 }
 
-class Resp {
+class RespM {
   String? id;
   String? sondeo;
   String? orden;
@@ -39,7 +39,7 @@ class Resp {
   num? iteracion;
   List<Preguntas>? preguntas;
 
-  Resp(
+  RespM(
       {this.id,
       this.sondeo,
       this.orden,
@@ -54,7 +54,7 @@ class Resp {
       this.iteracion,
       this.preguntas});
 
-  Resp.fromJson(Map<String, dynamic> json) {
+  RespM.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     sondeo = json['sondeo'];
     orden = json['orden'];

@@ -26,12 +26,8 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
     return _sendRequest(name, pass);
   }
 
-  // Future<void> saveUserData(String obj) async {
-  //   return _saveUserData(obj);
-  // }
-
   Future<bool> _sendRequest(String name, String pass) async {
-    //obtener el listado de accesos
+    //obtener la data del usuario
     final Login response = await loginService.sendAccess(name, pass);
     if (response.idError != 0) {
       state = state.copyWith(state: States.error);
@@ -39,7 +35,8 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
       return false;
     } else {
       //Guardar la data en shared
-      final obj = response.toRawJson();
+      final resp = response.resp;
+      final obj = resp.toRawJson();
       await _saveUserData(obj);
       state = state.copyWith(state: States.succes, loginData: response);
       debugPrint('Login Success save to DB');

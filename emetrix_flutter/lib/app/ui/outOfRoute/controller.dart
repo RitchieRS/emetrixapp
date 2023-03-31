@@ -59,6 +59,8 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
 //
 }
 
+// final number = Provider<int>((_) => 0);
+
 final card = StateNotifierProvider<Auth, bool>((_) => Auth(false));
 
 class Auth extends StateNotifier<bool> {

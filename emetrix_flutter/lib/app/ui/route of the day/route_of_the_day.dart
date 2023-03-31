@@ -1,5 +1,4 @@
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
-import 'package:emetrix_flutter/app/ui/outOfRoute/controller.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/controller.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/widgets/empty.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/state.dart';
@@ -24,7 +23,7 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      ref.read(card.notifier).refreshState();
+      // ref.read(card.notifier).refreshState();
       list = await ref.read(routeOTD.notifier).getStores();
     });
   }
