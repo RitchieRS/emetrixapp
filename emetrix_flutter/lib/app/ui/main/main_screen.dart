@@ -23,6 +23,7 @@ class _HomePageState extends ConsumerState<MainPage> {
     ];
 
     return Scaffold(
+        // body: screens[ref.watch(mainIndex)],
         body: IndexedStack(
           index: ref.watch(mainIndex),
           children: screens,

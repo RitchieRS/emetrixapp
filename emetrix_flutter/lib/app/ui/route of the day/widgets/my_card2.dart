@@ -130,7 +130,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
                                   width: size.width * 0.65,
                                   color: Colors.transparent,
                                   child: Text('${widget.resp?.tienda}',
-                                      style: t.medium,
+                                      style: t.mediumBold,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis))),
                           Padding(

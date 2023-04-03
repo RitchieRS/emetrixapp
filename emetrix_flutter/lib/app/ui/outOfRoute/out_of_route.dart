@@ -25,6 +25,7 @@ class OutOfRoutePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<OutOfRoutePage> {
   List<Store> storesMain = [];
   List<String> stores = [];
+  bool canceled = false;
 
   @override
   void initState() {
@@ -55,29 +56,36 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                   color: ThemeData().scaffoldBackgroundColor,
                   child: Padding(
                     padding: EdgeInsets.only(top: size.height * 0.02),
-                    child: ListView.builder(
-                      padding: const EdgeInsets.only(top: 0),
-                      shrinkWrap: true,
-                      addAutomaticKeepAlives: false,
-                      addRepaintBoundaries: false,
-                      addSemanticIndexes: false,
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: storesMain.length,
-                      itemBuilder: (context, index) => KeepAlive(
-                        keepAlive: true,
-                        child: IndexedSemantics(
-                          index: index,
-                          child: MyCard(
-                              onChanged: (index) {
-                                if (index != null) {
-                                  stores.add(jsonEncode(storesMain[index]));
-                                } else {
-                                  stores.removeAt(index ?? 0);
-                                }
-                                setState(() {});
-                              },
-                              index: index,
-                              resp: storesMain[index]),
+                    child: RefreshIndicator(
+                      onRefresh: getStoresDB,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.only(top: 0),
+                        shrinkWrap: true,
+                        addAutomaticKeepAlives: false,
+                        addRepaintBoundaries: false,
+                        addSemanticIndexes: false,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: storesMain.length,
+                        itemBuilder: (context, index) => KeepAlive(
+                          keepAlive: true,
+                          child: IndexedSemantics(
+                            index: index,
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: MyCard(
+                                  onChanged: (index) {
+                                    if (index != null) {
+                                      stores.add(jsonEncode(storesMain[index]));
+                                    } else {
+                                      stores.removeAt(index ?? 0);
+                                    }
+                                    setState(() {});
+                                  },
+                                  canceled: ref.watch(cardProvider),
+                                  index: index,
+                                  resp: storesMain[index]),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -101,7 +109,10 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                                     .setRoutesOTD(stores)
                                     .whenComplete(() {
                                   setState(() {
-                                    ref.read(card.notifier).hide();
+                                    ref
+                                        .read(cardProvider.notifier)
+                                        .update((state) => !state);
+                                    // canceled = false;
                                     stores.clear();
                                   });
 

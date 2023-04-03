@@ -61,20 +61,24 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
 
 // final number = Provider<int>((_) => 0);
 
-final card = StateNotifierProvider<Auth, bool>((_) => Auth(false));
+// final card = StateNotifierProvider<Auth, bool>((_) => Auth(false));
 
-class Auth extends StateNotifier<bool> {
-  Auth(super.state);
+// class Auth extends StateNotifier<bool> {
+//   Auth(super.state);
 
-  bool show() {
-    return state = true;
-  }
+//   bool show() {
+//     return state = true;
+//   }
 
-  bool hide() {
-    return state = false;
-  }
+//   bool hide() {
+//     return state = false;
+//   }
 
-  bool refreshState() {
-    return state = !state;
-  }
-}
+//   bool refreshState() {
+//     return state = !state;
+//   }
+// }
+
+final cardProvider = StateProvider<bool>((ref) {
+  return false;
+});

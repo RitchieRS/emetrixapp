@@ -36,7 +36,7 @@ class _ButonState extends ConsumerState<Buton> {
               ? [
                   BoxShadow(
                       color: c.disabled.withOpacity(0.4),
-                      blurRadius: 20.0,
+                      blurRadius: 10.0,
                       offset: const Offset(1, 1))
                 ]
               : [],

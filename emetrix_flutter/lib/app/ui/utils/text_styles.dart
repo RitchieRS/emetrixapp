@@ -10,6 +10,7 @@ abstract class IText {
   TextStyle get titleLight;
   TextStyle get subtitle;
   TextStyle get medium;
+  TextStyle get mediumBold;
   TextStyle get mediumBlue0;
   TextStyle get mediumBlue;
   TextStyle get mediumBlue2;
@@ -53,7 +54,11 @@ class _TextStylesMain implements IText {
       color: c.black);
 
   @override
-  TextStyle medium = const TextStyle(
+  TextStyle medium =
+      const TextStyle(fontFamily: 'Poppins', fontSize: 14, color: Colors.black);
+
+  @override
+  TextStyle mediumBold = const TextStyle(
       fontFamily: 'Poppins',
       fontSize: 14,
       fontWeight: FontWeight.bold,

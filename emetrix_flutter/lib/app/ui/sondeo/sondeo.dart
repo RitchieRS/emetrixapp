@@ -1,4 +1,5 @@
 import 'package:emetrix_flutter/app/core/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/ui/sondeo/components/type_question_builder.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,13 +18,16 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Sondeo: ${widget.sondeo.sondeo}', style: t.titleBlue),
+      ),
       body: ListView(
         children: [
-          Padding(
-              padding: EdgeInsets.only(
-                  left: size.height * 0.018, top: size.height * 0.03),
-              child:
-                  Text('Sondeo: ${widget.sondeo.sondeo}', style: t.titleBlue)),
+          // Padding(
+          //     padding: EdgeInsets.only(
+          //         left: size.height * 0.018, top: size.height * 0.03),
+          //     child:
+          //         Text('Sondeo: ${widget.sondeo.sondeo}', style: t.titleBlue)),
 
           //
           ListView.builder(
@@ -35,9 +39,12 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
-              debugPrint('length --->${widget.sondeo.toString()}');
-              return Text(
-                  '${index + 1}.- ${widget.sondeo.preguntas?[index].pregunta}');
+              // debugPrint('length --->${widget.sondeo.toString()}');
+              return QuestionBuilder(
+                  pregunta: widget.sondeo.preguntas?[index] ?? Preguntas());
+
+              // Text(
+              //     '${index + 1}.- ${widget.sondeo.preguntas?[index].pregunta}');
             },
           ),
           //

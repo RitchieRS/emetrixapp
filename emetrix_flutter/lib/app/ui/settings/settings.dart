@@ -1,5 +1,6 @@
 import 'package:emetrix_flutter/app/ui/login/login.dart';
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
+import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,48 +19,46 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Ajustes', style: t.titleBlue),
+      ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Expanded(
-              child: Container(
-                  color: Colors.transparent,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        left: size.height * 0.018, top: size.height * 0.03),
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text('Ajustes', style: t.titleBlue)),
-                  ))),
-          SizedBox(
-            height: size.height * 0.77,
-            width: size.width,
-            child: ListView(
-              shrinkWrap: true,
-              padding: const EdgeInsets.only(top: 0),
-              children: [
-                ListTile(
-                  title: const Text('Capacitaciones'),
-                  onTap: () {},
-                  trailing: const Icon(Icons.info),
-                ),
-                ListTile(
-                  title: const Text('FAQs'),
-                  onTap: () {},
-                  trailing: const Icon(Icons.question_answer),
-                ),
-                ListTile(
-                  title: const Text('Soporte Técnico'),
-                  onTap: () {},
-                  trailing: const Icon(Icons.contact_support),
-                ),
-                ListTile(
-                  title: const Text('Cerrar Sesión'),
-                  onTap: () => showModal(size),
-                  trailing: const Icon(Icons.exit_to_app),
-                ),
-              ],
-            ),
+          // Expanded(
+          //     child: Container(
+          //         color: Colors.transparent,
+          //         child: Padding(
+          //           padding: EdgeInsets.only(
+          //               left: size.height * 0.018, top: size.height * 0.03),
+          //           child: Align(
+          //               alignment: Alignment.centerLeft,
+          //               child: Text('Ajustes', style: t.titleBlue)),
+          //         ))),
+          ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.only(top: 0),
+            children: [
+              ListTile(
+                title: Text('Capacitaciones', style: t.medium),
+                onTap: () {},
+                trailing: Icon(Icons.info, color: c.primary),
+              ),
+              ListTile(
+                title: Text('FAQs', style: t.medium),
+                onTap: () {},
+                trailing: Icon(Icons.question_answer, color: c.primary),
+              ),
+              ListTile(
+                title: Text('Soporte Técnico', style: t.medium),
+                onTap: () {},
+                trailing: Icon(Icons.contact_support, color: c.primary),
+              ),
+              ListTile(
+                title: Text('Cerrar Sesión', style: t.medium),
+                onTap: () => showModal(size),
+                trailing: Icon(Icons.exit_to_app, color: c.error),
+              ),
+            ],
           )
         ],
       ),
@@ -78,7 +77,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             children: [
               Padding(
                 padding: EdgeInsets.all(size.height * 0.01),
-                child: const Text('¿Seguro que quieres cerrar la sesión?'),
+                child: Text('¿Seguro que quieres cerrar la sesión?',
+                    style: t.medium),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: size.height * 0.01),

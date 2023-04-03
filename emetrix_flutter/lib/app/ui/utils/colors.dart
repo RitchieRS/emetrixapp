@@ -22,6 +22,7 @@ abstract class IColors {
   Color get error;
   Color get ok;
   Color get black;
+  Color get surface;
 
   Color get backgroundTres;
   Color get backgroundSeis;
@@ -59,6 +60,9 @@ class _ColorsMain implements IColors {
 
   @override
   Color black = const Color(0xff404040);
+
+  @override
+  Color surface = Colors.transparent;
 
   //
   @override
