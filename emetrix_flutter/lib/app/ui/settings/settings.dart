@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/ui/login/login.dart';
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
@@ -15,51 +16,55 @@ class SettingsPage extends ConsumerStatefulWidget {
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
   @override
+  void initState() {
+    super.initState();
+    Services.checkConectivity();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Ajustes', style: t.titleBlue),
+        centerTitle: false,
+        backgroundColor: c.background,
+        elevation: 0,
+        toolbarHeight: size.height * 0.1,
       ),
-      body: Column(
+      body: ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(top: 0),
         children: [
-          // Expanded(
-          //     child: Container(
-          //         color: Colors.transparent,
-          //         child: Padding(
-          //           padding: EdgeInsets.only(
-          //               left: size.height * 0.018, top: size.height * 0.03),
-          //           child: Align(
-          //               alignment: Alignment.centerLeft,
-          //               child: Text('Ajustes', style: t.titleBlue)),
-          //         ))),
-          ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.only(top: 0),
-            children: [
-              ListTile(
-                title: Text('Capacitaciones', style: t.medium),
-                onTap: () {},
-                trailing: Icon(Icons.info, color: c.primary),
-              ),
-              ListTile(
-                title: Text('FAQs', style: t.medium),
-                onTap: () {},
-                trailing: Icon(Icons.question_answer, color: c.primary),
-              ),
-              ListTile(
-                title: Text('Soporte Técnico', style: t.medium),
-                onTap: () {},
-                trailing: Icon(Icons.contact_support, color: c.primary),
-              ),
-              ListTile(
-                title: Text('Cerrar Sesión', style: t.medium),
-                onTap: () => showModal(size),
-                trailing: Icon(Icons.exit_to_app, color: c.error),
-              ),
-            ],
-          )
+          ListTile(
+            title: Text('Capacitaciones', style: t.medium),
+            onTap: () {},
+            trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+            leading: const Icon(Icons.info),
+            minLeadingWidth: 25,
+          ),
+          ListTile(
+            title: Text('FAQs', style: t.medium),
+            onTap: () {},
+            trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+            leading: const Icon(Icons.question_answer),
+            minLeadingWidth: 25,
+          ),
+          ListTile(
+            title: Text('Soporte Técnico', style: t.medium),
+            onTap: () {},
+            trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+            leading: const Icon(Icons.contact_support),
+            minLeadingWidth: 25,
+          ),
+          ListTile(
+            title: Text('Cerrar Sesión', style: t.medium),
+            onTap: () => showModal(size),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+            leading: const Icon(Icons.exit_to_app),
+            minLeadingWidth: 25,
+          ),
         ],
       ),
     );

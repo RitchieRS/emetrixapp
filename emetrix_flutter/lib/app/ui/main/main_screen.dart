@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/out_of_route.dart';
 import 'package:emetrix_flutter/app/ui/settings/settings.dart';
@@ -14,6 +15,12 @@ class MainPage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<MainPage> {
   // int _currentIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    Services.checkConectivity();
+  }
 
   @override
   Widget build(BuildContext context) {

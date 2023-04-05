@@ -1,5 +1,4 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,11 +15,12 @@ class EmptyList extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(top: size.height * 0.035),
           child: AppBar(
-              leading: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.arrow_back_ios, color: c.primary)),
+              automaticallyImplyLeading: false,
+              // leading: IconButton(
+              //     onPressed: () => Navigator.pop(context),
+              //     icon: Icon(Icons.arrow_back_ios, color: c.primary)),
               title: Column(
-                mainAxisSize: MainAxisSize.min,
+                // mainAxisSize: MainAxisSize.min,
                 children: [
                   Text('RUTA', style: t.titleBlue),
                   Text('Del Dia', style: t.textBlue),

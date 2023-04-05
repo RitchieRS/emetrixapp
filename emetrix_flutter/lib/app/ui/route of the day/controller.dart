@@ -66,3 +66,7 @@ class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
 
 //
 }
+
+final showProgress1 = StateProvider<bool>((ref) {
+  return false;
+});

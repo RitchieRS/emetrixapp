@@ -15,12 +15,14 @@ abstract class IText {
   TextStyle get mediumBlue;
   TextStyle get mediumBlue2;
   TextStyle get mediumLight;
+  TextStyle get mediumDisabled;
   TextStyle get text;
   TextStyle get text2;
   TextStyle get textLight;
   TextStyle get textBlue;
   TextStyle get textError;
   TextStyle get textDisabled;
+  TextStyle get textDisabled2;
   TextStyle get textDisabledBold;
 }
 
@@ -63,6 +65,12 @@ class _TextStylesMain implements IText {
       fontSize: 14,
       fontWeight: FontWeight.bold,
       color: Colors.black);
+  @override
+  TextStyle mediumDisabled = TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      color: c.disabled.withOpacity(0.4));
 
   @override
   TextStyle mediumBlue0 = TextStyle(
@@ -117,6 +125,11 @@ class _TextStylesMain implements IText {
   @override
   TextStyle textDisabled =
       const TextStyle(fontFamily: 'Poppins', fontSize: 14, color: Colors.grey);
+
+  @override
+  TextStyle textDisabled2 =
+      const TextStyle(fontFamily: 'Poppins', fontSize: 12, color: Colors.grey);
+
   @override
   TextStyle textDisabledBold = const TextStyle(
       fontFamily: 'Poppins',

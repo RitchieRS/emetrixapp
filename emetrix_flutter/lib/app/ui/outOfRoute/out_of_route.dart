@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/loading_view.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/widgets/title_gradient.dart';
@@ -30,6 +31,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
   @override
   void initState() {
     super.initState();
+    Services.checkConectivity();
     getStoresDB();
   }
 
