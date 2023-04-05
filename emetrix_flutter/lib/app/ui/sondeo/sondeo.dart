@@ -2,15 +2,16 @@ import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/core/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/controller.dart';
-import 'package:emetrix_flutter/app/ui/sondeo/components/type_builder.dart';
+import 'package:emetrix_flutter/app/ui/sondeo/components/type_sondeo.dart';
+import 'package:emetrix_flutter/app/ui/sondeo/controller.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SondeoPage extends ConsumerStatefulWidget {
-  const SondeoPage({super.key, required this.sondeo, required this.store});
-  final RespM sondeo;
+  const SondeoPage({super.key, required this.sondeosList, required this.store});
+  final List<RespM> sondeosList;
   final Store store;
 
   @override
@@ -18,9 +19,15 @@ class SondeoPage extends ConsumerStatefulWidget {
 }
 
 class _SondeoPageState extends ConsumerState<SondeoPage> {
+  List<RespM> sondeosList2 = [];
+
   @override
   void initState() {
     super.initState();
+    setState(() {
+      sondeosList2 =
+          ref.read(sondeoController.notifier).reorderList(widget.sondeosList);
+    });
     Services.checkConectivity();
   }
 
@@ -51,20 +58,20 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
             ListView.builder(
               padding: EdgeInsets.only(
                   top: 0, left: size.height * 0.01, right: size.height * 0.01),
-              itemCount: widget.sondeo.preguntas?.length ?? 2,
+              itemCount: sondeosList2.length,
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemBuilder: (BuildContext context, int index) {
-                final List<int> finisedSections = [0, 1, 2];
+                final List<int> finisedSections = [
+                  0,
+                ];
 
-                return TypeBuilder(
+                return TypeSondeo(
                   onTap: finisedSections.contains(index) ? () {} : null,
-                  type: widget.sondeo.preguntas?[index].pregunta ?? 'Error',
+                  type: sondeosList2[index].sondeo ?? 'Error',
                   index: index,
                   finisedSections: finisedSections,
-                  isLast: index + 1 == widget.sondeo.preguntas?.length
-                      ? true
-                      : false,
+                  isLast: index + 1 == sondeosList2.length ? true : false,
                 );
                 // QuestionBuilder(
                 //     pregunta: widget.sondeo.preguntas?[index] ?? Preguntas());

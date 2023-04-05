@@ -19,13 +19,14 @@ class ConetionService extends GetxController {
       Get.rawSnackbar(
           messageText: Text('Sin conexión a Internet', style: t.textLight),
           isDismissible: true,
-          duration: const Duration(seconds: 4),
+          duration: const Duration(seconds: 3),
           backgroundColor: c.black,
           icon: const Icon(Icons.wifi_off, color: Colors.white),
           snackStyle: SnackStyle.FLOATING,
           borderRadius: 10,
-          margin: const EdgeInsets.only(top: 0, left: 10, right: 10),
-          snackPosition: SnackPosition.TOP);
+          margin:
+              const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 60),
+          snackPosition: SnackPosition.BOTTOM);
     } else {
       if (Get.isSnackbarOpen) {
         //Get.closeCurrentSnackbar();
@@ -44,13 +45,14 @@ class ConetionService extends GetxController {
         Get.rawSnackbar(
             messageText: Text('En línea', style: t.textLight),
             isDismissible: true,
-            duration: const Duration(seconds: 4),
+            duration: const Duration(seconds: 3),
             backgroundColor: c.black,
             icon: const Icon(Icons.wifi, color: Colors.white),
             snackStyle: SnackStyle.FLOATING,
             borderRadius: 10,
-            margin: const EdgeInsets.only(top: 0, left: 10, right: 10),
-            snackPosition: SnackPosition.TOP);
+            margin:
+                const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 60),
+            snackPosition: SnackPosition.BOTTOM);
       }
     }
   }

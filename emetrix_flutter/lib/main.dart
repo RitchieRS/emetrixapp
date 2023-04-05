@@ -20,24 +20,23 @@ class MainApp extends StatelessWidget {
 
       //Theme of the app
       theme: ThemeData(
-        colorSchemeSeed: c.primary,
-        dividerColor: c.surface,
-        // useMaterial3: true,
-        fontFamily: 'Poppins',
-        // colorScheme: ColorScheme(
-        //   brightness: Brightness.light,
-        //   primary: c.primary,
-        //   onPrimary: c.primary,
-        //   secondary: c.secondary,
-        //   onSecondary: c.onSecondary,
-        //   error: c.error,
-        //   onError: c.error,
-        //   background: c.background,
-        //   onBackground: c.background,
-        //   surface: c.background,
-        //   onSurface: c.black.withOpacity(0.9),
-        // )
-      ),
+          // colorSchemeSeed: c.primary,
+          // useMaterial3: true,
+          dividerColor: c.surface,
+          fontFamily: 'Poppins',
+          colorScheme: ColorScheme(
+            brightness: Brightness.light,
+            primary: c.primary,
+            onPrimary: c.primary,
+            secondary: c.secondary,
+            onSecondary: c.onSecondary,
+            error: c.error,
+            onError: c.error,
+            background: c.background,
+            onBackground: c.background,
+            surface: c.background,
+            onSurface: c.black.withOpacity(0.9),
+          )),
     );
   }
 }

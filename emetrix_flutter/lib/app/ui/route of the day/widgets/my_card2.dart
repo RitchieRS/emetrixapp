@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:animate_do/animate_do.dart';
-import 'package:emetrix_flutter/app/core/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/controller.dart';
 import 'package:emetrix_flutter/app/ui/sondeo/sondeo.dart';
@@ -39,12 +38,9 @@ class _MyCardState extends ConsumerState<MyCard2> {
           padding: EdgeInsets.only(bottom: size.height * 0.01),
           child: Container(
               padding: EdgeInsets.only(right: size.height * 0.01),
-              decoration: const BoxDecoration(
-                // borderRadius: BorderRadius.circular(14),
-                color: Colors.red,
-              ),
+              decoration: BoxDecoration(color: Colors.red.withOpacity(0.2)),
               alignment: Alignment.centerRight,
-              child: const Icon(Icons.delete, color: Colors.white)),
+              child: const Icon(Icons.delete, color: Colors.redAccent)),
         ),
         direction: DismissDirection.endToStart,
         confirmDismiss: (direction) async {
@@ -215,6 +211,11 @@ class _MyCardState extends ConsumerState<MyCard2> {
         await ref.read(routeOTD.notifier).getSondeo(widget.resp?.id ?? '');
 
     if (sondeo.idError != 0) {
+      setState(() {
+        ref.read(showProgress1.notifier).update((state) => false);
+      });
+      navigator.pop(true);
+
       showYesNoMsj(
           context: context,
           title: 'Error',
@@ -227,8 +228,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
       navigator.pop(true);
       navigator.push(MaterialPageRoute(builder: (context) {
         return SondeoPage(
-            sondeo: sondeo.resp?.first ?? RespM(),
-            store: widget.resp ?? Store());
+            sondeosList: sondeo.resp ?? [], store: widget.resp ?? Store());
       }));
     }
   }

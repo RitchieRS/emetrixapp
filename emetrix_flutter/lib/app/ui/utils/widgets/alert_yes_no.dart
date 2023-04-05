@@ -15,7 +15,7 @@ Future showYesNoMsj(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           title: Text(title, style: t.subtitle, textAlign: TextAlign.center),
-          content: Center(child: Text(content, style: t.text2)),
+          content: Text(content, style: t.text2, textAlign: TextAlign.center),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(context),
