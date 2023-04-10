@@ -43,6 +43,7 @@ class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
   Future<void> deleteItem(int index) async {
     final prefs = await SharedPreferences.getInstance();
     final List<String>? routes = prefs.getStringList('routes');
+    final List<String>? sondeos = prefs.getStringList('sondeos');
 
     routes?.removeAt(index);
     if (routes != null) {
@@ -56,6 +57,20 @@ class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
     } else {
       debugPrint('SHARED ERROR: Error deleting in db');
     }
+
+    sondeos?.removeAt(index);
+    if (sondeos != null) {
+      if (sondeos.isEmpty) {
+        prefs.remove('sondeos');
+        state = state.copyWith(state: States.error);
+      } else {
+        prefs.setStringList('sondeos', sondeos);
+        state = state.copyWith(state: States.succes);
+      }
+    } else {
+      debugPrint('SHARED ERROR sondeos: Error deleting in db');
+    }
+
     return;
   }
 

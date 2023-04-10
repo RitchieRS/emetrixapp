@@ -20,7 +20,7 @@ Future<bool> showMsj(
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis),
-          content: Text(content, style: t.text2),
+          content: Text(content, style: t.text2, textAlign: TextAlign.center),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(

@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/core/routes.dart';
 import 'package:emetrix_flutter/app/ui/splash/splash.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class MainApp extends StatelessWidget {
     return GetMaterialApp(
       home: const SplashPage(), //Splash or Home
       debugShowCheckedModeBanner: false,
+      routes: getAppRoutes(),
 
       //Theme of the app
       theme: ThemeData(
@@ -28,7 +30,7 @@ class MainApp extends StatelessWidget {
             brightness: Brightness.light,
             primary: c.primary,
             onPrimary: c.primary,
-            secondary: c.secondary,
+            secondary: Colors.blue[700] ?? c.secondary,
             onSecondary: c.onSecondary,
             error: c.error,
             onError: c.error,

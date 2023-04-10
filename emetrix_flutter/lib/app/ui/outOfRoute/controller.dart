@@ -4,6 +4,7 @@ import 'package:emetrix_flutter/app/core/providers/providers.dart';
 import 'package:emetrix_flutter/app/core/stores/service.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/state.dart';
+import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -53,6 +54,40 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
       prefs
           .setStringList('routes', routes)
           .whenComplete(() => debugPrint('ROTD Added FirstTime $routes'));
+    }
+  }
+
+  Future<List<String>> getSondeosFromApi(
+      List<Store> routes, WidgetRef ref) async {
+    List<String> sondeos = [];
+
+    try {
+      //Obtener los sondeos
+      for (Store element in routes) {
+        final sondeo =
+            await ref.read(routeOTD.notifier).getSondeo(element.id ?? '');
+        sondeos.add(jsonEncode(sondeo));
+      }
+      return sondeos;
+    } catch (e) {
+      throw Exception('Failed get sondeos from api: $e');
+    }
+  }
+
+  Future<void> setSondeosToDB(List<String> sondeos) async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String>? savedList = prefs.getStringList('sondeos');
+    debugPrint('Saved Sondeos: $savedList');
+
+    if (savedList != null) {
+      savedList.addAll(sondeos);
+      prefs
+          .setStringList('sondeos', savedList)
+          .whenComplete(() => debugPrint('Sondeos Added $sondeos'));
+    } else {
+      prefs
+          .setStringList('sondeos', sondeos)
+          .whenComplete(() => debugPrint('Sondeos Added FirstTime $sondeos'));
     }
   }
 

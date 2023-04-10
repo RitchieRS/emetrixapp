@@ -104,6 +104,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     prefs.remove('loginInfo');
     prefs.remove('routes');
     prefs.remove('storesData');
+    prefs.remove('sondeos');
     ref.read(mainIndex.notifier).setIndex(0);
     //
     setState(() {});

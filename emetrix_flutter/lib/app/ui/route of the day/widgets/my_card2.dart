@@ -90,9 +90,8 @@ class _MyCardState extends ConsumerState<MyCard2> {
                 child: Ink(
                   height: size.height * 0.107,
                   width: size.width * 0.95,
-                  decoration: BoxDecoration(
-                      // color: c.disabled.withOpacity(0.07),
-                      borderRadius: BorderRadius.circular(8)),
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(8)),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -170,7 +169,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('¿Comenzar este sondeo?',
+                    Text('¿Ir a los sondeos?',
                         style: t.text2, textAlign: TextAlign.center),
                   ],
                 ),

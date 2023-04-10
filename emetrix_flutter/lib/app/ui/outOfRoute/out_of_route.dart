@@ -5,6 +5,7 @@ import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/loading_view.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/widgets/title_gradient.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/route_of_the_day.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/button_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
@@ -25,8 +26,9 @@ class OutOfRoutePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<OutOfRoutePage> {
   List<Store> storesMain = [];
+  List<Store> storesSelected = [];
   List<String> stores = [];
-  bool canceled = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -78,8 +80,10 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                                   onChanged: (index) {
                                     if (index != null) {
                                       stores.add(jsonEncode(storesMain[index]));
+                                      storesSelected.add(storesMain[index]);
                                     } else {
                                       stores.removeAt(index ?? 0);
+                                      storesSelected.removeAt(index ?? 0);
                                     }
                                     setState(() {});
                                   },
@@ -100,34 +104,20 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                       child: Padding(
                         padding: EdgeInsets.only(top: size.height * 0.8),
                         child: Center(
-                          child: ButonDimentions(
-                              background: c.primary,
-                              title:
-                                  'Agregar Ruta${stores.length <= 1 ? '' : 's'}',
-                              style: t.mediumLight,
-                              onTap: () {
-                                ref
-                                    .read(outORControllerProvider.notifier)
-                                    .setRoutesOTD(stores)
-                                    .whenComplete(() {
-                                  setState(() {
-                                    ref
-                                        .read(cardProvider.notifier)
-                                        .update((state) => !state);
-                                    // canceled = false;
-                                    stores.clear();
-                                  });
-
-                                  showSnack();
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const RouteOfTheDayPage()));
-                                });
-                              },
-                              width: size.width * 0.85,
-                              height: size.height * 0.065),
+                          child: isLoading
+                              ? ButonLoading(
+                                  background: c.primary,
+                                  onFinish: null,
+                                  width: size.width * 0.85,
+                                  height: size.height * 0.065)
+                              : ButonDimentions(
+                                  background: c.primary,
+                                  title:
+                                      'Agregar Ruta${stores.length <= 1 ? '' : 's'}',
+                                  style: t.mediumLight,
+                                  onTap: () => setStores(),
+                                  width: size.width * 0.85,
+                                  height: size.height * 0.065),
                         ),
                       ),
                     )
@@ -150,6 +140,35 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
   Future getStoresDB() async {
     storesMain = await ref.read(outORControllerProvider.notifier).getStoresDB();
     setState(() {});
+  }
+
+  Future setStores() async {
+    setState(() {
+      isLoading = true;
+    });
+    final naivigator = Navigator.of(context);
+    ref
+        .read(outORControllerProvider.notifier)
+        .setRoutesOTD(stores)
+        .whenComplete(() async {
+      setState(() {});
+      final sondeos = await ref
+          .read(outORControllerProvider.notifier)
+          .getSondeosFromApi(storesSelected, ref);
+      ref.read(outORControllerProvider.notifier).setSondeosToDB(sondeos);
+
+      ref.read(cardProvider.notifier).update((state) => !state);
+      stores.clear();
+      storesSelected.clear();
+
+      setState(() {
+        isLoading = false;
+      });
+
+      showSnack();
+      naivigator.push(
+          MaterialPageRoute(builder: (context) => const RouteOfTheDayPage()));
+    });
   }
 
   void showSnack() {
