@@ -27,14 +27,12 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
   }
 
   Future<bool> _sendRequest(String name, String pass) async {
-    //obtener la data del usuario
     final Login response = await loginService.sendAccess(name, pass);
     if (response.idError != 0) {
       state = state.copyWith(state: States.error);
       debugPrint('ERROR: ${response.idError}');
       return false;
     } else {
-      //Guardar la data en shared
       final resp = response.resp;
       final obj = resp.toRawJson();
       await _saveUserData(obj);
@@ -69,24 +67,24 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
     }
   }
 
+  Future<Stores> getAditionalStores() async {
+    final response = await homeService.getAditionalStores();
+    if (response.idError != 0) {
+      state = state.copyWith(state: States.error);
+      return Stores(idError: 1, resp: []);
+    } else {
+      state = state.copyWith(state: States.succes);
+      return response;
+    }
+  }
+
   Future saveStoresData(List<String> stores) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setStringList('storesData', stores);
     debugPrint('STORES SET ON SHARED');
   }
 
-  // _saveUserData(String objToString) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final String? userData = prefs.getString('user');
-
-  //   if (userData == null) {
-  //     prefs.setString('user', objToString);
-  //     print('Addeed USERDATA FIRST TIME SHARED');
-  //   } else {
-  //     return;
-  //   }
-  //   state = state.copyWith(state: States.succes);
-  // }
+  //
 }
 
 // //final authorize = StateNotifierProvider<Auth, bool>((_) => Auth(false));

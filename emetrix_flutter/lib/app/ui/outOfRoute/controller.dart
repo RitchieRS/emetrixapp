@@ -65,7 +65,7 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
       //Obtener los sondeos
       for (Store element in routes) {
         final sondeo =
-            await ref.read(routeOTD.notifier).getSondeo(element.id ?? '');
+            await ref.read(routeOTD.notifier).getSondeo2(element.id ?? '');
         sondeos.add(jsonEncode(sondeo));
       }
       return sondeos;

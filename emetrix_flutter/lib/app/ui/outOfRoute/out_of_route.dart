@@ -1,11 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/loading_view.dart';
-import 'package:emetrix_flutter/app/ui/outOfRoute/widgets/title_gradient.dart';
-import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/route_of_the_day.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/alert_yes_no.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/button_loading.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/gradient_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
@@ -48,7 +51,12 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
           body: Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              const GradientTitle(),
+              GradientTitle(
+                height: size.height,
+                width: size.width,
+                title1: 'Fuera de',
+                title2: 'RUTA',
+              ),
 
               //
               ClipRRect(
@@ -77,16 +85,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                             child: GestureDetector(
                               onTap: () {},
                               child: MyCard(
-                                  onChanged: (index) {
-                                    if (index != null) {
-                                      stores.add(jsonEncode(storesMain[index]));
-                                      storesSelected.add(storesMain[index]);
-                                    } else {
-                                      stores.removeAt(index ?? 0);
-                                      storesSelected.removeAt(index ?? 0);
-                                    }
-                                    setState(() {});
-                                  },
+                                  onChanged: (index) => selectedStores(index),
                                   canceled: ref.watch(cardProvider),
                                   index: index,
                                   resp: storesMain[index]),
@@ -115,7 +114,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                                   title:
                                       'Agregar Ruta${stores.length <= 1 ? '' : 's'}',
                                   style: t.mediumLight,
-                                  onTap: () => setStores(),
+                                  onTap: () => start(),
                                   width: size.width * 0.85,
                                   height: size.height * 0.065),
                         ),
@@ -137,9 +136,35 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     }
   }
 
+  void selectedStores(int? index) {
+    if (index != null) {
+      stores.add(jsonEncode(storesMain[index]));
+      storesSelected.add(storesMain[index]);
+    } else {
+      stores.removeAt(index ?? 0);
+      storesSelected.removeAt(index ?? 0);
+    }
+    setState(() {});
+  }
+
   Future getStoresDB() async {
     storesMain = await ref.read(outORControllerProvider.notifier).getStoresDB();
     setState(() {});
+  }
+
+  Future start() async {
+    final networkResult = await (Connectivity().checkConnectivity());
+
+    if (networkResult == ConnectivityResult.none) {
+      showYesNoMsj(
+          context: context,
+          yesOnly: true,
+          title: 'Sin Conexión',
+          content:
+              'Conéctate a internet para poder descargar los sondeos de la/s tiendas seleccionadas.');
+    } else {
+      await setStores();
+    }
   }
 
   Future setStores() async {
@@ -166,8 +191,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
       });
 
       showSnack();
-      naivigator.push(
-          MaterialPageRoute(builder: (context) => const RouteOfTheDayPage()));
+      naivigator.pushNamed('routeOTD');
     });
   }
 

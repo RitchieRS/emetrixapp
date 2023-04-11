@@ -3,15 +3,24 @@ import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class GradientTitle extends StatelessWidget {
-  const GradientTitle({super.key});
+  const GradientTitle(
+      {super.key,
+      required this.height,
+      required this.width,
+      required this.title1,
+      required this.title2});
+  final double height;
+  final double width;
+  final String title1;
+  final String title2;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Container(
-      height: size.height,
-      width: size.width,
+      height: height,
+      width: width,
       decoration: BoxDecoration(
           gradient: LinearGradient(
         begin: Alignment.topRight,
@@ -25,8 +34,8 @@ class GradientTitle extends StatelessWidget {
             title: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Fuera de', style: t.textLight),
-                Text('RUTA', style: t.titleLight),
+                Text(title1, style: t.textLight),
+                Text(title2, style: t.titleLight),
               ],
             ),
             elevation: 0,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 Future showYesNoMsj(
     {required BuildContext context,
+    required bool yesOnly,
     required String title,
     required String content}) async {
   // var result =
@@ -16,11 +17,13 @@ Future showYesNoMsj(
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           title: Text(title, style: t.subtitle, textAlign: TextAlign.center),
           content: Text(content, style: t.text2, textAlign: TextAlign.center),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(context),
-                style: TextButton.styleFrom(foregroundColor: c.disabled),
-                child: Text('Cancelar', style: t.textDisabledBold)),
+            if (yesOnly = false)
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: TextButton.styleFrom(foregroundColor: c.disabled),
+                  child: Text('Cancelar', style: t.textDisabledBold)),
             OutlinedButton(
                 onPressed: () => Navigator.pop(context),
                 style: OutlinedButton.styleFrom(

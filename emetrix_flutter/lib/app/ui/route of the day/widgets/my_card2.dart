@@ -187,7 +187,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
                               child:
                                   CircularProgressIndicator(color: c.primary)))
                       : OutlinedButton(
-                          onPressed: () => start(),
+                          onPressed: () => start(widget.index),
                           style: OutlinedButton.styleFrom(
                               foregroundColor: c.primary,
                               side: BorderSide(color: c.primary)),
@@ -200,16 +200,15 @@ class _MyCardState extends ConsumerState<MyCard2> {
     return Future.value(result);
   }
 
-  Future start() async {
+  Future start(int index) async {
     final navigator = Navigator.of(context);
     setState(() {
       ref.read(showProgress1.notifier).update((state) => true);
     });
 
-    final sondeo =
-        await ref.read(routeOTD.notifier).getSondeo(widget.resp?.id ?? '');
+    final sondeos = await ref.read(routeOTD.notifier).getSondeoFromDB();
 
-    if (sondeo.idError != 0) {
+    if (sondeos[index].idError != 0) {
       setState(() {
         ref.read(showProgress1.notifier).update((state) => false);
       });
@@ -217,9 +216,10 @@ class _MyCardState extends ConsumerState<MyCard2> {
 
       showYesNoMsj(
           context: context,
+          yesOnly: true,
           title: 'Error',
           content:
-              'Se produjo un error inesperado. Ten en cuenta que para realizar un sondeo se requiere acceso a la red. Intenta nuevamente. Si el error persiste, verifica tu conexión a Internet. ');
+              'Se produjo un error inesperado. Si el error persiste, elimina las tiendas e intentalo de nuevo.');
     } else {
       // Emulated Delay
       Future.delayed(const Duration(seconds: 2));
@@ -227,7 +227,8 @@ class _MyCardState extends ConsumerState<MyCard2> {
       navigator.pop(true);
       navigator.push(MaterialPageRoute(builder: (context) {
         return SondeoPage(
-            sondeosList: sondeo.resp ?? [], store: widget.resp ?? Store());
+            sondeosList: sondeos[index].resp ?? [],
+            store: widget.resp ?? Store());
       }));
     }
   }

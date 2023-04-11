@@ -74,9 +74,25 @@ class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
     return;
   }
 
-  Future<SondeoModel> getSondeo(String idTienda) async {
+  Future<SondeoModel> getSondeo2(String idTienda) async {
     final sondeo = sondeoService.getStores(idTienda);
     return sondeo;
+  }
+
+  Future<List<SondeoModel>> getSondeoFromDB() async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String>? sondeos = prefs.getStringList('sondeos');
+    final List<SondeoModel> sondeosObj = [];
+
+    if (sondeos != null) {
+      for (var element in sondeos) {
+        sondeosObj.add(SondeoModel.fromJson(jsonDecode(element)));
+      }
+    } else {
+      debugPrint('SHARED ERROR sondeos: Error get in db');
+    }
+
+    return sondeosObj;
   }
 
 //

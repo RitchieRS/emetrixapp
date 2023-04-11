@@ -1,5 +1,5 @@
 import 'package:emetrix_flutter/app/ui/outOfRoute/widgets/shimmer_cards.dart';
-import 'package:emetrix_flutter/app/ui/outOfRoute/widgets/title_gradient.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/gradient_title.dart';
 import 'package:flutter/material.dart';
 
 class LoadingView extends StatelessWidget {
@@ -13,7 +13,12 @@ class LoadingView extends StatelessWidget {
       body: Stack(
         alignment: AlignmentDirectional.bottomCenter,
         children: [
-          const GradientTitle(),
+          GradientTitle(
+            height: size.height,
+            width: size.width,
+            title1: 'Fuera de',
+            title2: 'RUTA',
+          ),
           ClipRRect(
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(35)),
             child: Container(

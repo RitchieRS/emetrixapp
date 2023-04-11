@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:emetrix_flutter/app/ui/login/controller.dart';
-import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
 import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/button_dimentions.dart';
@@ -108,28 +107,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       background: c.primary,
                                       title: 'Entrar',
                                       style: t.mediumLight,
-                                      onTap: () async {
-                                        final networkResult =
-                                            await (Connectivity()
-                                                .checkConnectivity());
-                                        setState(
-                                            () => switchButton = !switchButton);
-
-                                        if (user.text.isEmpty ||
-                                            password.text.isEmpty) {
-                                          showMsj('Casi...',
-                                              'El usuario y la contraseña no pueden estar vacios. Ingresa un usuario  y contraseña.');
-                                          setState(() => switchButton = false);
-                                        } else if (networkResult ==
-                                            ConnectivityResult.none) {
-                                          showMsj('Sin Conexión',
-                                              'Conéctate a internet para poder iniciar sesión correctamente.');
-                                          setState(() => switchButton = false);
-                                        } else {
-                                          await requestAccess()
-                                              .then((value) => getStores());
-                                        }
-                                      },
+                                      onTap: () => start(),
                                       width: size.width * 0.9,
                                       height: size.height * 0.06))
                               : Padding(
@@ -156,7 +134,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 
+  Future start() async {
+    final networkResult = await (Connectivity().checkConnectivity());
+    setState(() => switchButton = !switchButton);
+
+    if (user.text.isEmpty || password.text.isEmpty) {
+      showMsj('Casi...',
+          'El usuario y la contraseña no pueden estar vacios. Ingresa un usuario  y contraseña.');
+      setState(() => switchButton = false);
+    } else if (networkResult == ConnectivityResult.none) {
+      showMsj('Sin Conexión',
+          'Conéctate a internet para poder iniciar sesión correctamente.');
+      setState(() => switchButton = false);
+    } else {
+      await requestAccess().then((value) => getStores());
+    }
+  }
+
   Future requestAccess() async {
+    final navigator = Navigator.of(context);
     bool userLoggedIn = await ref
         .read(loginControllerProvider.notifier)
         .init(user.text, password.text);
@@ -164,8 +160,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     if (userLoggedIn) {
       Future.delayed(const Duration(seconds: 1)).whenComplete(() {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const MainPage()));
+        navigator.pushReplacementNamed('home');
         user.clear();
         password.clear();
         setState(() => switchButton = false);
@@ -184,9 +179,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future getStores() async {
     List<String> storesJson = [];
     final stores = await ref.read(loginControllerProvider.notifier).getStores();
+    final storesAdditional =
+        await ref.read(loginControllerProvider.notifier).getAditionalStores();
+
     stores.resp?.forEach((store) {
       storesJson.add(jsonEncode(store));
     });
+    storesAdditional.resp?.forEach((store) {
+      storesJson.add(jsonEncode(store));
+    });
+
     ref.read(loginControllerProvider.notifier).saveStoresData(storesJson);
   }
 

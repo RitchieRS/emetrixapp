@@ -19,7 +19,7 @@ class ConetionService extends GetxController {
       Get.rawSnackbar(
           messageText: Text('Sin conexión a Internet', style: t.textLight),
           isDismissible: true,
-          duration: const Duration(seconds: 3),
+          duration: const Duration(seconds: 2),
           backgroundColor: c.black,
           icon: const Icon(Icons.wifi_off, color: Colors.white),
           snackStyle: SnackStyle.FLOATING,
@@ -45,7 +45,7 @@ class ConetionService extends GetxController {
         Get.rawSnackbar(
             messageText: Text('En línea', style: t.textLight),
             isDismissible: true,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 2),
             backgroundColor: c.black,
             icon: const Icon(Icons.wifi, color: Colors.white),
             snackStyle: SnackStyle.FLOATING,
