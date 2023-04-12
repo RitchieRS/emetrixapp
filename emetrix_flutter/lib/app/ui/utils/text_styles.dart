@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'colors.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 final IText t = _TextStylesMain();
 

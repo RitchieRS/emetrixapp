@@ -1,6 +1,6 @@
-import 'package:emetrix_flutter/app/ui/outOfRoute/widgets/shimmer_cards.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/gradient_title.dart';
 import 'package:flutter/material.dart';
+import 'package:emetrix_flutter/app/ui/outOfRoute/widgets/shimmer_cards.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 
 class LoadingView extends StatelessWidget {
   const LoadingView({super.key});

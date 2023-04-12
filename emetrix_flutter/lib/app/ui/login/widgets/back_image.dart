@@ -1,5 +1,5 @@
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class BackImage extends StatelessWidget {
   const BackImage({super.key});

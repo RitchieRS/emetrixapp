@@ -1,11 +1,13 @@
-import 'package:animate_do/animate_do.dart';
-import 'package:emetrix_flutter/app/ui/login/login.dart';
-import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
+
+import 'package:animate_do/animate_do.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:emetrix_flutter/app/ui/login/login.dart';
+import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});

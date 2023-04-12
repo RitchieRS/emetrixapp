@@ -1,7 +1,7 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/state_manager.dart';
 

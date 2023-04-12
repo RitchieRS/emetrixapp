@@ -1,24 +1,21 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:flutter/material.dart';
 import 'dart:convert';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+
 import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/loading_view.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/alert_yes_no.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/button_loading.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/gradient_title.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:animate_do/animate_do.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:emetrix_flutter/app/ui/drawer/drawer.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/controller.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/state.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/widgets/my_card.dart';
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/button_dimentions.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class OutOfRoutePage extends ConsumerStatefulWidget {
   const OutOfRoutePage({super.key});

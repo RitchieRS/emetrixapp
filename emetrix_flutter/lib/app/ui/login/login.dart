@@ -1,13 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:convert';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:emetrix_flutter/app/ui/login/controller.dart';
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/button_dimentions.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'widgets/back_image.dart';
 import 'widgets/my_text_field.dart';
@@ -139,12 +141,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     setState(() => switchButton = !switchButton);
 
     if (user.text.isEmpty || password.text.isEmpty) {
-      showMsj('Casi...',
-          'El usuario y la contraseña no pueden estar vacios. Ingresa un usuario  y contraseña.');
+      showYesNoMsj(
+          context: context,
+          title: 'Casi...',
+          content:
+              'El usuario y la contraseña no pueden estar vacios. Ingresa un usuario  y contraseña.',
+          yesOnly: true);
       setState(() => switchButton = false);
     } else if (networkResult == ConnectivityResult.none) {
-      showMsj('Sin Conexión',
-          'Conéctate a internet para poder iniciar sesión correctamente.');
+      showYesNoMsj(
+          context: context,
+          title: 'Sin Conexión',
+          content:
+              'Conéctate a internet para poder iniciar sesión correctamente.',
+          yesOnly: true);
+
       setState(() => switchButton = false);
     } else {
       await requestAccess().then((value) => getStores());
@@ -152,63 +163,52 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Future requestAccess() async {
-    final navigator = Navigator.of(context);
-    bool userLoggedIn = await ref
-        .read(loginControllerProvider.notifier)
-        .init(user.text, password.text);
-    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final navigator = Navigator.of(context);
+      bool userLoggedIn = await ref
+          .read(loginControllerProvider.notifier)
+          .init(user.text, password.text);
+      setState(() {});
 
-    if (userLoggedIn) {
-      Future.delayed(const Duration(seconds: 1)).whenComplete(() {
-        navigator.pushReplacementNamed('home');
-        user.clear();
-        password.clear();
-        setState(() => switchButton = false);
-      });
-    } else {
-      Future.delayed(const Duration(seconds: 1)).whenComplete(() {
-        setState(() => switchButton = false);
-        user.clear();
-        password.clear();
-        showMsj('Error',
-            'El usuario y la contraseña no existen. Intentalo de nuevo');
-      });
-    }
+      if (userLoggedIn) {
+        Future.delayed(const Duration(seconds: 1)).whenComplete(() {
+          navigator.pushReplacementNamed('home');
+          user.clear();
+          password.clear();
+          setState(() => switchButton = false);
+        });
+      } else {
+        Future.delayed(const Duration(seconds: 1)).whenComplete(() {
+          setState(() => switchButton = false);
+          user.clear();
+          password.clear();
+          showYesNoMsj(
+              context: context,
+              title: 'Error',
+              content:
+                  'El usuario y la contraseña no existen. Intentalo de nuevo.',
+              yesOnly: true);
+        });
+      }
+    });
   }
 
   Future getStores() async {
-    List<String> storesJson = [];
-    final stores = await ref.read(loginControllerProvider.notifier).getStores();
-    final storesAdditional =
-        await ref.read(loginControllerProvider.notifier).getAditionalStores();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      List<String> storesJson = [];
+      final stores =
+          await ref.read(loginControllerProvider.notifier).getStores();
+      final storesAdditional =
+          await ref.read(loginControllerProvider.notifier).getAditionalStores();
 
-    stores.resp?.forEach((store) {
-      storesJson.add(jsonEncode(store));
+      stores.resp?.forEach((store) {
+        storesJson.add(jsonEncode(store));
+      });
+      storesAdditional.resp?.forEach((store) {
+        storesJson.add(jsonEncode(store));
+      });
+
+      ref.read(loginControllerProvider.notifier).saveStoresData(storesJson);
     });
-    storesAdditional.resp?.forEach((store) {
-      storesJson.add(jsonEncode(store));
-    });
-
-    ref.read(loginControllerProvider.notifier).saveStoresData(storesJson);
-  }
-
-  showMsj(String title, String content) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          title: Text(title, style: t.mediumBlue),
-          content: Text(content, style: t.text2, textAlign: TextAlign.justify),
-          actions: [
-            OutlinedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Entendido')),
-          ],
-        );
-      },
-    );
   }
 }

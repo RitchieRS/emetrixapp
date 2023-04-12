@@ -1,15 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:animate_do/animate_do.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/controller.dart';
 import 'package:emetrix_flutter/app/ui/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/alert_yes_no.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class MyCard2 extends ConsumerStatefulWidget {
   const MyCard2(
@@ -44,34 +44,14 @@ class _MyCardState extends ConsumerState<MyCard2> {
         ),
         direction: DismissDirection.endToStart,
         confirmDismiss: (direction) async {
-          var result = await showDialog(
+          final delete = await showMsj(
               context: context,
-              barrierDismissible: false,
-              builder: (context) {
-                return AlertDialog(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  title: Text('Cuidado',
-                      style: t.subtitle, textAlign: TextAlign.center),
-                  content: Text(
-                      '¿Seguro que deseas eliminar esta tienda de Ruta del Dia?',
-                      style: t.text2),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        style:
-                            TextButton.styleFrom(foregroundColor: c.disabled),
-                        child: Text('Cancelar', style: t.textDisabledBold)),
-                    OutlinedButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        style: OutlinedButton.styleFrom(
-                            foregroundColor: c.error,
-                            side: BorderSide(color: c.error)),
-                        child: Text('Eliminar', style: t.textError))
-                  ],
-                );
-              });
-          return Future.value(result);
+              title: 'Cuidado',
+              content:
+                  '¿Seguro que deseas eliminar esta tienda de Ruta del Dia?',
+              buttonLabel: 'Eliminar',
+              destructive: true);
+          return Future.value(delete);
         },
         onDismissed: (direction) {
           widget.onDeleted(widget.index);
@@ -82,7 +62,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
             child: Material(
               child: InkWell(
                 onTap: () async {
-                  await showMsj(widget.resp?.tienda ?? '');
+                  await showMsj2(widget.resp?.tienda ?? '');
 
                   //
                 },
@@ -151,7 +131,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
     await launchUrl(url, mode: LaunchMode.externalApplication);
   }
 
-  Future showMsj(String store) async {
+  Future showMsj2(String store) async {
     var result = await showDialog(
         context: context,
         barrierDismissible: false,
@@ -222,7 +202,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
               'Se produjo un error inesperado. Si el error persiste, elimina las tiendas e intentalo de nuevo.');
     } else {
       // Emulated Delay
-      Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 1));
 
       navigator.pop(true);
       navigator.push(MaterialPageRoute(builder: (context) {

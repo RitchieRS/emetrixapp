@@ -17,7 +17,9 @@ abstract class IColors {
   Color get primary;
   Color get secondary;
   Color get onSecondary;
+  Color get onSecondaryDark;
   Color get background;
+  Color get backgroundDark;
   Color get disabled;
   Color get error;
   Color get ok;
@@ -47,7 +49,13 @@ class _ColorsMain implements IColors {
   Color onSecondary = const Color(0xffeaeaea);
 
   @override
+  Color onSecondaryDark = const Color(0xff161925);
+
+  @override
   Color background = const Color(0xffffffff);
+
+  @override
+  Color backgroundDark = const Color(0xff454E73);
 
   @override
   Color disabled = const Color(0xff404040);

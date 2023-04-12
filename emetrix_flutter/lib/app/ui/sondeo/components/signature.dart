@@ -1,7 +1,6 @@
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:hand_signature/signature.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class Signature extends ConsumerStatefulWidget {
   const Signature({super.key});

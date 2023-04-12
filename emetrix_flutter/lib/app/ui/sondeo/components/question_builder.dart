@@ -1,4 +1,6 @@
 // ignore_for_file: avoid_print
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:emetrix_flutter/app/core/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/sondeo/components/question.dart';
@@ -6,10 +8,8 @@ import 'package:emetrix_flutter/app/ui/sondeo/components/select_multiple.dart';
 import 'package:emetrix_flutter/app/ui/sondeo/components/select_photo.dart';
 import 'package:emetrix_flutter/app/ui/sondeo/components/selection.dart';
 import 'package:emetrix_flutter/app/ui/sondeo/components/signature.dart';
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+
 import 'date_time.dart';
 
 class QuestionBuilder extends ConsumerStatefulWidget {

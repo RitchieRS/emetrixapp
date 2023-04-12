@@ -1,6 +1,5 @@
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 Future showYesNoMsj(
     {required BuildContext context,

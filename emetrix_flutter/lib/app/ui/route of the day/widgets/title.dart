@@ -1,7 +1,6 @@
-import 'package:emetrix_flutter/app/ui/utils/dimentions.dart';
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class MyTitle extends StatelessWidget implements PreferredSizeWidget {
   const MyTitle({super.key});

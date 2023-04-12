@@ -1,13 +1,14 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
+
 import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/addActivities/controller.dart';
 import 'package:emetrix_flutter/app/ui/addActivities/state.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/widgets/my_card.dart';
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/gradient_title.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AditionalActivitiesPage extends ConsumerStatefulWidget {
   const AditionalActivitiesPage({super.key});
@@ -40,14 +41,12 @@ class _AditionalActivitiesPageState
       case States.succes:
         return Scaffold(
           body: Stack(
-            // alignment: Alignment.bottomCenter,
             children: [
               GradientTitle(
-                height: size.height * 0.4,
-                width: size.width,
-                title1: 'Actividades',
-                title2: 'ADICIONALES',
-              ),
+                  height: size.height * 0.4,
+                  width: size.width,
+                  title1: 'Actividades',
+                  title2: 'EXTRAS'),
               //
               Padding(
                 padding: EdgeInsets.only(top: size.height * 0.18),
@@ -60,52 +59,32 @@ class _AditionalActivitiesPageState
                       decoration: BoxDecoration(
                         color: c.background,
                       ),
-                      child: ListView.builder(
-                        padding: const EdgeInsets.only(top: 0),
-                        shrinkWrap: true,
-                        addAutomaticKeepAlives: false,
-                        addRepaintBoundaries: false,
-                        addSemanticIndexes: false,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: storesMain.length,
-                        itemBuilder: (context, index) => KeepAlive(
-                          keepAlive: true,
-                          child: MyCard(
-                              // onChanged: (index) => selectedStores(index),
-                              onChanged: (index) {},
-                              canceled: false,
-                              index: index,
-                              resp: storesMain[index]),
+                      child: Padding(
+                        padding: EdgeInsets.only(top: size.height * 0.015),
+                        child: ListView.builder(
+                          padding: const EdgeInsets.only(top: 0),
+                          shrinkWrap: true,
+                          addAutomaticKeepAlives: false,
+                          addRepaintBoundaries: false,
+                          addSemanticIndexes: false,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: storesMain.length,
+                          itemBuilder: (context, index) => KeepAlive(
+                            keepAlive: true,
+                            child: MyCard(
+                                // onChanged: (index) => selectedStores(index),
+                                onChanged: (index) {},
+                                canceled: false,
+                                index: index,
+                                resp: storesMain[index]),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-              // stores.isNotEmpty
-              //     ? FadeIn(
-              //         duration: const Duration(milliseconds: 100),
-              //         child: Padding(
-              //           padding: EdgeInsets.only(top: size.height * 0.8),
-              //           child: Center(
-              //             child: isLoading
-              //                 ? ButonLoading(
-              //                     background: c.primary,
-              //                     onFinish: null,
-              //                     width: size.width * 0.85,
-              //                     height: size.height * 0.065)
-              //                 : ButonDimentions(
-              //                     background: c.primary,
-              //                     title:
-              //                         'Agregar Ruta${stores.length <= 1 ? '' : 's'}',
-              //                     style: t.mediumLight,
-              //                     onTap: () => start(),
-              //                     width: size.width * 0.85,
-              //                     height: size.height * 0.065),
-              //           ),
-              //         ),
-              //       )
-              //     : Container()
+              //
             ],
           ),
         );
@@ -127,7 +106,6 @@ class _AditionalActivitiesPageState
         .read(addActControllerProvider.notifier)
         .getAdditionalStoresDB();
 
-    // debugPrint(storesMain.length.toString());
     setState(() {});
   }
 }

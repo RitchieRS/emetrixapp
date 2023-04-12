@@ -1,10 +1,11 @@
-import 'dart:io';
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:io';
+
 import 'package:image_picker/image_picker.dart';
+
+import 'package:flutter/services.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class SelectPicture extends ConsumerStatefulWidget {
   const SelectPicture({super.key});

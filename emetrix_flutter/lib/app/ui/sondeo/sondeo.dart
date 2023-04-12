@@ -1,13 +1,15 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/core/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/controller.dart';
 import 'package:emetrix_flutter/app/ui/sondeo/components/type_sondeo.dart';
 import 'package:emetrix_flutter/app/ui/sondeo/controller.dart';
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/alert.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 
 class SondeoPage extends ConsumerStatefulWidget {
   const SondeoPage({super.key, required this.sondeosList, required this.store});

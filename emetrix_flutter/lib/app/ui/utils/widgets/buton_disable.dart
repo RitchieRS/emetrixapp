@@ -1,6 +1,6 @@
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class ButonDisabled extends ConsumerStatefulWidget {
   const ButonDisabled(

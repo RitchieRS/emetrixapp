@@ -1,10 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/out_of_route.dart';
 import 'package:emetrix_flutter/app/ui/settings/settings.dart';
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   const MainPage({super.key});

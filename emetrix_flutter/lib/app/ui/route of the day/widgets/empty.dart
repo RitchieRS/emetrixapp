@@ -1,7 +1,7 @@
-import 'package:animate_do/animate_do.dart';
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class EmptyList extends StatelessWidget {
   const EmptyList({super.key});
