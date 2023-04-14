@@ -56,9 +56,7 @@ class _AditionalActivitiesPageState
                     borderRadius:
                         const BorderRadius.only(topLeft: Radius.circular(40)),
                     child: Container(
-                      decoration: BoxDecoration(
-                        color: c.background,
-                      ),
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       child: Padding(
                         padding: EdgeInsets.only(top: size.height * 0.015),
                         child: ListView.builder(

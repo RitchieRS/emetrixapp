@@ -39,7 +39,7 @@ class GradientTitle extends StatelessWidget {
             ),
             elevation: 0,
             backgroundColor: Colors.transparent,
-            iconTheme: const IconThemeData(color: Colors.white),
+            iconTheme: IconThemeData(color: c.background),
             centerTitle: true),
       ),
     );

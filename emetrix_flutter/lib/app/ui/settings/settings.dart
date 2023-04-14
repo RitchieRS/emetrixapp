@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -25,17 +26,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final isDark = ref.watch(isDarkModeProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Ajustes', style: t.titleBlue),
         centerTitle: true,
-        backgroundColor: c.background,
+        backgroundColor: c.surface,
         elevation: 0,
         toolbarHeight: size.height * 0.1,
         actions: [
           IconButton(
-              onPressed: () {}, icon: Icon(Icons.light_mode, color: c.disabled))
+              onPressed: () {
+                ref.read(isDarkModeProvider.notifier).update((state) => !state);
+                setState(() {});
+              },
+              icon: isDark
+                  ? const Icon(Icons.light_mode)
+                  : Icon(Icons.dark_mode_outlined, color: c.disabled))
         ],
       ),
       body: ListView(
@@ -148,6 +156,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     await prefs.remove('storesData');
     await prefs.remove('sondeos');
     ref.read(mainIndex.notifier).setIndex(0);
+    ref.read(isDarkModeProvider.notifier).update((state) => false);
     //
     setState(() {});
     navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) {

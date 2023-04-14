@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class MyTitle extends StatelessWidget implements PreferredSizeWidget {
@@ -23,9 +22,8 @@ class MyTitle extends StatelessWidget implements PreferredSizeWidget {
           Text('Del Dia', style: t.textBlue),
         ],
       ),
-      systemOverlayStyle: SystemUiOverlayStyle.dark,
       elevation: 0,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       iconTheme: const IconThemeData(color: Colors.white),
       centerTitle: true,
       toolbarHeight: Dimentions().getHeight() * 0.12,

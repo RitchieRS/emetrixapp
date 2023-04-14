@@ -49,7 +49,9 @@ class _MyCardState extends ConsumerState<MyCard> {
                 height: size.height * 0.107,
                 width: size.width * 0.95,
                 decoration: BoxDecoration(
-                  color: isBlue ? c.primary.withOpacity(0.1) : Colors.white,
+                  color: isBlue
+                      ? c.primary.withOpacity(0.1)
+                      : Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Row(

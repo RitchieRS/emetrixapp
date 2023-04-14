@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/loading_view.dart';
@@ -40,6 +41,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(outORControllerProvider);
+    final isDark = ref.watch(isDarkModeProvider);
     final size = MediaQuery.of(context).size;
 
     switch (state.state) {
@@ -49,11 +51,10 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
             alignment: Alignment.bottomCenter,
             children: [
               GradientTitle(
-                height: size.height,
-                width: size.width,
-                title1: 'Fuera de',
-                title2: 'RUTA',
-              ),
+                  height: size.height,
+                  width: size.width,
+                  title1: 'Fuera de',
+                  title2: 'RUTA'),
 
               //
               ClipRRect(
@@ -62,7 +63,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                 child: Container(
                   height: size.height * 0.75,
                   width: size.width,
-                  color: ThemeData().scaffoldBackgroundColor,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   child: Padding(
                     padding: EdgeInsets.only(top: size.height * 0.02),
                     child: RefreshIndicator(
@@ -98,7 +99,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                   ? FadeIn(
                       duration: const Duration(milliseconds: 100),
                       child: Padding(
-                        padding: EdgeInsets.only(top: size.height * 0.8),
+                        padding: EdgeInsets.only(top: size.height * 0.77),
                         child: Center(
                           child: isLoading
                               ? ButonLoading(
@@ -110,7 +111,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                                   background: c.primary,
                                   title:
                                       'Agregar Ruta${stores.length <= 1 ? '' : 's'}',
-                                  style: t.mediumLight,
+                                  style: isDark ? t.mediumDark : t.mediumLight,
                                   onTap: () => start(),
                                   width: size.width * 0.85,
                                   height: size.height * 0.065),

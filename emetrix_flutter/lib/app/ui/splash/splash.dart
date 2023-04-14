@@ -52,12 +52,23 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final prefs = await SharedPreferences.getInstance();
       final String? session = prefs.getString('loginInfo');
+      final bool? theme = prefs.getBool('isDarkMode');
       if (kDebugMode) {
         print(session);
       }
 
-      Future.delayed(const Duration(milliseconds: 1500)).whenComplete(() async {
-        if (session != null) {
+      Future.delayed(const Duration(milliseconds: 900)).whenComplete(() async {
+        if (session != null && theme == null) {
+          //Pantalla de seleccion de tema
+          await Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                  pageBuilder: (_, animation, __) => FadeTransition(
+                        opacity: animation,
+                        child: const MainPage(),
+                      )));
+        } else if (session != null) {
+          //Home
           await Navigator.pushReplacement(
               context,
               PageRouteBuilder(
@@ -66,6 +77,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                         child: const MainPage(),
                       )));
         } else {
+          //LogIn
           await Navigator.pushReplacement(
               context,
               PageRouteBuilder(

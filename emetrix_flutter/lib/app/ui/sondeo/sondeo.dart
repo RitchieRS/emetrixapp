@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,6 +11,8 @@ import 'package:emetrix_flutter/app/ui/sondeo/controller.dart';
 
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
+
+import 'sondeo_individual.dart';
 
 class SondeoPage extends ConsumerStatefulWidget {
   const SondeoPage({super.key, required this.sondeosList, required this.store});
@@ -36,6 +39,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final isDark = ref.watch(isDarkModeProvider);
 
     return WillPopScope(
       onWillPop: () async {
@@ -45,11 +49,11 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text('${widget.store.tienda}',
-              style: t.subtitle,
+              style: isDark ? t.subtitleLight : t.subtitleDark,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               maxLines: 2),
-          backgroundColor: ThemeData().scaffoldBackgroundColor,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           elevation: 0,
           centerTitle: true,
           toolbarHeight: size.height * 0.1,
@@ -69,7 +73,17 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
                 ];
 
                 return TypeSondeo(
-                  onTap: finisedSections.contains(index) ? () {} : null,
+                  onTap:
+                      // finisedSections.contains(index) ?
+                      () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SondeosBuilder(
+                                  sondeoItem: sondeosList2[index],
+                                )));
+                  },
+                  // : null,
                   type: sondeosList2[index].sondeo ?? 'Error',
                   index: index,
                   finisedSections: finisedSections,
