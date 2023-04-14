@@ -7,7 +7,6 @@ import 'package:emetrix_flutter/app/core/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/controller.dart';
 import 'package:emetrix_flutter/app/ui/sondeo/components/type_sondeo.dart';
-import 'package:emetrix_flutter/app/ui/sondeo/controller.dart';
 
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
@@ -30,10 +29,13 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
   void initState() {
     super.initState();
     setState(() {
-      sondeosList2 =
-          ref.read(sondeoController.notifier).reorderList(widget.sondeosList);
+      sondeosList2 = widget.sondeosList;
+      // ref.read(sondeoController.notifier).reorderList(widget.sondeosList);
     });
     Services.checkConectivity();
+
+    print('List Original: ${widget.sondeosList.length}');
+    print('List Reorder: ${sondeosList2.length}');
   }
 
   @override

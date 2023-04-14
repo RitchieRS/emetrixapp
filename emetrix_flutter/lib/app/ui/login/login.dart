@@ -10,6 +10,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:emetrix_flutter/app/ui/login/controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'widgets/back_image.dart';
 import 'widgets/my_text_field.dart';
@@ -158,11 +159,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
       setState(() => switchButton = false);
     } else {
-      await requestAccess().then((value) => getStores());
+      // await requestAccess().then((value) => getStores());
+      await requestAccess();
+      await getStores();
     }
   }
 
   Future requestAccess() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isDark = prefs.containsKey('isDarkMode');
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final navigator = Navigator.of(context);
       bool userLoggedIn = await ref
@@ -170,7 +176,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           .init(user.text, password.text);
       setState(() {});
 
-      if (userLoggedIn) {
+      if (userLoggedIn == true && isDark == false) {
+        Future.delayed(const Duration(seconds: 1)).whenComplete(() {
+          navigator.pushReplacementNamed('theme');
+          user.clear();
+          password.clear();
+          setState(() => switchButton = false);
+        });
+      } else if (userLoggedIn == true && isDark == true) {
         Future.delayed(const Duration(seconds: 1)).whenComplete(() {
           navigator.pushReplacementNamed('home');
           user.clear();

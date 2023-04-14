@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,10 +17,15 @@ class SplashPage extends ConsumerStatefulWidget {
 }
 
 class _SplashPageState extends ConsumerState<SplashPage> {
+  String? session;
+  bool? theme;
+
   @override
   void initState() {
     super.initState();
-    _checkRoute();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _checkData().whenComplete(() => _checkRoute());
+    });
   }
 
   @override
@@ -48,46 +53,38 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     );
   }
 
-  _checkRoute() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final prefs = await SharedPreferences.getInstance();
-      final String? session = prefs.getString('loginInfo');
-      final bool? theme = prefs.getBool('isDarkMode');
-      if (kDebugMode) {
-        print(session);
-      }
+  Future<void> _checkData() async {
+    final prefs = await SharedPreferences.getInstance();
+    session = prefs.getString('loginInfo');
+    setState(() {});
+    if (kDebugMode) {
+      print('SESION ---> $session');
+    }
+  }
 
-      Future.delayed(const Duration(milliseconds: 900)).whenComplete(() async {
-        if (session != null && theme == null) {
-          //Pantalla de seleccion de tema
-          await Navigator.pushReplacement(
-              context,
-              PageRouteBuilder(
-                  pageBuilder: (_, animation, __) => FadeTransition(
-                        opacity: animation,
-                        child: const MainPage(),
-                      )));
-        } else if (session != null) {
-          //Home
-          await Navigator.pushReplacement(
-              context,
-              PageRouteBuilder(
-                  pageBuilder: (_, animation, __) => FadeTransition(
-                        opacity: animation,
-                        child: const MainPage(),
-                      )));
-        } else {
-          //LogIn
-          await Navigator.pushReplacement(
-              context,
-              PageRouteBuilder(
-                  pageBuilder: (_, animation, __) => FadeTransition(
-                        opacity: animation,
-                        child: const LoginPage(),
-                      )));
-        }
-        //
-      });
+  Future<void> _checkRoute() async {
+    await Future.delayed(const Duration(milliseconds: 2100))
+        .whenComplete(() async {
+      if (session != null) {
+        //Home
+        await Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+                pageBuilder: (_, animation, __) => FadeTransition(
+                      opacity: animation,
+                      child: const MainPage(),
+                    )));
+      } else {
+        //LogIn
+        await Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+                pageBuilder: (_, animation, __) => FadeTransition(
+                      opacity: animation,
+                      child: const LoginPage(),
+                    )));
+      }
+      //
     });
   }
 }

@@ -42,12 +42,12 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
     }
   }
 
-  Future _saveUserData(String objToString) async {
+  Future<void> _saveUserData(String objToString) async {
     final prefs = await SharedPreferences.getInstance();
     final String? userData = prefs.getString('loginInfo');
 
     if (userData == null) {
-      prefs.setString('loginInfo', objToString);
+      await prefs.setString('loginInfo', objToString);
       debugPrint('LoginInfo added FIRST TIME SHARED');
     } else {
       debugPrint('LoginInfo EXIST');
@@ -78,9 +78,9 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
     }
   }
 
-  Future saveStoresData(List<String> stores) async {
+  Future<void> saveStoresData(List<String> stores) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('storesData', stores);
+    await prefs.setStringList('storesData', stores);
     debugPrint('STORES SET ON SHARED');
   }
 

@@ -39,7 +39,7 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
             child: DrawerHeader(
               decoration: const BoxDecoration(color: Colors.transparent),
               child: CircleAvatar(
-                  backgroundColor: Colors.blue[700],
+                  backgroundColor: Theme.of(context).primaryColor,
                   child: Padding(
                     padding: const EdgeInsets.all(25.0),
                     child: Image.asset('assets/images/logo_blancoE.png'),

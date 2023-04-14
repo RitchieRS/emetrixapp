@@ -38,20 +38,23 @@ class SondeosBuilder extends ConsumerWidget {
                   ),
                 )),
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: sondeoItem.preguntas?.length,
-            itemBuilder: (context, index) => Column(
-              children: [
-                Text(
-                  '${sondeoItem.preguntas?[index].pregunta} ',
-                  textAlign: TextAlign.center,
-                ),
-                Text('Pregunta ${index + 1} de ${lenght.ceil()} \n'),
-              ],
-            ),
-          )
+          if (sondeoItem.preguntas != null)
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: sondeoItem.preguntas?.length,
+              itemBuilder: (context, index) => Column(
+                children: [
+                  Text(
+                    '${sondeoItem.preguntas?[index].pregunta} ',
+                    textAlign: TextAlign.center,
+                  ),
+                  Text('Pregunta ${index + 1} de ${lenght.ceil()} \n'),
+                ],
+              ),
+            )
+          else
+            Text('${sondeoItem.linkWeb}')
         ],
       ),
     );
