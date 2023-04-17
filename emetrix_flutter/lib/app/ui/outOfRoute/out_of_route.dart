@@ -41,7 +41,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(outORControllerProvider);
-    final isDark = ref.watch(isDarkModeProvider);
+    final isDark = ref.watch(themeProvider);
     final size = MediaQuery.of(context).size;
 
     switch (state.state) {
@@ -111,7 +111,9 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                                   background: c.primary,
                                   title:
                                       'Agregar Ruta${stores.length <= 1 ? '' : 's'}',
-                                  style: isDark ? t.mediumDark : t.mediumLight,
+                                  style: isDark == ThemeMode.dark
+                                      ? t.mediumDark
+                                      : t.mediumLight,
                                   onTap: () => start(),
                                   width: size.width * 0.85,
                                   height: size.height * 0.065),

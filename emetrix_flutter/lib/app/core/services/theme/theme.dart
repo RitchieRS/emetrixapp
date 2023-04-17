@@ -1,109 +1,54 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final isDarkModeProvider = StateProvider<bool>((ref) {
-  return false;
+final themeProvider = StateNotifierProvider<ThemeProvider, ThemeMode>((ref) {
+  return ThemeProvider();
 });
 
-// final isDarkModeProvider =
-//     StateNotifierProvider<ThemeChanger, ThemeData>((ref) => ThemeChanger());
+class ThemeProvider extends StateNotifier<ThemeMode> {
+  ThemeProvider() : super(ThemeMode.system) {
+    loadThemeFromPrefs();
+  }
 
-// class ThemeChanger extends StateNotifier<ThemeData> {
-//   ThemeChanger() : super(ThemeData());
+  Future<void> loadThemeFromPrefs() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool isDarkMode = prefs.getBool('isDarkMode') ?? false;
+    if (isDarkMode) {
+      state = ThemeMode.dark;
+    } else {
+      state = ThemeMode.light;
+    }
+  }
 
-//   Future<ThemeData> getTheme() async {
-//     final prefs = await SharedPreferences.getInstance();
-//     final bool? isDarkMode = prefs.getBool('isDarkMode');
+  Future<void> toggleTheme() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (state == ThemeMode.dark) {
+      state = ThemeMode.light;
+      await prefs.setBool('isDarkMode', false);
+    } else {
+      state = ThemeMode.dark;
+      await prefs.setBool('isDarkMode', true);
+    }
+  }
 
-//     if (isDarkMode != null) {
-//       if (isDarkMode) {
-//         return ThemeData(
-//           colorSchemeSeed: c.primary,
-//           dividerColor: c.surface,
-//           fontFamily: 'Poppins',
-//           brightness: Brightness.dark,
-//         );
-//       } else {
-//         return ThemeData(
-//           colorSchemeSeed: c.primary,
-//           dividerColor: c.surface,
-//           fontFamily: 'Poppins',
-//           brightness: Brightness.light,
-//         );
-//       }
-//     } else {
-//       return ThemeData(
-//         colorSchemeSeed: c.primary,
-//         dividerColor: c.surface,
-//         fontFamily: 'Poppins',
-//         brightness: Brightness.light,
-//       );
-//     }
-//   }
+  Future<void> setLightTheme() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    state = ThemeMode.light;
+    await prefs.setBool('isDarkMode', false);
+  }
 
-//   ThemeData getDefaultTheme() {
-//     return ThemeData(
-//       colorSchemeSeed: c.primary,
-//       dividerColor: c.surface,
-//       fontFamily: 'Poppins',
-//       brightness: Brightness.light,
-//     );
-//   }
+  Future<void> setDarkTheme() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    state = ThemeMode.dark;
+    await prefs.setBool('isDarkMode', true);
+  }
 
-//   Future<void> setTheme({required bool isDark}) async {
-//     final prefs = await SharedPreferences.getInstance();
-//     prefs.setBool('isDarkMode', isDark);
-//   }
+  // Future<void> setFirstTime() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   state = ThemeMode.light;
+  //   await prefs.setBool('isFirstTime', false);
+  // }
 
-//   // ThemeData setDefaultTheme() {
-//   //   return ThemeData(
-//   //     colorSchemeSeed: c.primary,
-//   //     dividerColor: c.surface,
-//   //     fontFamily: 'Poppins',
-//   //     brightness: Brightness.light,
-//   //   );
-//   // }
-
-//   // ThemeData setTheme({bool isDarkMode = false}) {
-//   //   return isDarkMode
-//   //       ? ThemeData(
-//   //           colorSchemeSeed: c.primary,
-//   //           // useMaterial3: true,
-//   //           dividerColor: c.surface,
-//   //           fontFamily: 'Poppins',
-//   //           brightness: Brightness.dark,
-//   //           // colorScheme: ColorScheme(
-//   //           //   brightness: Brightness.dark,
-//   //           //   primary: c.primary,
-//   //           //   onPrimary: c.primary,
-//   //           //   secondary: Colors.blue[700] ?? c.secondary,
-//   //           //   onSecondary: c.onSecondaryDark,
-//   //           //   error: c.error,
-//   //           //   onError: c.error,
-//   //           //   background: c.backgroundDark,
-//   //           //   onBackground: c.backgroundDark,
-//   //           //   surface: c.backgroundDark,
-//   //           //   onSurface: c.background.withOpacity(0.9),
-//   //           // ),
-//   //         )
-//   //       : ThemeData(
-//   //           colorSchemeSeed: c.primary,
-//   //           // useMaterial3: true,
-//   //           dividerColor: c.surface,
-//   //           fontFamily: 'Poppins',
-//   //           brightness: Brightness.light,
-//   //           // colorScheme: ColorScheme(
-//   //           //   brightness: Brightness.light,
-//   //           //   primary: c.primary,
-//   //           //   onPrimary: c.primary,
-//   //           //   secondary: Colors.blue[700] ?? c.secondary,
-//   //           //   onSecondary: c.onSecondary,
-//   //           //   error: c.error,
-//   //           //   onError: c.error,
-//   //           //   background: c.background,
-//   //           //   onBackground: c.background,
-//   //           //   surface: c.background,
-//   //           //   onSurface: c.black.withOpacity(0.9),
-//   //           // ),
-//   //         );
-//   // }
-// }
+  //
+}

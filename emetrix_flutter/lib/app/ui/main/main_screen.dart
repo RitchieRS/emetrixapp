@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/out_of_route.dart';
@@ -25,6 +26,7 @@ class _HomePageState extends ConsumerState<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = ref.watch(themeProvider);
     List<Widget> screens = [
       const OutOfRoutePage(),
       const SettingsPage(),
@@ -41,7 +43,9 @@ class _HomePageState extends ConsumerState<MainPage> {
           onTap: (value) => ref.read(mainIndex.notifier).setIndex(value),
           elevation: 0,
           selectedItemColor: c.primary,
-          unselectedItemColor: c.disabled.withOpacity(0.5),
+          unselectedItemColor: isDark == ThemeMode.dark
+              ? c.background.withOpacity(0.4)
+              : c.disabled.withOpacity(0.5),
           showUnselectedLabels: true,
           selectedFontSize: 12,
           unselectedFontSize: 12,

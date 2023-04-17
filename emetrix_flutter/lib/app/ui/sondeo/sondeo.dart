@@ -1,16 +1,16 @@
-import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/core/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
+import 'package:emetrix_flutter/app/ui/sondeo/controller.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/controller.dart';
 import 'package:emetrix_flutter/app/ui/sondeo/components/type_sondeo.dart';
 
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
-
 import 'sondeo_individual.dart';
 
 class SondeoPage extends ConsumerStatefulWidget {
@@ -28,10 +28,10 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      sondeosList2 = widget.sondeosList;
-      // ref.read(sondeoController.notifier).reorderList(widget.sondeosList);
-    });
+    setState(() {});
+    sondeosList2 =
+        //  widget.sondeosList;
+        ref.read(sondeoController.notifier).reorderList(widget.sondeosList);
     Services.checkConectivity();
 
     print('List Original: ${widget.sondeosList.length}');
@@ -41,7 +41,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isDark = ref.watch(isDarkModeProvider);
+    final isDark = ref.watch(themeProvider);
 
     return WillPopScope(
       onWillPop: () async {
@@ -51,7 +51,8 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text('${widget.store.tienda}',
-              style: isDark ? t.subtitleLight : t.subtitleDark,
+              style:
+                  isDark == ThemeMode.dark ? t.subtitleLight : t.subtitleDark,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               maxLines: 2),

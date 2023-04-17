@@ -8,6 +8,7 @@ abstract class IText {
   TextStyle get titleBlue;
   TextStyle get titleLight;
   TextStyle get subtitle;
+  TextStyle get subtitle2;
   TextStyle get subtitleLight;
   TextStyle get subtitleDark;
   TextStyle get medium;
@@ -19,6 +20,7 @@ abstract class IText {
   TextStyle get mediumDark;
   TextStyle get mediumDisabled;
   TextStyle get text;
+  TextStyle get textUnselected;
   TextStyle get text2;
   TextStyle get textLight;
   TextStyle get textBlue;
@@ -56,6 +58,14 @@ class _TextStylesMain implements IText {
   TextStyle subtitle = const TextStyle(
     fontFamily: 'Poppins',
     fontSize: 18,
+    fontWeight: FontWeight.bold,
+    // color: c.background
+  );
+
+  @override
+  TextStyle subtitle2 = const TextStyle(
+    fontFamily: 'Poppins',
+    fontSize: 16,
     fontWeight: FontWeight.bold,
     // color: c.background
   );
@@ -134,6 +144,12 @@ class _TextStylesMain implements IText {
     fontFamily: 'Poppins', fontSize: 12,
     // color: Colors.black
   );
+
+  @override
+  TextStyle textUnselected = TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 12,
+      color: c.background.withOpacity(0.4));
   @override
   TextStyle text2 = const TextStyle(
     fontFamily: 'Poppins', fontSize: 14,
