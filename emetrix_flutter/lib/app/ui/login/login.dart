@@ -159,7 +159,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
       setState(() => switchButton = false);
     } else {
-      // await requestAccess().then((value) => getStores());
       await requestAccess();
       await getStores();
     }
@@ -173,7 +172,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       final navigator = Navigator.of(context);
       bool userLoggedIn = await ref
           .read(loginControllerProvider.notifier)
-          .init(user.text, password.text);
+          .sendRequest(user.text, password.text);
       setState(() {});
 
       if (userLoggedIn == true && isDark == false) {

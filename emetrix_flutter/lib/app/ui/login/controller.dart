@@ -1,12 +1,12 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:emetrix_flutter/app/core/core.dart';
 import 'package:emetrix_flutter/app/core/login/login.dart';
 import 'package:emetrix_flutter/app/core/login/service.dart';
 import 'package:emetrix_flutter/app/core/providers/providers.dart';
 import 'package:emetrix_flutter/app/core/stores/service.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/login/state.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final loginControllerProvider =
     StateNotifierProvider<LoginControllerNotifier, LoginState>((ref) {
@@ -22,35 +22,31 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
   LoginControllerNotifier(this.loginService, this.homeService)
       : super(const LoginState());
 
-  Future<bool> init(String name, String pass) async {
-    return _sendRequest(name, pass);
-  }
-
-  Future<bool> _sendRequest(String name, String pass) async {
+  Future<bool> sendRequest(String name, String pass) async {
     final Login response = await loginService.sendAccess(name, pass);
     if (response.idError != 0) {
       state = state.copyWith(state: States.error);
-      debugPrint('ERROR: ${response.idError}');
+      logger.d('ERROR: ${response.idError}');
       return false;
     } else {
       final resp = response.resp;
       final obj = resp.toRawJson();
-      await _saveUserData(obj);
+      await _saveUserDataToDB(obj);
       state = state.copyWith(state: States.succes, loginData: response);
-      debugPrint('Login Success save to DB');
+      logger.d('Login Success save to DB');
       return true;
     }
   }
 
-  Future<void> _saveUserData(String objToString) async {
+  Future<void> _saveUserDataToDB(String objToString) async {
     final prefs = await SharedPreferences.getInstance();
     final String? userData = prefs.getString('loginInfo');
 
     if (userData == null) {
       await prefs.setString('loginInfo', objToString);
-      debugPrint('LoginInfo added FIRST TIME SHARED');
+      logger.d('LoginInfo added FIRST TIME SHARED');
     } else {
-      debugPrint('LoginInfo EXIST');
+      logger.d('LoginInfo EXIST');
       return;
     }
     state = state.copyWith(state: States.succes);
@@ -81,52 +77,8 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
   Future<void> saveStoresData(List<String> stores) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('storesData', stores);
-    debugPrint('STORES SET ON SHARED');
+    logger.d('STORES SET ON SHARED');
   }
 
   //
 }
-
-// //final authorize = StateNotifierProvider<Auth, bool>((_) => Auth(false));
-// final userAuth = StateNotifierProvider<Auth, bool>((_) => Auth(false));
-// final passAuth = StateNotifierProvider<Auth, bool>((_) => Auth(false));
-
-// final obscurePassword = StateNotifierProvider<Auth, bool>((_) => Auth(true));
-// final loading = StateNotifierProvider<Auth, bool>((_) => Auth(false));
-
-// class Auth extends StateNotifier<bool> {
-//   Auth(super.state);
-
-//   bool ok() {
-//     return state = true;
-//   }
-
-//   bool denied() {
-//     return state = false;
-//   }
-
-//   bool refreshState() {
-//     return state = !state;
-//   }
-// }
-
-// final user =
-//     StateNotifierProvider<SetColors, Color>((_) => SetColors(c.disabled));
-// final pass =
-//     StateNotifierProvider<SetColors, Color>((_) => SetColors(c.disabled));
-
-// class SetColors extends StateNotifier<Color> {
-//   SetColors(super.state);
-
-//   Color defaul() {
-//     return state = c.disabled;
-//   }
-
-//   Color ok() {
-//     return state = c.primary;
-//   }
-
-//   Color denied() {
-//     return state = c.error;
-//   }
-// }

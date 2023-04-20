@@ -31,11 +31,6 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     setState(() {});
     sondeosList2 =
         ref.read(sondeoController.notifier).reorderList(widget.sondeosList);
-    // sondeosList2 =
-    //      widget.sondeosList;
-
-    // print('List Original: ${widget.sondeosList.length}');
-    // print('List Reorder: ${sondeosList2.length}');
   }
 
   @override

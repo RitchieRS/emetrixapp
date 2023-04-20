@@ -1,27 +1,23 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'login.dart';
+import 'package:emetrix_flutter/app/core/core.dart';
 
 class LoginRepository {
+  //
   Future<Login> requestAccess(
       {required String user, required String password}) async {
-    //200--success
-    try {
-      final url = Uri.parse('https://emetrix.com.mx/tracker/login.php');
-      final response =
-          await http.post(url, body: {"usuario": user, "password": password});
+    final url = Uri.parse('/login.php').replace(queryParameters: {
+      'usuario': user,
+      'password': password,
+    });
 
-      if (response.statusCode == 200) {
-        debugPrint('Success Login${response.statusCode}');
-        debugPrint(
-            'Response type: ${response.body.runtimeType} ${response.body}');
-        final responseLogin = Login.fromRawJson(response.body);
-        return responseLogin;
-      } else {
-        debugPrint('Acces status: ${response.statusCode}');
-      }
+    try {
+      final response = await dio.getUri(url);
+      logger.d('Login StatusCode: ${response.statusCode}');
+      final responseLogin = Login.fromRawJson(response.data);
+      return responseLogin;
+      //
     } catch (error) {
-      debugPrint('ERROR Access//////---- ${error.toString()}');
+      logger.d('Error Access: ${error.toString()}');
       return Login(
           idError: 1,
           resp: Resp(
@@ -36,17 +32,5 @@ class LoginRepository {
               versiones: []));
     }
     //
-    return Login(
-        idError: 1,
-        resp: Resp(
-            usuario: Usuario(
-                id: '',
-                fechaVencimiento: DateTime(0),
-                versionApp: 0,
-                versionAppHasbro: 0,
-                telefonosSoporte: '',
-                correosSoporte: ''),
-            proyectos: [],
-            versiones: []));
   }
 }
