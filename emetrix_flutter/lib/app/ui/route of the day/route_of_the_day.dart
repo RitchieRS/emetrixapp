@@ -1,12 +1,12 @@
-import 'package:emetrix_flutter/app/core/services/main.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/controller.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/widgets/empty.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/state.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/widgets/my_card2.dart';
 import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/widgets/title.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RouteOfTheDayPage extends ConsumerStatefulWidget {
   const RouteOfTheDayPage({super.key});
@@ -22,8 +22,6 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
   @override
   void initState() {
     super.initState();
-    Services.checkConectivity();
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       list = await ref.read(routeOTD.notifier).getStores();
     });

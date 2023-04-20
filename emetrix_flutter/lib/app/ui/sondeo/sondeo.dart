@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
-import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/core/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/sondeo/controller.dart';
@@ -28,14 +27,15 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
   @override
   void initState() {
     super.initState();
+
     setState(() {});
     sondeosList2 =
-        //  widget.sondeosList;
         ref.read(sondeoController.notifier).reorderList(widget.sondeosList);
-    Services.checkConectivity();
+    // sondeosList2 =
+    //      widget.sondeosList;
 
-    print('List Original: ${widget.sondeosList.length}');
-    print('List Reorder: ${sondeosList2.length}');
+    // print('List Original: ${widget.sondeosList.length}');
+    // print('List Reorder: ${sondeosList2.length}');
   }
 
   @override

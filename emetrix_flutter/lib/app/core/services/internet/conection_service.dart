@@ -1,61 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
-import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:get/get_navigation/get_navigation.dart';
-import 'package:get/state_manager.dart';
-
-class ConetionService extends GetxController {
-  final Connectivity _connectivity = Connectivity();
-
-  @override
-  void onInit() {
-    super.onInit();
-    _connectivity.onConnectivityChanged.listen(_updateStatus);
+class ConetionService {
+  static void showError(BuildContext context, String message) {
+    final snackbar = SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+      duration: const Duration(seconds: 2),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
-  void _updateStatus(ConnectivityResult result) {
-    if (result == ConnectivityResult.none) {
-      Get.rawSnackbar(
-          messageText: Text('Sin conexión a Internet', style: t.textLight),
-          isDismissible: true,
-          duration: const Duration(seconds: 2),
-          backgroundColor: c.black,
-          icon: const Icon(Icons.wifi_off, color: Colors.white),
-          snackStyle: SnackStyle.FLOATING,
-          borderRadius: 10,
-          margin:
-              const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 60),
-          snackPosition: SnackPosition.BOTTOM);
-    } else {
-      if (Get.isSnackbarOpen) {
-        //Get.closeCurrentSnackbar();
-
-        // Get.rawSnackbar(
-        //     messageText: Text('En línea', style: t.textLight),
-        //     isDismissible: true,
-        //     duration: const Duration(seconds: 4),
-        //     backgroundColor: c.black,
-        //     icon: const Icon(Icons.wifi, color: Colors.white),
-        //     snackStyle: SnackStyle.FLOATING,
-        //     borderRadius: 10,
-        //     margin: const EdgeInsets.only(top: 0, left: 10, right: 10),
-        //     snackPosition: SnackPosition.TOP);
-      } else {
-        Get.rawSnackbar(
-            messageText: Text('En línea', style: t.textLight),
-            isDismissible: true,
-            duration: const Duration(seconds: 2),
-            backgroundColor: c.black,
-            icon: const Icon(Icons.wifi, color: Colors.white),
-            snackStyle: SnackStyle.FLOATING,
-            borderRadius: 10,
-            margin:
-                const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 60),
-            snackPosition: SnackPosition.BOTTOM);
-      }
-    }
+  static void showWarning(
+      {required BuildContext context, required String message}) {
+    final snackbar = SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.yellow,
+      duration: const Duration(seconds: 2),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
-  //
+  static void showSuccess(
+      {required BuildContext context, required String message}) {
+    final snackbar = SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.green,
+      duration: const Duration(seconds: 2),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
+  }
+
+  static void showMessage(
+      {required BuildContext context,
+      required String message,
+      required IconData icon}) {
+    final snackbar = SnackBar(
+      content: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Icon(icon),
+          ),
+          Text(message),
+        ],
+      ),
+      backgroundColor: const Color(0xff3B3D3F),
+      duration: const Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).size.height * 0.8,
+          right: 20,
+          left: 20),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackbar).close;
+  }
 }

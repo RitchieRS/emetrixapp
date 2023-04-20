@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 
-import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/addActivities/controller.dart';
 import 'package:emetrix_flutter/app/ui/addActivities/state.dart';
@@ -28,7 +27,6 @@ class _AditionalActivitiesPageState
   @override
   void initState() {
     super.initState();
-    Services.checkConectivity();
     getStoresDB();
   }
 
@@ -54,7 +52,7 @@ class _AditionalActivitiesPageState
                   onRefresh: getStoresDB,
                   child: ClipRRect(
                     borderRadius:
-                        const BorderRadius.only(topLeft: Radius.circular(40)),
+                        const BorderRadius.only(topRight: Radius.circular(40)),
                     child: Container(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       child: Padding(

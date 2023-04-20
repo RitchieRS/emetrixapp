@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/ui/utils/widgets/map_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -91,7 +92,7 @@ class _MyCardState extends ConsumerState<MyCard> {
                     ),
                     const Spacer(),
                     IconButton(
-                        onPressed: () => goMaps(),
+                        onPressed: () => goMapsPage(),
                         icon: Icon(Icons.location_on,
                             color: isBlue
                                 ? c.error.withOpacity(0.75)
@@ -128,5 +129,12 @@ class _MyCardState extends ConsumerState<MyCard> {
         Uri.parse('http://maps.google.com/maps?z=12&t=m&q=loc:$lat+$lon');
     debugPrint(url.toString());
     await launchUrl(url, mode: LaunchMode.externalApplication);
+  }
+
+  void goMapsPage() {
+    final lat = widget.resp?.latitud;
+    final lon = widget.resp?.longitud;
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const MapsPage()));
   }
 }

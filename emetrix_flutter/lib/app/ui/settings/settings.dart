@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
-import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/ui/login/login.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
@@ -18,12 +17,6 @@ class SettingsPage extends ConsumerStatefulWidget {
 }
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
-  @override
-  void initState() {
-    super.initState();
-    Services.checkConectivity();
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;

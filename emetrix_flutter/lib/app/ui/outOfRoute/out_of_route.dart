@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:emetrix_flutter/app/core/services/internet/conection_service.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
@@ -8,7 +9,6 @@ import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
-import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/core/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/outOfRoute/loading_view.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
@@ -34,7 +34,6 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
   @override
   void initState() {
     super.initState();
-    Services.checkConectivity();
     getStoresDB();
   }
 
@@ -190,17 +189,18 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
         isLoading = false;
       });
 
-      showSnack();
+      ConetionService.showSuccess(
+          context: context, message: 'Agregados a Ruta del Dia!');
       naivigator.pushNamed('routeOTD');
     });
   }
 
-  void showSnack() {
-    final snackBar = SnackBar(
-        duration: const Duration(seconds: 4),
-        content: const Text('Agregados a Ruta del Dia!'),
-        backgroundColor: c.ok.withOpacity(0.8));
+  // void showSnack() {
+  //   final snackBar = SnackBar(
+  //       duration: const Duration(seconds: 4),
+  //       content: const Text('Agregados a Ruta del Dia!'),
+  //       backgroundColor: c.ok.withOpacity(0.8));
 
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
+  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  // }
 }
