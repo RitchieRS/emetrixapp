@@ -19,7 +19,7 @@ class _SelectionState extends ConsumerState<SelectionMultiple> {
     final boollist2 = widget.question.opciones?.map((e) => false).toList();
     boollist = boollist2;
     setState(() {});
-    print(boollist);
+    debugPrint(boollist.toString());
   }
 
   @override

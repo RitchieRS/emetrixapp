@@ -137,7 +137,7 @@ class _SelectPictureState extends ConsumerState<SelectPicture> {
         image = imageTemporal;
       });
     } on PlatformException catch (e) {
-      print('error:$e');
+      debugPrint('error:$e');
     }
   }
 }

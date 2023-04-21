@@ -1,50 +1,176 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map/plugin_api.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:emetrix_flutter/app/core/stores/stores.dart';
 
 class MapsPage extends StatefulWidget {
-  const MapsPage({super.key});
+  const MapsPage({super.key, this.store});
+  final Store? store;
 
   @override
   State<MapsPage> createState() => _MapsPageState();
 }
 
 class _MapsPageState extends State<MapsPage> {
-  // final Completer<GoogleMapController> _controller = Completer();
+  PermissionStatus permission = PermissionStatus.denied;
+  MapController mapController = MapController();
+  static final mexico = LatLng(19.451054, -99.125519);
+  final token =
+      'pk.eyJ1IjoicGl0bWFjIiwiYSI6ImNsY3BpeWxuczJhOTEzbnBlaW5vcnNwNzMifQ.ncTzM4bW-jpq-hUFutnR1g';
 
-  // static const CameraPosition _kGooglePlex = CameraPosition(
-  //   target: LatLng(37.42796133580664, -122.085749655962),
-  //   zoom: 0,
-  // );
+  final markers = <Marker>[
+    Marker(
+      width: 80,
+      height: 80,
+      point: mexico,
+      builder: (context) => Container(
+        key: const Key('blue'),
+        child: Icon(Icons.location_on, color: c.error),
+      ),
+    ),
+  ];
 
-  // static const CameraPosition _kLake = CameraPosition(
-  //     bearing: 192.8334901395799,
-  //     target: LatLng(37.43296265331129, -122.08832357078792),
-  //     tilt: 59.440717697143555,
-  //     zoom: 19.151926040649414);
+  @override
+  void initState() {
+    super.initState();
+    requestLocationPermission();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    mapController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Maps'),
+      body: Stack(
+        children: [
+          Container(
+            height: size.height,
+            width: size.width,
+            color: c.surface,
+            child: permission.isGranted
+                ? FlutterMap(
+                    mapController: mapController,
+                    options: MapOptions(
+                      center: LatLng(widget.store?.latitud ?? mexico.latitude,
+                          widget.store?.longitud ?? mexico.longitude),
+                      zoom: 10,
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
+                        additionalOptions: {
+                          'accessToken': token,
+                          'id': 'mapbox/streets-v12'
+                        },
+                      ),
+                      MarkerLayer(markers: markers),
+                    ],
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Concede los permisos necesarios.', style: t.text2),
+                      const CircularProgressIndicator(strokeWidth: 2)
+                    ],
+                  ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FloatingActionButton(
+                  onPressed: centerMap,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: const Icon(Icons.location_searching),
+                ),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  height: size.height * 0.23,
+                  width: size.width,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/images/location.svg',
+                        height: size.height * 0.135,
+                        width: size.width * 0.1,
+                      ),
+                      Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: size.width * 0.55,
+                              color: c.surface,
+                              child: Text(widget.store?.tienda ?? 'México',
+                                  style: t.mediumBold),
+                            ),
+                            SizedBox(
+                              height: size.height * 0.01,
+                            ),
+                            Text(
+                                'Cadena: ${widget.store?.idCadena ?? '0123456'}',
+                                style: t.text),
+                            Text('Grupo: ${widget.store?.idGrupo ?? '987654'}',
+                                style: t.text),
+                            Text(
+                                'Clasificación: ${widget.store?.clasificacion ?? 'Clasified'}',
+                                style: t.text),
+                            Text(
+                                'Rango Gps: ${widget.store?.rangoGPS.toString() ?? 'Gps Range'}',
+                                style: t.text),
+                          ]),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  icon: Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Theme.of(context).primaryColor,
+                  )),
+            ),
+          )
+        ],
       ),
-      // body: GoogleMap(
-      //   mapType: MapType.normal,
-      //   initialCameraPosition: _kGooglePlex,
-      //   onMapCreated: (GoogleMapController controller) {
-      //     _controller.complete(controller);
-      //   },
-      // ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: _goToTheLake,
-      //   label: const Text('To the lake!'),
-      //   icon: const Icon(Icons.directions_boat),
-      // ),
     );
   }
 
-  // Future<void> _goToTheLake() async {
-  //   final GoogleMapController controller = await _controller.future;
-  //   controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
-  // }
+  Future<void> requestLocationPermission() async {
+    await Permission.locationWhenInUse.request();
+    permission = await Permission.locationWhenInUse.status;
+    setState(() {});
+  }
+
+  Future<void> centerMap() async {
+    mapController.moveAndRotate(
+      LatLng(widget.store?.latitud ?? mexico.latitude,
+          widget.store?.longitud ?? mexico.longitude),
+      9,
+      0,
+    );
+  }
 }

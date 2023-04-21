@@ -24,7 +24,7 @@ class ButonLoading extends ConsumerStatefulWidget {
 class _Buton2State extends ConsumerState<ButonLoading> {
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    // final size = MediaQuery.of(context).size;
 
     return Material(
       child: InkWell(
