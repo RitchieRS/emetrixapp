@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/core/routes.dart';
-import 'package:emetrix_flutter/app/ui/splash/splash.dart';
-import 'app/ui/utils/utils.dart';
+import 'package:emetrix_flutter/app/ui/modules/splash/splash.dart';
+import 'app/core/services/theme/app_theme.dart';
 
 void main() {
   runApp(const ProviderScope(child: MainApp()));
@@ -19,29 +19,10 @@ class MainApp extends ConsumerWidget {
     return MaterialApp(
       home: const SplashPage(), //Splash or Home
       debugShowCheckedModeBanner: false,
-      routes: getAppRoutes(),
-
-      //Set theme of the app before enter to the app. The configuration be saved in storage
-      theme: ThemeData(
-        dividerColor: c.surface,
-        fontFamily: 'Poppins',
-        brightness: Brightness.light,
-        primaryColor: c.primary,
-        iconTheme: IconThemeData(color: c.background),
-      ),
-      darkTheme: ThemeData(
-          primaryColor: c.primary,
-          dividerColor: c.surface,
-          fontFamily: 'Poppins',
-          brightness: Brightness.dark,
-          navigationDrawerTheme: NavigationDrawerThemeData(
-            indicatorColor: c.primary,
-          ),
-          bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            unselectedIconTheme:
-                IconThemeData(color: c.background.withOpacity(0.4)),
-          )),
-
+      routes: appRoutes(),
+      locale: const Locale('es', 'MX'),
+      theme: AppTheme.ligthTheme(),
+      darkTheme: AppTheme.darkTheme(),
       themeMode: isDark == ThemeMode.dark ? ThemeMode.dark : ThemeMode.light,
     );
   }

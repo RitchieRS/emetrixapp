@@ -1,14 +1,14 @@
-import 'package:emetrix_flutter/app/ui/addActivities/aditional_activities.dart';
 import 'package:flutter/material.dart';
 
 import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
-import 'package:emetrix_flutter/app/ui/outOfRoute/out_of_route.dart';
-import 'package:emetrix_flutter/app/ui/pendings/pendings.dart';
-import 'package:emetrix_flutter/app/ui/route%20of%20the%20day/route_of_the_day.dart';
-import 'package:emetrix_flutter/app/ui/selectTheme/select_theme.dart';
-import 'package:emetrix_flutter/app/ui/settings/settings.dart';
+import 'package:emetrix_flutter/app/ui/modules/out_of_route/out_of_route.dart';
+import 'package:emetrix_flutter/app/ui/modules/add_activities/aditional_activities.dart';
+import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/route_of_the_day.dart';
+import 'package:emetrix_flutter/app/ui/modules/pendings/pendings.dart';
+import 'package:emetrix_flutter/app/ui/modules/select_theme/select_theme.dart';
+import 'package:emetrix_flutter/app/ui/modules/settings/settings.dart';
 
-Map<String, WidgetBuilder> getAppRoutes() {
+Map<String, WidgetBuilder> appRoutes() {
   return {
     'home': (context) => const MainPage(),
     'routeOTD': (context) => const RouteOfTheDayPage(),

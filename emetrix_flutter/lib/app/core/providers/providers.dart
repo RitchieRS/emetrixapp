@@ -1,9 +1,9 @@
-import 'package:emetrix_flutter/app/core/sondeo/repository.dart';
-import 'package:emetrix_flutter/app/core/sondeo/service.dart';
-import 'package:emetrix_flutter/app/core/login/repository.dart';
-import 'package:emetrix_flutter/app/core/login/service.dart';
-import 'package:emetrix_flutter/app/core/stores/repository.dart';
-import 'package:emetrix_flutter/app/core/stores/service.dart';
+import 'package:emetrix_flutter/app/core/modules/sondeo/repository.dart';
+import 'package:emetrix_flutter/app/core/modules/sondeo/service.dart';
+import 'package:emetrix_flutter/app/core/modules/login/repository.dart';
+import 'package:emetrix_flutter/app/core/modules/login/service.dart';
+import 'package:emetrix_flutter/app/core/modules/stores/repository.dart';
+import 'package:emetrix_flutter/app/core/modules/stores/service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final loginRepoProvider = Provider<LoginRepository>((ref) {

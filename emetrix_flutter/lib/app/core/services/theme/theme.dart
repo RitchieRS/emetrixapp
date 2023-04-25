@@ -44,11 +44,5 @@ class ThemeProvider extends StateNotifier<ThemeMode> {
     await prefs.setBool('isDarkMode', true);
   }
 
-  // Future<void> setFirstTime() async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   state = ThemeMode.light;
-  //   await prefs.setBool('isFirstTime', false);
-  // }
-
   //
 }

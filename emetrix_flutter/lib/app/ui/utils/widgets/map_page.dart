@@ -5,8 +5,10 @@ import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:emetrix_flutter/app/core/stores/stores.dart';
+import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
+import 'package:emetrix_flutter/app/core/services/services.dart';
 
 class MapsPage extends StatefulWidget {
   const MapsPage({super.key, this.store});
@@ -107,7 +109,7 @@ class _MapsPageState extends State<MapsPage> {
                   child: Row(
                     children: [
                       SvgPicture.asset(
-                        'assets/images/location.svg',
+                        AppAssets.location,
                         height: size.height * 0.135,
                         width: size.width * 0.1,
                       ),
