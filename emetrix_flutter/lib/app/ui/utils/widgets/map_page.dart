@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
-import 'package:emetrix_flutter/app/core/services/services.dart';
 
 class MapsPage extends StatefulWidget {
   const MapsPage({super.key, this.store});
@@ -20,22 +18,13 @@ class MapsPage extends StatefulWidget {
 
 class _MapsPageState extends State<MapsPage> {
   PermissionStatus permission = PermissionStatus.denied;
-  MapController mapController = MapController();
-  static final mexico = LatLng(19.451054, -99.125519);
-  final token =
-      'pk.eyJ1IjoicGl0bWFjIiwiYSI6ImNsY3BpeWxuczJhOTEzbnBlaW5vcnNwNzMifQ.ncTzM4bW-jpq-hUFutnR1g';
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
 
-  final markers = <Marker>[
-    Marker(
-      width: 80,
-      height: 80,
-      point: mexico,
-      builder: (context) => Container(
-        key: const Key('blue'),
-        child: Icon(Icons.location_on, color: c.error),
-      ),
-    ),
-  ];
+  final CameraPosition _defaultMexico = const CameraPosition(
+    target: LatLng(19.451054, -99.125519),
+    zoom: 11,
+  );
 
   @override
   void initState() {
@@ -44,14 +33,22 @@ class _MapsPageState extends State<MapsPage> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    mapController.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final double lat = widget.store?.latitud ?? 0;
+    final double long = widget.store?.longitud ?? 0;
+
+    final Marker currentMarker = Marker(
+      markerId: const MarkerId('StoreMarker'),
+      infoWindow: const InfoWindow(title: 'Tienda'),
+      icon: BitmapDescriptor.defaultMarker,
+      position: LatLng(lat, long),
+    );
+
+    final CameraPosition current = CameraPosition(
+      target: LatLng(lat, long),
+      zoom: 17,
+    );
 
     return Scaffold(
       body: Stack(
@@ -61,24 +58,15 @@ class _MapsPageState extends State<MapsPage> {
             width: size.width,
             color: c.surface,
             child: permission.isGranted
-                ? FlutterMap(
-                    mapController: mapController,
-                    options: MapOptions(
-                      center: LatLng(widget.store?.latitud ?? mexico.latitude,
-                          widget.store?.longitud ?? mexico.longitude),
-                      zoom: 10,
-                    ),
-                    children: [
-                      TileLayer(
-                        urlTemplate:
-                            'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
-                        additionalOptions: {
-                          'accessToken': token,
-                          'id': 'mapbox/streets-v12'
-                        },
-                      ),
-                      MarkerLayer(markers: markers),
-                    ],
+                ? GoogleMap(
+                    mapType: MapType.normal,
+                    initialCameraPosition: current,
+                    markers: {
+                      currentMarker,
+                    },
+                    onMapCreated: (GoogleMapController controller) {
+                      _controller.complete(controller);
+                    },
                   )
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -95,7 +83,7 @@ class _MapsPageState extends State<MapsPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: FloatingActionButton(
-                  onPressed: centerMap,
+                  onPressed: () => centerMap(),
                   backgroundColor: Theme.of(context).primaryColor,
                   child: const Icon(Icons.location_searching),
                 ),
@@ -168,11 +156,16 @@ class _MapsPageState extends State<MapsPage> {
   }
 
   Future<void> centerMap() async {
-    mapController.moveAndRotate(
-      LatLng(widget.store?.latitud ?? mexico.latitude,
-          widget.store?.longitud ?? mexico.longitude),
-      9,
-      0,
+    final double lat = widget.store?.latitud ?? 0;
+    final double long = widget.store?.longitud ?? 0;
+    CameraPosition kLake = CameraPosition(
+      target: LatLng(lat, long),
+      zoom: 19,
     );
+
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(kLake));
   }
+
+  //
 }
