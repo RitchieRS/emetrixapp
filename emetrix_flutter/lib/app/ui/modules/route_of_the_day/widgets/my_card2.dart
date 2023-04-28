@@ -1,9 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:emetrix_flutter/app/ui/utils/widgets/map_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:animate_do/animate_do.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
@@ -106,7 +106,11 @@ class _MyCardState extends ConsumerState<MyCard2> {
                       ),
                       const Spacer(),
                       IconButton(
-                          onPressed: () => goMaps(),
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      MapsPage(store: widget.resp))),
                           icon: Icon(Icons.location_on,
                               color: c.primary.withOpacity(0.8),
                               size: size.height * 0.03))
@@ -122,14 +126,14 @@ class _MyCardState extends ConsumerState<MyCard2> {
     );
   }
 
-  Future goMaps() async {
-    final lat = widget.resp?.latitud;
-    final lon = widget.resp?.longitud;
-    final Uri url =
-        Uri.parse('http://maps.google.com/maps?z=12&t=m&q=loc:$lat+$lon');
-    debugPrint(url.toString());
-    await launchUrl(url, mode: LaunchMode.externalApplication);
-  }
+  // Future goMaps() async {
+  //   final lat = widget.resp?.latitud;
+  //   final lon = widget.resp?.longitud;
+  //   final Uri url =
+  //       Uri.parse('http://maps.google.com/maps?z=12&t=m&q=loc:$lat+$lon');
+  //   debugPrint(url.toString());
+  //   await launchUrl(url, mode: LaunchMode.externalApplication);
+  // }
 
   Future showMsj2(String store) async {
     var result = await showDialog(

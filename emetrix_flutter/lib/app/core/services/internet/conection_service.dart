@@ -36,6 +36,7 @@ class ConetionService {
       required IconData icon}) {
     final snackbar = SnackBar(
       content: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -44,14 +45,15 @@ class ConetionService {
           Text(message),
         ],
       ),
-      backgroundColor: const Color(0xff3B3D3F),
+      backgroundColor: const Color(0xFF646464),
       duration: const Duration(seconds: 2),
       behavior: SnackBarBehavior.floating,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
       margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height * 0.8,
+          bottom: MediaQuery.of(context).size.height * 0.74,
           right: 20,
           left: 20),
     );

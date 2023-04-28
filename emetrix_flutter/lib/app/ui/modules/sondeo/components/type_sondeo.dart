@@ -1,24 +1,26 @@
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
-class TypeSondeo extends StatelessWidget {
+class TypeSondeo extends ConsumerWidget {
   const TypeSondeo({
     super.key,
-    required this.type,
     required this.index,
     required this.isLast,
+    required this.sondeoItem,
     required this.onTap,
-    required this.finisedSections,
+    required this.enebled,
   });
-  final String type;
   final int index;
   final bool isLast;
+  final RespM sondeoItem;
   final VoidCallback? onTap;
-  final List<int> finisedSections;
+  final bool enebled;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
 
     return FadeIn(
@@ -42,15 +44,9 @@ class TypeSondeo extends StatelessWidget {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                            color: finisedSections.contains(index)
-                                ? Colors.transparent
-                                : Colors.grey),
-                        color: finisedSections.contains(index)
-                            ? c.primary
-                            : Colors.transparent),
-                    child: icons(finisedSections.contains(index)
-                        ? c.background
-                        : Colors.grey),
+                            color: enebled ? Colors.transparent : Colors.grey),
+                        color: enebled ? c.primary : Colors.transparent),
+                    child: icons(enebled ? c.background : Colors.grey),
                   ),
                   SizedBox(width: size.width * 0.06),
                   Column(
@@ -60,10 +56,8 @@ class TypeSondeo extends StatelessWidget {
                       Text('PASO ${index + 1}', style: t.textDisabled2),
                       SizedBox(
                         width: size.width * 0.6,
-                        child: Text(type,
-                            style: finisedSections.contains(index)
-                                ? t.mediumBold
-                                : t.mediumDisabled,
+                        child: Text(sondeoItem.sondeo ?? 'Error',
+                            style: enebled ? t.mediumBold : t.mediumDisabled,
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis),
                       ),
@@ -73,14 +67,13 @@ class TypeSondeo extends StatelessWidget {
               ),
 
               isLast
-                  ? Container()
+                  ? const SizedBox()
                   : Padding(
                       padding: EdgeInsets.only(
                           left: size.width * 0.14, top: size.width * 0.01),
                       child: Container(
-                        color: finisedSections.contains(index)
-                            ? c.primary
-                            : c.disabled.withOpacity(0.2),
+                        color:
+                            enebled ? c.primary : c.disabled.withOpacity(0.2),
                         height: size.height * 0.06,
                         width: size.width * 0.01,
                       ),
@@ -109,6 +102,7 @@ class TypeSondeo extends StatelessWidget {
       'Nueva Tienda': Icon(Icons.store, color: color),
     };
 
-    return icons[type] ?? Icon(Icons.question_answer, color: color);
+    return icons[sondeoItem.sondeo] ??
+        Icon(Icons.question_answer, color: color);
   }
 }

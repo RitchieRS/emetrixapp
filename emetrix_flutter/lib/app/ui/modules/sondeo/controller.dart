@@ -1,6 +1,8 @@
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final currentOptionProvider = StateProvider<int>((ref) => 0);
+
 final sondeoController = StateNotifierProvider<Auth, dynamic>((_) => Auth(''));
 
 class Auth extends StateNotifier {

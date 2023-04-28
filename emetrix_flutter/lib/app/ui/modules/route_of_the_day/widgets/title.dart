@@ -9,10 +9,10 @@ class MyTitle extends StatelessWidget implements PreferredSizeWidget {
     // final size = MediaQuery.of(context).size;
 
     return AppBar(
-      automaticallyImplyLeading: false,
-      // leading: IconButton(
-      //     onPressed: () => Navigator.pop(context),
-      //     icon: Icon(Icons.arrow_back_ios, color: c.primary)),
+      // automaticallyImplyLeading: true,
+      leading: IconButton(
+          onPressed: () => Scaffold.of(context).openDrawer(),
+          icon: Icon(Icons.menu, color: c.primary)),
       title: Column(
         // mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -24,7 +24,7 @@ class MyTitle extends StatelessWidget implements PreferredSizeWidget {
       ),
       elevation: 0,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      iconTheme: const IconThemeData(color: Colors.white),
+      iconTheme: IconThemeData(color: c.primary),
       centerTitle: true,
       toolbarHeight: Dimentions().getHeight() * 0.12,
     );

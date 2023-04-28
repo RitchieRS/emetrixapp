@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
@@ -11,7 +12,6 @@ import 'package:emetrix_flutter/app/core/services/internet/conection_service.dar
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
-import 'package:emetrix_flutter/app/ui/drawer/drawer.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 import 'controller.dart';
@@ -62,7 +62,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                     const BorderRadius.only(topLeft: Radius.circular(35)),
                 child: Material(
                   child: Container(
-                    height: size.height * 0.75,
+                    height: size.height * 0.82,
                     width: size.width,
                     color: Theme.of(context).highlightColor.withOpacity(0.2),
                     child: Padding(
@@ -125,7 +125,6 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                   : Container()
             ],
           ),
-          drawer: const MyDrawer(),
         );
       case States.error:
         return ListView(
@@ -173,7 +172,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     setState(() {
       isLoading = true;
     });
-    final naivigator = Navigator.of(context);
+    final navigator = Navigator.of(context);
     ref
         .read(outORControllerProvider.notifier)
         .setRoutesOTD(stores)
@@ -194,7 +193,10 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
 
       ConetionService.showSuccess(
           context: context, message: 'Agregados a Ruta del Dia!');
-      naivigator.pushNamed('routeOTD');
+      // navigator.pop();
+      navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) {
+        return const MainPage();
+      }), (route) => false);
     });
   }
 

@@ -54,84 +54,82 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               //Imagen
               const BackImage(),
 
+              Opacity(
+                opacity: 0.7,
+                child: Padding(
+                    padding: EdgeInsets.only(
+                      top: size.height * 0.33,
+                      //left: size.width * 0.07
+                    ),
+                    child: Align(
+                        alignment: Alignment.center,
+                        child: Text('Inicia Sesión', style: t.title))),
+              ),
+
               //Form
               FadeInUp(
                 child: Padding(
-                  padding: EdgeInsets.only(top: size.height * 0.5),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40)),
-                    child: Container(
-                      height: size.height * 0.5,
-                      width: size.width,
-                      color: Colors.white,
-                      child: Column(
-                        children: [
-                          //
-                          Padding(
-                              padding: EdgeInsets.only(
-                                top: size.height * 0.04,
-                                //left: size.width * 0.07
-                              ),
-                              child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text('Inicia Sesión'.toUpperCase(),
-                                      style: t.mediumBlue))),
-                          Padding(
-                              padding: EdgeInsets.only(
-                                  top: size.height * 0.01,
-                                  left: size.width * 0.07),
-                              child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('Usuario', style: t.text2))),
-                          TxtField(
-                            controller: user,
-                            isPassword: false,
-                            obscurePassword: false,
-                            onPressed: () {},
-                          ),
+                  padding: EdgeInsets.only(top: size.height * 0.45),
+                  child: Container(
+                    height: size.height * 0.5,
+                    width: size.width,
+                    color: c.surface,
+                    child: Column(
+                      children: [
+                        //
+                        Padding(
+                            padding: EdgeInsets.only(
+                                top: size.height * 0.01,
+                                left: size.width * 0.07),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text('Usuario', style: t.text2))),
+                        TxtField(
+                          controller: user,
+                          isPassword: false,
+                          obscurePassword: false,
+                          onPressed: () {},
+                        ),
 
-                          Padding(
-                              padding: EdgeInsets.only(
-                                  top: size.height * 0.01,
-                                  left: size.width * 0.07),
-                              child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('Contraseña', style: t.text2))),
-                          TxtField(
-                            controller: password,
-                            isPassword: true,
-                            obscurePassword: obscurePassword,
-                            onPressed: () {
-                              setState(() {
-                                obscurePassword = !obscurePassword;
-                              });
-                            },
-                          ),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                top: size.height * 0.01,
+                                left: size.width * 0.07),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text('Contraseña', style: t.text2))),
+                        TxtField(
+                          controller: password,
+                          isPassword: true,
+                          obscurePassword: obscurePassword,
+                          onPressed: () {
+                            setState(() {
+                              obscurePassword = !obscurePassword;
+                            });
+                          },
+                        ),
 
-                          switchButton == false
-                              ? Padding(
-                                  padding:
-                                      EdgeInsets.only(top: size.height * 0.05),
-                                  child: ButonDimentions(
-                                      background: c.primary,
-                                      title: 'Entrar',
-                                      style: t.mediumLight,
-                                      onTap: () => start(),
-                                      width: size.width * 0.9,
-                                      height: size.height * 0.06))
-                              : Padding(
-                                  padding:
-                                      EdgeInsets.only(top: size.height * 0.05),
-                                  child: const Center(
-                                    child: CircularProgressIndicator.adaptive(),
-                                  ),
-                                )
+                        switchButton == false
+                            ? Padding(
+                                padding:
+                                    EdgeInsets.only(top: size.height * 0.05),
+                                child: ButonDimentions(
+                                    background: c.primary,
+                                    title: 'Entrar',
+                                    style: t.mediumLight,
+                                    onTap: () => start(),
+                                    width: size.width * 0.9,
+                                    height: size.height * 0.06))
+                            : Padding(
+                                padding:
+                                    EdgeInsets.only(top: size.height * 0.05),
+                                child: const Center(
+                                  child: CircularProgressIndicator.adaptive(),
+                                ),
+                              )
 
-                          //
-                        ],
-                      ),
+                        //
+                      ],
                     ),
                   ),
                 ),

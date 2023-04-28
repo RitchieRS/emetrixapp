@@ -35,8 +35,9 @@ class _MapsPageState extends State<MapsPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final double lat = widget.store?.latitud ?? 0;
-    final double long = widget.store?.longitud ?? 0;
+    final double lat = widget.store?.latitud ?? _defaultMexico.target.latitude;
+    final double long =
+        widget.store?.longitud ?? _defaultMexico.target.longitude;
 
     final Marker currentMarker = Marker(
       markerId: const MarkerId('StoreMarker'),

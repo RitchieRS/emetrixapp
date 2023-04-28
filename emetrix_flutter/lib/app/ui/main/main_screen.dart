@@ -1,10 +1,11 @@
+import 'package:emetrix_flutter/app/ui/drawer/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:emetrix_flutter/app/core/services/main.dart';
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 
-import 'package:emetrix_flutter/app/ui/modules/out_of_route/out_of_route.dart';
+import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/route_of_the_day.dart';
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/settings/settings.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
@@ -27,12 +28,13 @@ class _HomePageState extends ConsumerState<MainPage> {
   Widget build(BuildContext context) {
     final isDark = ref.watch(themeProvider);
     List<Widget> screens = [
-      const OutOfRoutePage(),
+      const RouteOfTheDayPage(),
       const SettingsPage(),
     ];
 
     return Scaffold(
         // body: screens[ref.watch(mainIndex)],
+        drawer: const MyDrawer(),
         body: IndexedStack(
           index: ref.watch(mainIndex),
           children: screens,
@@ -50,7 +52,7 @@ class _HomePageState extends ConsumerState<MainPage> {
           unselectedFontSize: 12,
           items: const [
             BottomNavigationBarItem(
-                icon: Icon(Icons.alt_route), label: 'Fuera de Ruta'),
+                icon: Icon(Icons.alt_route), label: 'Ruta del dia'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.settings), label: 'Ajustes'),
           ],

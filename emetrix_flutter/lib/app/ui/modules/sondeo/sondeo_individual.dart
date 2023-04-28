@@ -5,10 +5,13 @@ import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 
 import 'components/components.dart';
+import 'controller.dart';
 
 class SondeosBuilder extends ConsumerStatefulWidget {
-  const SondeosBuilder({super.key, required this.sondeoItem});
+  const SondeosBuilder(
+      {super.key, required this.sondeoItem, required this.index});
   final RespM sondeoItem;
+  final int index;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SondeosBuilderState();
@@ -17,7 +20,7 @@ class SondeosBuilder extends ConsumerStatefulWidget {
 class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
   final PageController controller = PageController();
   double progress = 0; // 1
-  int index = 0;
+  int indexPageView = 0;
 
   @override
   void dispose() {
@@ -28,7 +31,7 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    double lenght = widget.sondeoItem.preguntas?.length.toDouble() ?? 0;
+    int lenght = widget.sondeoItem.preguntas?.length ?? 0;
     final progressValue = 1 / lenght;
 
     return Scaffold(
@@ -67,7 +70,6 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
           if (widget.sondeoItem.preguntas != null)
             Expanded(
               child: Container(
-                // color: c.primary.withOpacity(0.2),
                 color: c.surface,
                 child: PageView.builder(
                   controller: controller,
@@ -76,7 +78,7 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
                   itemCount: widget.sondeoItem.preguntas?.length,
                   onPageChanged: (value) {
                     setState(() {
-                      index = value;
+                      indexPageView = value;
                     });
                   },
                   itemBuilder: (context, index) => ListView(
@@ -92,7 +94,7 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
                               Preguntas(),
                         ),
                       ),
-                      // Text('Pregunta ${index + 1} de ${lenght.ceil()} \n'),
+                      //
                     ],
                   ),
                 ),
@@ -106,7 +108,8 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
             child: Container(
                 height: size.height * 0.03,
                 color: c.surface,
-                child: Text('Pregunta ${index + 1} de ${lenght.ceil()} \n')),
+                child: Text(
+                    'Pregunta ${indexPageView + 1} de ${lenght.ceil() + 1} \n')),
           ),
 
           //BUTTONS
@@ -115,13 +118,13 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
               height: size.height * 0.09,
               child: Center(
                 child: ButonDimentions(
-                    height: size.height * 0.06,
-                    width: size.width * 0.5,
-                    background:
-                        Colors.blue[700] ?? c.secondary.withOpacity(0.8),
-                    title: 'Finalizar',
-                    style: t.mediumLight,
-                    onTap: () {}),
+                  height: size.height * 0.06,
+                  width: size.width * 0.5,
+                  background: Colors.blue[700] ?? c.secondary.withOpacity(0.8),
+                  title: 'Finalizar',
+                  style: t.mediumLight,
+                  onTap: () => goNextSection(),
+                ),
               ),
             )
           else
@@ -130,14 +133,14 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  if (index != 0)
+                  if (indexPageView != 0)
                     ButonDimentions(
                         height: size.height * 0.06,
                         width: size.width * 0.35,
                         background: c.primary,
                         title: 'Prev',
                         style: t.mediumLight,
-                        onTap: () => previousPage(lenght, progressValue))
+                        onTap: () => previousPage(progressValue))
                   else
                     OutlinedButton(
                         onPressed: null,
@@ -149,7 +152,7 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
                         child: Text('Prev', style: t.mediumBold)),
 
                   //
-                  if (index != lenght - 1)
+                  if (indexPageView != lenght - 1)
                     ButonDimentions(
                         height: size.height * 0.06,
                         width: size.width * 0.35,
@@ -157,24 +160,34 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
                         title: 'Next',
                         style: t.mediumLight,
                         onTap: () => nextPage(lenght, progressValue))
-                  else if (index == lenght - 1)
+                  else if (indexPageView == lenght - 1)
                     ButonDimentions(
-                        height: size.height * 0.06,
-                        width: size.width * 0.35,
-                        background:
-                            Colors.blue[700] ?? c.secondary.withOpacity(0.8),
-                        title: 'Finalizar',
-                        style: t.mediumLight,
-                        onTap: () {})
+                      height: size.height * 0.06,
+                      width: size.width * 0.35,
+                      background:
+                          Colors.blue[700] ?? c.secondary.withOpacity(0.8),
+                      title: 'Finalizar',
+                      style: t.mediumLight,
+                      onTap: () => goNextSection(),
+                    )
                   else
-                    OutlinedButton(
-                        onPressed: null,
-                        style: OutlinedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            minimumSize:
-                                Size(size.width * 0.35, size.height * 0.06)),
-                        child: Text('Next', style: t.mediumBold)),
+                    ButonDimentions(
+                      height: size.height * 0.06,
+                      width: size.width * 0.35,
+                      background:
+                          Colors.blue[700] ?? c.secondary.withOpacity(0.8),
+                      title: 'Finalizar',
+                      style: t.mediumLight,
+                      onTap: () => goNextSection(),
+                    ),
+                  // OutlinedButton(
+                  //     onPressed: null,
+                  //     style: OutlinedButton.styleFrom(
+                  //         shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(10)),
+                  //         minimumSize:
+                  //             Size(size.width * 0.35, size.height * 0.06)),
+                  //     child: Text('Next', style: t.mediumBold)),
                 ],
               ),
             )
@@ -183,7 +196,7 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
     );
   }
 
-  nextPage(double lenght, double progressValue) {
+  void nextPage(int lenght, double progressValue) {
     if (progress != lenght) {
       controller.nextPage(
           duration: const Duration(milliseconds: 300), curve: Curves.linear);
@@ -192,7 +205,7 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
     }
   }
 
-  previousPage(double lenght, double progressValue) {
+  void previousPage(double progressValue) {
     if (progress != 0) {
       controller.previousPage(
           duration: const Duration(milliseconds: 300), curve: Curves.linear);
@@ -200,4 +213,15 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
       setState(() {});
     }
   }
+
+  void goNextSection() {
+    ref
+        .read(currentOptionProvider.notifier)
+        .update((state) => state = widget.index + 1);
+
+    setState(() {});
+    Navigator.pop(context);
+  }
+
+  //
 }

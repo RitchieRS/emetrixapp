@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/ui/drawer/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -36,6 +37,7 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
       case States.succes:
         return Scaffold(
           appBar: const MyTitle(),
+          drawer: const MyDrawer(),
           body: ListView.builder(
               shrinkWrap: true,
               padding: const EdgeInsets.only(top: 0),
@@ -52,6 +54,8 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
         );
       case States.error:
         return Scaffold(
+          appBar: const MyTitle(),
+          drawer: const MyDrawer(),
           body: RefreshIndicator(
               onRefresh: ref.read(routeOTD.notifier).getStores,
               child: const EmptyList()),
@@ -59,6 +63,8 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
 
       case States.loading:
         return const Scaffold(
+            appBar: MyTitle(),
+            drawer: MyDrawer(),
             body: Center(child: CircularProgressIndicator.adaptive()));
     }
   }

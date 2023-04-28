@@ -1,3 +1,5 @@
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/type_sondeo.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -6,11 +8,9 @@ import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/components/type_sondeo.dart';
 
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
-import 'sondeo_individual.dart';
 
 class SondeoPage extends ConsumerStatefulWidget {
   const SondeoPage({super.key, required this.sondeosList, required this.store});
@@ -37,6 +37,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider);
+    final currentOption = ref.watch(currentOptionProvider);
 
     return WillPopScope(
       onWillPop: () async {
@@ -57,40 +58,38 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
           toolbarHeight: size.height * 0.1,
         ),
         body: ListView(
+          physics: const BouncingScrollPhysics(),
           children: [
             //
+
             ListView.builder(
               padding: EdgeInsets.only(
-                  top: 0, left: size.height * 0.01, right: size.height * 0.01),
+                  left: size.height * 0.01, right: size.height * 0.01),
               itemCount: sondeosList2.length,
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemBuilder: (BuildContext context, int index) {
-                final List<int> finisedSections = [
-                  0,
-                ];
+                final enabled = index <= currentOption;
 
                 return TypeSondeo(
-                  onTap:
-                      // finisedSections.contains(index) ?
-                      () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SondeosBuilder(
-                                  sondeoItem: sondeosList2[index],
-                                )));
-                  },
-                  // : null,
-                  type: sondeosList2[index].sondeo ?? 'Error',
+                  onTap: enabled
+                      ? () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SondeosBuilder(
+                                        sondeoItem: sondeosList2[index],
+                                        index: index,
+                                      )));
+                        }
+                      : null,
+                  enebled: enabled,
+                  sondeoItem: sondeosList2[index],
                   index: index,
-                  finisedSections: finisedSections,
                   isLast: index + 1 == sondeosList2.length ? true : false,
                 );
-                // QuestionBuilder(
-                //     pregunta: widget.sondeo.preguntas?[index] ?? Preguntas());
               },
-            ),
+            )
             //
           ],
         ),

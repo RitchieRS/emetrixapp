@@ -12,12 +12,13 @@ class Services {
             context: context,
             message: 'Sin Conexión',
             icon: Icons.wifi_off_outlined);
-      } else if (result == ConnectivityResult.wifi ||
-          result == ConnectivityResult.mobile ||
-          result == ConnectivityResult.ethernet) {
-        ConetionService.showMessage(
-            context: context, message: 'En Linea', icon: Icons.wifi);
       }
+      // else if (result == ConnectivityResult.wifi ||
+      //     result == ConnectivityResult.mobile ||
+      //     result == ConnectivityResult.ethernet) {
+      //   ConetionService.showMessage(
+      //       context: context, message: 'En Linea', icon: Icons.wifi);
+      // }
     });
   }
 }

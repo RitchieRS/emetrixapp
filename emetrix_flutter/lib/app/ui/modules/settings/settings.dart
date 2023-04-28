@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -156,6 +157,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     final prefs = await SharedPreferences.getInstance();
     ref.read(mainIndex.notifier).setIndex(0);
+    ref.read(currentOptionProvider.notifier).update((state) => 0);
 
     if (isDark == ThemeMode.dark) {
       await ref.read(themeProvider.notifier).setLightTheme();

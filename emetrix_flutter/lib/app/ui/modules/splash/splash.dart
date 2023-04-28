@@ -45,11 +45,12 @@ class _SplashPageState extends ConsumerState<SplashPage> {
           colors: [c.secondary, c.primary.withOpacity(0.55)],
         )),
         child: BounceInDown(
+            delay: const Duration(seconds: 1),
             child: Padding(
-          padding: EdgeInsets.only(
-              left: size.width * 0.27, right: size.width * 0.27),
-          child: Image.asset(AppAssets.logo),
-        )),
+              padding: EdgeInsets.only(
+                  left: size.width * 0.27, right: size.width * 0.27),
+              child: Image.asset(AppAssets.logo),
+            )),
       ),
     );
   }
@@ -64,7 +65,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   }
 
   Future<void> _checkRoute() async {
-    await Future.delayed(const Duration(milliseconds: 2100))
+    await Future.delayed(const Duration(milliseconds: 2000))
         .whenComplete(() async {
       if (session != null) {
         //Home
