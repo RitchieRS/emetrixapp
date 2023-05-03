@@ -10,7 +10,8 @@ class SelectionMultiple extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _SelectionState();
 }
 
-class _SelectionState extends ConsumerState<SelectionMultiple> {
+class _SelectionState extends ConsumerState<SelectionMultiple>
+    with AutomaticKeepAliveClientMixin {
   List<bool>? boollist = [];
 
   @override
@@ -24,36 +25,36 @@ class _SelectionState extends ConsumerState<SelectionMultiple> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final size = MediaQuery.of(context).size;
     //top: size.height * 0.01
 
     return Padding(
       padding: EdgeInsets.only(bottom: size.height * 0.01),
-      child: Column(
-        children: [
-          ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: widget.question.opciones?.length ?? 0,
-              itemBuilder: (context, index) {
-                return Row(
-                  children: [
-                    Checkbox(
-                        value: boollist?[index],
-                        onChanged: (newvalue) {
-                          boollist?[index] = newvalue ?? false;
-                          setState(() {});
-                        }),
-                    SizedBox(
-                      width: size.width * 0.7,
-                      child: Text(widget.question.opciones?[index].opcion ?? '',
-                          maxLines: 2, overflow: TextOverflow.ellipsis),
-                    ),
-                  ],
-                );
-              })
-        ],
-      ),
+      child: ListView.builder(
+          shrinkWrap: true,
+          physics: const BouncingScrollPhysics(),
+          itemCount: widget.question.opciones?.length ?? 0,
+          itemBuilder: (context, index) {
+            return Row(
+              children: [
+                Checkbox(
+                    value: boollist?[index],
+                    onChanged: (newvalue) {
+                      boollist?[index] = newvalue ?? false;
+                      setState(() {});
+                    }),
+                SizedBox(
+                  width: size.width * 0.7,
+                  child: Text(widget.question.opciones?[index].opcion ?? '',
+                      maxLines: 2, overflow: TextOverflow.ellipsis),
+                ),
+              ],
+            );
+          }),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

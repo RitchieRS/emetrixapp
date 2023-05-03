@@ -11,6 +11,7 @@ import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
 
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
+import 'package:page_transition/page_transition.dart';
 
 class SondeoPage extends ConsumerStatefulWidget {
   const SondeoPage({super.key, required this.sondeosList, required this.store});
@@ -76,11 +77,14 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
                       ? () {
                           Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => SondeosBuilder(
-                                        sondeoItem: sondeosList2[index],
-                                        index: index,
-                                      )));
+                              PageTransition(
+                                  duration: const Duration(milliseconds: 350),
+                                  type: PageTransitionType.rightToLeft,
+                                  child: SondeosBuilder(
+                                    store: widget.store,
+                                    sondeoItem: sondeosList2[index],
+                                    index: index,
+                                  )));
                         }
                       : null,
                   enebled: enabled,

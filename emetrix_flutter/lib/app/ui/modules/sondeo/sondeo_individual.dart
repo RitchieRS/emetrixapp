@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
@@ -8,9 +9,14 @@ import 'components/components.dart';
 import 'controller.dart';
 
 class SondeosBuilder extends ConsumerStatefulWidget {
-  const SondeosBuilder(
-      {super.key, required this.sondeoItem, required this.index});
+  const SondeosBuilder({
+    super.key,
+    required this.sondeoItem,
+    required this.index,
+    required this.store,
+  });
   final RespM sondeoItem;
+  final Store store;
   final int index;
 
   @override
@@ -31,8 +37,9 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    int lenght = widget.sondeoItem.preguntas?.length ?? 0;
-    final progressValue = 1 / lenght;
+    int lenght =
+        widget.sondeoItem.preguntas?.length ?? 0; //Returns length from 1
+    final double progressValue = 1 / lenght;
 
     return Scaffold(
       appBar: AppBar(
@@ -53,16 +60,16 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: TweenAnimationBuilder<double>(
-                    duration: const Duration(milliseconds: 200),
+                    duration: const Duration(milliseconds: 400),
                     curve: Curves.easeInOut,
                     tween: Tween<double>(
                       begin: 0,
                       end: progress,
                     ),
                     builder: (context, value, _) => LinearProgressIndicator(
-                      value: value,
-                      minHeight: size.height * 0.008,
-                    ),
+                        value: value,
+                        minHeight: size.height * 0.008,
+                        backgroundColor: c.disabled.withOpacity(0.25)),
                   ),
                 )),
           ),
@@ -72,48 +79,38 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
               child: Container(
                 color: c.surface,
                 child: PageView.builder(
-                  controller: controller,
-                  allowImplicitScrolling: false,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: widget.sondeoItem.preguntas?.length,
-                  onPageChanged: (value) {
-                    setState(() {
-                      indexPageView = value;
-                    });
-                  },
-                  itemBuilder: (context, index) => ListView(
-                    children: [
-                      Text(
-                        '${widget.sondeoItem.preguntas?[index].pregunta} ',
-                        textAlign: TextAlign.center,
-                        style: t.mediumBold,
-                      ),
-                      Center(
-                        child: QuestionBuilder(
+                    controller: controller,
+                    allowImplicitScrolling: false,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: widget.sondeoItem.preguntas?.length,
+                    onPageChanged: (value) {
+                      setState(() {
+                        indexPageView = value;
+                      });
+                    },
+                    itemBuilder: (context, index) => QuestionBuilder(
+                          store: widget.store,
                           pregunta: widget.sondeoItem.preguntas?[index] ??
                               Preguntas(),
-                        ),
-                      ),
-                      //
-                    ],
-                  ),
-                ),
+                        )),
               ),
             )
           else
-            Text('${widget.sondeoItem.linkWeb}'),
+            Center(child: Text('${widget.sondeoItem.linkWeb}')),
 
-          Padding(
-            padding: EdgeInsets.only(top: size.height * 0.01),
-            child: Container(
-                height: size.height * 0.03,
-                color: c.surface,
-                child: Text(
-                    'Pregunta ${indexPageView + 1} de ${lenght.ceil() + 1} \n')),
-          ),
+          lenght != 0
+              ? Padding(
+                  padding: EdgeInsets.only(top: size.height * 0.01),
+                  child: Container(
+                      height: size.height * 0.03,
+                      color: c.surface,
+                      child: Text(
+                          'Pregunta ${indexPageView + 1} de ${lenght.ceil()} \n')),
+                )
+              : const SizedBox(),
 
           //BUTTONS
-          if (lenght == 1)
+          if (lenght == 1 || lenght == 0)
             SizedBox(
               height: size.height * 0.09,
               child: Center(
@@ -152,7 +149,7 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
                         child: Text('Prev', style: t.mediumBold)),
 
                   //
-                  if (indexPageView != lenght - 1)
+                  if (indexPageView + 1 != lenght)
                     ButonDimentions(
                         height: size.height * 0.06,
                         width: size.width * 0.35,
@@ -160,16 +157,6 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
                         title: 'Next',
                         style: t.mediumLight,
                         onTap: () => nextPage(lenght, progressValue))
-                  else if (indexPageView == lenght - 1)
-                    ButonDimentions(
-                      height: size.height * 0.06,
-                      width: size.width * 0.35,
-                      background:
-                          Colors.blue[700] ?? c.secondary.withOpacity(0.8),
-                      title: 'Finalizar',
-                      style: t.mediumLight,
-                      onTap: () => goNextSection(),
-                    )
                   else
                     ButonDimentions(
                       height: size.height * 0.06,
@@ -219,8 +206,16 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
         .read(currentOptionProvider.notifier)
         .update((state) => state = widget.index + 1);
 
-    setState(() {});
-    Navigator.pop(context);
+    setState(() {
+      progress = 1;
+    });
+
+    Future.delayed(const Duration(milliseconds: 500))
+        .whenComplete(() => Navigator.pop(context));
+  }
+
+  Future validate() async {
+    //Validate
   }
 
   //

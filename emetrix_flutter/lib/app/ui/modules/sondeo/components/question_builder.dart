@@ -2,19 +2,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/components/question.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/components/select_multiple.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/components/select_photo.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/components/selection.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/components/signature.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/components.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
-import 'date_time.dart';
-
 class QuestionBuilder extends ConsumerStatefulWidget {
-  const QuestionBuilder({super.key, required this.pregunta});
+  const QuestionBuilder({
+    super.key,
+    required this.pregunta,
+    required this.store,
+  });
   final Preguntas pregunta;
+  final Store store;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -27,14 +27,28 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
   @override
   Widget build(BuildContext context) {
     switch (widget.pregunta.pregunta) {
+      //Asistencia
+      case 'ASISTENCIA':
+        return MapView(store: widget.store);
+
+      //todo
+      case 'Pregunta abierta 2':
+        return Question(
+          pregunta: widget.pregunta,
+          getAnswer: (String answer) {
+            //Get the value of the textfield and save it to validate and send to endpoint;
+          },
+        );
       case 'Pregunta demo abierta':
         return Question(
+          pregunta: widget.pregunta,
           getAnswer: (String answer) {
             //Get the value of the textfield and save it to validate and send to endpoint;
           },
         );
       case 'Pregunta demo numérica':
         return Question(
+            pregunta: widget.pregunta,
             getAnswer: (String answer) {
               //Get the value of the textfield and save it to validate and send to endpoint;
             },
@@ -42,6 +56,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
 
       case 'Pregunta demo decimal (con limite minimo 5 y maximo 10)':
         return Question(
+            pregunta: widget.pregunta,
             getAnswer: (String answer) {
               //Get the value of the textfield and save it to validate and send to endpoint;
             },
@@ -50,19 +65,20 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             max: 10);
 
       case 'Pregunta demo si o no':
-        return Selection(question: widget.pregunta, yesNo: true);
+        return Selection(
+            pregunta: widget.pregunta, question: widget.pregunta, yesNo: true);
 
       case 'Pregunta demo de opción multiple con 1 selección':
-        return Selection(question: widget.pregunta);
+        return Selection(pregunta: widget.pregunta, question: widget.pregunta);
 
       case 'Pregunta demo de opción multiple con N selecciones':
         return SelectionMultiple(question: widget.pregunta);
 
       case '--Pregunta informativa--':
-        return Container();
+        return InfoQuestion(pregunta: widget.pregunta.pregunta ?? 'NoData');
 
       case 'Pregunta demo fotográfica':
-        return const SelectPicture();
+        return SelectPicture(pregunta: widget.pregunta.pregunta ?? 'NoData');
 
       case 'Pregunta demo GPS':
         return Container(
@@ -77,19 +93,21 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         );
 
       case 'Pregunta demo imágen':
-        return const SelectPicture();
+        return SelectPicture(pregunta: widget.pregunta.pregunta ?? 'NoData');
 
       case 'Pregunta demo de firma':
         return const Signature();
 
       case 'Pregunta demo fecha':
-        return const PickerDT(onlyDate: true);
+        return PickerDT(
+            pregunta: widget.pregunta.pregunta ?? 'NoData', onlyDate: true);
 
       case 'Pregunta demo fecha y hora':
-        return const PickerDT();
+        return PickerDT(pregunta: widget.pregunta.pregunta ?? 'NoData');
 
       case 'Pregunta demo hora':
-        return const PickerDT(onlyTime: true);
+        return PickerDT(
+            pregunta: widget.pregunta.pregunta ?? 'NoData', onlyTime: true);
 
       case 'ESCANEA EL CÓDIGO':
         return Container(
@@ -97,17 +115,9 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           child: Text('ESCANEA EL CÓDIGO', style: t.medium),
         );
 
-      default:
-        Container(
-            width: 150,
-            color: c.surface,
-            child: Text('TextField default switch', style: t.medium));
+      //Tomar Fotografía
     }
 
-    return Question(
-      getAnswer: (String answer) {
-        //Get the value of the textfield and save it to validate and send to endpoint;
-      },
-    );
+    return Center(child: Text(widget.pregunta.pregunta ?? 'NoData'));
   }
 }

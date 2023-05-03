@@ -1,4 +1,5 @@
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
@@ -22,6 +23,9 @@ class TypeSondeo extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
+    const int animationDuration = 1000;
+    final currentOption = ref.watch(currentOptionProvider);
+    final enabledColor = index <= currentOption - 1;
 
     return FadeIn(
       child: InkWell(
@@ -38,15 +42,17 @@ class TypeSondeo extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(width: size.width * 0.06),
-                  Container(
+                  AnimatedContainer(
+                    duration:
+                        const Duration(milliseconds: animationDuration + 300),
+                    curve: Curves.easeIn,
                     height: size.height * 0.08,
                     width: size.height * 0.08,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(
-                            color: enebled ? Colors.transparent : Colors.grey),
-                        color: enebled ? c.primary : Colors.transparent),
-                    child: icons(enebled ? c.background : Colors.grey),
+                        color:
+                            enebled ? c.primary : c.disabled.withOpacity(0.4)),
+                    child: icons(c.background),
                   ),
                   SizedBox(width: size.width * 0.06),
                   Column(
@@ -71,12 +77,29 @@ class TypeSondeo extends ConsumerWidget {
                   : Padding(
                       padding: EdgeInsets.only(
                           left: size.width * 0.14, top: size.width * 0.01),
-                      child: Container(
-                        color:
-                            enebled ? c.primary : c.disabled.withOpacity(0.2),
+                      child: SizedBox(
                         height: size.height * 0.06,
-                        width: size.width * 0.01,
+                        child: RotatedBox(
+                          quarterTurns: 5,
+                          child: TweenAnimationBuilder<double>(
+                            duration:
+                                const Duration(milliseconds: animationDuration),
+                            curve: Curves.easeInOut,
+                            tween: Tween<double>(
+                              begin: 0,
+                              end: enabledColor ? 1 : 0,
+                            ),
+                            builder: (context, value, _) =>
+                                LinearProgressIndicator(
+                              value: value,
+                              minHeight: size.height * 0.007,
+                              backgroundColor: c.disabled.withOpacity(0.3),
+                            ),
+                          ),
+                        ),
                       ),
+
+                      //
                     )
 
               //
