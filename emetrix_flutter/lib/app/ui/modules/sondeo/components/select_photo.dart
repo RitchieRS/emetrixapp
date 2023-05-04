@@ -33,8 +33,15 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
         alignment: Alignment.centerLeft,
         child: image != null
             ? Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.pregunta),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * 0.04),
+                    child: Text(widget.pregunta, style: t.subtitle),
+                  ),
+                  SizedBox(height: size.height * 0.01),
                   Center(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(90),
@@ -59,8 +66,15 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
                 ],
               )
             : Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.pregunta),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * 0.04),
+                    child: Text(widget.pregunta, style: t.subtitle),
+                  ),
+                  SizedBox(height: size.height * 0.01),
                   Center(
                     child: CircleAvatar(
                       backgroundColor: c.disabled.withOpacity(0.1),

@@ -41,7 +41,7 @@ class TypeSondeo extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(width: size.width * 0.06),
+                  SizedBox(width: size.width * 0.08),
                   AnimatedContainer(
                     duration:
                         const Duration(milliseconds: animationDuration + 300),
@@ -54,7 +54,7 @@ class TypeSondeo extends ConsumerWidget {
                             enebled ? c.primary : c.disabled.withOpacity(0.4)),
                     child: icons(c.background),
                   ),
-                  SizedBox(width: size.width * 0.06),
+                  SizedBox(width: size.width * 0.08),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -76,7 +76,7 @@ class TypeSondeo extends ConsumerWidget {
                   ? const SizedBox()
                   : Padding(
                       padding: EdgeInsets.only(
-                          left: size.width * 0.14, top: size.width * 0.01),
+                          left: size.width * 0.16, top: size.width * 0.01),
                       child: SizedBox(
                         height: size.height * 0.06,
                         child: RotatedBox(
@@ -87,7 +87,7 @@ class TypeSondeo extends ConsumerWidget {
                             curve: Curves.easeInOut,
                             tween: Tween<double>(
                               begin: 0,
-                              end: enabledColor ? 1 : 0,
+                              end: enabledColor ? 1 : 0, //
                             ),
                             builder: (context, value, _) =>
                                 LinearProgressIndicator(
@@ -123,6 +123,7 @@ class TypeSondeo extends ConsumerWidget {
       'Asistencia': Icon(Icons.location_on, color: color),
       'Tomar Fotografía': Icon(Icons.camera, color: color),
       'Nueva Tienda': Icon(Icons.store, color: color),
+      // 'Salida': Icon(Icons.exit_to_app, color: color),
     };
 
     return icons[sondeoItem.sondeo] ??

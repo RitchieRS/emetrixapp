@@ -21,39 +21,49 @@ class PickerDT extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _PickerDTState();
 }
 
-class _PickerDTState extends ConsumerState<PickerDT> {
+class _PickerDTState extends ConsumerState<PickerDT>
+    with AutomaticKeepAliveClientMixin {
   DateTime selectedDate = DateTime(2001);
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final size = MediaQuery.of(context).size;
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.pregunta),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: ButonDimentions(
-            height: size.height * 0.08,
-            width: size.width * 0.9,
-            background: Colors.white,
-            title:
-                'Establece ${widget.onlyDate == true ? 'Fecha' : widget.onlyTime == true ? 'Hora' : 'Fecha y Hora'}',
-            style: t.mediumBlue2,
-            onTap: () => handleTime(),
-            showShadow: true,
-          ),
-        ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+          child: Text(widget.pregunta, style: t.subtitle),
+        ),
+        SizedBox(height: size.height * 0.01),
+        Center(
           child: Text(
               widget.onlyDate == true
                   ? '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'
                   : widget.onlyTime == true
                       ? '${selectedDate.hour}:${selectedDate.minute}'
                       : '${selectedDate.day}/${selectedDate.month}/${selectedDate.year} \n ${selectedDate.hour}:${selectedDate.minute}',
-              style: t.subtitle),
-        )
+              style: t.medium),
+        ),
+        SizedBox(height: size.height * 0.01),
+        Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: ButonDimentions(
+              height: size.height * 0.08,
+              width: size.width * 0.9,
+              background: Colors.white,
+              title:
+                  'Establece ${widget.onlyDate == true ? 'Fecha' : widget.onlyTime == true ? 'Hora' : 'Fecha y Hora'}',
+              style: t.mediumBlue2,
+              onTap: () => handleTime(),
+              showShadow: true,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -93,4 +103,7 @@ class _PickerDTState extends ConsumerState<PickerDT> {
       selectedDate = newTime;
     });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

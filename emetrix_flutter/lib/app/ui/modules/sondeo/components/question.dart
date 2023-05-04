@@ -40,18 +40,18 @@ class _QuestionState extends ConsumerState<Question>
     super.build(context);
     final size = MediaQuery.of(context).size;
     Color color = c.primary;
-    Color color2 = c.disabled;
+    Color color2 = c.disabled.withOpacity(0.4);
     //String textfieldValue = '';
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-              color: c.surface,
-              width: size.width * 0.9,
-              child: Center(child: Text(widget.pregunta.pregunta ?? 'NoData'))),
+          padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+          child: Text(widget.pregunta.pregunta ?? 'NoData', style: t.subtitle),
         ),
+        SizedBox(height: size.height * 0.01),
         Center(
           child: Padding(
             padding: EdgeInsets.only(bottom: size.height * 0.01),

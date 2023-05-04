@@ -1,6 +1,7 @@
-import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class SelectionMultiple extends ConsumerStatefulWidget {
   const SelectionMultiple({super.key, required this.question});
@@ -29,29 +30,39 @@ class _SelectionState extends ConsumerState<SelectionMultiple>
     final size = MediaQuery.of(context).size;
     //top: size.height * 0.01
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: size.height * 0.01),
-      child: ListView.builder(
-          shrinkWrap: true,
-          physics: const BouncingScrollPhysics(),
-          itemCount: widget.question.opciones?.length ?? 0,
-          itemBuilder: (context, index) {
-            return Row(
-              children: [
-                Checkbox(
-                    value: boollist?[index],
-                    onChanged: (newvalue) {
-                      boollist?[index] = newvalue ?? false;
-                      setState(() {});
-                    }),
-                SizedBox(
-                  width: size.width * 0.7,
-                  child: Text(widget.question.opciones?[index].opcion ?? '',
-                      maxLines: 2, overflow: TextOverflow.ellipsis),
-                ),
-              ],
-            );
-          }),
+    return ListView(
+      physics: const BouncingScrollPhysics(),
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+          child: Text(widget.question.pregunta ?? 'NoData', style: t.subtitle),
+        ),
+        SizedBox(height: size.height * 0.01),
+        Padding(
+          padding: EdgeInsets.only(bottom: size.height * 0.01),
+          child: ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: widget.question.opciones?.length ?? 0,
+              itemBuilder: (context, index) {
+                return Row(
+                  children: [
+                    Checkbox(
+                        value: boollist?[index],
+                        onChanged: (newvalue) {
+                          boollist?[index] = newvalue ?? false;
+                          setState(() {});
+                        }),
+                    SizedBox(
+                      width: size.width * 0.7,
+                      child: Text(widget.question.opciones?[index].opcion ?? '',
+                          maxLines: 2, overflow: TextOverflow.ellipsis),
+                    ),
+                  ],
+                );
+              }),
+        ),
+      ],
     );
   }
 

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/type_sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +42,8 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     final isDark = ref.watch(themeProvider);
     final currentOption = ref.watch(currentOptionProvider);
 
+    //Close and save to db the current Navigator state, when the app restart, restore the Navigator state
+
     return WillPopScope(
       onWillPop: () async {
         return await onPop();
@@ -57,6 +61,11 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
           elevation: 0,
           centerTitle: true,
           toolbarHeight: size.height * 0.1,
+          actions: [
+            IconButton(
+                onPressed: () => onExit(currentOption),
+                icon: Icon(Icons.exit_to_app, color: c.error)),
+          ],
         ),
         body: ListView(
           physics: const BouncingScrollPhysics(),
@@ -110,10 +119,48 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
         destructive: true,
         buttonLabel: 'Salir');
 
+    if (exit) {
+      ref.read(currentOptionProvider.notifier).update((state) => 0);
+    }
+
     setState(() {
       ref.read(showProgress1.notifier).update((state) => false);
     });
 
     return Future.value(exit);
+  }
+
+  Future onExit(int currentOption) async {
+    final navigator = Navigator.of(context);
+
+    //Check First Validations of each component
+
+    if (currentOption == sondeosList2.length) {
+      final option = await showMsj(
+          context: context,
+          title: 'Salir',
+          content:
+              'Excelente completaste los sondeos. Guarda el progreso para salir.',
+          destructive: false,
+          buttonLabel: 'Guardar y Salir');
+
+      if (option) {
+        ref.read(currentOptionProvider.notifier).update((state) => 0);
+
+        setState(() {
+          ref.read(showProgress1.notifier).update((state) => false);
+        });
+        navigator.pop();
+      }
+      return;
+    }
+
+    await showMsj(
+        context: context,
+        title: 'Cuidado...',
+        content: 'Aun hay sondeos obligatorios.',
+        destructive: false,
+        onlyOk: true,
+        buttonLabel: 'Aceptar');
   }
 }

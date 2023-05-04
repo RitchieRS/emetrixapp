@@ -6,6 +6,7 @@ Future<bool> showMsj(
     required String title,
     required String content,
     required bool destructive,
+    bool onlyOk = false,
     required String buttonLabel}) async {
   final bool result = await showDialog(
       context: context,
@@ -21,19 +22,31 @@ Future<bool> showMsj(
               overflow: TextOverflow.ellipsis),
           content: Text(content, style: t.text2, textAlign: TextAlign.center),
           actionsAlignment: MainAxisAlignment.center,
-          actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                style: TextButton.styleFrom(foregroundColor: c.disabled),
-                child: Text('Cancelar', style: t.textDisabledBold)),
-            OutlinedButton(
-                onPressed: () => Navigator.pop(context, true),
-                style: OutlinedButton.styleFrom(
-                    foregroundColor: destructive ? c.error : c.primary,
-                    side: BorderSide(color: destructive ? c.error : c.primary)),
-                child: Text(buttonLabel,
-                    style: destructive ? t.textError : t.textBlue))
-          ],
+          actions: onlyOk == true
+              ? [
+                  OutlinedButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      style: OutlinedButton.styleFrom(
+                          foregroundColor: destructive ? c.error : c.primary,
+                          side: BorderSide(
+                              color: destructive ? c.error : c.primary)),
+                      child: Text(buttonLabel,
+                          style: destructive ? t.textError : t.textBlue))
+                ]
+              : [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      style: TextButton.styleFrom(foregroundColor: c.disabled),
+                      child: Text('Cancelar', style: t.textDisabledBold)),
+                  OutlinedButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      style: OutlinedButton.styleFrom(
+                          foregroundColor: destructive ? c.error : c.primary,
+                          side: BorderSide(
+                              color: destructive ? c.error : c.primary)),
+                      child: Text(buttonLabel,
+                          style: destructive ? t.textError : t.textBlue))
+                ],
         );
       });
   return Future.value(result);

@@ -26,27 +26,30 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    switch (widget.pregunta.pregunta) {
+    print('TIPO: ${widget.pregunta.tipo}');
+
+    switch (widget.pregunta.tipo) {
       //Asistencia
-      case 'ASISTENCIA':
+      case 'asistencia':
         return MapView(store: widget.store);
 
+      //Tomar Fotografía
+      case 'unicaRadio':
+        return Selection(pregunta: widget.pregunta, question: widget.pregunta);
+
+      case 'fotoGuardarCopia':
+        return SelectPicture(pregunta: widget.pregunta.pregunta ?? 'NoData');
+
       //todo
-      case 'Pregunta abierta 2':
+      case 'abierta':
         return Question(
           pregunta: widget.pregunta,
           getAnswer: (String answer) {
             //Get the value of the textfield and save it to validate and send to endpoint;
           },
         );
-      case 'Pregunta demo abierta':
-        return Question(
-          pregunta: widget.pregunta,
-          getAnswer: (String answer) {
-            //Get the value of the textfield and save it to validate and send to endpoint;
-          },
-        );
-      case 'Pregunta demo numérica':
+
+      case 'numerico':
         return Question(
             pregunta: widget.pregunta,
             getAnswer: (String answer) {
@@ -54,7 +57,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             },
             isNumeric: true);
 
-      case 'Pregunta demo decimal (con limite minimo 5 y maximo 10)':
+      case 'decimal':
         return Question(
             pregunta: widget.pregunta,
             getAnswer: (String answer) {
@@ -64,58 +67,61 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             min: 5,
             max: 10);
 
-      case 'Pregunta demo si o no':
+      case 'sino':
         return Selection(
             pregunta: widget.pregunta, question: widget.pregunta, yesNo: true);
 
-      case 'Pregunta demo de opción multiple con 1 selección':
-        return Selection(pregunta: widget.pregunta, question: widget.pregunta);
-
-      case 'Pregunta demo de opción multiple con N selecciones':
+      case 'multiple':
         return SelectionMultiple(question: widget.pregunta);
 
-      case '--Pregunta informativa--':
+      case 'informativo':
         return InfoQuestion(pregunta: widget.pregunta.pregunta ?? 'NoData');
 
-      case 'Pregunta demo fotográfica':
+      case 'foto':
         return SelectPicture(pregunta: widget.pregunta.pregunta ?? 'NoData');
 
-      case 'Pregunta demo GPS':
-        return Container(
-          color: c.surface,
-          child: Text('Pregunta demo GPS', style: t.medium),
-        );
+      case 'gps':
+        return Gps(pregunta: widget.pregunta.pregunta ?? 'NoData');
 
-      case 'Pregunta demo de 3 tiempos con el cronómetro.':
-        return Container(
-          color: c.surface,
-          child: Text('3 tiempos con el cronómetro.', style: t.medium),
-        );
+      case 'tiempo':
+        return MyTimer(
+            pregunta: widget.pregunta.pregunta ?? 'NoData', times: 2);
 
-      case 'Pregunta demo imágen':
+      case 'imagen':
         return SelectPicture(pregunta: widget.pregunta.pregunta ?? 'NoData');
 
-      case 'Pregunta demo de firma':
+      case 'firma':
         return const Signature();
 
-      case 'Pregunta demo fecha':
+      case 'fecha':
         return PickerDT(
             pregunta: widget.pregunta.pregunta ?? 'NoData', onlyDate: true);
 
-      case 'Pregunta demo fecha y hora':
+      case 'fechaHora':
         return PickerDT(pregunta: widget.pregunta.pregunta ?? 'NoData');
 
-      case 'Pregunta demo hora':
+      case 'hora':
         return PickerDT(
             pregunta: widget.pregunta.pregunta ?? 'NoData', onlyTime: true);
 
-      case 'ESCANEA EL CÓDIGO':
-        return Container(
-          color: c.surface,
-          child: Text('ESCANEA EL CÓDIGO', style: t.medium),
-        );
+      case 'scannerQR':
+        return const Scanner();
 
-      //Tomar Fotografía
+      //FOTOS
+      //preguntas
+      //SOS
+      //cronometro 2
+      //cronometro 4
+      //Carga de Videos
+      //NFC
+
+      case 'email':
+        return Question(
+          pregunta: widget.pregunta,
+          getAnswer: (String answer) {
+            //Get the value of the textfield and save it to validate and send to endpoint;
+          },
+        );
     }
 
     return Center(child: Text(widget.pregunta.pregunta ?? 'NoData'));

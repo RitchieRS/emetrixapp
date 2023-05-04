@@ -50,135 +50,139 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
         foregroundColor: Theme.of(context).hintColor,
         toolbarHeight: size.height * 0.07,
       ),
-      body: Column(
-        children: [
-          Container(
-            color: c.surface,
-            child: Padding(
-                padding:
-                    const EdgeInsets.only(left: 14.0, right: 14, bottom: 12),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: TweenAnimationBuilder<double>(
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeInOut,
-                    tween: Tween<double>(
-                      begin: 0,
-                      end: progress,
+      body: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Column(
+          children: [
+            Container(
+              color: c.surface,
+              child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 14.0, right: 14, bottom: 12),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: TweenAnimationBuilder<double>(
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeInOut,
+                      tween: Tween<double>(
+                        begin: 0,
+                        end: progress,
+                      ),
+                      builder: (context, value, _) => LinearProgressIndicator(
+                          value: value,
+                          minHeight: size.height * 0.008,
+                          backgroundColor: c.disabled.withOpacity(0.25)),
                     ),
-                    builder: (context, value, _) => LinearProgressIndicator(
-                        value: value,
-                        minHeight: size.height * 0.008,
-                        backgroundColor: c.disabled.withOpacity(0.25)),
-                  ),
-                )),
-          ),
-          //CONTENT
-          if (widget.sondeoItem.preguntas != null)
-            Expanded(
-              child: Container(
-                color: c.surface,
-                child: PageView.builder(
-                    controller: controller,
-                    allowImplicitScrolling: false,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: widget.sondeoItem.preguntas?.length,
-                    onPageChanged: (value) {
-                      setState(() {
-                        indexPageView = value;
-                      });
-                    },
-                    itemBuilder: (context, index) => QuestionBuilder(
-                          store: widget.store,
-                          pregunta: widget.sondeoItem.preguntas?[index] ??
-                              Preguntas(),
-                        )),
-              ),
-            )
-          else
-            Center(child: Text('${widget.sondeoItem.linkWeb}')),
-
-          lenght != 0
-              ? Padding(
-                  padding: EdgeInsets.only(top: size.height * 0.01),
-                  child: Container(
-                      height: size.height * 0.03,
-                      color: c.surface,
-                      child: Text(
-                          'Pregunta ${indexPageView + 1} de ${lenght.ceil()} \n')),
-                )
-              : const SizedBox(),
-
-          //BUTTONS
-          if (lenght == 1 || lenght == 0)
-            SizedBox(
-              height: size.height * 0.09,
-              child: Center(
-                child: ButonDimentions(
-                  height: size.height * 0.06,
-                  width: size.width * 0.5,
-                  background: Colors.blue[700] ?? c.secondary.withOpacity(0.8),
-                  title: 'Finalizar',
-                  style: t.mediumLight,
-                  onTap: () => goNextSection(),
+                  )),
+            ),
+            //CONTENT
+            if (widget.sondeoItem.preguntas != null)
+              Expanded(
+                child: Container(
+                  color: c.surface,
+                  child: PageView.builder(
+                      controller: controller,
+                      allowImplicitScrolling: false,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: widget.sondeoItem.preguntas?.length,
+                      onPageChanged: (value) {
+                        setState(() {
+                          indexPageView = value;
+                        });
+                      },
+                      itemBuilder: (context, index) => QuestionBuilder(
+                            store: widget.store,
+                            pregunta: widget.sondeoItem.preguntas?[index] ??
+                                Preguntas(),
+                          )),
                 ),
-              ),
-            )
-          else
-            SizedBox(
-              height: size.height * 0.09,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  if (indexPageView != 0)
-                    ButonDimentions(
-                        height: size.height * 0.06,
-                        width: size.width * 0.35,
-                        background: c.primary,
-                        title: 'Prev',
-                        style: t.mediumLight,
-                        onTap: () => previousPage(progressValue))
-                  else
-                    OutlinedButton(
-                        onPressed: null,
-                        style: OutlinedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            minimumSize:
-                                Size(size.width * 0.35, size.height * 0.06)),
-                        child: Text('Prev', style: t.mediumBold)),
+              )
+            else
+              Center(child: Text('${widget.sondeoItem.linkWeb}')),
 
-                  //
-                  if (indexPageView + 1 != lenght)
-                    ButonDimentions(
+            lenght != 0
+                ? Padding(
+                    padding: EdgeInsets.only(top: size.height * 0.01),
+                    child: Container(
+                        height: size.height * 0.03,
+                        color: c.surface,
+                        child: Text(
+                            'Pregunta ${indexPageView + 1} de ${lenght.ceil()} \n')),
+                  )
+                : const SizedBox(),
+
+            //BUTTONS
+            if (lenght == 1 || lenght == 0)
+              SizedBox(
+                height: size.height * 0.09,
+                child: Center(
+                  child: ButonDimentions(
+                    height: size.height * 0.06,
+                    width: size.width * 0.5,
+                    background:
+                        Colors.blue[700] ?? c.secondary.withOpacity(0.8),
+                    title: 'Finalizar',
+                    style: t.mediumLight,
+                    onTap: () => goNextSection(),
+                  ),
+                ),
+              )
+            else
+              SizedBox(
+                height: size.height * 0.09,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    if (indexPageView != 0)
+                      ButonDimentions(
+                          height: size.height * 0.06,
+                          width: size.width * 0.35,
+                          background: c.primary,
+                          title: 'Prev',
+                          style: t.mediumLight,
+                          onTap: () => previousPage(progressValue))
+                    else
+                      OutlinedButton(
+                          onPressed: null,
+                          style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              minimumSize:
+                                  Size(size.width * 0.35, size.height * 0.06)),
+                          child: Text('Prev', style: t.mediumBold)),
+
+                    //
+                    if (indexPageView + 1 != lenght)
+                      ButonDimentions(
+                          height: size.height * 0.06,
+                          width: size.width * 0.35,
+                          background: c.primary,
+                          title: 'Next',
+                          style: t.mediumLight,
+                          onTap: () => nextPage(lenght, progressValue))
+                    else
+                      ButonDimentions(
                         height: size.height * 0.06,
                         width: size.width * 0.35,
-                        background: c.primary,
-                        title: 'Next',
+                        background:
+                            Colors.blue[700] ?? c.secondary.withOpacity(0.8),
+                        title: 'Finalizar',
                         style: t.mediumLight,
-                        onTap: () => nextPage(lenght, progressValue))
-                  else
-                    ButonDimentions(
-                      height: size.height * 0.06,
-                      width: size.width * 0.35,
-                      background:
-                          Colors.blue[700] ?? c.secondary.withOpacity(0.8),
-                      title: 'Finalizar',
-                      style: t.mediumLight,
-                      onTap: () => goNextSection(),
-                    ),
-                  // OutlinedButton(
-                  //     onPressed: null,
-                  //     style: OutlinedButton.styleFrom(
-                  //         shape: RoundedRectangleBorder(
-                  //             borderRadius: BorderRadius.circular(10)),
-                  //         minimumSize:
-                  //             Size(size.width * 0.35, size.height * 0.06)),
-                  //     child: Text('Next', style: t.mediumBold)),
-                ],
-              ),
-            )
-        ],
+                        onTap: () => goNextSection(),
+                      ),
+                    // OutlinedButton(
+                    //     onPressed: null,
+                    //     style: OutlinedButton.styleFrom(
+                    //         shape: RoundedRectangleBorder(
+                    //             borderRadius: BorderRadius.circular(10)),
+                    //         minimumSize:
+                    //             Size(size.width * 0.35, size.height * 0.06)),
+                    //     child: Text('Next', style: t.mediumBold)),
+                  ],
+                ),
+              )
+          ],
+        ),
       ),
     );
   }

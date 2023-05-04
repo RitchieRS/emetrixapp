@@ -10,6 +10,7 @@ import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart'
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:page_transition/page_transition.dart';
 
 class MyCard2 extends ConsumerStatefulWidget {
   const MyCard2(
@@ -108,9 +109,10 @@ class _MyCardState extends ConsumerState<MyCard2> {
                       IconButton(
                           onPressed: () => Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      MapsPage(store: widget.resp))),
+                              PageTransition(
+                                  duration: const Duration(milliseconds: 350),
+                                  type: PageTransitionType.rightToLeft,
+                                  child: MapsPage(store: widget.resp))),
                           icon: Icon(Icons.location_on,
                               color: c.primary.withOpacity(0.8),
                               size: size.height * 0.03))
