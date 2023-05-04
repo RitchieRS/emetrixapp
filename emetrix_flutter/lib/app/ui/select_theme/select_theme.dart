@@ -1,10 +1,10 @@
+import 'package:emetrix_flutter/app/ui/modules/out_of_route/out_of_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
 
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 
 class SelectTheme extends ConsumerStatefulWidget {
@@ -15,12 +15,12 @@ class SelectTheme extends ConsumerStatefulWidget {
 }
 
 class _SelectThemeState extends ConsumerState<SelectTheme> {
-  bool isDark = false;
   bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final isDark = ref.watch(themeProvider);
 
     return Scaffold(
       body: Column(
@@ -52,13 +52,12 @@ class _SelectThemeState extends ConsumerState<SelectTheme> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           side: BorderSide(
-                            color: isDark == false ? c.primary : c.surface,
+                            color: isDark == ThemeMode.light
+                                ? c.primary
+                                : c.surface,
                           )),
                       onPressed: () {
                         ref.read(themeProvider.notifier).setLightTheme();
-                        setState(() {
-                          isDark = false;
-                        });
                       },
                       child: Row(
                         children: [
@@ -79,13 +78,12 @@ class _SelectThemeState extends ConsumerState<SelectTheme> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           side: BorderSide(
-                            color: isDark == true ? c.primary : c.surface,
+                            color: isDark == ThemeMode.dark
+                                ? c.primary
+                                : c.surface,
                           )),
                       onPressed: () {
                         ref.read(themeProvider.notifier).setDarkTheme();
-                        setState(() {
-                          isDark = true;
-                        });
                       },
                       child: Row(
                         children: [
@@ -105,7 +103,7 @@ class _SelectThemeState extends ConsumerState<SelectTheme> {
                   child: isLoading
                       ? ButonLoading(
                           background: c.primary,
-                          onFinish: () {},
+                          onFinish: null,
                           height: size.height * 0.065,
                           width: size.width * 0.85,
                         )
@@ -124,7 +122,7 @@ class _SelectThemeState extends ConsumerState<SelectTheme> {
                                 pageBuilder: (_, animation, __) =>
                                     FadeTransition(
                                       opacity: animation,
-                                      child: const MainPage(),
+                                      child: const OutOfRoutePage(),
                                     )));
                           }),
                 )

@@ -41,6 +41,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider);
     final currentOption = ref.watch(currentOptionProvider);
+    final onlyFirst = ref.watch(onlyFirstProvider);
 
     //Close and save to db the current Navigator state, when the app restart, restore the Navigator state
 
@@ -79,10 +80,12 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemBuilder: (BuildContext context, int index) {
-                final enabled = index <= currentOption;
+                // final enabled = index <= currentOption;       //One by one
+                // final enabled = index <= sondeosList2.length; //All
+                final enabled = index != 0 && onlyFirst == true; //One then all
 
                 return TypeSondeo(
-                  onTap: enabled
+                  onTap: !enabled
                       ? () {
                           Navigator.push(
                               context,
@@ -96,7 +99,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
                                   )));
                         }
                       : null,
-                  enebled: enabled,
+                  enebled: !enabled,
                   sondeoItem: sondeosList2[index],
                   index: index,
                   isLast: index + 1 == sondeosList2.length ? true : false,
@@ -121,6 +124,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
 
     if (exit) {
       ref.read(currentOptionProvider.notifier).update((state) => 0);
+      ref.read(onlyFirstProvider.notifier).update((state) => true);
     }
 
     setState(() {
@@ -146,6 +150,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
 
       if (option) {
         ref.read(currentOptionProvider.notifier).update((state) => 0);
+        ref.read(onlyFirstProvider.notifier).update((state) => true);
 
         setState(() {
           ref.read(showProgress1.notifier).update((state) => false);

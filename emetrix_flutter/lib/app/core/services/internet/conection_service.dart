@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ConetionService {
+class MesagessService {
   static void showError(BuildContext context, String message) {
     final snackbar = SnackBar(
       content: Text(message),
@@ -21,11 +21,17 @@ class ConetionService {
   }
 
   static void showSuccess(
-      {required BuildContext context, required String message}) {
+      {required BuildContext context,
+      required String message,
+      EdgeInsetsGeometry? marginBottom}) {
     final snackbar = SnackBar(
+      behavior: marginBottom != null
+          ? SnackBarBehavior.floating
+          : SnackBarBehavior.fixed,
       content: Text(message),
       backgroundColor: Colors.green,
       duration: const Duration(seconds: 2),
+      margin: marginBottom,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }

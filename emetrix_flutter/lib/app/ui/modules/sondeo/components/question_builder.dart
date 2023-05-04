@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/components.dart';
-import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class QuestionBuilder extends ConsumerStatefulWidget {
   const QuestionBuilder({
@@ -91,7 +90,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         return SelectPicture(pregunta: widget.pregunta.pregunta ?? 'NoData');
 
       case 'firma':
-        return const Signature();
+        return Signature(pregunta: widget.pregunta.pregunta ?? 'NoData');
 
       case 'fecha':
         return PickerDT(

@@ -29,76 +29,70 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
 
     return GestureDetector(
       onTap: () => handleImage(size: size),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: image != null
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * 0.04),
-                    child: Text(widget.pregunta, style: t.subtitle),
+      child: image != null
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+                  child: Text(widget.pregunta, style: t.subtitle),
+                ),
+                SizedBox(height: size.height * 0.02),
+                Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(90),
+                    child: Container(
+                      height: size.height * 0.2,
+                      width: size.height * 0.2,
+                      color: c.surface,
+                      child: Image.file(
+                        image!,
+                        fit: BoxFit.cover,
+                        frameBuilder:
+                            (context, child, frame, wasSynchronouslyLoaded) {
+                          return frame == null
+                              ? const Center(child: CircularProgressIndicator())
+                              : child;
+                        },
+                      ),
+                    ),
                   ),
-                  SizedBox(height: size.height * 0.01),
-                  Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(90),
-                      child: Container(
-                        height: size.height * 0.2,
-                        width: size.height * 0.2,
-                        color: c.surface,
-                        child: Image.file(
-                          image!,
-                          fit: BoxFit.cover,
-                          frameBuilder:
-                              (context, child, frame, wasSynchronouslyLoaded) {
-                            return frame == null
-                                ? const Center(
-                                    child: CircularProgressIndicator())
-                                : child;
-                          },
+                ),
+              ],
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+                  child: Text(widget.pregunta, style: t.subtitle),
+                ),
+                SizedBox(height: size.height * 0.02),
+                Center(
+                  child: CircleAvatar(
+                    backgroundColor: c.disabled.withOpacity(0.1),
+                    radius: size.height * 0.1,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.camera,
+                          color: c.disabled.withOpacity(0.8),
+                          size: size.height * 0.06,
                         ),
-                      ),
+                        Text(
+                          'Selecciona imagen',
+                          style: t.textDisabled,
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * 0.04),
-                    child: Text(widget.pregunta, style: t.subtitle),
-                  ),
-                  SizedBox(height: size.height * 0.01),
-                  Center(
-                    child: CircleAvatar(
-                      backgroundColor: c.disabled.withOpacity(0.1),
-                      radius: size.height * 0.1,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.camera,
-                            color: c.disabled.withOpacity(0.8),
-                            size: size.height * 0.06,
-                          ),
-                          Text(
-                            'Selecciona imagen',
-                            style: t.textDisabled,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-      ),
+                ),
+              ],
+            ),
     );
   }
 

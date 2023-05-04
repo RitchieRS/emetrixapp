@@ -2,6 +2,7 @@ import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final currentOptionProvider = StateProvider<int>((ref) => 0);
+final onlyFirstProvider = StateProvider<bool>((ref) => true);
 
 final sondeoController = StateNotifierProvider<Auth, dynamic>((_) => Auth(''));
 

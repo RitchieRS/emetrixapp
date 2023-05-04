@@ -49,6 +49,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Stack(
             children: [
               //Imagen
@@ -183,7 +184,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
       if (userLoggedIn == true && isDark == false) {
         Future.delayed(const Duration(seconds: 1)).whenComplete(() {
-          navigator.pushReplacementNamed('theme');
+          navigator.pushReplacementNamed('onboard');
           user.clear();
           password.clear();
           setState(() => switchButton = false);

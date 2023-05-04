@@ -123,7 +123,7 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
                         Colors.blue[700] ?? c.secondary.withOpacity(0.8),
                     title: 'Finalizar',
                     style: t.mediumLight,
-                    onTap: () => goNextSection(),
+                    onTap: () => finalize(),
                   ),
                 ),
               )
@@ -168,7 +168,7 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
                             Colors.blue[700] ?? c.secondary.withOpacity(0.8),
                         title: 'Finalizar',
                         style: t.mediumLight,
-                        onTap: () => goNextSection(),
+                        onTap: () => finalize(),
                       ),
                     // OutlinedButton(
                     //     onPressed: null,
@@ -205,10 +205,12 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
     }
   }
 
-  void goNextSection() {
+  void finalize() {
     ref
         .read(currentOptionProvider.notifier)
         .update((state) => state = widget.index + 1);
+
+    ref.read(onlyFirstProvider.notifier).update((state) => false);
 
     setState(() {
       progress = 1;

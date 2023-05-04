@@ -170,8 +170,8 @@ class _MyCardState extends ConsumerState<MyCard2> {
                           height: 25,
                           width: 25,
                           child: Center(
-                              child:
-                                  CircularProgressIndicator(color: c.primary)))
+                              child: CircularProgressIndicator(
+                                  color: c.primary, strokeWidth: 2)))
                       : OutlinedButton(
                           onPressed: () => start(widget.index),
                           style: OutlinedButton.styleFrom(

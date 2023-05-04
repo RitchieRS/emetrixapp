@@ -8,7 +8,7 @@ class Services {
 
     connectivity.onConnectivityChanged.listen((result) {
       if (result == ConnectivityResult.none) {
-        ConetionService.showMessage(
+        MesagessService.showMessage(
             context: context,
             message: 'Sin Conexión',
             icon: Icons.wifi_off_outlined);

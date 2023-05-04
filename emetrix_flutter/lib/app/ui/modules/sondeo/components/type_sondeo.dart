@@ -1,5 +1,4 @@
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
@@ -24,8 +23,8 @@ class TypeSondeo extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
     const int animationDuration = 1000;
-    final currentOption = ref.watch(currentOptionProvider);
-    final enabledColor = index <= currentOption - 1;
+    // final currentOption = ref.watch(currentOptionProvider);
+    // final enabledColor = index <= currentOption - 1;
 
     return FadeIn(
       child: InkWell(
@@ -87,7 +86,7 @@ class TypeSondeo extends ConsumerWidget {
                             curve: Curves.easeInOut,
                             tween: Tween<double>(
                               begin: 0,
-                              end: enabledColor ? 1 : 0, //
+                              end: enebled ? 1 : 0, //
                             ),
                             builder: (context, value, _) =>
                                 LinearProgressIndicator(

@@ -51,7 +51,7 @@ class _QuestionState extends ConsumerState<Question>
           padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
           child: Text(widget.pregunta.pregunta ?? 'NoData', style: t.subtitle),
         ),
-        SizedBox(height: size.height * 0.01),
+        SizedBox(height: size.height * 0.02),
         Center(
           child: Padding(
             padding: EdgeInsets.only(bottom: size.height * 0.01),
