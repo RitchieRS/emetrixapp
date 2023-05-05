@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final currentOptionProvider = StateProvider<int>((ref) => 0);
 final onlyFirstProvider = StateProvider<bool>((ref) => true);
+final finishedSondeos = StateProvider<List<int>>((ref) => []);
 
 final sondeoController = StateNotifierProvider<Auth, dynamic>((_) => Auth(''));
 

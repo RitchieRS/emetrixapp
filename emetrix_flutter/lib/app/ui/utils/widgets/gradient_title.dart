@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
-class GradientTitle extends StatelessWidget {
+class GradientTitle extends ConsumerWidget {
   const GradientTitle(
       {super.key,
       required this.height,
@@ -14,7 +15,7 @@ class GradientTitle extends StatelessWidget {
   final String title2;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
 
     return Container(
@@ -28,19 +29,15 @@ class GradientTitle extends StatelessWidget {
         colors: [c.secondary, c.primary.withOpacity(0.55)],
       )),
       child: Padding(
-        padding: EdgeInsets.only(top: size.height * 0.035),
-        child: AppBar(
-            title: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(title1, style: t.textLight),
-                Text(title2, style: t.titleLight),
-              ],
-            ),
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            iconTheme: IconThemeData(color: c.background),
-            centerTitle: true),
+        padding: EdgeInsets.only(bottom: size.height * 0.02),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(title1, style: t.textLight),
+            Text(title2, style: t.titleWhite),
+          ],
+        ),
       ),
     );
   }

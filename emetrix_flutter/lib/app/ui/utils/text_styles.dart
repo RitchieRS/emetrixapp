@@ -5,6 +5,8 @@ final IText t = _TextStylesMain();
 
 abstract class IText {
   TextStyle get title;
+  TextStyle get titleWhite;
+  TextStyle get titleBlack;
   TextStyle get titleBlue;
   TextStyle get titleLight;
   TextStyle get subtitle;
@@ -19,9 +21,11 @@ abstract class IText {
   TextStyle get mediumLight;
   TextStyle get mediumDark;
   TextStyle get mediumDisabled;
+  TextStyle get mediumOk;
   TextStyle get text;
-  TextStyle get textUnselected;
   TextStyle get text2;
+  TextStyle get textOk;
+  TextStyle get textUnselected;
   TextStyle get textLight;
   TextStyle get textBlue;
   TextStyle get textError;
@@ -37,6 +41,22 @@ class _TextStylesMain implements IText {
     fontSize: 24,
     fontWeight: FontWeight.bold,
     // color: c.black
+  );
+  @override
+  TextStyle titleWhite = TextStyle(
+    fontFamily: 'Poppins',
+    fontSize: 24,
+    height: 0.95,
+    fontWeight: FontWeight.bold,
+    color: c.background,
+  );
+  @override
+  TextStyle titleBlack = TextStyle(
+    fontFamily: 'Poppins',
+    fontSize: 24,
+    height: 0.95,
+    fontWeight: FontWeight.bold,
+    color: c.black,
   );
 
   @override
@@ -75,6 +95,7 @@ class _TextStylesMain implements IText {
       fontFamily: 'Poppins',
       fontSize: 18,
       fontWeight: FontWeight.bold,
+      height: 0.95,
       color: c.background);
 
   @override
@@ -82,6 +103,7 @@ class _TextStylesMain implements IText {
       fontFamily: 'Poppins',
       fontSize: 18,
       fontWeight: FontWeight.bold,
+      height: 0.95,
       color: c.black);
 
   @override
@@ -97,12 +119,20 @@ class _TextStylesMain implements IText {
     fontWeight: FontWeight.bold,
     // color: Colors.black
   );
+
   @override
   TextStyle mediumDisabled = TextStyle(
       fontFamily: 'Poppins',
       fontSize: 14,
       fontWeight: FontWeight.bold,
       color: c.disabled.withOpacity(0.4));
+
+  @override
+  TextStyle mediumOk = TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      color: c.ok);
 
   @override
   TextStyle mediumBlue0 = TextStyle(
@@ -150,11 +180,21 @@ class _TextStylesMain implements IText {
       fontFamily: 'Poppins',
       fontSize: 12,
       color: c.background.withOpacity(0.4));
+
   @override
   TextStyle text2 = const TextStyle(
     fontFamily: 'Poppins', fontSize: 14,
     // color: Colors.black
   );
+
+  @override
+  TextStyle textOk = TextStyle(
+    fontFamily: 'Poppins',
+    fontSize: 12,
+    color: c.ok,
+    fontWeight: FontWeight.bold,
+  );
+
   @override
   TextStyle textLight =
       const TextStyle(fontFamily: 'Poppins', fontSize: 14, color: Colors.white);

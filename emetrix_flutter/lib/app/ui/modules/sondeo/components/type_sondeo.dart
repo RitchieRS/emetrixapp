@@ -1,7 +1,8 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:animate_do/animate_do.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class TypeSondeo extends ConsumerWidget {
@@ -12,35 +13,40 @@ class TypeSondeo extends ConsumerWidget {
     required this.sondeoItem,
     required this.onTap,
     required this.enebled,
+    this.finished = false,
   });
   final int index;
   final bool isLast;
   final RespM sondeoItem;
   final VoidCallback? onTap;
   final bool enebled;
+  final bool finished;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
     const int animationDuration = 1000;
-    // final currentOption = ref.watch(currentOptionProvider);
+    final currentOption = ref.watch(currentOptionProvider);
     // final enabledColor = index <= currentOption - 1;
 
-    return FadeIn(
+    return Padding(
+      padding: isLast
+          ? EdgeInsets.only(bottom: size.height * 0.05)
+          : const EdgeInsets.all(0),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
         child: Ink(
           width: size.width,
-          height: size.height * 0.15,
-          color: Colors.transparent,
+          height: isLast ? size.height * 0.08 : size.height * 0.143,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(width: size.width * 0.08),
+                  SizedBox(width: size.width * 0.06),
                   AnimatedContainer(
                     duration:
                         const Duration(milliseconds: animationDuration + 300),
@@ -49,18 +55,34 @@ class TypeSondeo extends ConsumerWidget {
                     width: size.height * 0.08,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color:
-                            enebled ? c.primary : c.disabled.withOpacity(0.4)),
+                        color: finished
+                            ? c.ok.withOpacity(0.6)
+                            : enebled
+                                ? c.primary.withOpacity(0.6)
+                                : c.disabled.withOpacity(0.4)),
                     child: icons(c.background),
                   ),
-                  SizedBox(width: size.width * 0.08),
+                  SizedBox(width: size.width * 0.04),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('PASO ${index + 1}', style: t.textDisabled2),
-                      SizedBox(
-                        width: size.width * 0.6,
+                      Row(
+                        children: [
+                          Text('PASO ${index + 1}', style: t.textDisabled2),
+                          SizedBox(width: size.width * 0.02),
+                          finished
+                              ? Text('Completado', style: t.textOk)
+                              : const SizedBox(),
+                          SizedBox(width: size.width * 0.01),
+                          finished
+                              ? FadeIn(child: Icon(Icons.done, color: c.ok))
+                              : SizedBox(width: size.width * 0.06),
+                        ],
+                      ),
+                      Container(
+                        color: c.surface,
+                        width: size.width * 0.4,
                         child: Text(sondeoItem.sondeo ?? 'Error',
                             style: enebled ? t.mediumBold : t.mediumDisabled,
                             maxLines: 3,
@@ -74,8 +96,7 @@ class TypeSondeo extends ConsumerWidget {
               isLast
                   ? const SizedBox()
                   : Padding(
-                      padding: EdgeInsets.only(
-                          left: size.width * 0.16, top: size.width * 0.01),
+                      padding: EdgeInsets.only(left: size.width * 0.14, top: 0),
                       child: SizedBox(
                         height: size.height * 0.06,
                         child: RotatedBox(
@@ -86,13 +107,19 @@ class TypeSondeo extends ConsumerWidget {
                             curve: Curves.easeInOut,
                             tween: Tween<double>(
                               begin: 0,
-                              end: enebled ? 1 : 0, //
+                              end: currentOption > 0 ? 1 : 0, //
+                              // end: enebled ? 1 : 0, //
                             ),
                             builder: (context, value, _) =>
                                 LinearProgressIndicator(
                               value: value,
+                              color: finished
+                                  ? c.ok.withOpacity(0.6)
+                                  : enebled
+                                      ? c.primary.withOpacity(0.6)
+                                      : c.disabled.withOpacity(0.4),
                               minHeight: size.height * 0.007,
-                              backgroundColor: c.disabled.withOpacity(0.3),
+                              backgroundColor: Theme.of(context).highlightColor,
                             ),
                           ),
                         ),

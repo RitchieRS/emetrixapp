@@ -3,17 +3,6 @@ import 'package:flutter/material.dart';
 final IColors c = _ColorsMain();
 
 abstract class IColors {
-  // Color get disabled;
-  // Color get primary;
-  // Color get secondary;
-  // Color get onSecondary;
-  // Color get error;
-  // Color get caution;
-  // Color get black;
-  // Color get alarmBack;
-  // Color get surface;
-  // Color get OK;
-
   Color get primary;
   Color get secondary;
   Color get onSecondary;
@@ -38,7 +27,7 @@ abstract class IColors {
   Color get textNueve;
 }
 
-class _ColorsMain implements IColors {
+class _ColorsMain extends IColors {
   @override
   Color primary = const Color(0xff0099ff);
 

@@ -48,15 +48,23 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     switch (state.state) {
       case States.succes:
         return Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            backgroundColor: c.surface,
+            elevation: 0,
+          ),
           body: Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              GradientTitle(
-                  height: size.height,
-                  width: size.width,
-                  title1: 'Fuera de',
-                  title2: 'RUTA'),
-
+              Column(
+                children: [
+                  GradientTitle(
+                      height: size.height * 0.25,
+                      width: size.width,
+                      title1: 'Fuera de',
+                      title2: 'RUTA'),
+                ],
+              ),
               //
               ClipRRect(
                 borderRadius:

@@ -40,12 +40,17 @@ class _AditionalActivitiesPageState
       case States.succes:
         return Scaffold(
           body: Stack(
+            alignment: Alignment.bottomCenter,
             children: [
-              GradientTitle(
-                  height: size.height * 0.4,
-                  width: size.width,
-                  title1: 'Actividades',
-                  title2: 'EXTRAS'),
+              Column(
+                children: [
+                  GradientTitle(
+                      height: size.height * 0.25,
+                      width: size.width,
+                      title1: 'Actividades',
+                      title2: 'EXTRAS'),
+                ],
+              ),
               //
               Padding(
                 padding: EdgeInsets.only(top: size.height * 0.18),

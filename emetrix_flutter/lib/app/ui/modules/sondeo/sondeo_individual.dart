@@ -1,4 +1,6 @@
+import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
@@ -23,7 +25,8 @@ class SondeosBuilder extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _SondeosBuilderState();
 }
 
-class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
+class _SondeosBuilderState extends ConsumerState<SondeosBuilder>
+    with AutomaticKeepAliveClientMixin {
   final PageController controller = PageController();
   double progress = 0; // 1
   int indexPageView = 0;
@@ -36,10 +39,13 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final size = MediaQuery.of(context).size;
     int lenght =
         widget.sondeoItem.preguntas?.length ?? 0; //Returns length from 1
     final double progressValue = 1 / lenght;
+    final finishedSections = ref.watch(finishedSondeos);
+    final theme = ref.watch(themeProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -49,6 +55,11 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
         elevation: 0,
         foregroundColor: Theme.of(context).hintColor,
         toolbarHeight: size.height * 0.07,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: c.surface,
+          statusBarIconBrightness:
+              theme == ThemeMode.light ? Brightness.dark : Brightness.light,
+        ),
       ),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -123,7 +134,7 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
                         Colors.blue[700] ?? c.secondary.withOpacity(0.8),
                     title: 'Finalizar',
                     style: t.mediumLight,
-                    onTap: () => finalize(),
+                    onTap: () => finalize(finishedSections),
                   ),
                 ),
               )
@@ -168,7 +179,7 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
                             Colors.blue[700] ?? c.secondary.withOpacity(0.8),
                         title: 'Finalizar',
                         style: t.mediumLight,
-                        onTap: () => finalize(),
+                        onTap: () => finalize(finishedSections),
                       ),
                     // OutlinedButton(
                     //     onPressed: null,
@@ -205,7 +216,13 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
     }
   }
 
-  void finalize() {
+  void finalize(List<int> finishedSections) {
+    if (!finishedSections.contains(widget.index) ||
+        finishedSections.isEmpty ||
+        finishedSections == []) {
+      ref.read(finishedSondeos.notifier).state.add(widget.index);
+    }
+
     ref
         .read(currentOptionProvider.notifier)
         .update((state) => state = widget.index + 1);
@@ -223,6 +240,9 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder> {
   Future validate() async {
     //Validate
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   //
 }

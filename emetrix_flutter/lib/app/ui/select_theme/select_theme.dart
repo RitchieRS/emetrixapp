@@ -26,13 +26,15 @@ class _SelectThemeState extends ConsumerState<SelectTheme> {
     final isDark = ref.watch(themeProvider);
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: c.surface,
-        elevation: 0,
-        systemOverlayStyle: isDark == ThemeMode.dark
-            ? SystemUiOverlayStyle.light
-            : SystemUiOverlayStyle.dark,
-      ),
+          backgroundColor: c.surface,
+          elevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: c.surface,
+              statusBarIconBrightness: isDark == ThemeMode.dark
+                  ? Brightness.light
+                  : Brightness.dark)),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

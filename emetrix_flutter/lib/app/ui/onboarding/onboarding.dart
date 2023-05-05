@@ -4,6 +4,7 @@ import 'package:emetrix_flutter/app/ui/onboarding/widgets/page_custom.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class OnBoardingPage extends StatefulWidget {
   const OnBoardingPage({super.key});
@@ -64,6 +65,14 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: c.surface,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: c.surface,
+            statusBarIconBrightness: Brightness.dark),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
