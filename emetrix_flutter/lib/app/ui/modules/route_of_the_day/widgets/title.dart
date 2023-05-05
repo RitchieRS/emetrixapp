@@ -1,12 +1,16 @@
+import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MyTitle extends StatelessWidget implements PreferredSizeWidget {
+class MyTitle extends ConsumerWidget implements PreferredSizeWidget {
   const MyTitle({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // final size = MediaQuery.of(context).size;
+    final isDark = ref.watch(themeProvider);
 
     return AppBar(
       // automaticallyImplyLeading: true,
@@ -27,6 +31,9 @@ class MyTitle extends StatelessWidget implements PreferredSizeWidget {
       iconTheme: IconThemeData(color: c.primary),
       centerTitle: true,
       toolbarHeight: Dimentions().getHeight() * 0.12,
+      systemOverlayStyle: isDark == ThemeMode.dark
+          ? SystemUiOverlayStyle.light
+          : SystemUiOverlayStyle.dark,
     );
   }
 

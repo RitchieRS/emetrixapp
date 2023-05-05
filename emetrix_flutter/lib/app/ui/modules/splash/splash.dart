@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:animate_do/animate_do.dart';
@@ -59,9 +58,9 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     final prefs = await SharedPreferences.getInstance();
     session = prefs.getString('loginInfo');
     setState(() {});
-    if (kDebugMode) {
-      print('SESION ---> $session');
-    }
+    // if (kDebugMode) {
+    //   print('SESION ---> $session');
+    // }
   }
 
   Future<void> _checkRoute() async {

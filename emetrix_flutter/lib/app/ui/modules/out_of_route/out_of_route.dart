@@ -13,6 +13,7 @@ import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:vibration/vibration.dart';
 
 import 'controller.dart';
 import 'loading_view.dart';
@@ -113,9 +114,10 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                                   background: c.primary,
                                   title:
                                       'Agregar Ruta${stores.length <= 1 ? '' : 's'}',
-                                  style: isDark == ThemeMode.dark
-                                      ? t.mediumDark
-                                      : t.mediumLight,
+                                  style: t.mediumLight,
+                                  // isDark == ThemeMode.dark
+                                  //     ? t.mediumDark
+                                  //     : t.mediumLight,
                                   onTap: () => start(),
                                   width: size.width * 0.85,
                                   height: size.height * 0.065),
@@ -193,6 +195,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
 
       MesagessService.showSuccess(
           context: context, message: 'Agregados a Ruta del Dia!');
+      await Vibration.vibrate();
       // navigator.pop();
       navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) {
         return const MainPage();

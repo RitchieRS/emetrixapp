@@ -20,7 +20,7 @@ showProgress({
           content: const SizedBox(
               height: 70,
               width: 70,
-              child: Center(child: CircularProgressIndicator())),
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2))),
           actionsAlignment: MainAxisAlignment.center,
         );
       });

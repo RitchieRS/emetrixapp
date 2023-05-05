@@ -10,6 +10,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vibration/vibration.dart';
 
 import 'controller.dart';
 import 'widgets/back_image.dart';
@@ -125,7 +126,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 padding:
                                     EdgeInsets.only(top: size.height * 0.05),
                                 child: const Center(
-                                  child: CircularProgressIndicator.adaptive(),
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
                                 ),
                               )
 
@@ -183,18 +185,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       setState(() {});
 
       if (userLoggedIn == true && isDark == false) {
-        Future.delayed(const Duration(seconds: 1)).whenComplete(() {
+        Future.delayed(const Duration(seconds: 1)).whenComplete(() async {
           navigator.pushReplacementNamed('onboard');
           user.clear();
           password.clear();
           setState(() => switchButton = false);
+          await Vibration.vibrate();
         });
       } else if (userLoggedIn == true && isDark == true) {
-        Future.delayed(const Duration(seconds: 1)).whenComplete(() {
+        Future.delayed(const Duration(seconds: 1)).whenComplete(() async {
           navigator.pushReplacementNamed('home');
           user.clear();
           password.clear();
           setState(() => switchButton = false);
+          await Vibration.vibrate();
         });
       } else {
         Future.delayed(const Duration(seconds: 1)).whenComplete(() {

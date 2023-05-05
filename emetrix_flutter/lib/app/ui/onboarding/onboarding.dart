@@ -81,7 +81,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                         }
                         controller.jumpToPage(pages.length);
                       },
-                      child: const Text('Saltar'))),
+                      child: Text('Saltar', style: t.mediumBold))),
             ),
           ),
           FadeIn(
@@ -115,9 +115,10 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                     itemCount: pages.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
-                      return Container(
-                        height: size.height * 0.01,
-                        width: size.height * 0.01,
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 250),
+                        height: size.height * 0.008,
+                        width: size.height * 0.008,
                         decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: currentPage == index
@@ -135,7 +136,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                       background: c.primary,
                       title: 'Comenzar',
                       style: t.mediumLight,
-                      onTap: () => Navigator.pushNamed(context, 'theme'),
+                      onTap: () =>
+                          Navigator.pushReplacementNamed(context, 'theme'),
                       width: size.width * 0.85,
                       height: size.height * 0.065),
                 )
