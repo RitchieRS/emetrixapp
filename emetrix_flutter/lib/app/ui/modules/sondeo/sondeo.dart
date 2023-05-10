@@ -42,7 +42,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider);
-    final currentOption = ref.watch(currentOptionProvider);
+    // final currentOption = ref.watch(currentOptionProvider);
     final onlyFirst = ref.watch(onlyFirstProvider);
     final finishedSections = ref.watch(finishedSondeos);
     final completeAll = finishedSections.length == sondeosList2.length;
@@ -81,9 +81,8 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
             IconButton(
                 onPressed: () => onExit(finishedSections),
                 icon: Icon(Icons.exit_to_app,
-                    color: completeAll
-                        ? c.error
-                        : Theme.of(context).highlightColor)),
+                    color:
+                        completeAll ? c.error : Theme.of(context).hintColor)),
           ],
           systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: c.surface),
         ),
@@ -92,7 +91,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
           children: [
             //
 
-            FadeIn(
+            FadeInRight(
               child: ListView.builder(
                 padding: EdgeInsets.only(
                     left: size.height * 0.01, right: size.height * 0.01),
@@ -114,7 +113,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
                                 PageTransition(
                                     duration: const Duration(milliseconds: 350),
                                     type: PageTransitionType.rightToLeft,
-                                    child: SondeosBuilder(
+                                    child: SingleSondeoPage(
                                       store: widget.store,
                                       sondeoItem: sondeosList2[index],
                                       index: index,
@@ -163,6 +162,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     final navigator = Navigator.of(context);
 
     //Check First Validations of each component
+    // sondeosList2.forEach((element) { })
 
     if (finishedSections.length == sondeosList2.length) {
       final option = await showMsj(
@@ -176,10 +176,15 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
       if (option) {
         ref.read(currentOptionProvider.notifier).update((state) => 0);
         ref.read(onlyFirstProvider.notifier).update((state) => true);
+        ref.read(finishedSondeos.notifier).state = []; //
 
         setState(() {
           ref.read(showProgress1.notifier).update((state) => false);
         });
+
+        showProgress(context: context, title: 'Guardando progreso..');
+        await Future.delayed(const Duration(seconds: 1));
+        navigator.pop();
         navigator.pop();
       }
       return;
@@ -193,4 +198,6 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
         onlyOk: true,
         buttonLabel: 'Aceptar');
   }
+
+  //
 }

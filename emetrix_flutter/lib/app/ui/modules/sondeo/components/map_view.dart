@@ -1,14 +1,16 @@
 import 'dart:async';
-
-import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
-import 'package:emetrix_flutter/app/core/services/services.dart';
-import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class MapView extends StatefulWidget {
+import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
+import 'package:emetrix_flutter/app/core/services/services.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+
+class MapView extends ConsumerStatefulWidget {
   const MapView({
     super.key,
     required this.store,
@@ -16,12 +18,13 @@ class MapView extends StatefulWidget {
   final Store store;
 
   @override
-  State<MapView> createState() => _MapViewState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _MapViewState();
 }
 
-class _MapViewState extends State<MapView> {
+class _MapViewState extends ConsumerState<MapView> {
   PermissionStatus permission = PermissionStatus.denied;
   final _controller = Completer<GoogleMapController>();
+  String? _darkMapStyle;
 
   final CameraPosition _defaultMexico = const CameraPosition(
     target: LatLng(19.451054, -99.125519),
@@ -31,7 +34,15 @@ class _MapViewState extends State<MapView> {
   @override
   void initState() {
     super.initState();
-    requestLocationPermission();
+    _loadMapStyles();
+    _requestLocationPermission();
+    _setMapStyle(ref);
+  }
+
+  @override
+  void dispose() {
+    disp0se();
+    super.dispose();
   }
 
   @override
@@ -84,7 +95,7 @@ class _MapViewState extends State<MapView> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: FloatingActionButton(
-                onPressed: () => centerMap(),
+                onPressed: () => _centerMap(),
                 backgroundColor: Theme.of(context).primaryColor,
                 child: const Icon(Icons.location_searching),
               ),
@@ -133,13 +144,13 @@ class _MapViewState extends State<MapView> {
     );
   }
 
-  Future<void> requestLocationPermission() async {
+  Future<void> _requestLocationPermission() async {
     await Permission.locationWhenInUse.request();
     permission = await Permission.locationWhenInUse.status;
     setState(() {});
   }
 
-  Future<void> centerMap() async {
+  Future<void> _centerMap() async {
     final double lat = widget.store.latitud ?? 0;
     final double long = widget.store.longitud ?? 0;
     CameraPosition kLake = CameraPosition(
@@ -149,6 +160,27 @@ class _MapViewState extends State<MapView> {
 
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(kLake));
+  }
+
+  Future<void> _loadMapStyles() async {
+    _darkMapStyle = await rootBundle.loadString('assets/theme/maps_dark.json');
+    // _lightMapStyle =
+    //     await rootBundle.loadString('assets/map_styles/maps_light.json');
+  }
+
+  Future<void> _setMapStyle(WidgetRef ref) async {
+    final controller = await _controller.future;
+    final theme = ref.watch(themeProvider);
+    if (theme == ThemeMode.dark) {
+      controller.setMapStyle(_darkMapStyle);
+    } else {
+      controller.setMapStyle('[]');
+    }
+  }
+
+  Future<void> disp0se() async {
+    final controller = await _controller.future;
+    controller.dispose();
   }
 
   //

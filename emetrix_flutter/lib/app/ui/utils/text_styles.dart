@@ -29,6 +29,7 @@ abstract class IText {
   TextStyle get textLight;
   TextStyle get textBlue;
   TextStyle get textError;
+  TextStyle get textError2;
   TextStyle get textDisabled;
   TextStyle get textDisabled2;
   TextStyle get textDisabledBold;
@@ -204,11 +205,19 @@ class _TextStylesMain implements IText {
       fontSize: 14,
       fontWeight: FontWeight.bold,
       color: c.primary);
+
   @override
   TextStyle textError = const TextStyle(
       fontFamily: 'Poppins',
       fontSize: 14,
       color: Colors.red,
+      fontWeight: FontWeight.bold);
+
+  @override
+  TextStyle textError2 = TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 12,
+      color: Colors.red[800],
       fontWeight: FontWeight.bold);
 
   @override

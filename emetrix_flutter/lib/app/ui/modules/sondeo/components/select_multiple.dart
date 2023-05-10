@@ -48,6 +48,7 @@ class _SelectionState extends ConsumerState<SelectionMultiple>
                 return Row(
                   children: [
                     Checkbox(
+                        activeColor: c.primary,
                         value: boollist?[index],
                         onChanged: (newvalue) {
                           boollist?[index] = newvalue ?? false;

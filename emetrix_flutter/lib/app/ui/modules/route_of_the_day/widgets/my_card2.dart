@@ -142,45 +142,48 @@ class _MyCardState extends ConsumerState<MyCard2> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return Consumer(
-            builder: (context, ref, child) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-                title: Text(store,
-                    style: t.subtitle,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('¿Ir a los sondeos?',
-                        style: t.text2, textAlign: TextAlign.center),
+          return FadeIn(
+            child: Consumer(
+              builder: (context, ref, child) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                  title: Text(store,
+                      style: t.subtitle,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('¿Ir a los sondeos?',
+                          style: t.text2, textAlign: TextAlign.center),
+                    ],
+                  ),
+                  actionsAlignment: MainAxisAlignment.center,
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        style:
+                            TextButton.styleFrom(foregroundColor: c.disabled),
+                        child: Text('Cancelar', style: t.textDisabledBold)),
+                    ref.watch(showProgress1) == true
+                        ? SizedBox(
+                            height: 25,
+                            width: 25,
+                            child: Center(
+                                child: CircularProgressIndicator(
+                                    color: c.primary, strokeWidth: 2)))
+                        : OutlinedButton(
+                            onPressed: () => start(widget.index),
+                            style: OutlinedButton.styleFrom(
+                                foregroundColor: c.primary,
+                                side: BorderSide(color: c.primary)),
+                            child: Text('Comenzar', style: t.textBlue))
                   ],
-                ),
-                actionsAlignment: MainAxisAlignment.center,
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      style: TextButton.styleFrom(foregroundColor: c.disabled),
-                      child: Text('Cancelar', style: t.textDisabledBold)),
-                  ref.watch(showProgress1) == true
-                      ? SizedBox(
-                          height: 25,
-                          width: 25,
-                          child: Center(
-                              child: CircularProgressIndicator(
-                                  color: c.primary, strokeWidth: 2)))
-                      : OutlinedButton(
-                          onPressed: () => start(widget.index),
-                          style: OutlinedButton.styleFrom(
-                              foregroundColor: c.primary,
-                              side: BorderSide(color: c.primary)),
-                          child: Text('Comenzar', style: t.textBlue))
-                ],
-              );
-            },
+                );
+              },
+            ),
           );
         });
     return Future.value(result);

@@ -18,6 +18,6 @@ Map<String, WidgetBuilder> appRoutes() {
     'pendings': (context) => const PendingsPage(),
     'settings': (context) => const SettingsPage(),
     'onboard': (context) => const OnBoardingPage(),
-    'theme': (context) => const SelectTheme(),
+    'theme': (context) => const SelectThemePage(),
   };
 }

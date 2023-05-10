@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
-class TypeBuilder extends StatelessWidget {
+class TypeBuilder extends StatefulWidget {
   const TypeBuilder({
     super.key,
     required this.type,
@@ -18,12 +18,19 @@ class TypeBuilder extends StatelessWidget {
   final List<int> finisedSections;
 
   @override
+  State<TypeBuilder> createState() => _TypeBuilderState();
+}
+
+class _TypeBuilderState extends State<TypeBuilder>
+    with AutomaticKeepAliveClientMixin {
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final size = MediaQuery.of(context).size;
 
     return FadeIn(
       child: InkWell(
-        onTap: onTap,
+        onTap: widget.onTap,
         borderRadius: BorderRadius.circular(14),
         child: Ink(
           width: size.width,
@@ -42,13 +49,13 @@ class TypeBuilder extends StatelessWidget {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                            color: finisedSections.contains(index)
+                            color: widget.finisedSections.contains(widget.index)
                                 ? Colors.transparent
                                 : Colors.grey),
-                        color: finisedSections.contains(index)
+                        color: widget.finisedSections.contains(widget.index)
                             ? c.primary
                             : Colors.transparent),
-                    child: icon(finisedSections.contains(index)
+                    child: icon(widget.finisedSections.contains(widget.index)
                         ? c.background
                         : Colors.grey),
                   ),
@@ -57,11 +64,11 @@ class TypeBuilder extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('PASO ${index + 1}', style: t.textDisabled2),
+                      Text('PASO ${widget.index + 1}', style: t.textDisabled2),
                       SizedBox(
                         width: size.width * 0.6,
-                        child: Text(type,
-                            style: finisedSections.contains(index)
+                        child: Text(widget.type,
+                            style: widget.finisedSections.contains(widget.index)
                                 ? t.mediumBold
                                 : t.mediumDisabled,
                             maxLines: 3,
@@ -72,13 +79,13 @@ class TypeBuilder extends StatelessWidget {
                 ],
               ),
 
-              isLast
+              widget.isLast
                   ? Container()
                   : Padding(
                       padding: EdgeInsets.only(
                           left: size.width * 0.14, top: size.width * 0.01),
                       child: Container(
-                        color: finisedSections.contains(index)
+                        color: widget.finisedSections.contains(widget.index)
                             ? c.primary
                             : c.disabled.withOpacity(0.2),
                         height: size.height * 0.06,
@@ -118,6 +125,9 @@ class TypeBuilder extends StatelessWidget {
       'ESCANEA EL CÓDIGO': Icon(Icons.qr_code, color: color),
     };
 
-    return icons[type] ?? Icon(Icons.question_answer, color: color);
+    return icons[widget.type] ?? Icon(Icons.question_answer, color: color);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

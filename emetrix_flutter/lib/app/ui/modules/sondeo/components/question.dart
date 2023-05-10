@@ -40,7 +40,7 @@ class _QuestionState extends ConsumerState<Question>
     super.build(context);
     final size = MediaQuery.of(context).size;
     Color color = c.primary;
-    Color color2 = c.disabled.withOpacity(0.4);
+    Color color2 = Theme.of(context).hintColor;
     //String textfieldValue = '';
 
     return Column(

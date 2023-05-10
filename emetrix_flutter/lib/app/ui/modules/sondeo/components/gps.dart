@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -28,6 +29,10 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     final size = MediaQuery.of(context).size;
+    final theme = ref.watch(themeProvider);
+    final backColor = theme == ThemeMode.dark
+        ? Theme.of(context).hintColor
+        : Theme.of(context).highlightColor;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -53,9 +58,9 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
                       child: SizedBox(
                           height: size.height * 0.03,
                           width: size.height * 0.03,
-                          child: const Center(
-                              child:
-                                  CircularProgressIndicator(strokeWidth: 2))),
+                          child: Center(
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: c.primary))),
                     ),
                   )
                 : SizedBox(
@@ -64,7 +69,7 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
         SizedBox(height: size.height * 0.01),
         Center(
           child: Buton(
-              background: c.onSecondary,
+              background: backColor,
               title: 'Obtenet GPS',
               style: t.medium,
               onTap: () => getCurrentLocation()),

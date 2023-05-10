@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
+import 'package:emetrix_flutter/app/ui/ui.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
@@ -13,7 +14,6 @@ import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:vibration/vibration.dart';
 
 import 'controller.dart';
 import 'loading_view.dart';
@@ -203,7 +203,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
 
       MesagessService.showSuccess(
           context: context, message: 'Agregados a Ruta del Dia!');
-      await Vibration.vibrate();
+      await vibrate();
       // navigator.pop();
       navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) {
         return const MainPage();

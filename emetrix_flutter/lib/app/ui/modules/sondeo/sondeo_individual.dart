@@ -10,8 +10,8 @@ import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'components/components.dart';
 import 'controller.dart';
 
-class SondeosBuilder extends ConsumerStatefulWidget {
-  const SondeosBuilder({
+class SingleSondeoPage extends ConsumerStatefulWidget {
+  const SingleSondeoPage({
     super.key,
     required this.sondeoItem,
     required this.index,
@@ -25,7 +25,7 @@ class SondeosBuilder extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _SondeosBuilderState();
 }
 
-class _SondeosBuilderState extends ConsumerState<SondeosBuilder>
+class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     with AutomaticKeepAliveClientMixin {
   final PageController controller = PageController();
   double progress = 0; // 1
@@ -73,7 +73,7 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder>
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: TweenAnimationBuilder<double>(
-                      duration: const Duration(milliseconds: 400),
+                      duration: const Duration(milliseconds: 500),
                       curve: Curves.easeInOut,
                       tween: Tween<double>(
                         begin: 0,
@@ -82,7 +82,9 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder>
                       builder: (context, value, _) => LinearProgressIndicator(
                           value: value,
                           minHeight: size.height * 0.008,
-                          backgroundColor: c.disabled.withOpacity(0.25)),
+                          color: c.primary,
+                          backgroundColor:
+                              Theme.of(context).hintColor.withOpacity(0.2)),
                     ),
                   )),
             ),
@@ -145,13 +147,14 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder>
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     if (indexPageView != 0)
-                      ButonDimentions(
-                          height: size.height * 0.06,
-                          width: size.width * 0.35,
-                          background: c.primary,
-                          title: 'Prev',
-                          style: t.mediumLight,
-                          onTap: () => previousPage(progressValue))
+                      OutlinedButton(
+                          onPressed: () => previousPage(progressValue),
+                          style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              minimumSize:
+                                  Size(size.width * 0.35, size.height * 0.06)),
+                          child: Text('Prev', style: t.mediumBold))
                     else
                       OutlinedButton(
                           onPressed: null,
@@ -164,13 +167,14 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder>
 
                     //
                     if (indexPageView + 1 != lenght)
-                      ButonDimentions(
-                          height: size.height * 0.06,
-                          width: size.width * 0.35,
-                          background: c.primary,
-                          title: 'Next',
-                          style: t.mediumLight,
-                          onTap: () => nextPage(lenght, progressValue))
+                      OutlinedButton(
+                          onPressed: () => nextPage(lenght, progressValue),
+                          style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              minimumSize:
+                                  Size(size.width * 0.35, size.height * 0.06)),
+                          child: Text('Next', style: t.mediumBold))
                     else
                       ButonDimentions(
                         height: size.height * 0.06,
@@ -181,14 +185,6 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder>
                         style: t.mediumLight,
                         onTap: () => finalize(finishedSections),
                       ),
-                    // OutlinedButton(
-                    //     onPressed: null,
-                    //     style: OutlinedButton.styleFrom(
-                    //         shape: RoundedRectangleBorder(
-                    //             borderRadius: BorderRadius.circular(10)),
-                    //         minimumSize:
-                    //             Size(size.width * 0.35, size.height * 0.06)),
-                    //     child: Text('Next', style: t.mediumBold)),
                   ],
                 ),
               )
@@ -198,25 +194,33 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder>
     );
   }
 
-  void nextPage(int lenght, double progressValue) {
+  Future<void> nextPage(int lenght, double progressValue) async {
     if (progress != lenght) {
-      controller.nextPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.linear);
-      progress += progressValue;
-      setState(() {});
+      await controller
+          .nextPage(
+              duration: const Duration(milliseconds: 500), curve: Curves.ease)
+          .whenComplete(() => setState(() {
+                progress += progressValue;
+              }));
     }
   }
 
-  void previousPage(double progressValue) {
+  Future<void> previousPage(double progressValue) async {
     if (progress != 0) {
-      controller.previousPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.linear);
-      progress -= progressValue;
-      setState(() {});
+      await controller
+          .previousPage(
+              duration: const Duration(milliseconds: 500), curve: Curves.ease)
+          .whenComplete(() => setState(() {
+                progress -= progressValue;
+              }));
     }
   }
 
   void finalize(List<int> finishedSections) {
+    setState(() {
+      progress = 1;
+    });
+
     if (!finishedSections.contains(widget.index) ||
         finishedSections.isEmpty ||
         finishedSections == []) {
@@ -229,11 +233,7 @@ class _SondeosBuilderState extends ConsumerState<SondeosBuilder>
 
     ref.read(onlyFirstProvider.notifier).update((state) => false);
 
-    setState(() {
-      progress = 1;
-    });
-
-    Future.delayed(const Duration(milliseconds: 500))
+    Future.delayed(const Duration(milliseconds: 800))
         .whenComplete(() => Navigator.pop(context));
   }
 

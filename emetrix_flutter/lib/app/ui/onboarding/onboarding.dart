@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/onboarding/widgets/page_custom.dart';
+import 'package:emetrix_flutter/app/ui/select_theme/select_theme.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -47,11 +48,13 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   @override
   void initState() {
     super.initState();
-    if (currentPage + 1 == pages.length) {
-      setState(() {
-        showStart = true;
-      });
-    }
+    controller.addListener(() {
+      if (!showStart && (currentPage + 1) >= (pages.length - 0.5)) {
+        setState(() {
+          showStart = true;
+        });
+      }
+    });
   }
 
   @override
@@ -88,7 +91,10 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                         if (currentPage + 1 == pages.length) {
                           return;
                         }
-                        controller.jumpToPage(pages.length);
+                        controller.animateToPage(
+                            curve: Curves.easeIn,
+                            duration: const Duration(milliseconds: 500),
+                            pages.length);
                       },
                       child: Text('Saltar', style: t.mediumBold))),
             ),
@@ -138,15 +144,21 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
               ),
             ),
           ),
-          currentPage + 1 == pages.length
+          // currentPage + 1 == pages.length
+          showStart
               ? FadeIn(
                   delay: const Duration(seconds: 1),
                   child: ButonDimentions(
                       background: c.primary,
                       title: 'Comenzar',
                       style: t.mediumLight,
-                      onTap: () =>
-                          Navigator.pushReplacementNamed(context, 'theme'),
+                      onTap: () => Navigator.pushReplacement(
+                          context,
+                          PageRouteBuilder(
+                              pageBuilder: (_, animation, __) => FadeTransition(
+                                    opacity: animation,
+                                    child: const SelectThemePage(),
+                                  ))),
                       width: size.width * 0.85,
                       height: size.height * 0.065),
                 )

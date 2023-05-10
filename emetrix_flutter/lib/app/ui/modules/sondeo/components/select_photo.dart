@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
@@ -26,6 +27,10 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
   Widget build(BuildContext context) {
     super.build(context);
     final size = MediaQuery.of(context).size;
+    final theme = ref.watch(themeProvider);
+    final backColor = theme == ThemeMode.dark
+        ? Theme.of(context).hintColor
+        : Theme.of(context).highlightColor;
 
     return GestureDetector(
       onTap: () => handleImage(size: size),
@@ -45,7 +50,7 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
                     child: Container(
                       height: size.height * 0.2,
                       width: size.height * 0.2,
-                      color: c.surface,
+                      color: backColor,
                       child: Image.file(
                         image!,
                         fit: BoxFit.cover,
@@ -72,7 +77,7 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
                 SizedBox(height: size.height * 0.02),
                 Center(
                   child: CircleAvatar(
-                    backgroundColor: c.disabled.withOpacity(0.1),
+                    backgroundColor: backColor,
                     radius: size.height * 0.1,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -83,10 +88,7 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
                           color: c.disabled.withOpacity(0.8),
                           size: size.height * 0.06,
                         ),
-                        Text(
-                          'Selecciona imagen',
-                          style: t.textDisabled,
-                        ),
+                        Text('Selecciona imagen', style: t.text),
                       ],
                     ),
                   ),

@@ -10,14 +10,14 @@ import 'package:animate_do/animate_do.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 
-class SelectTheme extends ConsumerStatefulWidget {
-  const SelectTheme({super.key});
+class SelectThemePage extends ConsumerStatefulWidget {
+  const SelectThemePage({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SelectThemeState();
 }
 
-class _SelectThemeState extends ConsumerState<SelectTheme> {
+class _SelectThemeState extends ConsumerState<SelectThemePage> {
   bool isLoading = false;
 
   @override
@@ -40,7 +40,7 @@ class _SelectThemeState extends ConsumerState<SelectTheme> {
         children: [
           FadeIn(
               delay: const Duration(milliseconds: 500),
-              child: Center(child: Text('Ponte comodo.', style: t.subtitle))),
+              child: Center(child: Text('Ponte cómodo.', style: t.subtitle))),
           FadeIn(
             delay: const Duration(milliseconds: 900),
             child: Center(

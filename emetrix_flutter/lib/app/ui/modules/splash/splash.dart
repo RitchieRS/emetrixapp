@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:animate_do/animate_do.dart';
@@ -33,6 +34,12 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: c.surface,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: c.surface),
+      ),
       body: Container(
         height: size.height,
         width: size.width,

@@ -20,11 +20,13 @@ class QuestionBuilder extends ConsumerStatefulWidget {
       _QuestionBuilderState();
 }
 
-class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
+class _QuestionBuilderState extends ConsumerState<QuestionBuilder>
+    with AutomaticKeepAliveClientMixin {
   // List<String> lenght = [];
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     print('TIPO: ${widget.pregunta.tipo}');
 
     switch (widget.pregunta.tipo) {
@@ -125,4 +127,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
 
     return Center(child: Text(widget.pregunta.pregunta ?? 'NoData'));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

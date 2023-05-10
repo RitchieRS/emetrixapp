@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:emetrix_flutter/app/ui/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,7 +12,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vibration/vibration.dart';
 
 import 'controller.dart';
 import 'widgets/back_image.dart';
@@ -199,7 +199,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           user.clear();
           password.clear();
           setState(() => switchButton = false);
-          await Vibration.vibrate();
+          await vibrate();
         });
       } else if (userLoggedIn == true && isDark == true) {
         Future.delayed(const Duration(seconds: 1)).whenComplete(() async {
@@ -207,7 +207,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           user.clear();
           password.clear();
           setState(() => switchButton = false);
-          await Vibration.vibrate();
+          await vibrate();
         });
       } else {
         Future.delayed(const Duration(seconds: 1)).whenComplete(() {

@@ -1,4 +1,5 @@
 import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
+import 'package:emetrix_flutter/app/ui/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,7 +11,6 @@ import 'package:emetrix_flutter/app/ui/main/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/login/login.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:vibration/vibration.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -170,7 +170,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     await prefs.clear().whenComplete(() async {
       setState(() {});
-      await Vibration.vibrate();
+      await vibrate();
       navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) {
         return const LoginPage();
       }), (route) => false);

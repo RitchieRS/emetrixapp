@@ -1,9 +1,7 @@
+import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/drawer/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:emetrix_flutter/app/core/services/main.dart';
-import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/route_of_the_day.dart';
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
@@ -27,6 +25,7 @@ class _HomePageState extends ConsumerState<MainPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = ref.watch(themeProvider);
+    final indexMain = ref.watch(mainIndex);
     List<Widget> screens = [
       const RouteOfTheDayPage(),
       const SettingsPage(),
@@ -35,12 +34,18 @@ class _HomePageState extends ConsumerState<MainPage> {
     return Scaffold(
         // body: screens[ref.watch(mainIndex)],
         drawer: const MyDrawer(),
-        body: IndexedStack(
-          index: ref.watch(mainIndex),
-          children: screens,
+        body: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 150),
+          switchInCurve: Curves.fastEaseInToSlowEaseOut,
+          switchOutCurve: Curves.fastEaseInToSlowEaseOut,
+          child: indexMain == 0 ? screens[0] : screens[1],
         ),
+        // IndexedStack(
+        //   index: ref.watch(mainIndex),
+        //   children: screens,
+        // ),
         bottomNavigationBar: BottomNavigationBar(
-          currentIndex: ref.watch(mainIndex),
+          currentIndex: indexMain,
           onTap: (value) => ref.read(mainIndex.notifier).setIndex(value),
           elevation: 0,
           selectedItemColor: c.primary,
@@ -50,6 +55,7 @@ class _HomePageState extends ConsumerState<MainPage> {
           showUnselectedLabels: true,
           selectedFontSize: 12,
           unselectedFontSize: 12,
+          enableFeedback: true,
           items: const [
             BottomNavigationBarItem(
                 icon: Icon(Icons.alt_route), label: 'Ruta del dia'),

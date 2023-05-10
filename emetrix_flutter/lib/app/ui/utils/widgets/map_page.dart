@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -8,18 +10,19 @@ import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 
-class MapsPage extends StatefulWidget {
+class MapsPage extends ConsumerStatefulWidget {
   const MapsPage({super.key, this.store});
   final Store? store;
 
   @override
-  State<MapsPage> createState() => _MapsPageState();
+  ConsumerState<MapsPage> createState() => _MapsPageState();
 }
 
-class _MapsPageState extends State<MapsPage> {
+class _MapsPageState extends ConsumerState<MapsPage> {
   PermissionStatus permission = PermissionStatus.denied;
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
+  String? _darkMapStyle;
 
   final CameraPosition _defaultMexico = const CameraPosition(
     target: LatLng(19.451054, -99.125519),
@@ -29,7 +32,15 @@ class _MapsPageState extends State<MapsPage> {
   @override
   void initState() {
     super.initState();
+    _loadMapStyles();
+    _setMapStyle(ref);
     requestLocationPermission();
+  }
+
+  @override
+  void dispose() {
+    disp0se();
+    super.dispose();
   }
 
   @override
@@ -166,6 +177,27 @@ class _MapsPageState extends State<MapsPage> {
 
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(kLake));
+  }
+
+  Future<void> _loadMapStyles() async {
+    _darkMapStyle = await rootBundle.loadString('assets/theme/maps_dark.json');
+    // _lightMapStyle =
+    //     await rootBundle.loadString('assets/map_styles/maps_light.json');
+  }
+
+  Future<void> _setMapStyle(WidgetRef ref) async {
+    final controller = await _controller.future;
+    final theme = ref.watch(themeProvider);
+    if (theme == ThemeMode.dark) {
+      controller.setMapStyle(_darkMapStyle);
+    } else {
+      controller.setMapStyle('[]');
+    }
+  }
+
+  Future<void> disp0se() async {
+    final controller = await _controller.future;
+    controller.dispose();
   }
 
   //
