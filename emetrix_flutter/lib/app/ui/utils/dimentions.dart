@@ -1,6 +1,8 @@
 import 'dart:ui' as ui;
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 class Dimentions {
   final Size size = ui.window.physicalSize;
   final double pixelRatio = ui.window.devicePixelRatio;

@@ -32,13 +32,17 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final isDark = ref.watch(themeProvider);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: c.surface,
         elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: c.surface),
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: c.surface,
+            statusBarIconBrightness:
+                isDark == ThemeMode.light ? Brightness.dark : Brightness.light),
       ),
       body: Container(
         height: size.height,

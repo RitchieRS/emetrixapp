@@ -48,16 +48,28 @@ class _SelectionState extends ConsumerState<SelectionMultiple>
                 return Row(
                   children: [
                     Checkbox(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)),
                         activeColor: c.primary,
                         value: boollist?[index],
                         onChanged: (newvalue) {
-                          boollist?[index] = newvalue ?? false;
-                          setState(() {});
+                          setState(() => boollist?[index] = newvalue ?? false);
                         }),
-                    SizedBox(
-                      width: size.width * 0.7,
-                      child: Text(widget.question.opciones?[index].opcion ?? '',
-                          maxLines: 2, overflow: TextOverflow.ellipsis),
+                    GestureDetector(
+                      onTap: () {
+                        if (boollist?[index] == false) {
+                          setState(() => boollist?[index] = true);
+                          return;
+                        }
+                        setState(() => boollist?[index] = false);
+                      },
+                      child: SizedBox(
+                        width: size.width * 0.7,
+                        child: Text(
+                            widget.question.opciones?[index].opcion ?? '',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis),
+                      ),
                     ),
                   ],
                 );

@@ -14,14 +14,12 @@ class TypeSondeo extends ConsumerWidget {
     required this.sondeoItem,
     required this.onTap,
     required this.enebled,
-    this.finished = false,
   });
   final int index;
   final bool isLast;
   final RespM sondeoItem;
   final VoidCallback? onTap;
   final bool enebled;
-  final bool finished;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,11 +27,13 @@ class TypeSondeo extends ConsumerWidget {
     const int animationDuration = 1000;
     final currentOption = ref.watch(currentOptionProvider);
     final theme = ref.watch(themeProvider);
-    final enebledColor = c.secondary.withOpacity(0.7);
+    const enebledColor = Color(0xff3C91E6);
     final disabledColor =
         theme == ThemeMode.light ? Colors.grey[400] : c.disabled;
     final finishedColor = c.ok.withOpacity(0.7);
     // final enabledColor = index <= currentOption - 1;
+    final finishedSections = ref.watch(finishedSondeos);
+    final isFinished = finishedSections.any((element) => element == index);
 
     return Padding(
       padding: isLast
@@ -61,7 +61,7 @@ class TypeSondeo extends ConsumerWidget {
                     width: size.height * 0.08,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: finished
+                        color: isFinished
                             ? finishedColor
                             : enebled
                                 ? enebledColor
@@ -87,11 +87,11 @@ class TypeSondeo extends ConsumerWidget {
                         children: [
                           Text('PASO ${index + 1}', style: t.textDisabled2),
                           SizedBox(width: size.width * 0.02),
-                          finished
+                          isFinished
                               ? Text('Completado', style: t.textOk)
                               : const SizedBox(),
                           SizedBox(width: size.width * 0.01),
-                          finished
+                          isFinished
                               ? FadeIn(child: Icon(Icons.done, color: c.ok))
                               : SizedBox(width: size.width * 0.06),
                         ],
@@ -131,7 +131,7 @@ class TypeSondeo extends ConsumerWidget {
                               builder: (context, value, _) =>
                                   LinearProgressIndicator(
                                 value: value,
-                                color: finished
+                                color: isFinished
                                     ? finishedColor
                                     : enebled
                                         ? enebledColor

@@ -11,9 +11,13 @@ class QuestionBuilder extends ConsumerStatefulWidget {
     super.key,
     required this.pregunta,
     required this.store,
+    required this.index,
+    this.textController,
   });
   final Preguntas pregunta;
   final Store store;
+  final int index;
+  final TextEditingController? textController;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -27,12 +31,12 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    print('TIPO: ${widget.pregunta.tipo}');
+    // print('TIPO: ${widget.pregunta.tipo}');
 
     switch (widget.pregunta.tipo) {
       //Asistencia
-      case 'asistencia':
-        return MapView(store: widget.store);
+      // case 'asistencia':
+      //   return MapView(store: widget.store);
 
       //Tomar Fotografía
       case 'unicaRadio':
@@ -44,27 +48,37 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder>
       //todo
       case 'abierta':
         return Question(
+          type: widget.pregunta.tipo ?? 'abierto',
+          controller: widget.textController,
+          index: widget.index,
           pregunta: widget.pregunta,
-          getAnswer: (String answer) {
+          answer: (String answer) {
+            // print('Respuesta: $answer');
             //Get the value of the textfield and save it to validate and send to endpoint;
           },
         );
 
       case 'numerico':
         return Question(
+            type: widget.pregunta.tipo ?? 'abierto',
+            controller: widget.textController,
+            index: widget.index,
             pregunta: widget.pregunta,
-            getAnswer: (String answer) {
+            answer: (String answer) {
               //Get the value of the textfield and save it to validate and send to endpoint;
             },
             isNumeric: true);
 
       case 'decimal':
         return Question(
+            type: widget.pregunta.tipo ?? 'abierto',
+            controller: widget.textController,
+            index: widget.index,
             pregunta: widget.pregunta,
-            getAnswer: (String answer) {
+            answer: (String answer) {
               //Get the value of the textfield and save it to validate and send to endpoint;
             },
-            isNumeric: true,
+            isDecimal: true,
             min: 5,
             max: 10);
 
@@ -118,14 +132,21 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder>
 
       case 'email':
         return Question(
+          type: widget.pregunta.tipo ?? 'abierto',
+          controller: widget.textController,
+          index: widget.index,
           pregunta: widget.pregunta,
-          getAnswer: (String answer) {
+          answer: (String answer) {
             //Get the value of the textfield and save it to validate and send to endpoint;
           },
         );
     }
 
     return Center(child: Text(widget.pregunta.pregunta ?? 'NoData'));
+  }
+
+  setTextControllers(Preguntas pregunta) {
+    // pregunta.tipo
   }
 
   @override

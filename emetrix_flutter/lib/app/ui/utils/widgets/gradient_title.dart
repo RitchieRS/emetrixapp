@@ -34,7 +34,7 @@ class GradientTitle extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(title1, style: t.textLight),
+            // Text(title1, style: t.textLight),
             Text(title2, style: t.titleWhite),
           ],
         ),

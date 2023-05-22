@@ -49,6 +49,7 @@ class _SelectionState extends ConsumerState<Selection>
             child: widget.yesNo == true
                 ? ListView.builder(
                     shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
                     itemCount: widget.yn.length,
                     itemBuilder: (BuildContext context, int index) {
                       return RadioListTile(
@@ -66,31 +67,6 @@ class _SelectionState extends ConsumerState<Selection>
                       );
                     },
                   )
-                // Container(
-                //     width: size.width * 0.95,
-                //     decoration: BoxDecoration(
-                //         border: Border.all(color: c.disabled),
-                //         borderRadius: BorderRadius.circular(10)),
-                //     child: Center(
-                //       child: DropdownButton(
-                //         underline: Container(),
-                //         items: widget.yn.map((item) {
-                //           return DropdownMenuItem(
-                //             value: item,
-                //             child: Text(item),
-                //           );
-                //         }).toList(),
-                //         value: typeService,
-                //         icon: const Icon(Icons.keyboard_arrow_down),
-                //         onChanged: (String? newValue) {
-                //           setState(() {
-                //             typeService = newValue!;
-                //           });
-                //           setState(() {});
-                //         },
-                //       ),
-                //     ),
-                //   )
                 : widget.oneSelection != true &&
                         widget.question.opciones != null
                     ? ListView.builder(
@@ -106,39 +82,12 @@ class _SelectionState extends ConsumerState<Selection>
                             groupValue: selectedOption,
                             onChanged: (value) {
                               if (value != null) {
-                                setState(() {
-                                  selectedOption = value;
-                                });
+                                setState(() => selectedOption = value);
                               }
                             },
                           );
                         },
                       )
-
-                    // Container(
-                    //     width: size.width * 0.95,
-                    //     decoration: BoxDecoration(
-                    //         border: Border.all(color: c.disabled),
-                    //         borderRadius: BorderRadius.circular(10)),
-                    //     child: Center(
-                    //       child: DropdownButton(
-                    //         underline: Container(),
-                    //         items: widget.question.opciones!.map((item) {
-                    //           return DropdownMenuItem(
-                    //             value: item.opcion ?? '',
-                    //             child: Text(item.opcion ?? ''),
-                    //           );
-                    //         }).toList(),
-                    //         value: multi,
-                    //         icon: const Icon(Icons.keyboard_arrow_down),
-                    //         onChanged: (String? newValue) {
-                    //           setState(() {
-                    //             multi = newValue!;
-                    //           });
-                    //         },
-                    //       ),
-                    //     ),
-                    //   )
                     : Container(height: 50, color: c.error),
           ),
         ),

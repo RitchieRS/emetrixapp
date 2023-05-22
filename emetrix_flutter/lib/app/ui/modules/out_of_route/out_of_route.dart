@@ -1,19 +1,18 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
-import 'package:emetrix_flutter/app/ui/ui.dart';
-import 'package:flutter/material.dart';
 import 'dart:convert';
-
+import 'package:emetrix_flutter/app/core/services/services.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-import 'package:emetrix_flutter/app/core/services/internet/conection_service.dart';
-import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
+import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:emetrix_flutter/app/ui/ui.dart';
 
 import 'controller.dart';
 import 'loading_view.dart';
@@ -42,8 +41,8 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(outORControllerProvider);
-    final isDark = ref.watch(themeProvider);
     final size = MediaQuery.of(context).size;
+    // final isDark = ref.watch(themeProvider);
 
     switch (state.state) {
       case States.succes:
@@ -52,6 +51,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
           appBar: AppBar(
             backgroundColor: c.surface,
             elevation: 0,
+            systemOverlayStyle: SystemUiOverlayStyle.light,
           ),
           body: Stack(
             alignment: Alignment.bottomCenter,
@@ -59,10 +59,10 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
               Column(
                 children: [
                   GradientTitle(
-                      height: size.height * 0.25,
+                      height: size.height * 0.2,
                       width: size.width,
-                      title1: 'Fuera de',
-                      title2: 'RUTA'),
+                      title1: '',
+                      title2: 'Fuera de Ruta'),
                 ],
               ),
               //
@@ -71,9 +71,9 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                     const BorderRadius.only(topLeft: Radius.circular(35)),
                 child: Material(
                   child: Container(
-                    height: size.height * 0.82,
+                    height: size.height * 0.87,
                     width: size.width,
-                    color: Theme.of(context).highlightColor.withOpacity(0.2),
+                    color: Theme.of(context).dialogBackgroundColor,
                     child: Padding(
                       padding: EdgeInsets.only(top: size.height * 0.02),
                       child: RefreshIndicator(

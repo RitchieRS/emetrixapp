@@ -46,8 +46,9 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     final onlyFirst = ref.watch(onlyFirstProvider);
     final finishedSections = ref.watch(finishedSondeos);
     final completeAll = finishedSections.length == sondeosList2.length;
+    print('Finished Sections: $finishedSections');
 
-    //Close and save to db the current Navigator state, when the app restart, restore the Navigator state
+    //*Close and save to db the current Navigator state, when the app restart, restore the Navigator state
 
     return WillPopScope(
       onWillPop: () async {
@@ -102,8 +103,6 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
                   // final enabled = index <= currentOption;       //One by one
                   // final enabled = index <= sondeosList2.length; //All
                   final enabled = index != 0 && onlyFirst; //One then all
-                  final isFinished =
-                      finishedSections.any((element) => element == index);
 
                   return TypeSondeo(
                     onTap: !enabled
@@ -121,7 +120,6 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
                           }
                         : null,
                     enebled: !enabled,
-                    finished: isFinished,
                     sondeoItem: sondeosList2[index],
                     index: index,
                     isLast: index + 1 == sondeosList2.length ? true : false,
