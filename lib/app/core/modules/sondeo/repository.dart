@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'sondeo.dart';
-import 'package:emetrix_flutter/app/core/core.dart';
+import 'package:emetrix_flutter/app/core/global/core.dart';
 
 class HomeRepository {
   //

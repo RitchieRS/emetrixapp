@@ -1,15 +1,13 @@
-import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
-import 'package:emetrix_flutter/app/ui/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
+import 'package:emetrix_flutter/app/ui/global/ui.dart';
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/login/login.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
@@ -111,7 +109,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     );
   }
 
-  showModal(Size size, ThemeMode isDark) {
+  void showModal(Size size, ThemeMode isDark) {
     showModalBottomSheet(
         context: context,
         shape: const RoundedRectangleBorder(
@@ -122,17 +120,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: EdgeInsets.only(top: size.height * 0.01),
+                padding: EdgeInsets.only(
+                    top: size.height * 0.02, bottom: size.height * 0.01),
                 child: Text('Cuidado', style: t.subtitle2),
               ),
               Padding(
-                padding: EdgeInsets.all(size.height * 0.01),
+                padding: EdgeInsets.symmetric(horizontal: size.height * 0.03),
                 child: Text(
-                    'Ten en cuenta que se borrará todo tu progreso guardado en tu teléfono hasta el momento. \nIncluyendo: \n - Rutas del dia. \n - Actividades adicionales.\n - Sondeos. \n etc.',
+                    'Ten en cuenta que se borrará todo tu progreso guardado en tu teléfono hasta el momento. \nIncluyendo: \n - Rutas del dia. \n - Actividades adicionales.\n - Sondeos. ',
                     style: t.medium),
               ),
               Padding(
-                padding: EdgeInsets.all(size.height * 0.01),
+                padding: EdgeInsets.all(size.height * 0.02),
                 child: Text('¿Seguro que quieres cerrar la sesión?',
                     style: t.medium),
               ),

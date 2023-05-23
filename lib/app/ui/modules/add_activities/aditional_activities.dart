@@ -39,55 +39,39 @@ class _AditionalActivitiesPageState
     switch (state.state) {
       case States.succes:
         return Scaffold(
-          body: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              Column(
-                children: [
-                  GradientTitle(
-                      height: size.height * 0.25,
-                      width: size.width,
-                      title1: 'Actividades',
-                      title2: 'EXTRAS'),
-                ],
-              ),
-              //
-              Padding(
-                padding: EdgeInsets.only(top: size.height * 0.18),
-                child: RefreshIndicator(
-                  onRefresh: getStoresDB,
-                  child: ClipRRect(
-                    borderRadius:
-                        const BorderRadius.only(topRight: Radius.circular(40)),
-                    child: Container(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      child: Padding(
-                        padding: EdgeInsets.only(top: size.height * 0.015),
-                        child: ListView.builder(
-                          padding: const EdgeInsets.only(top: 0),
-                          shrinkWrap: true,
-                          addAutomaticKeepAlives: false,
-                          addRepaintBoundaries: false,
-                          addSemanticIndexes: false,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: storesMain.length,
-                          itemBuilder: (context, index) => KeepAlive(
-                            keepAlive: true,
-                            child: MyCard(
-                                // onChanged: (index) => selectedStores(index),
-                                onChanged: (index) {},
-                                canceled: false,
-                                index: index,
-                                resp: storesMain[index]),
-                          ),
-                        ),
-                      ),
+          appBar: GradientTitle(
+            preferedSize: Size(size.width, size.height * 0.1),
+            title: 'EXTRAS',
+          ),
+          body: Padding(
+            padding: EdgeInsets.only(top: size.height * 0.02),
+            child: RefreshIndicator(
+              onRefresh: getStoresDB,
+              child: ClipRRect(
+                borderRadius:
+                    const BorderRadius.only(topRight: Radius.circular(40)),
+                child: Container(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    addAutomaticKeepAlives: false,
+                    addRepaintBoundaries: false,
+                    addSemanticIndexes: false,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: storesMain.length,
+                    itemBuilder: (context, index) => KeepAlive(
+                      keepAlive: true,
+                      child: MyCard(
+                          // onChanged: (index) => selectedStores(index),
+                          onChanged: (index) {},
+                          canceled: false,
+                          index: index,
+                          resp: storesMain[index]),
                     ),
                   ),
                 ),
               ),
-              //
-            ],
+            ),
           ),
         );
       case States.error:

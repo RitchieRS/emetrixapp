@@ -17,7 +17,15 @@ class MyTitle extends ConsumerWidget implements PreferredSizeWidget {
       leading: IconButton(
           onPressed: () => Scaffold.of(context).openDrawer(),
           icon: Icon(Icons.menu, color: c.primary)),
-      title: FadeIn(child: Text(currentTime(), style: t.textDisabled2)),
+      title: Row(
+        children: [
+          FadeIn(child: Text(currentTime(), style: t.textDisabled2)),
+          Spin(
+              infinite: true,
+              duration: const Duration(seconds: 3),
+              child: Text(currentIcon(), style: t.textDisabled2)),
+        ],
+      ),
       elevation: 0,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       iconTheme: IconThemeData(color: c.primary),
@@ -38,6 +46,18 @@ class MyTitle extends ConsumerWidget implements PreferredSizeWidget {
       return '¡Buenas Tardes!';
     }
     return '¡Buenas Noches!';
+  }
+
+  String currentIcon() {
+    final hour = DateTime.now().hour;
+
+    if (hour >= 5 && hour <= 12) {
+      return '☀';
+    }
+    if (hour >= 13 && hour <= 19) {
+      return '⛅';
+    }
+    return '🌙';
   }
 
   @override

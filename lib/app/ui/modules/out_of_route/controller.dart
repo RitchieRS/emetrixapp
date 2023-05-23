@@ -25,6 +25,8 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
     List<Store> stores = [];
     final prefs = await SharedPreferences.getInstance();
     final List<String>? storesData = prefs.getStringList('storesData');
+    state = state.copyWith(state: States.loading);
+    await Future.delayed(const Duration(seconds: 1));
 
     if (storesData != null) {
       for (var store in storesData) {

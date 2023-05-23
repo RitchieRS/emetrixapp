@@ -1,22 +1,11 @@
-import 'dart:ui' as ui;
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
-
 class Dimentions {
-  final Size size = ui.window.physicalSize;
-  final double pixelRatio = ui.window.devicePixelRatio;
+  final Size size = PlatformDispatcher.instance.views.first.physicalSize;
+  final double pixelRatio =
+      PlatformDispatcher.instance.views.first.devicePixelRatio;
 
-  // final double width = size.width / pixelRatio;
-  // final height = size.height / pixelRatio;
+  double getWidth() => size.width / pixelRatio;
 
-  double getWidth() {
-    return size.width / pixelRatio;
-  }
-
-  double getHeight() {
-    return size.height / pixelRatio;
-  }
-
-  // print('Screen width: $width, height: $height');
+  double getHeight() => size.height / pixelRatio;
 }

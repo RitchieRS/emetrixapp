@@ -61,6 +61,8 @@ class _HomePageState extends ConsumerState<MainPage> {
           selectedFontSize: 12,
           unselectedFontSize: 12,
           enableFeedback: true,
+          selectedLabelStyle: t.text,
+          unselectedLabelStyle: t.text,
           items: const [
             BottomNavigationBarItem(
                 icon: Icon(Icons.alt_route), label: 'Ruta del dia'),

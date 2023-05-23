@@ -15,7 +15,7 @@ dependencies:
   dio: ^5.0.3
   shared_preferences: ^2.0.18
   vibration: ^1.7.6
-  path_provider: ^2.0.11
+  # path_provider: ^2.0.11
   animate_do: ^3.0.2
   shimmer: ^2.0.0
   url_launcher: ^6.1.10
@@ -28,13 +28,9 @@ dependencies:
   qr_code_scanner: ^1.0.1
   intl: ^0.18.0
   hand_signature: ^3.0.1
-  one_context: ^2.1.0
-
-  flutter_map: ^3.1.0
-  latlong2: ^0.8.1
-
+  # flutter_map: ^3.1.0
+  # latlong2: ^0.8.1
   google_maps_flutter: ^2.2.5
-  google_maps_flutter_platform_interface: ^2.0.4
   permission_handler: ^10.2.0
   flutter_localizations:
     sdk: flutter
@@ -48,14 +44,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   fonts:
-    - family: Montserrat
-      fonts:
-        - asset: fonts/Montserrat/Montserrat-Regular.ttf
-        - asset: fonts/Montserrat/Montserrat-Bold.ttf
-        - asset: fonts/Montserrat/Montserrat-Light.ttf
-        - asset: fonts/Montserrat/Montserrat-Medium.ttf
-        - asset: fonts/Montserrat/Montserrat-Italic.ttf
-          style: italic
     - family: Poppins
       fonts:
         - asset: fonts/Poppins/Poppins-Regular.ttf
@@ -64,14 +52,30 @@ flutter:
         - asset: fonts/Poppins/Poppins-Medium.ttf
         - asset: fonts/Poppins/Poppins-Italic.ttf
           style: italic
-    - family: Raleway
-      fonts:
-        - asset: fonts/Raleway/Raleway-Regular.ttf
-        - asset: fonts/Raleway/Raleway-Bold.ttf
-        - asset: fonts/Raleway/Raleway-Light.ttf
-        - asset: fonts/Raleway/Raleway-Medium.ttf
-        - asset: fonts/Raleway/Raleway-Italic.ttf
-          style: italic
+    # - family: Montserrat
+    #   fonts:
+    #     - asset: fonts/Montserrat/Montserrat-Regular.ttf
+    #     - asset: fonts/Montserrat/Montserrat-Bold.ttf
+    #     - asset: fonts/Montserrat/Montserrat-Light.ttf
+    #     - asset: fonts/Montserrat/Montserrat-Medium.ttf
+    #     - asset: fonts/Montserrat/Montserrat-Italic.ttf
+    #       style: italic
+    # - family: Raleway
+    #   fonts:
+    #     - asset: fonts/Raleway/Raleway-Regular.ttf
+    #     - asset: fonts/Raleway/Raleway-Bold.ttf
+    #     - asset: fonts/Raleway/Raleway-Light.ttf
+    #     - asset: fonts/Raleway/Raleway-Medium.ttf
+    #     - asset: fonts/Raleway/Raleway-Italic.ttf
+    #       style: italic
+    # - family: Prompt
+    #   fonts:
+    #     - asset: fonts/Prompt/Prompt-Regular.ttf
+    #     - asset: fonts/Prompt/Prompt-Bold.ttf
+    #     - asset: fonts/Prompt/Prompt-Light.ttf
+    #     - asset: fonts/Prompt/Prompt-Medium.ttf
+    #     - asset: fonts/Prompt/Prompt-Italic.ttf
+    #       style: italic
 
   assets:
     - assets/

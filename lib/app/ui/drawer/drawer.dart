@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
@@ -50,20 +51,20 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
 
           Padding(
             padding: EdgeInsets.fromLTRB(28, hasNotch ? 0 : 20, 16, 10),
-            child: const Text('Principales'),
+            child: Text('Principales', style: t.text2),
           ),
 
           ...appMenuItems.sublist(0, 4).map((item) =>
               NavigationDrawerDestination(
-                  icon: item.icon, label: Text(item.title))),
+                  icon: item.icon, label: Text(item.title, style: t.text2))),
 
           Padding(
             padding: EdgeInsets.fromLTRB(28, hasNotch ? 0 : 20, 16, 10),
-            child: const Text('Secundarias'),
+            child: Text('Secundarias', style: t.text2),
           ),
 
           ...appMenuItems.sublist(4).map((item) => NavigationDrawerDestination(
-              icon: item.icon, label: Text(item.title))),
+              icon: item.icon, label: Text(item.title, style: t.text2))),
 
           //
         ]);

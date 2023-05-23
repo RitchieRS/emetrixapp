@@ -2,11 +2,13 @@ import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class MesagessService {
+  static const int _duration = 3;
+
   static void showError(BuildContext context, String message) {
     final snackbar = SnackBar(
       content: Text(message),
       backgroundColor: Colors.red,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: _duration),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
@@ -16,7 +18,7 @@ class MesagessService {
     final snackbar = SnackBar(
       content: Text(message),
       backgroundColor: Colors.yellow,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: _duration),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
@@ -31,7 +33,7 @@ class MesagessService {
           : SnackBarBehavior.fixed,
       content: Text(message),
       backgroundColor: Colors.green,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: _duration),
       margin: marginBottom,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackbar);

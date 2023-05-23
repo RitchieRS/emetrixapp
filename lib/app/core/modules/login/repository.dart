@@ -1,5 +1,5 @@
 import 'login.dart';
-import 'package:emetrix_flutter/app/core/core.dart';
+import 'package:emetrix_flutter/app/core/global/core.dart';
 
 class LoginRepository {
   //

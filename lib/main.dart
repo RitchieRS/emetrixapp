@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
-import 'package:emetrix_flutter/app/core/routes.dart';
-import 'package:emetrix_flutter/app/ui/modules/splash/splash.dart';
-import 'app/core/services/theme/app_theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:emetrix_flutter/app/core/services/services.dart';
+import 'package:emetrix_flutter/app/core/global/routes.dart';
+import 'package:emetrix_flutter/app/ui/modules/splash/splash.dart';
 
 void main() {
   runApp(const ProviderScope(child: MainApp()));

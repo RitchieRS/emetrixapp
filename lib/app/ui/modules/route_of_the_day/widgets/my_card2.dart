@@ -7,7 +7,6 @@ import 'package:page_transition/page_transition.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/map_page.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
@@ -31,7 +30,9 @@ class _MyCardState extends ConsumerState<MyCard2> {
     final size = MediaQuery.of(context).size;
     final backWidget = Padding(
       padding: EdgeInsets.only(
-          right: size.height * 0.01, bottom: size.height * 0.005),
+          right: size.height * 0.01,
+          left: size.height * 0.01,
+          bottom: size.height * 0.005),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Container(
@@ -54,15 +55,15 @@ class _MyCardState extends ConsumerState<MyCard2> {
           padding: EdgeInsets.only(bottom: size.height * 0.005),
           child: Center(
             child: Material(
-              borderRadius: BorderRadius.circular(10),
+              // borderRadius: BorderRadius.circular(8),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
                 clipBehavior: Clip.hardEdge,
                 child: InkWell(
                   onTap: () => showMsj2(widget.resp?.tienda ?? ''),
                   borderRadius: BorderRadius.circular(10),
                   child: Ink(
-                    height: size.height * 0.107,
+                    height: size.height * 0.125,
                     width: size.width * 0.95,
                     decoration: BoxDecoration(
                       color: ThemeData().highlightColor.withOpacity(0.2),
@@ -73,7 +74,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          width: size.width * 0.012,
+                          width: size.width * 0.013,
                           height: double.infinity,
                           color: c.primary,
                         ),
@@ -143,11 +144,14 @@ class _MyCardState extends ConsumerState<MyCard2> {
 
   Future<bool> confirmDimiss() async {
     final delete = await showMsj(
-        context: context,
-        title: 'Cuidado',
-        content: '¿Seguro que deseas eliminar esta tienda de Ruta del Dia?',
-        buttonLabel: 'Eliminar',
-        destructive: true);
+      context: context,
+      title: '¿Eliminar?',
+      content:
+          'Ten en cuenta que necesitarás conexión a internet para añadir nuevamente una tienda. \n\n¿Seguro que deseas eliminar esta tienda de Ruta del Dia?',
+      buttonLabel: 'Eliminar',
+      destructive: true,
+      justifyContent: true,
+    );
     return Future.value(delete);
   }
 

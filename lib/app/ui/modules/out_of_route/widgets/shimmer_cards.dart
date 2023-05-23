@@ -14,14 +14,14 @@ class LoadingCard extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(14),
           child: Shimmer.fromColors(
-            baseColor: Colors.grey.withOpacity(0.7),
-            highlightColor: Colors.white,
+            baseColor: Theme.of(context).highlightColor,
+            highlightColor: Colors.white.withOpacity(0.8),
             loop: 1000000000000000000,
             period: const Duration(milliseconds: 750),
             child: Container(
               height: size.height * 0.11,
               width: size.width * 0.95,
-              color: Colors.grey.withOpacity(0.45),
+              color: Theme.of(context).hintColor,
             ),
           ),
         ),

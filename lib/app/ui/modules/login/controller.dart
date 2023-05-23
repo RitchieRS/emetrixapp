@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:emetrix_flutter/app/core/core.dart';
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/modules/login/login.dart';
 import 'package:emetrix_flutter/app/core/modules/login/service.dart';
 import 'package:emetrix_flutter/app/core/providers/providers.dart';

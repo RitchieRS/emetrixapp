@@ -1,18 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
-import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
+import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
+import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:emetrix_flutter/app/ui/ui.dart';
+import 'package:emetrix_flutter/app/ui/global/ui.dart';
 
 import 'controller.dart';
 import 'loading_view.dart';
@@ -47,58 +44,40 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     switch (state.state) {
       case States.succes:
         return Scaffold(
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            backgroundColor: c.surface,
-            elevation: 0,
-            systemOverlayStyle: SystemUiOverlayStyle.light,
-          ),
+          appBar: GradientTitle(
+              preferedSize: Size(size.width, size.height * 0.1),
+              title: 'Fuera de Ruta'),
           body: Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              Column(
-                children: [
-                  GradientTitle(
-                      height: size.height * 0.2,
-                      width: size.width,
-                      title1: '',
-                      title2: 'Fuera de Ruta'),
-                ],
-              ),
               //
-              ClipRRect(
-                borderRadius:
-                    const BorderRadius.only(topLeft: Radius.circular(35)),
-                child: Material(
-                  child: Container(
-                    height: size.height * 0.87,
-                    width: size.width,
-                    color: Theme.of(context).dialogBackgroundColor,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: size.height * 0.02),
-                      child: RefreshIndicator(
-                        onRefresh: getStoresDB,
-                        child: ListView.builder(
-                          padding: const EdgeInsets.only(top: 0),
-                          shrinkWrap: true,
-                          addAutomaticKeepAlives: false,
-                          addRepaintBoundaries: false,
-                          addSemanticIndexes: false,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: storesMain.length,
-                          itemBuilder: (context, index) => KeepAlive(
-                            keepAlive: true,
-                            child: IndexedSemantics(
-                              index: index,
-                              child: GestureDetector(
-                                onTap: () {},
-                                child: MyCard(
-                                    onChanged: (index) => selectedStores(index),
-                                    canceled: ref.watch(cardProvider),
-                                    index: index,
-                                    resp: storesMain[index]),
-                              ),
-                            ),
+              Container(
+                height: size.height * 0.87,
+                width: size.width,
+                color: Theme.of(context).dialogBackgroundColor,
+                child: Padding(
+                  padding: EdgeInsets.only(top: size.height * 0.02),
+                  child: RefreshIndicator(
+                    onRefresh: getStoresDB,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.only(top: 0),
+                      shrinkWrap: true,
+                      addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: false,
+                      addSemanticIndexes: false,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: storesMain.length,
+                      itemBuilder: (context, index) => KeepAlive(
+                        keepAlive: true,
+                        child: IndexedSemantics(
+                          index: index,
+                          child: GestureDetector(
+                            onTap: () {},
+                            child: MyCard(
+                                onChanged: (index) => selectedStores(index),
+                                canceled: ref.watch(cardProvider),
+                                index: index,
+                                resp: storesMain[index]),
                           ),
                         ),
                       ),
@@ -110,7 +89,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                   ? FadeIn(
                       duration: const Duration(milliseconds: 100),
                       child: Padding(
-                        padding: EdgeInsets.only(top: size.height * 0.77),
+                        padding: EdgeInsets.only(top: size.height * 0.7),
                         child: Center(
                           child: isLoading
                               ? ButonLoading(

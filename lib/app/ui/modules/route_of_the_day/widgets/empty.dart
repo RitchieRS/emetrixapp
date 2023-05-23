@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,10 +13,17 @@ class EmptyList extends StatelessWidget {
 
     return ListView(
       children: [
+        Padding(
+            padding: EdgeInsets.only(
+              top: size.width * 0.02,
+              left: size.width * 0.05,
+              bottom: size.width * 0.02,
+            ),
+            child: Text('Ruta del Dia', style: t.titleBlue)),
         //
         FadeIn(
           child: Padding(
-            padding: EdgeInsets.only(top: size.height * 0.05),
+            padding: EdgeInsets.only(top: size.height * 0.03),
             child: SvgPicture.asset(
               AppAssets.location,
               height: size.height * 0.2,

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:emetrix_flutter/app/core/core.dart';
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 
 class StoresRepository {

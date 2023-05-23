@@ -11,32 +11,18 @@ class LoadingView extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Stack(
-        alignment: AlignmentDirectional.bottomCenter,
-        children: [
-          GradientTitle(
-            height: size.height,
-            width: size.width,
-            title1: 'Fuera de',
-            title2: 'RUTA',
-          ),
-          ClipRRect(
-            borderRadius: const BorderRadius.only(topLeft: Radius.circular(35)),
-            child: Container(
-              height: size.height * 0.75,
-              width: size.width,
-              color: ThemeData().scaffoldBackgroundColor,
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: 10,
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return const LoadingCard();
-                  }),
-            ),
-          ),
-        ],
-      ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: GradientTitle(
+          preferedSize: Size(size.width, size.height * 0.1),
+          title: 'Fuera de Ruta'),
+      body: ListView.builder(
+          padding: EdgeInsets.only(top: size.height * 0.02),
+          shrinkWrap: true,
+          itemCount: 10,
+          physics: const BouncingScrollPhysics(),
+          itemBuilder: (context, index) {
+            return const LoadingCard();
+          }),
     );
   }
 }

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
-Future<bool> showMsj(
-    {required BuildContext context,
-    required String title,
-    required String content,
-    required bool destructive,
-    bool onlyOk = false,
-    required String buttonLabel}) async {
+Future<bool> showMsj({
+  required BuildContext context,
+  required String title,
+  required String content,
+  required bool destructive,
+  required String buttonLabel,
+  bool onlyOk = false,
+  bool justifyContent = false,
+}) async {
   final bool result = await showDialog(
       context: context,
       barrierDismissible: false,
@@ -20,7 +22,9 @@ Future<bool> showMsj(
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis),
-          content: Text(content, style: t.text2, textAlign: TextAlign.center),
+          content: Text(content,
+              style: t.text2,
+              textAlign: justifyContent ? TextAlign.justify : TextAlign.center),
           actionsAlignment: MainAxisAlignment.center,
           actions: onlyOk == true
               ? [

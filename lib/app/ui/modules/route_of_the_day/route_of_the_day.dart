@@ -50,12 +50,10 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
               physics: const BouncingScrollPhysics(),
               children: [
                 Padding(
-                  padding: titlePadding,
-                  child: Text('Ruta del Dia', style: t.titleBlue),
-                ),
+                    padding: titlePadding,
+                    child: Text('Ruta del Dia', style: t.titleBlue)),
                 ListView.builder(
                     shrinkWrap: true,
-                    // padding: const EdgeInsets.only(top: 0),
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: state.data.length,
                     itemBuilder: (context, index) {
