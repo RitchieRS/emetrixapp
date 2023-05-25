@@ -1,9 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class PickerDT extends ConsumerStatefulWidget {
   const PickerDT({

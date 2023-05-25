@@ -32,7 +32,7 @@ class _ColorsMain extends IColors {
   Color primary = const Color(0xff0099ff);
 
   @override
-  Color secondary = const Color.fromARGB(255, 0, 92, 157);
+  Color secondary = const Color(0xFF005C9D);
 
   @override
   Color onSecondary = const Color(0xffeaeaea);

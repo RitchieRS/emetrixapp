@@ -1,10 +1,9 @@
-import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 
+import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 
 class Gps extends ConsumerStatefulWidget {
   const Gps({super.key, required this.pregunta});

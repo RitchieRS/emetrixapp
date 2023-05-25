@@ -1,11 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
+
 import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/onboarding/widgets/page_custom.dart';
 import 'package:emetrix_flutter/app/ui/onboarding/select_theme.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class OnBoardingPage extends StatefulWidget {
   const OnBoardingPage({super.key});

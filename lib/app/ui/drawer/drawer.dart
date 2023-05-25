@@ -39,9 +39,9 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
           Padding(
             padding: EdgeInsets.only(top: hasNotch ? 5 : 15),
             child: DrawerHeader(
-              decoration: const BoxDecoration(color: Colors.transparent),
+              decoration: BoxDecoration(color: c.surface),
               child: CircleAvatar(
-                  backgroundColor: Theme.of(context).primaryColor,
+                  backgroundColor: Theme.of(context).highlightColor,
                   child: Padding(
                     padding: const EdgeInsets.all(25.0),
                     child: Image.asset(AppAssets.logo),

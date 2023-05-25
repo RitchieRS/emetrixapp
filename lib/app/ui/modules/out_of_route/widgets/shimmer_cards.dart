@@ -19,7 +19,7 @@ class LoadingCard extends StatelessWidget {
             loop: 1000000000000000000,
             period: const Duration(milliseconds: 750),
             child: Container(
-              height: size.height * 0.11,
+              height: size.height * 0.125,
               width: size.width * 0.95,
               color: Theme.of(context).hintColor,
             ),

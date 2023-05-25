@@ -1,14 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'package:emetrix_flutter/app/core/services/services.dart';
-import 'package:emetrix_flutter/app/ui/modules/out_of_route/out_of_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
 
+import 'package:emetrix_flutter/app/core/services/services.dart';
+import 'package:emetrix_flutter/app/ui/modules/out_of_route/out_of_route.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 
 class SelectThemePage extends ConsumerStatefulWidget {
   const SelectThemePage({super.key});

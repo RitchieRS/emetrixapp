@@ -36,7 +36,7 @@ class _HomePageState extends ConsumerState<MainPage> {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           toolbarHeight: 0,
-          backgroundColor: c.surface,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           elevation: 0,
           systemOverlayStyle: SystemUiOverlayStyle(
               statusBarColor: c.surface,
@@ -45,9 +45,13 @@ class _HomePageState extends ConsumerState<MainPage> {
                   : Brightness.light),
         ),
         drawer: const MyDrawer(),
-        body: IndexedStack(
-          index: ref.watch(mainIndex),
-          children: screens,
+        body: Material(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: IndexedStack(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            index: ref.watch(mainIndex),
+            children: screens,
+          ),
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: indexMain,

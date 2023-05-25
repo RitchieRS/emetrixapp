@@ -47,72 +47,74 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
           appBar: GradientTitle(
               preferedSize: Size(size.width, size.height * 0.1),
               title: 'Fuera de Ruta'),
-          body: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              //
-              Container(
-                height: size.height * 0.87,
-                width: size.width,
-                color: Theme.of(context).dialogBackgroundColor,
-                child: Padding(
-                  padding: EdgeInsets.only(top: size.height * 0.02),
-                  child: RefreshIndicator(
-                    onRefresh: getStoresDB,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.only(top: 0),
-                      shrinkWrap: true,
-                      addAutomaticKeepAlives: false,
-                      addRepaintBoundaries: false,
-                      addSemanticIndexes: false,
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: storesMain.length,
-                      itemBuilder: (context, index) => KeepAlive(
-                        keepAlive: true,
-                        child: IndexedSemantics(
-                          index: index,
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: MyCard(
-                                onChanged: (index) => selectedStores(index),
-                                canceled: ref.watch(cardProvider),
-                                index: index,
-                                resp: storesMain[index]),
+          body: Material(
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                //
+                Container(
+                  height: size.height * 0.87,
+                  width: size.width,
+                  color: Theme.of(context).dialogBackgroundColor,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: size.height * 0.02),
+                    child: RefreshIndicator(
+                      onRefresh: getStoresDB,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.only(top: 0),
+                        shrinkWrap: true,
+                        addAutomaticKeepAlives: false,
+                        addRepaintBoundaries: false,
+                        addSemanticIndexes: false,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: storesMain.length,
+                        itemBuilder: (context, index) => KeepAlive(
+                          keepAlive: true,
+                          child: IndexedSemantics(
+                            index: index,
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: MyCard(
+                                  onChanged: (index) => selectedStores(index),
+                                  canceled: ref.watch(cardProvider),
+                                  index: index,
+                                  resp: storesMain[index]),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              stores.isNotEmpty
-                  ? FadeIn(
-                      duration: const Duration(milliseconds: 100),
-                      child: Padding(
-                        padding: EdgeInsets.only(top: size.height * 0.7),
-                        child: Center(
-                          child: isLoading
-                              ? ButonLoading(
-                                  background: c.primary,
-                                  onFinish: null,
-                                  width: size.width * 0.85,
-                                  height: size.height * 0.065)
-                              : ButonDimentions(
-                                  background: c.primary,
-                                  title:
-                                      'Agregar Ruta${stores.length <= 1 ? '' : 's'}',
-                                  style: t.mediumLight,
-                                  // isDark == ThemeMode.dark
-                                  //     ? t.mediumDark
-                                  //     : t.mediumLight,
-                                  onTap: () => start(),
-                                  width: size.width * 0.85,
-                                  height: size.height * 0.065),
+                stores.isNotEmpty
+                    ? FadeIn(
+                        duration: const Duration(milliseconds: 100),
+                        child: Padding(
+                          padding: EdgeInsets.only(top: size.height * 0.7),
+                          child: Center(
+                            child: isLoading
+                                ? ButonLoading(
+                                    background: c.primary,
+                                    onFinish: null,
+                                    width: size.width * 0.85,
+                                    height: size.height * 0.065)
+                                : ButonDimentions(
+                                    background: c.primary,
+                                    title:
+                                        'Agregar Ruta${stores.length <= 1 ? '' : 's'}',
+                                    style: t.mediumLight,
+                                    // isDark == ThemeMode.dark
+                                    //     ? t.mediumDark
+                                    //     : t.mediumLight,
+                                    onTap: () => start(),
+                                    width: size.width * 0.85,
+                                    height: size.height * 0.065),
+                          ),
                         ),
-                      ),
-                    )
-                  : Container()
-            ],
+                      )
+                    : Container()
+              ],
+            ),
           ),
         );
       case States.error:

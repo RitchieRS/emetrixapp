@@ -27,7 +27,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       appBar: AppBar(
         title: Text('Ajustes', style: t.titleBlue),
         centerTitle: true,
-        backgroundColor: c.surface,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         toolbarHeight: size.height * 0.1,
         systemOverlayStyle: isDark == ThemeMode.dark

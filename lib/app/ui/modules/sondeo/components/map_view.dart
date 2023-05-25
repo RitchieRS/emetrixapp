@@ -103,20 +103,19 @@ class _MapViewState extends ConsumerState<MapView> {
             ClipRRect(
               borderRadius: BorderRadius.circular(14),
               child: Container(
-                height: size.height * 0.18,
+                height: size.height * 0.2,
                 width: size.width,
                 color: Theme.of(context).scaffoldBackgroundColor,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SvgPicture.asset(AppAssets.store,
-                        height: size.height * 0.12),
                     Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            width: size.width * 0.55,
+                            width: size.width * 0.5,
                             color: c.surface,
                             child: Text(widget.store.tienda ?? 'México',
                                 style: t.mediumBold),
@@ -134,6 +133,8 @@ class _MapViewState extends ConsumerState<MapView> {
                           Text('Rango Gps: ${widget.store.rangoGPS.toString()}',
                               style: t.text),
                         ]),
+                    SvgPicture.asset(AppAssets.store,
+                        height: size.height * 0.12),
                   ],
                 ),
               ),

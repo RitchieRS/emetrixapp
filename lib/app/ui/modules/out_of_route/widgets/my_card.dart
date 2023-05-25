@@ -31,6 +31,8 @@ class _MyCardState extends ConsumerState<MyCard> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final height = size.height * 0.125;
+    final width = size.width * 0.95;
     cancelColor();
 
     return FadeIn(
@@ -46,8 +48,8 @@ class _MyCardState extends ConsumerState<MyCard> {
               },
               borderRadius: BorderRadius.circular(10),
               child: Container(
-                height: size.height * 0.107,
-                width: size.width * 0.95,
+                height: height,
+                width: width,
                 decoration: BoxDecoration(
                   color: isBlue
                       ? c.primary.withOpacity(0.1)
@@ -58,36 +60,36 @@ class _MyCardState extends ConsumerState<MyCard> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.store,
-                        color:
-                            isBlue ? c.secondary.withOpacity(0.7) : Colors.grey,
-                      ),
+                    Container(
+                      width: size.width * 0.013,
+                      height: double.infinity,
+                      color: c.secondary,
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                            padding: EdgeInsets.only(left: size.width * 0.02),
-                            child: SizedBox(
-                                width: size.width * 0.65,
-                                child: Text('${widget.resp?.tienda}',
-                                    style: t.mediumBold,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis))),
-                        Padding(
-                            padding: EdgeInsets.only(left: size.width * 0.02),
-                            child: Text('Cadena: ${widget.resp?.idCadena}',
-                                style: t.text)),
-                        Padding(
-                            padding: EdgeInsets.only(left: size.width * 0.02),
-                            child: Text('Grupo: ${widget.resp?.idGrupo}',
-                                style: t.text)),
-                      ],
+                    Padding(
+                      padding: EdgeInsets.only(left: size.width * 0.04),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.only(left: size.width * 0.02),
+                              child: SizedBox(
+                                  width: size.width * 0.65,
+                                  child: Text('${widget.resp?.tienda}',
+                                      style: t.mediumBold,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis))),
+                          Padding(
+                              padding: EdgeInsets.only(left: size.width * 0.02),
+                              child: Text('Cadena: ${widget.resp?.idCadena}',
+                                  style: t.text)),
+                          Padding(
+                              padding: EdgeInsets.only(left: size.width * 0.02),
+                              child: Text('Grupo: ${widget.resp?.idGrupo}',
+                                  style: t.text)),
+                        ],
+                      ),
                     ),
                     const Spacer(),
                     IconButton(

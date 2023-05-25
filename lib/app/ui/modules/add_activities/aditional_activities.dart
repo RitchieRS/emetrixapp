@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
-
 import 'package:emetrix_flutter/app/ui/modules/out_of_route/widgets/my_card.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 
 import 'controller.dart';
 import 'state.dart';

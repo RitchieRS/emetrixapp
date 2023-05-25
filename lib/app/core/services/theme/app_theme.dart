@@ -22,14 +22,15 @@ class AppTheme {
     return ThemeData(
         primaryColor: c.primary,
         dividerColor: c.surface,
+        // scaffoldBackgroundColor: const Color(0xFF2C2C2C),
         fontFamily: 'Poppins',
         colorScheme: ColorScheme.fromSeed(
           brightness: Brightness.dark,
           seedColor: c.primary,
         ),
-        navigationDrawerTheme: NavigationDrawerThemeData(
-          indicatorColor: c.primary,
-        ),
+        navigationDrawerTheme: const NavigationDrawerThemeData(
+            // indicatorColor: c.primary,
+            ),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           unselectedIconTheme:
               IconThemeData(color: c.background.withOpacity(0.4)),

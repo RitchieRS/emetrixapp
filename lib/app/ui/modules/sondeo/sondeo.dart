@@ -1,21 +1,18 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'package:animate_do/animate_do.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/components/type_sondeo.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:animate_do/animate_do.dart';
+import 'package:page_transition/page_transition.dart';
 
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/type_sondeo.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
-
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
-import 'package:page_transition/page_transition.dart';
 
 class SondeoPage extends ConsumerStatefulWidget {
   const SondeoPage({super.key, required this.sondeosList, required this.store});
@@ -42,11 +39,11 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider);
-    // final currentOption = ref.watch(currentOptionProvider);
     final onlyFirst = ref.watch(onlyFirstProvider);
     final finishedSections = ref.watch(finishedSondeos);
     final completeAll = finishedSections.length == sondeosList2.length;
-    print('Finished Sections: $finishedSections');
+    debugPrint('Finished Sections: $finishedSections');
+    // final currentOption = ref.watch(currentOptionProvider);
 
     //*Close and save to db the current Navigator state, when the app restart, restore the Navigator state
 
@@ -61,11 +58,9 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text('${widget.store.tienda}',
-                  style:
-                      // isDark == ThemeMode.dark ? t.titleWhite : t.titleBlack,
-                      isDark == ThemeMode.dark
-                          ? t.subtitleLight
-                          : t.subtitleDark,
+                  style: isDark == ThemeMode.dark
+                      ? t.subtitleLight
+                      : t.subtitleDark,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   maxLines: 2),

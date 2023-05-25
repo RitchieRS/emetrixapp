@@ -28,6 +28,8 @@ class _MyCardState extends ConsumerState<MyCard2> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final height = size.height * 0.125;
+    final width = size.width * 0.95;
     final backWidget = Padding(
       padding: EdgeInsets.only(
           right: size.height * 0.01,
@@ -63,8 +65,8 @@ class _MyCardState extends ConsumerState<MyCard2> {
                   onTap: () => showMsj2(widget.resp?.tienda ?? ''),
                   borderRadius: BorderRadius.circular(10),
                   child: Ink(
-                    height: size.height * 0.125,
-                    width: size.width * 0.95,
+                    height: height,
+                    width: width,
                     decoration: BoxDecoration(
                       color: ThemeData().highlightColor.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(10),
@@ -78,16 +80,6 @@ class _MyCardState extends ConsumerState<MyCard2> {
                           height: double.infinity,
                           color: c.primary,
                         ),
-                        // Padding(
-                        //   padding: const EdgeInsets.all(8.0),
-                        //   child: Container(
-                        //       decoration: BoxDecoration(
-                        //           color: c.primary, shape: BoxShape.circle),
-                        //       child: Padding(
-                        //         padding: const EdgeInsets.all(8.0),
-                        //         child: Icon(Icons.store, color: c.background),
-                        //       )),
-                        // ),
                         Padding(
                           padding: EdgeInsets.only(left: size.width * 0.04),
                           child: Column(

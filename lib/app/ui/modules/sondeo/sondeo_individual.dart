@@ -7,7 +7,6 @@ import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 
 import 'components/components.dart';
 import 'controller.dart';

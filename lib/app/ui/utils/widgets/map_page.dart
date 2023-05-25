@@ -103,22 +103,19 @@ class _MapsPageState extends ConsumerState<MapsPage> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(14),
                 child: Container(
-                  height: size.height * 0.23,
+                  height: size.height * 0.2,
                   width: size.width,
                   color: Theme.of(context).scaffoldBackgroundColor,
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset(
-                        AppAssets.location,
-                        height: size.height * 0.135,
-                        width: size.width * 0.1,
-                      ),
                       Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              width: size.width * 0.55,
+                              width: size.width * 0.5,
                               color: c.surface,
                               child: Text(widget.store?.tienda ?? 'México',
                                   style: t.mediumBold),
@@ -138,6 +135,11 @@ class _MapsPageState extends ConsumerState<MapsPage> {
                                 'Rango Gps: ${widget.store?.rangoGPS.toString() ?? 'Gps Range'}',
                                 style: t.text),
                           ]),
+                      SvgPicture.asset(
+                        AppAssets.location2,
+                        height: size.height * 0.13,
+                        width: size.width * 0.1,
+                      ),
                     ],
                   ),
                 ),
