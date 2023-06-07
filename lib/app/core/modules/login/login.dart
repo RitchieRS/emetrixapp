@@ -10,7 +10,7 @@ class Login {
     required this.resp,
   });
 
-  final int idError;
+  final int? idError;
   final Resp resp;
 
   factory Login.fromRawJson(String str) => Login.fromJson(json.decode(str));

@@ -23,19 +23,17 @@ class LoginPage extends ConsumerStatefulWidget {
 class _LoginPageState extends ConsumerState<LoginPage> {
   final user = TextEditingController();
   final password = TextEditingController();
+  final userKey = GlobalKey<FormState>();
+  final passKey = GlobalKey<FormState>();
   bool obscurePassword = true;
   bool switchButton = false;
 
   @override
-  void initState() {
-    super.initState();
-    switchButton = false;
-  }
-
-  @override
   void dispose() {
     user.dispose();
+    userKey.currentState?.dispose();
     password.dispose();
+    passKey.currentState?.dispose();
     super.dispose();
   }
 
@@ -54,98 +52,76 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       ),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Stack(
-            children: [
-              //Imagen
-              const BackImage(),
+        child: Stack(
+          children: [
+            //Imagen
+            const BackImage(),
 
-              Opacity(
-                opacity: 0.7,
-                child: Padding(
-                    padding: EdgeInsets.only(
-                      top: size.height * 0.33,
-                      //left: size.width * 0.07
+            //Form
+            FadeInUp(
+              child: Padding(
+                padding: EdgeInsets.only(top: size.height * 0.3),
+                child: ListView(
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    Opacity(
+                      opacity: 0.7,
+                      child: Align(
+                          alignment: Alignment.center,
+                          child: Text('Inicia Sesión', style: t.title)),
                     ),
-                    child: Align(
-                        alignment: Alignment.center,
-                        child: Text('Inicia Sesión', style: t.title))),
-              ),
-
-              //Form
-              FadeInUp(
-                child: Padding(
-                  padding: EdgeInsets.only(top: size.height * 0.45),
-                  child: Container(
-                    height: size.height * 0.5,
-                    width: size.width,
-                    color: c.surface,
-                    child: Column(
-                      children: [
-                        //
-                        Padding(
-                            padding: EdgeInsets.only(
-                                top: size.height * 0.01,
-                                left: size.width * 0.07),
-                            child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text('Usuario', style: t.text2))),
-                        TxtField(
-                          controller: user,
-                          isPassword: false,
-                          obscurePassword: false,
-                          onPressed: () {},
-                        ),
-
-                        Padding(
-                            padding: EdgeInsets.only(
-                                top: size.height * 0.01,
-                                left: size.width * 0.07),
-                            child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text('Contraseña', style: t.text2))),
-                        TxtField(
-                          controller: password,
-                          isPassword: true,
-                          obscurePassword: obscurePassword,
-                          onPressed: () {
-                            setState(() {
-                              obscurePassword = !obscurePassword;
-                            });
-                          },
-                        ),
-
-                        switchButton == false
-                            ? Padding(
-                                padding:
-                                    EdgeInsets.only(top: size.height * 0.05),
-                                child: ButonDimentions(
-                                    background: c.primary,
-                                    title: 'Entrar',
-                                    style: t.mediumLight,
-                                    onTap: () => start(),
-                                    width: size.width * 0.9,
-                                    height: size.height * 0.06))
-                            : Padding(
-                                padding:
-                                    EdgeInsets.only(top: size.height * 0.05),
-                                child: const Center(
-                                  child:
-                                      CircularProgressIndicator(strokeWidth: 2),
-                                ),
-                              )
-
-                        //
-                      ],
+                    //
+                    Padding(
+                        padding: EdgeInsets.only(
+                            top: size.height * 0.01, left: size.width * 0.07),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('Usuario', style: t.text2))),
+                    TxtField(
+                      hinText: 'Ingresa usuario',
+                      controller: user,
+                      isPassword: false,
+                      formKey: userKey,
                     ),
-                  ),
+
+                    Padding(
+                        padding: EdgeInsets.only(
+                            top: size.height * 0.01, left: size.width * 0.07),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('Contraseña', style: t.text2))),
+                    TxtField(
+                      hinText: 'Ingresa contraseña',
+                      controller: password,
+                      isPassword: true,
+                      formKey: passKey,
+                    ),
+
+                    switchButton == false
+                        ? Padding(
+                            padding: EdgeInsets.only(top: size.height * 0.05),
+                            child: ButonDimentions(
+                                background: c.primary,
+                                title: 'Entrar',
+                                style: t.mediumLight,
+                                onTap: () => start(),
+                                width: size.width * 0.9,
+                                height: size.height * 0.06))
+                        : Padding(
+                            padding: EdgeInsets.only(top: size.height * 0.05),
+                            child: const Center(
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          )
+
+                    //
+                  ],
                 ),
               ),
+            ),
 
-              //
-            ],
-          ),
+            //
+          ],
         ),
       ),
     );
@@ -155,88 +131,102 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final networkResult = await (Connectivity().checkConnectivity());
     setState(() => switchButton = !switchButton);
 
-    if (user.text.isEmpty || password.text.isEmpty) {
-      showYesNoMsj(
-          context: context,
-          title: 'Casi...',
-          content:
-              'El usuario y la contraseña no pueden estar vacios. Ingresa un usuario  y contraseña.',
-          yesOnly: true);
-      setState(() => switchButton = false);
-    } else if (networkResult == ConnectivityResult.none) {
+    if (!validateForm(userKey.currentState) &&
+        !validateForm(passKey.currentState)) {
+      setState(() {});
+      return;
+    }
+
+    if (!validateForm(userKey.currentState) ||
+        !validateForm(passKey.currentState)) {
+      setState(() {});
+      return;
+    }
+
+    if (networkResult == ConnectivityResult.none) {
       showYesNoMsj(
           context: context,
           title: 'Sin Conexión',
           content:
               'Conéctate a internet para poder iniciar sesión correctamente.',
           yesOnly: true);
-
       setState(() => switchButton = false);
-    } else {
-      await requestAccess();
-      await getStores();
+      return;
     }
+
+    await requestAccess();
+    //
+  }
+
+  bool validateForm(FormState? form) {
+    if (form != null) {
+      if (form.validate()) {
+        //Form is valid
+        setState(() {});
+        return true;
+      } else {
+        //Form is invalid
+        setState(() {});
+        setState(() => switchButton = false);
+        return false;
+      }
+    }
+    return false;
   }
 
   Future requestAccess() async {
     final prefs = await SharedPreferences.getInstance();
     final isDark = prefs.containsKey('isDarkMode');
+    final navigator = Navigator.of(context);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final navigator = Navigator.of(context);
-      bool userLoggedIn = await ref
-          .read(loginControllerProvider.notifier)
-          .sendRequest(user.text, password.text);
-      setState(() {});
+    bool userLoggedIn = await ref
+        .read(loginControllerProvider.notifier)
+        .sendRequest(user.text, password.text);
+    setState(() {});
 
-      if (userLoggedIn == true && isDark == false) {
-        Future.delayed(const Duration(seconds: 1)).whenComplete(() async {
-          navigator.pushReplacementNamed('onboard');
-          user.clear();
-          password.clear();
-          setState(() => switchButton = false);
-          await vibrate();
-        });
-      } else if (userLoggedIn == true && isDark == true) {
-        Future.delayed(const Duration(seconds: 1)).whenComplete(() async {
-          navigator.pushReplacementNamed('home');
-          user.clear();
-          password.clear();
-          setState(() => switchButton = false);
-          await vibrate();
-        });
-      } else {
-        Future.delayed(const Duration(seconds: 1)).whenComplete(() {
-          setState(() => switchButton = false);
-          user.clear();
-          password.clear();
-          showYesNoMsj(
-              context: context,
-              title: 'Error',
-              content:
-                  'El usuario y la contraseña no existen. Intentalo de nuevo.',
-              yesOnly: true);
-        });
-      }
+    if (userLoggedIn == true && isDark == false) {
+      await getStores();
+      navigator.pushReplacementNamed('onboard');
+      user.clear();
+      password.clear();
+      setState(() => switchButton = false);
+      await vibrate();
+      return;
+    }
+    if (userLoggedIn == true && isDark == true) {
+      await getStores();
+      navigator.pushReplacementNamed('home');
+      user.clear();
+      password.clear();
+      setState(() => switchButton = false);
+      await vibrate();
+      return;
+    }
+    await Future.delayed(const Duration(seconds: 1)).whenComplete(() {
+      setState(() => switchButton = false);
+      user.clear();
+      password.clear();
+      showYesNoMsj(
+          context: context,
+          title: 'Error',
+          content: 'El usuario y la contraseña no existen. Intentalo de nuevo.',
+          yesOnly: true);
     });
   }
 
   Future getStores() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      List<String> storesJson = [];
-      final stores =
-          await ref.read(loginControllerProvider.notifier).getStores();
-      final storesAdditional =
-          await ref.read(loginControllerProvider.notifier).getAditionalStores();
+    List<String> storesJson = [];
+    final stores = await ref.read(loginControllerProvider.notifier).getStores();
+    final storesAdditional =
+        await ref.read(loginControllerProvider.notifier).getAditionalStores();
 
-      stores.resp?.forEach((store) {
-        storesJson.add(jsonEncode(store));
-      });
-      storesAdditional.resp?.forEach((store) {
-        storesJson.add(jsonEncode(store));
-      });
-
-      ref.read(loginControllerProvider.notifier).saveStoresData(storesJson);
+    stores.resp?.forEach((store) {
+      storesJson.add(jsonEncode(store));
     });
+    storesAdditional.resp?.forEach((store) {
+      storesJson.add(jsonEncode(store));
+    });
+
+    ref.read(loginControllerProvider.notifier).saveStoresData(storesJson);
   }
 }

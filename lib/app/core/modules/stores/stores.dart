@@ -13,7 +13,7 @@ class Store {
   int? definirNombre;
   String? clasificacion;
   int? rangoGPS;
-  String? checkGPS;
+  int? checkGPS;
 
   Store(
       {this.id,

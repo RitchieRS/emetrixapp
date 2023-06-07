@@ -110,14 +110,26 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder>
 
       case 'fecha':
         return PickerDT(
-            pregunta: widget.pregunta.pregunta ?? 'NoData', onlyDate: true);
+            getDateTime: (dateTime) {
+              print(dateTime);
+            },
+            pregunta: widget.pregunta.pregunta ?? 'NoData',
+            onlyDate: true);
 
       case 'fechaHora':
-        return PickerDT(pregunta: widget.pregunta.pregunta ?? 'NoData');
+        return PickerDT(
+            getDateTime: (dateTime) {
+              print(dateTime);
+            },
+            pregunta: widget.pregunta.pregunta ?? 'NoData');
 
       case 'hora':
         return PickerDT(
-            pregunta: widget.pregunta.pregunta ?? 'NoData', onlyTime: true);
+            getDateTime: (dateTime) {
+              print(dateTime);
+            },
+            pregunta: widget.pregunta.pregunta ?? 'NoData',
+            onlyTime: true);
 
       case 'scannerQR':
         return const Scanner();

@@ -28,27 +28,29 @@ class ButonDimentions extends ConsumerStatefulWidget {
 class _Buton2State extends ConsumerState<ButonDimentions> {
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: InkWell(
-        borderRadius: BorderRadius.circular(10),
-        onTap: widget.onTap,
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: widget.showShadow == true
-                ? [
-                    BoxShadow(
-                        color: c.disabled.withOpacity(0.4),
-                        blurRadius: 20.0,
-                        offset: const Offset(1, 1))
-                  ]
-                : [],
-            color: widget.background,
-          ),
-          height: widget.height,
-          width: widget.width,
-          child: Center(
-            child: Text(widget.title, style: widget.style),
+    return Center(
+      child: Material(
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: widget.onTap,
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: widget.showShadow == true
+                  ? [
+                      BoxShadow(
+                          color: c.disabled.withOpacity(0.4),
+                          blurRadius: 20.0,
+                          offset: const Offset(1, 1))
+                    ]
+                  : [],
+              color: widget.background,
+            ),
+            height: widget.height,
+            width: widget.width,
+            child: Center(
+              child: Text(widget.title, style: widget.style),
+            ),
           ),
         ),
       ),

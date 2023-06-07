@@ -69,16 +69,12 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     final prefs = await SharedPreferences.getInstance();
     session = prefs.getString('loginInfo');
     setState(() {});
-    // if (kDebugMode) {
-    //   print('SESION ---> $session');
-    // }
   }
 
   Future<void> _checkRoute() async {
     await Future.delayed(const Duration(milliseconds: 2000))
         .whenComplete(() async {
       if (session != null) {
-        //Home
         await Navigator.pushReplacement(
             context,
             PageRouteBuilder(
@@ -87,7 +83,6 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                       child: const MainPage(),
                     )));
       } else {
-        //LogIn
         await Navigator.pushReplacement(
             context,
             PageRouteBuilder(
@@ -96,7 +91,6 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                       child: const LoginPage(),
                     )));
       }
-      //
     });
   }
 }

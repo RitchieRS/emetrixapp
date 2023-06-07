@@ -118,10 +118,14 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
           ),
         );
       case States.error:
-        return ListView(
-          children: [
-            Center(child: Text(state.homeData?.idError.toString() ?? 'error'))
-          ],
+        return Scaffold(
+          body: ListView(
+            children: [
+              Center(
+                  child: Text(state.homeData?.idError.toString() ??
+                      'Hubo un problema con la descarga de tiendas. Inténtalo de nuevo.'))
+            ],
+          ),
         );
       case States.loading:
         return const LoadingView();

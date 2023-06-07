@@ -10,10 +10,12 @@ class PickerDT extends ConsumerStatefulWidget {
     this.onlyDate,
     this.onlyTime,
     required this.pregunta,
+    required this.getDateTime,
   });
   final bool? onlyDate;
   final bool? onlyTime;
   final String pregunta;
+  final Function(DateTime?) getDateTime;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _PickerDTState();
@@ -116,6 +118,7 @@ class _PickerDTState extends ConsumerState<PickerDT>
             firstDate: DateTime.now(),
             lastDate: DateTime.now().add(const Duration(days: 30))) ??
         DateTime.now();
+    widget.getDateTime(selectedDate);
     setState(() {});
   }
 
@@ -128,6 +131,7 @@ class _PickerDTState extends ConsumerState<PickerDT>
     if (hour != null) {
       setState(() {
         selectedDate = DateTime(2023, 1, 1, hour.hour, hour.minute);
+        widget.getDateTime(selectedDate);
       });
     }
   }
@@ -156,6 +160,8 @@ class _PickerDTState extends ConsumerState<PickerDT>
             hour.hour,
             hour.minute,
           );
+
+          widget.getDateTime(selectedDate);
         });
       }
     }

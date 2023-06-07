@@ -6,7 +6,6 @@ export 'select_multiple.dart';
 export 'select_photo.dart';
 export 'selection.dart';
 export 'signature.dart';
-export 'type_builder.dart';
 export 'type_sondeo.dart';
 export 'info_question.dart';
 export 'map_view.dart';

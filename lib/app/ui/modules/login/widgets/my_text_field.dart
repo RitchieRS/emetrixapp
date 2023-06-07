@@ -3,18 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class TxtField extends ConsumerStatefulWidget {
-  const TxtField(
-      {super.key,
-      required this.controller,
-      required this.isPassword,
-      required this.obscurePassword,
-      required this.onPressed
-      // required this.onChanged
-      });
+  const TxtField({
+    super.key,
+    required this.controller,
+    required this.isPassword,
+    required this.formKey,
+    this.hinText = 'Ingresa texto',
+    // required this.onChanged
+  });
   final TextEditingController controller;
   final bool isPassword;
-  final bool obscurePassword;
-  final void Function()? onPressed;
+  final GlobalKey<FormState> formKey;
+  final String hinText;
   // final Function(String text) onChanged;
 
   @override
@@ -22,74 +22,99 @@ class TxtField extends ConsumerStatefulWidget {
 }
 
 class _TxtFieldState extends ConsumerState<TxtField> {
+  bool obscure = true;
+  Color iconColor = c.disabled;
+  final enebledBorder = OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.black54.withOpacity(0.2)),
+    borderRadius: BorderRadius.circular(10),
+  );
+  final focusedBorder = OutlineInputBorder(
+    borderSide: BorderSide(color: c.primary),
+    borderRadius: BorderRadius.circular(10),
+  );
+  final errorBorder = OutlineInputBorder(
+    borderSide: BorderSide(color: c.error),
+    borderRadius: BorderRadius.circular(10),
+  );
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final height = size.height * 0.055;
+    final width = size.width * 0.9;
+    final contentPadding = EdgeInsets.only(
+      left: 12,
+      bottom: 0,
+      top: height / 2,
+    );
+    final outsidePadding = EdgeInsets.only(
+      top: size.height * 0.01,
+      bottom: size.height * 0.01,
+    );
 
-    return widget.isPassword == false
-        ? Padding(
-            padding: EdgeInsets.only(
-                top: size.height * 0.01, bottom: size.height * 0.01),
-            child: TextField(
-                controller: widget.controller,
-                keyboardType: TextInputType.emailAddress,
-                textCapitalization: TextCapitalization.none,
-                decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(
-                        left: 12, bottom: 0, top: size.height * 0.055 / 3),
-                    prefixIcon: const Icon(Icons.alternate_email),
-                    constraints: BoxConstraints(
-                        maxHeight: size.height * 0.055,
-                        maxWidth: size.width * 0.9),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: c.primary),
-                        borderRadius: BorderRadius.circular(10)),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.black54.withOpacity(0.2)),
-                        borderRadius: BorderRadius.circular(10)),
-                    hintText: 'Ingresa usuario')),
-          )
-        : Padding(
-            padding: EdgeInsets.only(
-                top: size.height * 0.01, bottom: size.height * 0.01),
-            child: TextField(
-                controller: widget.controller,
-                keyboardType: TextInputType.emailAddress,
-                obscureText: widget.obscurePassword,
-                textCapitalization: TextCapitalization.none,
-                decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(
-                        left: 12, bottom: 0, top: size.height * 0.055 / 3),
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                        onPressed: widget.onPressed,
-                        icon: Icon(widget.obscurePassword == false
-                            ? Icons.remove_red_eye
-                            : Icons.visibility_off)),
-                    constraints: BoxConstraints(
-                        maxHeight: size.height * 0.055,
-                        maxWidth: size.width * 0.9),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: c.primary),
-                        borderRadius: BorderRadius.circular(10)),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.black54.withOpacity(0.2)),
-                        borderRadius: BorderRadius.circular(10)),
-                    hintText: 'Ingresa contraseña')),
-          );
+    return Center(
+      child: Padding(
+        padding: outsidePadding,
+        child: Form(
+          key: widget.formKey,
+          child: TextFormField(
+              controller: widget.controller,
+              validator: (value) => validateEmpty(value),
+              onChanged: (value) => validateAndSave(),
+              keyboardType: TextInputType.emailAddress,
+              obscureText: widget.isPassword ? obscure : false,
+              textCapitalization: TextCapitalization.none,
+              decoration: InputDecoration(
+                contentPadding: contentPadding,
+                prefixIcon: Icon(
+                    widget.isPassword ? Icons.lock : Icons.alternate_email,
+                    color: iconColor),
+                suffixIcon: widget.isPassword
+                    ? IconButton(
+                        onPressed: () => handleObscure(),
+                        icon: Icon(
+                            obscure
+                                ? Icons.visibility_off
+                                : Icons.remove_red_eye,
+                            color: iconColor))
+                    : null,
+                constraints: BoxConstraints(minHeight: height, maxWidth: width),
+                focusedBorder: focusedBorder,
+                enabledBorder: enebledBorder,
+                errorBorder: errorBorder,
+                focusedErrorBorder: errorBorder,
+                hintText: widget.hinText,
+              )),
+        ),
+      ),
+    );
   }
 
-  Widget clearText() {
-    setState(() {});
-    return IconButton(
-        onPressed: () => widget.controller.clear(),
-        icon: const Icon(Icons.close));
+  void validateAndSave() {
+    final form = widget.formKey.currentState;
+    if (form != null) {
+      if (form.validate()) {
+        setState(() => iconColor = c.primary);
+        return;
+      }
+      setState(() => iconColor = c.error);
+      return;
+    }
+    setState(() => iconColor = c.disabled);
   }
 
-  Widget empty() {
-    setState(() {});
-    return Container(width: 0);
+  String? validateEmpty(String? value) {
+    if (value == null) {
+      return '';
+    }
+    if (value == '' || value.isEmpty) {
+      return 'Completa el campo';
+    }
+
+    return null;
+  }
+
+  void handleObscure() {
+    setState(() => obscure = !obscure);
   }
 }

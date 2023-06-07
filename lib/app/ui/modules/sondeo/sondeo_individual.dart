@@ -32,7 +32,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   double progressBar = 0; //* 1 = 100%
   int lenght = 0;
   List<TextEditingController> textControllers = [];
-  int inputIndex = 0;
+  int inputIndex = 1;
   int indexGlobal = 0;
   List<String> inputs = ['abierta', 'numerico', 'email', 'decimal'];
 
@@ -127,6 +127,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                         setState(() {});
                       },
                       itemBuilder: (context, index) {
+                        print('index ${index + 1}');
+                        print('length ${textControllers.length}');
                         // indexGlobal = index;
 
                         if (widget.sondeoItem.preguntas?[index].tipo ==
