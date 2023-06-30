@@ -31,13 +31,8 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // print('TIPO: ${widget.pregunta.tipo}');
 
     switch (widget.pregunta.tipo) {
-      //Asistencia
-      // case 'asistencia':
-      //   return MapView(store: widget.store);
-
       //Tomar Fotografía
       case 'unicaRadio':
         return Selection(pregunta: widget.pregunta, question: widget.pregunta);

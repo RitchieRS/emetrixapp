@@ -122,8 +122,10 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
           body: ListView(
             children: [
               Center(
-                  child: Text(state.homeData?.idError.toString() ??
-                      'Hubo un problema con la descarga de tiendas. Inténtalo de nuevo.'))
+                  child: Text(
+                      state.homeData?.idError.toString() ??
+                          'Hubo un problema con la descarga de tiendas. Inténtalo de nuevo.',
+                      style: t.mediumDark))
             ],
           ),
         );

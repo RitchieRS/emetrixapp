@@ -182,7 +182,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     bool userLoggedIn = await ref
         .read(loginControllerProvider.notifier)
         .sendRequest(user.text, password.text);
-    setState(() {});
 
     if (userLoggedIn == true && isDark == false) {
       await getStores();
