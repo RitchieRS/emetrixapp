@@ -9,33 +9,41 @@ import 'package:emetrix_flutter/app/ui/modules/sondeo/components/components.dart
 class QuestionBuilder extends ConsumerStatefulWidget {
   const QuestionBuilder({
     super.key,
+    // this.textController,
     required this.pregunta,
     required this.store,
     required this.index,
-    this.textController,
+    required this.answer,
+    required this.answerRadio,
   });
+  // final TextEditingController? textController;
   final Preguntas pregunta;
   final Store store;
   final int index;
-  final TextEditingController? textController;
+  final Function(String) answer;
+  final Function(String) answerRadio;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _QuestionBuilderState();
 }
 
-class _QuestionBuilderState extends ConsumerState<QuestionBuilder>
-    with AutomaticKeepAliveClientMixin {
+class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
   // List<String> lenght = [];
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     switch (widget.pregunta.tipo) {
       //Tomar Fotografía
       case 'unicaRadio':
-        return Selection(pregunta: widget.pregunta, question: widget.pregunta);
+        return Selection(
+          pregunta: widget.pregunta,
+          question: widget.pregunta,
+          answer: (response) {
+            widget.answerRadio(response);
+            //
+          },
+        );
 
       case 'fotoGuardarCopia':
         return SelectPicture(pregunta: widget.pregunta.pregunta ?? 'NoData');
@@ -43,11 +51,11 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder>
       //todo
       case 'abierta':
         return Question(
-          type: widget.pregunta.tipo ?? 'abierto',
-          controller: widget.textController,
+          type: widget.pregunta.tipo ?? 'abierta',
           index: widget.index,
           pregunta: widget.pregunta,
           answer: (String answer) {
+            widget.answer(answer);
             // print('Respuesta: $answer');
             //Get the value of the textfield and save it to validate and send to endpoint;
           },
@@ -55,31 +63,36 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder>
 
       case 'numerico':
         return Question(
-            type: widget.pregunta.tipo ?? 'abierto',
-            controller: widget.textController,
+            type: widget.pregunta.tipo ?? 'abierta',
             index: widget.index,
             pregunta: widget.pregunta,
             answer: (String answer) {
+              widget.answer(answer);
               //Get the value of the textfield and save it to validate and send to endpoint;
-            },
-            isNumeric: true);
+            });
 
       case 'decimal':
         return Question(
-            type: widget.pregunta.tipo ?? 'abierto',
-            controller: widget.textController,
+            type: widget.pregunta.tipo ?? 'abierta',
             index: widget.index,
             pregunta: widget.pregunta,
             answer: (String answer) {
+              widget.answer(answer);
               //Get the value of the textfield and save it to validate and send to endpoint;
             },
-            isDecimal: true,
             min: 5,
             max: 10);
 
       case 'sino':
         return Selection(
-            pregunta: widget.pregunta, question: widget.pregunta, yesNo: true);
+          pregunta: widget.pregunta,
+          question: widget.pregunta,
+          yesNo: true,
+          answer: (response) {
+            widget.answerRadio(response);
+            //
+          },
+        );
 
       case 'multiple':
         return SelectionMultiple(question: widget.pregunta);
@@ -139,11 +152,11 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder>
 
       case 'email':
         return Question(
-          type: widget.pregunta.tipo ?? 'abierto',
-          controller: widget.textController,
+          type: widget.pregunta.tipo ?? 'abierta',
           index: widget.index,
           pregunta: widget.pregunta,
           answer: (String answer) {
+            widget.answer(answer);
             //Get the value of the textfield and save it to validate and send to endpoint;
           },
         );
@@ -151,11 +164,4 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder>
 
     return Center(child: Text(widget.pregunta.pregunta ?? 'NoData'));
   }
-
-  setTextControllers(Preguntas pregunta) {
-    // pregunta.tipo
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }

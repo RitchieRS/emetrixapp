@@ -1,7 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:animate_do/animate_do.dart';
 
 import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
@@ -12,24 +11,20 @@ class MyTitle extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = ref.watch(themeProvider);
+    final size = MediaQuery.of(context).size;
 
     return AppBar(
       leading: IconButton(
           onPressed: () => Scaffold.of(context).openDrawer(),
           icon: Icon(Icons.menu, color: c.primary)),
-      title: Row(
-        children: [
-          FadeIn(child: Text(currentTime(), style: t.textDisabled2)),
-          Spin(
-              infinite: true,
-              duration: const Duration(seconds: 3),
-              child: Text(currentIcon(), style: t.textDisabled2)),
-        ],
-      ),
+      centerTitle: true,
+      title: Text('Ruta del Dia', style: t.titleBlue),
+      //     FadeIn(child: Text(currentTime(), style: t.textDisabled2)),
       elevation: 0,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       iconTheme: IconThemeData(color: c.primary),
-      toolbarHeight: Dimentions().getHeight() * 0.12,
+      toolbarHeight: size.height * 0.1,
+      // toolbarHeight: Dimentions().getHeight() * 0.12,
       systemOverlayStyle: isDark == ThemeMode.dark
           ? SystemUiOverlayStyle.light
           : SystemUiOverlayStyle.dark,
@@ -40,26 +35,16 @@ class MyTitle extends ConsumerWidget implements PreferredSizeWidget {
     final hour = DateTime.now().hour;
 
     if (hour >= 5 && hour <= 12) {
-      return '¡Buenos Días!';
+      return '¡Buenos Días! ☀';
     }
     if (hour >= 13 && hour <= 19) {
-      return '¡Buenas Tardes!';
+      return '¡Buenas Tardes! ⛅';
     }
-    return '¡Buenas Noches!';
-  }
-
-  String currentIcon() {
-    final hour = DateTime.now().hour;
-
-    if (hour >= 5 && hour <= 12) {
-      return '☀';
-    }
-    if (hour >= 13 && hour <= 19) {
-      return '⛅';
-    }
-    return '🌙';
+    return '¡Buenas Noches! 🌙';
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(Dimentions().getHeight() * 0.06);
+  Size get preferredSize => Size.fromHeight(Dimentions().getHeight() * 0.1);
+  // Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  // Size get preferredSize => Size.fromHeight(Dimentions().getHeight() * 0.06);
 }

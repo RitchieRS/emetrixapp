@@ -19,13 +19,11 @@ class SelectPicture extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _SelectPictureState();
 }
 
-class _SelectPictureState extends ConsumerState<SelectPicture>
-    with AutomaticKeepAliveClientMixin {
+class _SelectPictureState extends ConsumerState<SelectPicture> {
   File? image;
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final size = MediaQuery.of(context).size;
     final theme = ref.watch(themeProvider);
     final backColor = theme == ThemeMode.dark
@@ -169,7 +167,4 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
           );
         });
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

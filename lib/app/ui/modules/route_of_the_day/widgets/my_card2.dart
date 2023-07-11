@@ -25,63 +25,77 @@ class MyCard2 extends ConsumerStatefulWidget {
 }
 
 class _MyCardState extends ConsumerState<MyCard2> {
+  final int progress = 0;
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final height = size.height * 0.125;
+    final height = size.height * 0.11; // 125
     final width = size.width * 0.95;
     final backWidget = Padding(
       padding: EdgeInsets.only(
-          right: size.height * 0.01,
-          left: size.height * 0.01,
-          bottom: size.height * 0.005),
+          left: size.height * 0.01, bottom: size.height * 0.005),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Container(
+            height: height,
+            width: width,
             padding: EdgeInsets.only(right: size.height * 0.01),
             decoration: BoxDecoration(color: Colors.red.withOpacity(0.2)),
             alignment: Alignment.centerRight,
             child: const Icon(Icons.delete, color: Colors.redAccent)),
       ),
     );
+    final radius = BorderRadius.circular(8);
+    final backColor = ThemeData().highlightColor.withOpacity(0.25);
+    final iconColor = Theme.of(context).textTheme.bodyLarge?.color;
 
-    return FadeIn(
-      child: Dismissible(
-        // key: ValueKey<int>(widget.index),
-        key: UniqueKey(),
-        background: backWidget,
-        direction: DismissDirection.endToStart,
-        confirmDismiss: (direction) => confirmDimiss(),
-        onDismissed: (direction) => widget.onDeleted(widget.index),
-        child: Padding(
-          padding: EdgeInsets.only(bottom: size.height * 0.005),
-          child: Center(
+    return Center(
+      child: FadeIn(
+        child: Dismissible(
+          key: UniqueKey(),
+          background: backWidget,
+          direction: DismissDirection.endToStart,
+          confirmDismiss: (direction) => confirmDimiss(),
+          onDismissed: (direction) => widget.onDeleted(widget.index),
+          child: Padding(
+            padding: EdgeInsets.only(bottom: size.height * 0.005),
             child: Material(
-              // borderRadius: BorderRadius.circular(8),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: radius,
                 clipBehavior: Clip.hardEdge,
                 child: InkWell(
                   onTap: () => showMsj2(widget.resp?.tienda ?? ''),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: radius,
                   child: Ink(
                     height: height,
                     width: width,
                     decoration: BoxDecoration(
-                      color: ThemeData().highlightColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(10),
+                      color: c.surface,
+                      borderRadius: radius,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Container(
-                          width: size.width * 0.013,
-                          height: double.infinity,
-                          color: c.primary,
+                        // Container(
+                        //   width: size.width * 0.013,
+                        //   height: double.infinity,
+                        //   color: c.primary,
+                        // ),
+                        Padding(
+                          padding: EdgeInsets.only(left: size.width * 0.02),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: backColor),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Icon(Icons.storefront_outlined,
+                                    color: iconColor),
+                              )),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(left: size.width * 0.04),
+                          padding: EdgeInsets.only(left: size.width * 0.02),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,10 +108,10 @@ class _MyCardState extends ConsumerState<MyCard2> {
                                       style: t.mediumBold,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis)),
-                              Text('Cadena: ${widget.resp?.idCadena}',
-                                  style: t.text),
-                              Text('Grupo: ${widget.resp?.idGrupo}',
-                                  style: t.text),
+                              Text('Progreso: $progress%',
+                                  style: progress == 0
+                                      ? t.textDisabled2
+                                      : t.textBlue),
                             ],
                           ),
                         ),
@@ -125,15 +139,6 @@ class _MyCardState extends ConsumerState<MyCard2> {
     );
   }
 
-  // Future goMaps() async {
-  //   final lat = widget.resp?.latitud;
-  //   final lon = widget.resp?.longitud;
-  //   final Uri url =
-  //       Uri.parse('http://maps.google.com/maps?z=12&t=m&q=loc:$lat+$lon');
-  //   debugPrint(url.toString());
-  //   await launchUrl(url, mode: LaunchMode.externalApplication);
-  // }
-
   Future<bool> confirmDimiss() async {
     final delete = await showMsj(
       context: context,
@@ -156,7 +161,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
             builder: (context, ref, child) {
               return AlertDialog(
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                    borderRadius: BorderRadius.circular(8)),
                 title: Text(store,
                     style: t.subtitle,
                     textAlign: TextAlign.center,
@@ -165,8 +170,8 @@ class _MyCardState extends ConsumerState<MyCard2> {
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('¿Ir a los sondeos?',
-                        style: t.text2, textAlign: TextAlign.center),
+                    Text('Cadena: ${widget.resp?.idCadena}', style: t.text),
+                    Text('Grupo: ${widget.resp?.idGrupo}', style: t.text),
                   ],
                 ),
                 actionsAlignment: MainAxisAlignment.center,

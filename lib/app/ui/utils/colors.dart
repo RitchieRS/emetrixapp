@@ -14,6 +14,7 @@ abstract class IColors {
   Color get ok;
   Color get black;
   Color get surface;
+  Color get tertiary;
 
   Color get backgroundTres;
   Color get backgroundSeis;
@@ -39,6 +40,9 @@ class _ColorsMain extends IColors {
 
   @override
   Color onSecondaryDark = const Color(0xff161925);
+
+  @override
+  Color tertiary = const Color(0xff5A81FA);
 
   @override
   Color background = const Color(0xffffffff);

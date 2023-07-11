@@ -12,26 +12,26 @@ class Selection extends ConsumerStatefulWidget {
     this.yn = const ['Si', 'No'],
     required this.question,
     required this.pregunta,
+    required this.answer,
   });
   final bool? yesNo;
   final bool? oneSelection;
   final Preguntas question;
   final List<String> yn;
   final Preguntas pregunta;
+  final Function(String) answer;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SelectionState();
 }
 
-class _SelectionState extends ConsumerState<Selection>
-    with AutomaticKeepAliveClientMixin {
+class _SelectionState extends ConsumerState<Selection> {
   late String typeService = widget.yn[0];
   late String multi = widget.question.opciones?[0].opcion ?? '';
-  int selectedOption = 0;
+  int? selectedOption;
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final size = MediaQuery.of(context).size;
 
     return Column(
@@ -46,55 +46,51 @@ class _SelectionState extends ConsumerState<Selection>
         Padding(
           padding: EdgeInsets.only(bottom: size.height * 0.01),
           child: Center(
-            child: widget.yesNo == true
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: widget.yn.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return RadioListTile(
-                        title: Text(widget.yn[index]),
-                        activeColor: c.primary,
-                        value: index,
-                        groupValue: selectedOption,
-                        onChanged: (value) {
-                          if (value != null) {
-                            setState(() {
-                              selectedOption = value;
-                            });
-                          }
-                        },
-                      );
-                    },
-                  )
-                : widget.oneSelection != true &&
-                        widget.question.opciones != null
-                    ? ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: widget.question.opciones!.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return RadioListTile(
-                            title: Text(
-                                widget.question.opciones![index].opcion ??
-                                    'option'),
-                            value: index,
-                            activeColor: c.primary,
-                            groupValue: selectedOption,
-                            onChanged: (value) {
-                              if (value != null) {
-                                setState(() => selectedOption = value);
-                              }
-                            },
-                          );
-                        },
-                      )
-                    : Container(height: 50, color: c.error),
-          ),
+              child: ListView.builder(
+            shrinkWrap: true,
+            physics: const BouncingScrollPhysics(),
+            itemCount: widget.yn.length,
+            itemBuilder: (BuildContext context, int index) {
+              return widget.yesNo == true
+                  ? RadioListTile(
+                      title: Text(widget.yn[index]),
+                      activeColor: c.primary,
+                      value: index,
+                      groupValue: selectedOption,
+                      onChanged: (value) => yesNoOnChanged(value))
+                  : widget.oneSelection != true &&
+                          widget.question.opciones != null
+                      ? RadioListTile(
+                          title: Text(widget.question.opciones![index].opcion ??
+                              'option'),
+                          value: index,
+                          activeColor: c.primary,
+                          groupValue: selectedOption,
+                          onChanged: (value) => onChanged(value))
+                      : const SizedBox();
+            },
+          )),
         ),
       ],
     );
   }
 
-  @override
-  bool get wantKeepAlive => true;
+  void yesNoOnChanged(int? value) {
+    if (value != null) {
+      setState(() {
+        selectedOption = value;
+        widget.answer(widget.yn[selectedOption ?? 0]);
+      });
+    }
+  }
+
+  void onChanged(int? value) {
+    if (value != null) {
+      setState(() {
+        selectedOption = value;
+        widget.answer(
+            widget.question.opciones![selectedOption ?? 0].opcion ?? '');
+      });
+    }
+  }
 }

@@ -24,9 +24,12 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
   @override
   Widget build(BuildContext context) {
     final hasNotch = MediaQuery.of(context).viewPadding.top > 35;
+    final color = c.primary.withOpacity(0.2);
+    // final color = c.tertiary.withOpacity(0.3);
 
     return NavigationDrawer(
         selectedIndex: currentIndex,
+        indicatorColor: color,
         onDestinationSelected: (value) {
           setState(() {
             currentIndex = value;
@@ -41,7 +44,7 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
             child: DrawerHeader(
               decoration: BoxDecoration(color: c.surface),
               child: CircleAvatar(
-                  backgroundColor: Theme.of(context).highlightColor,
+                  backgroundColor: color,
                   child: Padding(
                     padding: const EdgeInsets.all(25.0),
                     child: Image.asset(AppAssets.logo),

@@ -46,7 +46,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       ),
       body: ListView(
         shrinkWrap: true,
-        padding: const EdgeInsets.only(top: 0),
+        // padding: const EdgeInsets.only(top: 0),
         physics: const NeverScrollableScrollPhysics(),
         children: [
           Center(

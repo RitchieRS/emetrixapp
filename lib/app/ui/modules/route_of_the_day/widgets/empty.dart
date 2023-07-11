@@ -1,4 +1,3 @@
-import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,13 +12,6 @@ class EmptyList extends StatelessWidget {
 
     return ListView(
       children: [
-        Padding(
-            padding: EdgeInsets.only(
-              top: size.width * 0.02,
-              left: size.width * 0.05,
-              bottom: size.width * 0.02,
-            ),
-            child: Text('Ruta del Dia', style: t.titleBlue)),
         //
         FadeIn(
           child: Padding(
@@ -34,7 +26,8 @@ class EmptyList extends StatelessWidget {
           child: const Padding(
             padding: EdgeInsets.all(15.0),
             child: Text(
-                'No hay rutas añadidas. Escoge tus ruta/s en el apartado "Fuera de Ruta" para comenzar.'),
+                'No hay rutas añadidas. Escoge tus ruta/s en el apartado "Fuera de Ruta" para comenzar.',
+                textAlign: TextAlign.center),
           ),
         ),
       ],

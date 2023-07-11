@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class ButonDimentions extends ConsumerStatefulWidget {
-  const ButonDimentions(
-      {required this.background,
-      required this.title,
-      required this.style,
-      required this.onTap,
-      this.showShadow,
-      required this.width,
-      required this.height,
-      super.key});
+  const ButonDimentions({
+    required this.background,
+    required this.title,
+    required this.style,
+    required this.onTap,
+    required this.width,
+    required this.height,
+    this.shadow,
+    this.padding,
+    super.key,
+  });
 
   final VoidCallback onTap;
   final Color background;
   final String title;
   final TextStyle style;
-  final bool? showShadow;
+  final double? shadow;
   final double width;
   final double height;
+  final EdgeInsetsGeometry? padding;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _Buton2State();
@@ -28,28 +30,25 @@ class ButonDimentions extends ConsumerStatefulWidget {
 class _Buton2State extends ConsumerState<ButonDimentions> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Material(
-        child: InkWell(
+    return Padding(
+      padding: widget.padding ?? const EdgeInsets.all(8.0),
+      child: Center(
+        child: Material(
+          elevation: widget.shadow ?? 0,
           borderRadius: BorderRadius.circular(10),
-          onTap: widget.onTap,
-          child: Ink(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: widget.showShadow == true
-                  ? [
-                      BoxShadow(
-                          color: c.disabled.withOpacity(0.4),
-                          blurRadius: 20.0,
-                          offset: const Offset(1, 1))
-                    ]
-                  : [],
-              color: widget.background,
-            ),
-            height: widget.height,
-            width: widget.width,
-            child: Center(
-              child: Text(widget.title, style: widget.style),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(10),
+            onTap: widget.onTap,
+            child: Ink(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: widget.background,
+              ),
+              height: widget.height,
+              width: widget.width,
+              child: Center(
+                child: Text(widget.title, style: widget.style),
+              ),
             ),
           ),
         ),

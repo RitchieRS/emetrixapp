@@ -69,7 +69,7 @@ class _PickerDTState extends ConsumerState<PickerDT>
                   'Establece ${widget.onlyDate == true ? 'Fecha' : widget.onlyTime == true ? 'Hora' : 'Fecha y Hora'}',
               style: t.mediumLight,
               onTap: () => _handleTime(),
-              showShadow: true,
+              shadow: 5,
             ),
           ),
         ),

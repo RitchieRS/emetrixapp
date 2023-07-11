@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
 import 'package:emetrix_flutter/app/ui/drawer/drawer.dart';
-import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'state.dart';
 import 'widgets/empty.dart';
 import 'widgets/my_card2.dart';
@@ -32,12 +31,6 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(routeOTD);
-    final size = MediaQuery.of(context).size;
-    final titlePadding = EdgeInsets.only(
-      top: size.width * 0.02,
-      left: size.width * 0.05,
-      bottom: size.width * 0.02,
-    );
 
     switch (state.state) {
       case States.succes:
@@ -46,18 +39,13 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
             appBar: const MyTitle(),
             drawer: const MyDrawer(),
             body: ListView(
-              padding: const EdgeInsets.only(top: 0),
               physics: const BouncingScrollPhysics(),
               children: [
-                Padding(
-                    padding: titlePadding,
-                    child: Text('Ruta del Dia', style: t.titleBlue)),
                 ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: state.data.length,
                     itemBuilder: (context, index) {
-                      // int reverseIndex = stores.length - 1 - index;
                       return MyCard2(
                         index: index,
                         resp: state.data[index],
