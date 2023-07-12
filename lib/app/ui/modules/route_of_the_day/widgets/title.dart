@@ -16,32 +16,32 @@ class MyTitle extends ConsumerWidget implements PreferredSizeWidget {
     return AppBar(
       leading: IconButton(
           onPressed: () => Scaffold.of(context).openDrawer(),
-          icon: Icon(Icons.menu, color: c.primary)),
+          icon: Icon(Icons.menu,
+              color: isDark == ThemeMode.dark ? c.onSecondary : c.black)),
       centerTitle: true,
-      title: Text('Ruta del Dia', style: t.titleBlue),
-      //     FadeIn(child: Text(currentTime(), style: t.textDisabled2)),
+      title: Text('Ruta del Dia',
+          style: isDark == ThemeMode.dark ? t.titleWhite : t.titleBlack),
       elevation: 0,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       iconTheme: IconThemeData(color: c.primary),
       toolbarHeight: size.height * 0.1,
-      // toolbarHeight: Dimentions().getHeight() * 0.12,
       systemOverlayStyle: isDark == ThemeMode.dark
           ? SystemUiOverlayStyle.light
           : SystemUiOverlayStyle.dark,
     );
   }
 
-  String currentTime() {
-    final hour = DateTime.now().hour;
+  // String currentTime() {
+  //   final hour = DateTime.now().hour;
 
-    if (hour >= 5 && hour <= 12) {
-      return '¡Buenos Días! ☀';
-    }
-    if (hour >= 13 && hour <= 19) {
-      return '¡Buenas Tardes! ⛅';
-    }
-    return '¡Buenas Noches! 🌙';
-  }
+  //   if (hour >= 5 && hour <= 12) {
+  //     return '¡Buenos Días! ☀';
+  //   }
+  //   if (hour >= 13 && hour <= 19) {
+  //     return '¡Buenas Tardes! ⛅';
+  //   }
+  //   return '¡Buenas Noches! 🌙';
+  // }
 
   @override
   Size get preferredSize => Size.fromHeight(Dimentions().getHeight() * 0.1);

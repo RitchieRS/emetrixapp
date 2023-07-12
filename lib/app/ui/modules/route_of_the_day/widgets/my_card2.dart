@@ -1,14 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:emetrix_flutter/app/ui/utils/widgets/map_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:page_transition/page_transition.dart';
 
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/map_page.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:page_transition/page_transition.dart';
 
 class MyCard2 extends ConsumerStatefulWidget {
   const MyCard2(
@@ -32,25 +32,17 @@ class _MyCardState extends ConsumerState<MyCard2> {
     final size = MediaQuery.of(context).size;
     final height = size.height * 0.11; // 125
     final width = size.width * 0.95;
-    final backWidget = Padding(
-      padding: EdgeInsets.only(
-          left: size.height * 0.01, bottom: size.height * 0.005),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-            height: height,
-            width: width,
-            padding: EdgeInsets.only(right: size.height * 0.01),
-            decoration: BoxDecoration(color: Colors.red.withOpacity(0.2)),
-            alignment: Alignment.centerRight,
-            child: const Icon(Icons.delete, color: Colors.redAccent)),
-      ),
-    );
-    final radius = BorderRadius.circular(8);
-    final backColor = ThemeData().highlightColor.withOpacity(0.25);
+    final backWidget = Container(
+        height: height,
+        width: width,
+        padding: EdgeInsets.only(right: size.height * 0.01),
+        decoration: BoxDecoration(color: Colors.red.withOpacity(0.2)),
+        alignment: Alignment.centerRight,
+        child: const Icon(Icons.delete, color: Colors.redAccent));
     final iconColor = Theme.of(context).textTheme.bodyLarge?.color;
 
-    return Center(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
       child: FadeIn(
         child: Dismissible(
           key: UniqueKey(),
@@ -58,81 +50,59 @@ class _MyCardState extends ConsumerState<MyCard2> {
           direction: DismissDirection.endToStart,
           confirmDismiss: (direction) => confirmDimiss(),
           onDismissed: (direction) => widget.onDeleted(widget.index),
-          child: Padding(
-            padding: EdgeInsets.only(bottom: size.height * 0.005),
-            child: Material(
-              child: ClipRRect(
-                borderRadius: radius,
-                clipBehavior: Clip.hardEdge,
-                child: InkWell(
-                  onTap: () => showMsj2(widget.resp?.tienda ?? ''),
-                  borderRadius: radius,
-                  child: Ink(
-                    height: height,
-                    width: width,
-                    decoration: BoxDecoration(
-                      color: c.surface,
-                      borderRadius: radius,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        // Container(
-                        //   width: size.width * 0.013,
-                        //   height: double.infinity,
-                        //   color: c.primary,
-                        // ),
-                        Padding(
-                          padding: EdgeInsets.only(left: size.width * 0.02),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: backColor),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(Icons.storefront_outlined,
-                                    color: iconColor),
-                              )),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: size.width * 0.02),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ExpansionPanelList.radio(
+            expandedHeaderPadding: const EdgeInsets.all(0),
+            elevation: 0,
+            animationDuration: const Duration(milliseconds: 350),
+            children: [
+              ExpansionPanelRadio(
+                  canTapOnHeader: false, // True
+                  value: widget.resp ?? Store(),
+                  headerBuilder: (context, isExpanded) {
+                    return ListTile(
+                      onTap: () =>
+                          showMsj2(widget.resp?.tienda ?? 'Tienda', size),
+                      minVerticalPadding: 0,
+                      leading:
+                          Icon(Icons.storefront_outlined, color: iconColor),
+                      title: Text('${widget.resp?.tienda}',
+                          style: t.mediumBold,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis),
+                      subtitle: Text('Progreso: $progress%',
+                          style: progress == 0 ? t.textDisabled2 : t.textBlue),
+                    );
+                  },
+                  body: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: size.width * 0.2, top: 0),
+                        child: Column(
                             mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                  width: size.width * 0.65,
-                                  color: Colors.transparent,
-                                  child: Text('${widget.resp?.tienda}',
-                                      style: t.mediumBold,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis)),
-                              Text('Progreso: $progress%',
-                                  style: progress == 0
-                                      ? t.textDisabled2
-                                      : t.textBlue),
-                            ],
-                          ),
-                        ),
-                        const Spacer(),
-                        IconButton(
-                            onPressed: () => Navigator.push(
-                                context,
-                                PageTransition(
-                                    duration: const Duration(milliseconds: 350),
-                                    type: PageTransitionType.rightToLeft,
-                                    child: MapsPage(store: widget.resp))),
-                            icon: Icon(Icons.location_on,
-                                color: c.primary.withOpacity(0.8),
-                                size: size.height * 0.03))
-                        //
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+                              Text('Cadena: ${widget.resp?.idCadena}',
+                                  style: t.text),
+                              Text('Grupo: ${widget.resp?.idGrupo}',
+                                  style: t.text),
+                            ]),
+                      ),
+                      IconButton(
+                          onPressed: () => Navigator.push(
+                              context,
+                              PageTransition(
+                                  duration: const Duration(milliseconds: 350),
+                                  type: PageTransitionType.rightToLeft,
+                                  child: MapsPage(store: widget.resp))),
+                          icon: Icon(Icons.location_on,
+                              color: c.primary.withOpacity(0.8),
+                              size: size.height * 0.03))
+                    ],
+                  )),
+            ],
           ),
         ),
       ),
@@ -152,10 +122,10 @@ class _MyCardState extends ConsumerState<MyCard2> {
     return Future.value(delete);
   }
 
-  Future showMsj2(String store) async {
+  Future showMsj2(String store, Size size) async {
     var result = await showDialog(
         context: context,
-        barrierDismissible: false,
+        // barrierDismissible: false,
         builder: (context) {
           return Consumer(
             builder: (context, ref, child) {
@@ -176,23 +146,22 @@ class _MyCardState extends ConsumerState<MyCard2> {
                 ),
                 actionsAlignment: MainAxisAlignment.center,
                 actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      style: TextButton.styleFrom(foregroundColor: c.disabled),
-                      child: Text('Cancelar', style: t.textDisabledBold)),
                   ref.watch(showProgress1) == true
-                      ? SizedBox(
-                          height: 25,
-                          width: 25,
-                          child: Center(
-                              child: CircularProgressIndicator(
-                                  color: c.primary, strokeWidth: 2)))
-                      : OutlinedButton(
-                          onPressed: () => start(widget.index),
-                          style: OutlinedButton.styleFrom(
-                              foregroundColor: c.primary,
-                              side: BorderSide(color: c.primary)),
-                          child: Text('Comenzar', style: t.textBlue))
+                      ? Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ButonLoading(
+                              background: c.onTertiary,
+                              onFinish: () {},
+                              width: size.width * 0.6,
+                              height: size.height * 0.06),
+                        )
+                      : ButonDimentions(
+                          background: c.onTertiary,
+                          title: 'Comenzar',
+                          style: t.textLight,
+                          onTap: () => start(widget.index),
+                          width: size.width * 0.6,
+                          height: size.height * 0.06),
                 ],
               );
             },

@@ -60,7 +60,7 @@ class _TextStylesMain implements IText {
   TextStyle titleBlack = TextStyle(
     fontFamily: _mainFont,
     fontSize: 24,
-    height: 0.95,
+    // height: 0.95,
     fontWeight: FontWeight.bold,
     color: c.black,
   );

@@ -24,8 +24,7 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
   @override
   Widget build(BuildContext context) {
     final hasNotch = MediaQuery.of(context).viewPadding.top > 35;
-    final color = c.primary.withOpacity(0.2);
-    // final color = c.tertiary.withOpacity(0.3);
+    final color = c.tertiary.withOpacity(0.2);
 
     return NavigationDrawer(
         selectedIndex: currentIndex,

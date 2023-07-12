@@ -25,7 +25,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ajustes', style: t.titleBlue),
+        title: Text('Ajustes',
+            style: isDark == ThemeMode.dark ? t.titleWhite : t.titleBlack),
         centerTitle: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
