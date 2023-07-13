@@ -12,9 +12,7 @@ class LoadingView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: GradientTitle(
-          preferedSize: Size(size.width, size.height * 0.1),
-          title: 'Fuera de Ruta'),
+      appBar: const GradientTitle(title: 'Fuera de Ruta'),
       body: ListView.builder(
           padding: EdgeInsets.only(top: size.height * 0.02),
           shrinkWrap: true,

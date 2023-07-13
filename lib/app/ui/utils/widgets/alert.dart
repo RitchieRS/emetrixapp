@@ -15,8 +15,7 @@ Future<bool> showMsj({
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           title: Text(title,
               style: t.subtitle,
               textAlign: TextAlign.center,
@@ -28,28 +27,35 @@ Future<bool> showMsj({
           actionsAlignment: MainAxisAlignment.center,
           actions: onlyOk == true
               ? [
-                  OutlinedButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      style: OutlinedButton.styleFrom(
-                          foregroundColor: destructive ? c.error : c.primary,
-                          side: BorderSide(
-                              color: destructive ? c.error : c.primary)),
-                      child: Text(buttonLabel,
-                          style: destructive ? t.textError : t.textBlue))
+                  ButonDimentions(
+                    onTap: () => Navigator.pop(context, true),
+                    background: destructive ? c.error : c.primary,
+                    title: buttonLabel,
+                    style: t.textLight,
+                    width: Dimentions().getWidth() * 0.4,
+                    height: Dimentions().getHeight() * 0.055,
+                  ),
                 ]
               : [
-                  TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      style: TextButton.styleFrom(foregroundColor: c.disabled),
-                      child: Text('Cancelar', style: t.textDisabledBold)),
-                  OutlinedButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      style: OutlinedButton.styleFrom(
-                          foregroundColor: destructive ? c.error : c.primary,
-                          side: BorderSide(
-                              color: destructive ? c.error : c.primary)),
-                      child: Text(buttonLabel,
-                          style: destructive ? t.textError : t.textBlue))
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          style:
+                              TextButton.styleFrom(foregroundColor: c.disabled),
+                          child: Text('Cancelar', style: t.textDisabledBold)),
+                      const SizedBox(width: 12),
+                      ButonDimentions(
+                        background: destructive ? c.error : c.primary,
+                        title: buttonLabel,
+                        style: t.textLight,
+                        onTap: () => Navigator.pop(context, true),
+                        width: Dimentions().getWidth() * 0.3,
+                        height: Dimentions().getHeight() * 0.055,
+                      ),
+                    ],
+                  )
                 ],
         );
       });

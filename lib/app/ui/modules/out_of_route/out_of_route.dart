@@ -39,14 +39,14 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
   Widget build(BuildContext context) {
     final state = ref.watch(outORControllerProvider);
     final size = MediaQuery.of(context).size;
+    final width = size.width * 0.85;
+    final height = size.height * 0.065;
     // final isDark = ref.watch(themeProvider);
 
     switch (state.state) {
       case States.succes:
         return Scaffold(
-          appBar: GradientTitle(
-              preferedSize: Size(size.width, size.height * 0.1),
-              title: 'Fuera de Ruta'),
+          appBar: const GradientTitle(title: 'Fuera de Ruta'),
           body: Material(
             child: Stack(
               alignment: Alignment.bottomCenter,
@@ -96,23 +96,20 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                                 ? ButonLoading(
                                     background: c.primary,
                                     onFinish: null,
-                                    width: size.width * 0.85,
-                                    height: size.height * 0.065)
+                                    width: width,
+                                    height: height)
                                 : ButonDimentions(
                                     background: c.primary,
                                     title:
                                         'Agregar Ruta${stores.length <= 1 ? '' : 's'}',
                                     style: t.mediumLight,
-                                    // isDark == ThemeMode.dark
-                                    //     ? t.mediumDark
-                                    //     : t.mediumLight,
                                     onTap: () => start(),
-                                    width: size.width * 0.85,
-                                    height: size.height * 0.065),
+                                    width: width,
+                                    height: height),
                           ),
                         ),
                       )
-                    : Container()
+                    : const SizedBox()
               ],
             ),
           ),
@@ -138,19 +135,20 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     if (index != null) {
       stores.add(jsonEncode(storesMain[index]));
       storesSelected.add(storesMain[index]);
-    } else {
-      stores.removeAt(index ?? 0);
-      storesSelected.removeAt(index ?? 0);
+      setState(() {});
+      return;
     }
+    stores.removeAt(index ?? 0);
+    storesSelected.removeAt(index ?? 0);
     setState(() {});
   }
 
-  Future getStoresDB() async {
+  Future<void> getStoresDB() async {
     storesMain = await ref.read(outORControllerProvider.notifier).getStoresDB();
     setState(() {});
   }
 
-  Future start() async {
+  Future<void> start() async {
     final networkResult = await (Connectivity().checkConnectivity());
 
     if (networkResult == ConnectivityResult.none) {
@@ -165,7 +163,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     }
   }
 
-  Future setStores() async {
+  Future<void> setStores() async {
     setState(() {
       isLoading = true;
     });
@@ -197,13 +195,4 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
       }), (route) => false);
     });
   }
-
-  // void showSnack() {
-  //   final snackBar = SnackBar(
-  //       duration: const Duration(seconds: 4),
-  //       content: const Text('Agregados a Ruta del Dia!'),
-  //       backgroundColor: c.ok.withOpacity(0.8));
-
-  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  // }
 }

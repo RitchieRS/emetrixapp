@@ -90,16 +90,20 @@ class _MyCardState extends ConsumerState<MyCard2> {
                                   style: t.text),
                             ]),
                       ),
-                      IconButton(
-                          onPressed: () => Navigator.push(
-                              context,
-                              PageTransition(
-                                  duration: const Duration(milliseconds: 350),
-                                  type: PageTransitionType.rightToLeft,
-                                  child: MapsPage(store: widget.resp))),
-                          icon: Icon(Icons.location_on,
-                              color: c.primary.withOpacity(0.8),
-                              size: size.height * 0.03))
+                      Padding(
+                        padding: EdgeInsets.only(right: size.width * 0.1),
+                        child: TextButton.icon(
+                            label: const Text('Maps'),
+                            onPressed: () => Navigator.push(
+                                context,
+                                PageTransition(
+                                    duration: const Duration(milliseconds: 350),
+                                    type: PageTransitionType.rightToLeft,
+                                    child: MapsPage(store: widget.resp))),
+                            icon: Icon(Icons.location_on,
+                                color: c.primary.withOpacity(0.8),
+                                size: size.height * 0.03)),
+                      )
                     ],
                   )),
             ],

@@ -17,22 +17,43 @@ class SelectThemePage extends ConsumerStatefulWidget {
 
 class _SelectThemeState extends ConsumerState<SelectThemePage> {
   bool isLoading = false;
+  final padding = const EdgeInsets.all(8.0);
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider);
+    final height = size.height * 0.065;
+    final width = size.width * 0.9;
+    final appbar = AppBar(
+        backgroundColor: c.surface,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: c.surface,
+            statusBarIconBrightness:
+                isDark == ThemeMode.dark ? Brightness.light : Brightness.dark));
+    final minSize = Size(size.width * 0.7, size.height * 0.065);
+    final miaxSize = Size(size.width * 0.9, size.height * 0.07);
+    final radius =
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(10));
+    final lightStyle = OutlinedButton.styleFrom(
+        minimumSize: minSize,
+        maximumSize: miaxSize,
+        alignment: Alignment.center,
+        shape: radius,
+        side: BorderSide(
+            color: isDark == ThemeMode.light ? c.primary : c.surface));
+    final darkStyle = OutlinedButton.styleFrom(
+        minimumSize: Size(size.width * 0.7, size.height * 0.065),
+        maximumSize: Size(size.width * 0.9, size.height * 0.07),
+        shape: radius,
+        side: BorderSide(
+          color: isDark == ThemeMode.dark ? c.primary : c.surface,
+        ));
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-          backgroundColor: c.surface,
-          elevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: c.surface,
-              statusBarIconBrightness: isDark == ThemeMode.dark
-                  ? Brightness.light
-                  : Brightness.dark)),
+      appBar: appbar,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -53,95 +74,52 @@ class _SelectThemeState extends ConsumerState<SelectThemePage> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: padding,
                   child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                          minimumSize:
-                              Size(size.width * 0.8, size.height * 0.07),
-                          alignment: Alignment.center,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          side: BorderSide(
-                            color: isDark == ThemeMode.light
-                                ? c.primary
-                                : c.surface,
-                          )),
-                      onPressed: () {
-                        ref.read(themeProvider.notifier).setLightTheme();
-                      },
+                      style: lightStyle,
+                      onPressed: () =>
+                          ref.read(themeProvider.notifier).setLightTheme(),
                       child: Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(Icons.light_mode, color: c.primary),
-                          ),
+                              padding: padding,
+                              child: Icon(Icons.light_mode, color: c.primary)),
                           const Text('Modo claro'),
                         ],
                       )),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: padding,
                   child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                          minimumSize:
-                              Size(size.width * 0.8, size.height * 0.07),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          side: BorderSide(
-                            color: isDark == ThemeMode.dark
-                                ? c.primary
-                                : c.surface,
-                          )),
-                      onPressed: () {
-                        ref.read(themeProvider.notifier).setDarkTheme();
-                      },
+                      style: darkStyle,
+                      onPressed: () =>
+                          ref.read(themeProvider.notifier).setDarkTheme(),
                       child: Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(Icons.dark_mode_outlined,
-                                color: c.primary),
-                          ),
+                              padding: padding,
+                              child: Icon(Icons.dark_mode_outlined,
+                                  color: c.primary)),
                           const Text('Modo obscuro'),
                         ],
                       )),
                 ),
-                SizedBox(
-                  height: size.height * 0.05,
-                ),
+                SizedBox(height: size.height * 0.05),
                 Center(
                   child: isLoading
                       ? ButonLoading(
                           background: c.primary,
                           onFinish: null,
-                          height: size.height * 0.065,
-                          width: size.width * 0.85,
+                          height: height,
+                          width: width,
                         )
-                      : Buton(
+                      : ButonDimentions(
+                          height: height,
+                          width: width,
                           background: c.primary,
                           title: 'Siguiente',
                           style: t.mediumLight,
-                          onTap: () async {
-                            setState(() {
-                              isLoading = !isLoading;
-                            });
-                            final navigator = Navigator.of(context);
-                            await Future.delayed(const Duration(seconds: 2));
-
-                            MesagessService.showMessage(
-                                context: context,
-                                duration: const Duration(seconds: 3),
-                                message:
-                                    'Selecciona las tiendas que visitarás.',
-                                icon: Icons.store);
-
-                            await navigator.pushReplacement(PageRouteBuilder(
-                                pageBuilder: (_, animation, __) =>
-                                    FadeTransition(
-                                      opacity: animation,
-                                      child: const OutOfRoutePage(),
-                                    )));
-                          }),
+                          onTap: () => goToStores()),
                 )
               ],
             ),
@@ -149,5 +127,23 @@ class _SelectThemeState extends ConsumerState<SelectThemePage> {
         ],
       ),
     );
+  }
+
+  Future<void> goToStores() async {
+    setState(() => isLoading = !isLoading);
+    final navigator = Navigator.of(context);
+    await Future.delayed(const Duration(seconds: 2));
+
+    MesagessService.showMessage(
+        context: context,
+        duration: const Duration(seconds: 3),
+        message: 'Selecciona las tiendas que visitarás.',
+        icon: Icons.store);
+
+    await navigator.pushReplacement(PageRouteBuilder(
+        pageBuilder: (_, animation, __) => FadeTransition(
+              opacity: animation,
+              child: const OutOfRoutePage(),
+            )));
   }
 }

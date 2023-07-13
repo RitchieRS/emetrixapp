@@ -60,11 +60,11 @@ class _MyCardState extends ConsumerState<MyCard> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Container(
-                      width: size.width * 0.013,
-                      height: double.infinity,
-                      color: c.secondary,
-                    ),
+                    // Container(
+                    //   width: size.width * 0.013,
+                    //   height: double.infinity,
+                    //   color: c.secondary,
+                    // ),
                     Padding(
                       padding: EdgeInsets.only(left: size.width * 0.04),
                       child: Column(
@@ -92,8 +92,9 @@ class _MyCardState extends ConsumerState<MyCard> {
                       ),
                     ),
                     const Spacer(),
-                    IconButton(
-                        onPressed: () => goMapsPage(),
+                    TextButton.icon(
+                        label: const Text('Maps'),
+                        onPressed: isBlue ? () => goMapsPage() : null,
                         icon: Icon(Icons.location_on,
                             color: isBlue
                                 ? c.error.withOpacity(0.75)

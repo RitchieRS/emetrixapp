@@ -37,10 +37,7 @@ class _AditionalActivitiesPageState
     switch (state.state) {
       case States.succes:
         return Scaffold(
-          appBar: GradientTitle(
-            preferedSize: Size(size.width, size.height * 0.1),
-            title: 'EXTRAS',
-          ),
+          appBar: const GradientTitle(title: 'EXTRAS'),
           body: Padding(
             padding: EdgeInsets.only(top: size.height * 0.02),
             child: RefreshIndicator(
