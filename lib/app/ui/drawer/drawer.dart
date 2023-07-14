@@ -12,7 +12,7 @@ class MyDrawer extends ConsumerStatefulWidget {
 }
 
 class _MyDrawerState extends ConsumerState<MyDrawer> {
-  int currentIndex = 0;
+  int? currentIndex;
 
   navigate(String link) {
     Future.delayed(const Duration(milliseconds: 400)).whenComplete(() {

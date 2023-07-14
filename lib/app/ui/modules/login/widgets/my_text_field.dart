@@ -24,24 +24,31 @@ class TxtField extends ConsumerStatefulWidget {
 class _TxtFieldState extends ConsumerState<TxtField> {
   bool obscure = true;
   Color iconColor = Colors.black54.withOpacity(0.4);
-  final enebledBorder = OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.black54.withOpacity(0.2)),
-    borderRadius: BorderRadius.circular(10),
-  );
-  final focusedBorder = OutlineInputBorder(
-    borderSide: BorderSide(color: c.primary),
-    borderRadius: BorderRadius.circular(10),
-  );
-  final errorBorder = OutlineInputBorder(
-    borderSide: BorderSide(color: c.error),
-    borderRadius: BorderRadius.circular(10),
-  );
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final radius = BorderRadius.circular(10);
     final height = size.height * 0.055;
     final width = size.width * 0.9;
+    final constraints = BoxConstraints(
+      minHeight: height,
+      // maxHeight: height,
+      maxWidth: width,
+    );
+
+    final enebledBorder = OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black54.withOpacity(0.2)),
+      borderRadius: radius,
+    );
+    final focusedBorder = OutlineInputBorder(
+      borderSide: BorderSide(color: c.primary),
+      borderRadius: radius,
+    );
+    final errorBorder = OutlineInputBorder(
+      borderSide: BorderSide(color: c.error),
+      borderRadius: radius,
+    );
     final contentPadding = EdgeInsets.only(
       left: 12,
       bottom: 0,
@@ -80,7 +87,7 @@ class _TxtFieldState extends ConsumerState<TxtField> {
                                 ? Colors.black54.withOpacity(0.4)
                                 : c.primary))
                     : null,
-                constraints: BoxConstraints(minHeight: height, maxWidth: width),
+                constraints: constraints,
                 focusedBorder: focusedBorder,
                 enabledBorder: enebledBorder,
                 errorBorder: errorBorder,

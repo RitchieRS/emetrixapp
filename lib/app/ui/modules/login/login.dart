@@ -27,6 +27,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final passKey = GlobalKey<FormState>();
   bool obscurePassword = true;
   bool switchButton = false;
+  final appbar = AppBar(
+    backgroundColor: c.surface,
+    elevation: 0,
+    systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: c.surface, statusBarIconBrightness: Brightness.dark),
+  );
 
   @override
   void dispose() {
@@ -40,16 +46,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final width = size.width * 0.9;
+    final height = size.height * 0.06;
+    final textPadding =
+        EdgeInsets.only(top: size.height * 0.01, left: size.width * 0.07);
+    final buttonPadding = EdgeInsets.only(top: size.height * 0.05);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: c.surface,
-        elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: c.surface,
-            statusBarIconBrightness: Brightness.dark),
-      ),
+      appBar: appbar,
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Stack(
@@ -72,8 +77,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                     //
                     Padding(
-                        padding: EdgeInsets.only(
-                            top: size.height * 0.01, left: size.width * 0.07),
+                        padding: textPadding,
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text('Usuario', style: t.text2))),
@@ -85,8 +89,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
 
                     Padding(
-                        padding: EdgeInsets.only(
-                            top: size.height * 0.01, left: size.width * 0.07),
+                        padding: textPadding,
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text('Contraseña', style: t.text2))),
@@ -99,16 +102,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                     switchButton == false
                         ? Padding(
-                            padding: EdgeInsets.only(top: size.height * 0.05),
+                            padding: buttonPadding,
                             child: ButonDimentions(
                                 background: c.primary,
                                 title: 'Entrar',
                                 style: t.mediumLight,
                                 onTap: () => start(),
-                                width: size.width * 0.9,
-                                height: size.height * 0.06))
+                                width: width,
+                                height: height))
                         : Padding(
-                            padding: EdgeInsets.only(top: size.height * 0.05),
+                            padding: buttonPadding,
                             child: const Center(
                               child: CircularProgressIndicator(strokeWidth: 2),
                             ),

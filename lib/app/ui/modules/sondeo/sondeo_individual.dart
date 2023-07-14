@@ -50,6 +50,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
         widget.sondeoItem.preguntas?.length ?? 0; //*Returns length from 1
     final double progressValue = 1 / lenght;
     final finishedSections = ref.watch(finishedSondeos);
+    final height = size.height * 0.06;
+    final width = size.width * 0.9;
 
     return Scaffold(
       appBar: CustomTitle(title: widget.sondeoItem.sondeo),
@@ -133,9 +135,9 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
             //*BUTTONS
             if (lenght == 1 || lenght == 0)
               ButonDimentions(
-                height: size.height * 0.07,
-                width: size.width * 0.9,
-                background: Colors.blue[700] ?? c.secondary.withOpacity(0.8),
+                height: height,
+                width: width,
+                background: c.onTertiary,
                 title: 'Finalizar',
                 style: t.mediumLight,
                 onTap: () => finalize(finishedSections),
@@ -143,8 +145,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
               )
             else if (indexGlobal + 1 != lenght)
               ButonDimentions(
-                height: size.height * 0.07,
-                width: size.width * 0.9,
+                height: height,
+                width: width,
                 background: Theme.of(context).dialogBackgroundColor,
                 title: 'Next',
                 style: t.mediumBlue,
@@ -155,8 +157,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
               )
             else
               ButonDimentions(
-                height: size.height * 0.07,
-                width: size.width * 0.9,
+                height: height,
+                width: width,
                 background: Colors.blue[700] ?? c.secondary.withOpacity(0.8),
                 title: 'Finalizar',
                 style: t.mediumLight,
@@ -216,6 +218,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
       return;
     }
 
+    setState(() => responses.add(radioResponse));
     await goNextQuestion(progressValue);
     setState(() {
       printResponses();

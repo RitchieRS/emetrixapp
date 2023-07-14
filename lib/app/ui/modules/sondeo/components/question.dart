@@ -20,7 +20,7 @@ class Question extends ConsumerStatefulWidget {
   final String textfieldValue = '';
   final Preguntas pregunta;
   final String type;
-  final Function(String) answer;
+  final Function(String?) answer;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _QuestionState();
@@ -106,10 +106,13 @@ class _QuestionState extends ConsumerState<Question> {
 
   void validateAndSave(String value) {
     final form = formKey.currentState;
+    final isValid = form!.validate();
 
-    if (form!.validate() && value.isNotEmpty) {
+    if (isValid && value.isNotEmpty) {
       widget.answer(value);
+      return;
     }
+    widget.answer(null);
     return;
   }
 
@@ -128,6 +131,7 @@ class _QuestionState extends ConsumerState<Question> {
     if (value == null || value.isEmpty || value == '') {
       return 'Completa el campo';
     }
+    widget.answer(value);
     return null;
   }
 
@@ -140,6 +144,7 @@ class _QuestionState extends ConsumerState<Question> {
     if (!isNumber) {
       return 'Debe ser un número';
     }
+    widget.answer(value);
     return null;
   }
 
@@ -158,6 +163,7 @@ class _QuestionState extends ConsumerState<Question> {
     if (valueNumber < 5 || valueNumber > 10 || valueNumber % 1 == 0) {
       return 'Debe ser un DECIMAL entre 5 - 10';
     }
+    widget.answer(value);
     return null;
   }
 
@@ -167,6 +173,7 @@ class _QuestionState extends ConsumerState<Question> {
 
     if (email != null) {
       if (emailRegExp.hasMatch(email)) {
+        widget.answer(email);
         return null;
       }
       return 'E-mail incorrecto';

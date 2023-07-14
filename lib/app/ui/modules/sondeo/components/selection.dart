@@ -19,7 +19,7 @@ class Selection extends ConsumerStatefulWidget {
   final Preguntas question;
   final List<String> yn;
   final Preguntas pregunta;
-  final Function(String) answer;
+  final Function(String?) answer;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SelectionState();
@@ -79,18 +79,23 @@ class _SelectionState extends ConsumerState<Selection> {
     if (value != null) {
       setState(() {
         selectedOption = value;
-        widget.answer(widget.yn[selectedOption ?? 0]);
       });
+      widget.answer(widget.yn[selectedOption ?? 0]);
+      return;
     }
+    widget.answer(null);
+    return;
   }
 
   void onChanged(int? value) {
     if (value != null) {
-      setState(() {
-        selectedOption = value;
-        widget.answer(
-            widget.question.opciones![selectedOption ?? 0].opcion ?? '');
-      });
+      setState(() => selectedOption = value);
+      widget.answer(widget.question.opciones![selectedOption ?? 0].opcion);
+      return;
     }
+    widget.answer(null);
+    return;
   }
+
+  //
 }

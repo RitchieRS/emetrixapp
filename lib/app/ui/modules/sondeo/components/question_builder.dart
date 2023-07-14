@@ -9,19 +9,17 @@ import 'package:emetrix_flutter/app/ui/modules/sondeo/components/components.dart
 class QuestionBuilder extends ConsumerStatefulWidget {
   const QuestionBuilder({
     super.key,
-    // this.textController,
     required this.pregunta,
     required this.store,
     required this.index,
     required this.answer,
     required this.answerRadio,
   });
-  // final TextEditingController? textController;
   final Preguntas pregunta;
   final Store store;
   final int index;
-  final Function(String) answer;
-  final Function(String) answerRadio;
+  final Function(String?) answer;
+  final Function(String?) answerRadio;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -29,19 +27,15 @@ class QuestionBuilder extends ConsumerStatefulWidget {
 }
 
 class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
-  // List<String> lenght = [];
-
   @override
   Widget build(BuildContext context) {
     switch (widget.pregunta.tipo) {
-      //Tomar Fotografía
       case 'unicaRadio':
         return Selection(
           pregunta: widget.pregunta,
           question: widget.pregunta,
-          answer: (response) {
+          answer: (String? response) {
             widget.answerRadio(response);
-            //
           },
         );
 
@@ -54,9 +48,8 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           type: widget.pregunta.tipo ?? 'abierta',
           index: widget.index,
           pregunta: widget.pregunta,
-          answer: (String answer) {
+          answer: (String? answer) {
             widget.answer(answer);
-            // print('Respuesta: $answer');
             //Get the value of the textfield and save it to validate and send to endpoint;
           },
         );
@@ -66,9 +59,8 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             type: widget.pregunta.tipo ?? 'abierta',
             index: widget.index,
             pregunta: widget.pregunta,
-            answer: (String answer) {
+            answer: (String? answer) {
               widget.answer(answer);
-              //Get the value of the textfield and save it to validate and send to endpoint;
             });
 
       case 'decimal':
@@ -76,9 +68,8 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             type: widget.pregunta.tipo ?? 'abierta',
             index: widget.index,
             pregunta: widget.pregunta,
-            answer: (String answer) {
+            answer: (String? answer) {
               widget.answer(answer);
-              //Get the value of the textfield and save it to validate and send to endpoint;
             },
             min: 5,
             max: 10);
@@ -88,9 +79,8 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           pregunta: widget.pregunta,
           question: widget.pregunta,
           yesNo: true,
-          answer: (response) {
+          answer: (String? response) {
             widget.answerRadio(response);
-            //
           },
         );
 
@@ -142,22 +132,13 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
       case 'scannerQR':
         return const Scanner();
 
-      //FOTOS
-      //preguntas
-      //SOS
-      //cronometro 2
-      //cronometro 4
-      //Carga de Videos
-      //NFC
-
       case 'email':
         return Question(
           type: widget.pregunta.tipo ?? 'abierta',
           index: widget.index,
           pregunta: widget.pregunta,
-          answer: (String answer) {
+          answer: (String? answer) {
             widget.answer(answer);
-            //Get the value of the textfield and save it to validate and send to endpoint;
           },
         );
     }

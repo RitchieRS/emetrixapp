@@ -96,47 +96,43 @@ class _MapViewState extends ConsumerState<MapView> {
               padding: const EdgeInsets.all(8.0),
               child: FloatingActionButton(
                 onPressed: () => _centerMap(),
-                backgroundColor: Theme.of(context).primaryColor,
+                backgroundColor: c.onTertiary,
                 child: const Icon(Icons.location_searching),
               ),
             ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: Container(
-                height: size.height * 0.2,
-                width: size.width,
-                color: Theme.of(context).scaffoldBackgroundColor,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: size.width * 0.5,
-                            color: c.surface,
-                            child: Text(widget.store.tienda ?? 'México',
-                                style: t.mediumBold),
-                          ),
-                          SizedBox(
-                            height: size.height * 0.01,
-                          ),
-                          Text('Cadena: ${widget.store.idCadena ?? '0123456'}',
-                              style: t.text),
-                          Text('Grupo: ${widget.store.idGrupo ?? '987654'}',
-                              style: t.text),
-                          Text(
-                              'Clasificación: ${widget.store.clasificacion ?? 'Clasified'}',
-                              style: t.text),
-                          Text('Rango Gps: ${widget.store.rangoGPS.toString()}',
-                              style: t.text),
-                        ]),
-                    SvgPicture.asset(AppAssets.store,
-                        height: size.height * 0.12),
-                  ],
-                ),
+            Container(
+              height: size.height * 0.2,
+              width: size.width,
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: size.width * 0.5,
+                          color: c.surface,
+                          child: Text(widget.store.tienda ?? 'México',
+                              style: t.mediumBold),
+                        ),
+                        SizedBox(
+                          height: size.height * 0.01,
+                        ),
+                        Text('Cadena: ${widget.store.idCadena ?? '0123456'}',
+                            style: t.text),
+                        Text('Grupo: ${widget.store.idGrupo ?? '987654'}',
+                            style: t.text),
+                        Text(
+                            'Clasificación: ${widget.store.clasificacion ?? 'Clasified'}',
+                            style: t.text),
+                        Text('Rango Gps: ${widget.store.rangoGPS.toString()}',
+                            style: t.text),
+                      ]),
+                  SvgPicture.asset(AppAssets.store, height: size.height * 0.12),
+                ],
               ),
             ),
           ],
