@@ -1,19 +1,23 @@
-import 'package:emetrix_flutter/app/core/services/services.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:io';
-
 import 'package:image_picker/image_picker.dart';
 
-import 'package:flutter/services.dart';
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class SelectPicture extends ConsumerStatefulWidget {
   const SelectPicture({
     super.key,
     required this.pregunta,
+    this.saveCopy = false,
+    required this.image,
   });
-  final String pregunta;
+  final Preguntas pregunta;
+  final bool saveCopy;
+  final Function(File?) image;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SelectPictureState();
@@ -23,77 +27,85 @@ class _SelectPictureState extends ConsumerState<SelectPicture> {
   File? image;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.pregunta.tipo == 'foto') {
+      getImage(ImageSource.camera);
+      return;
+    }
+    if (widget.pregunta.tipo == 'fotoGuardarCopia') {
+      getImage(ImageSource.camera);
+      //SaveOnGalery
+      return;
+    }
+    if (widget.pregunta.tipo == 'imagen') {
+      getImage(ImageSource.gallery);
+      return;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final theme = ref.watch(themeProvider);
     final backColor = theme == ThemeMode.dark
         ? Theme.of(context).hintColor
         : Theme.of(context).highlightColor;
+    final labelPadding = EdgeInsets.symmetric(horizontal: size.width * 0.04);
+    final side = size.height * 0.4;
+    // final side = size.height * 0.2;
 
     return GestureDetector(
-      onTap: () => handleImage(size: size),
-      child: image != null
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
-                  child: Text(widget.pregunta, style: t.subtitle),
-                ),
-                SizedBox(height: size.height * 0.02),
-                Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(90),
-                    child: Container(
-                      height: size.height * 0.2,
-                      width: size.height * 0.2,
-                      color: backColor,
-                      child: Image.file(
-                        image!,
-                        fit: BoxFit.cover,
-                        frameBuilder:
-                            (context, child, frame, wasSynchronouslyLoaded) {
-                          return frame == null
-                              ? const Center(child: CircularProgressIndicator())
-                              : child;
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
-                  child: Text(widget.pregunta, style: t.subtitle),
-                ),
-                SizedBox(height: size.height * 0.02),
-                Center(
-                  child: CircleAvatar(
-                    backgroundColor: backColor,
-                    radius: size.height * 0.1,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.camera,
-                          color: c.disabled.withOpacity(0.8),
-                          size: size.height * 0.06,
-                        ),
-                        Text('Selecciona imagen', style: t.text),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+        onTap: () => handleImage(size: size),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: labelPadding,
+              child:
+                  Text(widget.pregunta.pregunta ?? 'NoData', style: t.subtitle),
             ),
-    );
+            SizedBox(height: size.height * 0.02),
+            Center(
+              child: ClipRRect(
+                clipBehavior: Clip.hardEdge,
+                borderRadius: BorderRadius.circular(10),
+                // borderRadius: BorderRadius.circular(90),
+                child: Container(
+                  height: side,
+                  width: side,
+                  color: backColor,
+                  child: image != null
+                      ? Image.file(
+                          image ?? File(''),
+                          fit: BoxFit.cover,
+                          frameBuilder:
+                              (context, child, frame, wasSynchronouslyLoaded) {
+                            return frame == null
+                                ? const Center(
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2))
+                                : child;
+                          },
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.camera,
+                              color: c.disabled.withOpacity(0.8),
+                              size: size.height * 0.06,
+                            ),
+                            Text('Selecciona imagen', style: t.text),
+                          ],
+                        ),
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 
   Future pickImage(ImageSource source) async {
@@ -102,62 +114,63 @@ class _SelectPictureState extends ConsumerState<SelectPicture> {
       if (image2 == null) return;
 
       final imageTemporal = File(image2.path);
-      setState(() {
-        image = imageTemporal;
-      });
+      setState(() => image = imageTemporal);
+      widget.image(image);
     } on PlatformException catch (e) {
       debugPrint('error:$e');
+      widget.image(null);
     }
+  }
+
+  void getImage(ImageSource source) async {
+    await pickImage(source);
+    setState(() {});
+  }
+
+  void getImageAndPop(ImageSource source) async {
+    final navigator = Navigator.of(context);
+    await pickImage(source);
+    navigator.pop();
+    setState(() {});
   }
 
   void handleImage({required Size size}) {
     FocusManager.instance.primaryFocus?.unfocus();
+    final side = size.width * 0.02;
+    final top = size.height * 0.02;
 
     showModalBottomSheet(
         context: context,
         shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: EdgeInsets.only(
-                    left: size.width * 0.02,
-                    bottom: size.height * 0.02,
-                    top: size.height * 0.02),
+                padding: EdgeInsets.only(left: side, bottom: top, top: top),
                 child: ListTile(
-                    onTap: () async {
-                      final navigator = Navigator.of(context);
-                      await pickImage(ImageSource.gallery);
-                      navigator.pop();
-                      setState(() {});
-                    },
+                    onTap: () => getImageAndPop(ImageSource.gallery),
                     title: const Text('Galería.'),
+                    subtitle: const Text('Seleccionar imagen de la galeria.'),
                     leading: const Icon(Icons.photo)),
               ),
               Padding(
-                padding: EdgeInsets.only(
-                    left: size.width * 0.02, bottom: size.height * 0.02),
+                padding: EdgeInsets.only(left: side, bottom: top),
                 child: ListTile(
-                    onTap: () async {
-                      final navigator = Navigator.of(context);
-                      await pickImage(ImageSource.camera);
-                      navigator.pop();
-                    },
+                    onTap: () => getImageAndPop(ImageSource.camera),
                     title: const Text('Cámara.'),
+                    subtitle: const Text('Tomar una foto con la cámara.'),
                     leading: const Icon(Icons.camera)),
               ),
               Padding(
-                padding: EdgeInsets.only(
-                    left: size.width * 0.02, bottom: size.height * 0.02),
+                padding: EdgeInsets.only(left: side, bottom: top),
                 child: ListTile(
                     onTap: () async {
                       final navigator = Navigator.of(context);
-                      setState(() {
-                        image = null;
-                      });
+                      setState(() => image = null);
+                      widget.image(null);
                       navigator.pop();
                     },
                     title: Text('Cancelar', style: t.textError),

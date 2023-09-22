@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
-import 'package:emetrix_flutter/app/ui/drawer/drawer.dart';
+import 'package:emetrix_flutter/app/ui/modules/drawer/drawer.dart';
 import 'state.dart';
 import 'widgets/empty.dart';
 import 'widgets/my_card2.dart';

@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:io';
+
 import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/custom_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,10 +34,12 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
   int indexGlobal = 0;
   List<String> inputs = ['abierta', 'numerico', 'email', 'decimal'];
   List<String> radios = ['unicaRadio', 'sino'];
+  List<String> images = ['fotoGuardarCopia', 'foto', 'imagen'];
   //* List Responses
   List<dynamic> responses = [];
   String? textResponse;
   String? radioResponse;
+  File? imageResponse;
 
   @override
   void dispose() {
@@ -106,6 +110,9 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
                             },
                             answerRadio: (response) {
                               setState(() => radioResponse = response);
+                            },
+                            image: (image) {
+                              setState(() => imageResponse = image);
                             },
                             index: index,
                             store: widget.store,
@@ -181,22 +188,39 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
     print('--------------------------------------------------------------\n');
 
     // Validate
-    // If TextField
     if (inputs.contains(questionType)) {
-      print('Is an Input');
       validateInputs(progressValue);
     }
-    // If Radios
+    //
     else if (radios.contains(questionType)) {
-      print('Is an Radio');
       validateRadios(progressValue);
-    } else {
-      // Extract data from others components
+    }
+    //
+    else if (images.contains(questionType)) {
+      print('Is an Image');
+      validateImages(progressValue);
+    }
+    //
+    else {
       print('Is other component');
-      // await goNextQuestion(progressValue);
+      // Extract data from others components
     }
     //
     print('--------------------------------------------------------------\n');
+  }
+
+  Future validateImages(double progressValue) async {
+    if (imageResponse == null) {
+      print('returned');
+      return;
+    }
+
+    setState(() => responses.add(imageResponse));
+    await goNextQuestion(progressValue);
+    setState(() {
+      printResponses();
+      imageResponse = null;
+    });
   }
 
   Future validateInputs(double progressValue) async {
@@ -244,6 +268,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
   }
 
   void finalize(List<int> finishedSections) {
+    //Save all progress and data to db
+
     //* UI ProgressBar
     if (progressBar != 1) {
       setState(() => progressBar = 1);

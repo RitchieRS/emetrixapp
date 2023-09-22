@@ -1,4 +1,6 @@
 // ignore_for_file: avoid_print
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,12 +16,14 @@ class QuestionBuilder extends ConsumerStatefulWidget {
     required this.index,
     required this.answer,
     required this.answerRadio,
+    required this.image,
   });
   final Preguntas pregunta;
   final Store store;
   final int index;
   final Function(String?) answer;
   final Function(String?) answerRadio;
+  final Function(File?) image;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -40,7 +44,14 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         );
 
       case 'fotoGuardarCopia':
-        return SelectPicture(pregunta: widget.pregunta.pregunta ?? 'NoData');
+        return SelectPicture(
+          pregunta: widget.pregunta,
+          saveCopy: true,
+          image: (image) {
+            print('Image: $image');
+            widget.image(image);
+          },
+        );
 
       //todo
       case 'abierta':
@@ -91,7 +102,12 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         return InfoQuestion(pregunta: widget.pregunta.pregunta ?? 'NoData');
 
       case 'foto':
-        return SelectPicture(pregunta: widget.pregunta.pregunta ?? 'NoData');
+        return SelectPicture(
+          pregunta: widget.pregunta,
+          image: (image) {
+            widget.image(image);
+          },
+        );
 
       case 'gps':
         return Gps(pregunta: widget.pregunta.pregunta ?? 'NoData');
@@ -101,7 +117,12 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             pregunta: widget.pregunta.pregunta ?? 'NoData', times: 2);
 
       case 'imagen':
-        return SelectPicture(pregunta: widget.pregunta.pregunta ?? 'NoData');
+        return SelectPicture(
+          pregunta: widget.pregunta,
+          image: (image) {
+            widget.image(image);
+          },
+        );
 
       case 'firma':
         return Signature(pregunta: widget.pregunta.pregunta ?? 'NoData');

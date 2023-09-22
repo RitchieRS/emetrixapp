@@ -1,5 +1,5 @@
 import 'package:emetrix_flutter/app/core/services/services.dart';
-import 'package:emetrix_flutter/app/ui/drawer/drawer.dart';
+import 'package:emetrix_flutter/app/ui/modules/drawer/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

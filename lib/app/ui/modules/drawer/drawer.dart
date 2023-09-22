@@ -2,7 +2,7 @@ import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
-import 'package:emetrix_flutter/app/ui/drawer/menu_items.dart';
+import 'package:emetrix_flutter/app/ui/modules/drawer/menu_items.dart';
 
 class MyDrawer extends ConsumerStatefulWidget {
   const MyDrawer({super.key});

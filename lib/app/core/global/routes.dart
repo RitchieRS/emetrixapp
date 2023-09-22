@@ -5,8 +5,8 @@ import 'package:emetrix_flutter/app/ui/modules/out_of_route/out_of_route.dart';
 import 'package:emetrix_flutter/app/ui/modules/add_activities/aditional_activities.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/route_of_the_day.dart';
 import 'package:emetrix_flutter/app/ui/modules/pendings/pendings.dart';
-import 'package:emetrix_flutter/app/ui/onboarding/onboarding.dart';
-import 'package:emetrix_flutter/app/ui/onboarding/select_theme.dart';
+import 'package:emetrix_flutter/app/ui/modules/onboarding/onboarding.dart';
+import 'package:emetrix_flutter/app/ui/modules/onboarding/select_theme.dart';
 import 'package:emetrix_flutter/app/ui/modules/settings/settings.dart';
 
 Map<String, WidgetBuilder> appRoutes() {
