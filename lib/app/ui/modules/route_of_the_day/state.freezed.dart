@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$RouteOTDState {
-  List<Store> get data => throw _privateConstructorUsedError;
+  List<StoreIsar> get data => throw _privateConstructorUsedError;
   States get state => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -30,7 +30,7 @@ abstract class $RouteOTDStateCopyWith<$Res> {
           RouteOTDState value, $Res Function(RouteOTDState) then) =
       _$RouteOTDStateCopyWithImpl<$Res, RouteOTDState>;
   @useResult
-  $Res call({List<Store> data, States state});
+  $Res call({List<StoreIsar> data, States state});
 }
 
 /// @nodoc
@@ -53,7 +53,7 @@ class _$RouteOTDStateCopyWithImpl<$Res, $Val extends RouteOTDState>
       data: null == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as List<Store>,
+              as List<StoreIsar>,
       state: null == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -70,7 +70,7 @@ abstract class _$$_RouteOTDCopyWith<$Res>
       __$$_RouteOTDCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<Store> data, States state});
+  $Res call({List<StoreIsar> data, States state});
 }
 
 /// @nodoc
@@ -91,7 +91,7 @@ class __$$_RouteOTDCopyWithImpl<$Res>
       data: null == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
-              as List<Store>,
+              as List<StoreIsar>,
       state: null == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -104,13 +104,13 @@ class __$$_RouteOTDCopyWithImpl<$Res>
 
 class _$_RouteOTD implements _RouteOTD {
   const _$_RouteOTD(
-      {final List<Store> data = const [], this.state = States.loading})
+      {final List<StoreIsar> data = const [], this.state = States.loading})
       : _data = data;
 
-  final List<Store> _data;
+  final List<StoreIsar> _data;
   @override
   @JsonKey()
-  List<Store> get data {
+  List<StoreIsar> get data {
     if (_data is EqualUnmodifiableListView) return _data;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_data);
@@ -146,11 +146,11 @@ class _$_RouteOTD implements _RouteOTD {
 }
 
 abstract class _RouteOTD implements RouteOTDState {
-  const factory _RouteOTD({final List<Store> data, final States state}) =
+  const factory _RouteOTD({final List<StoreIsar> data, final States state}) =
       _$_RouteOTD;
 
   @override
-  List<Store> get data;
+  List<StoreIsar> get data;
   @override
   States get state;
   @override

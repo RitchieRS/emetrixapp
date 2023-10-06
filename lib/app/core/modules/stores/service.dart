@@ -7,10 +7,10 @@ class StoresService {
 
   Future<Stores> getStores() async {
     final response = await repository.getStores();
-    final List<Store?> mainStores = [];
+    final List<Store> mainStores = [];
     response.resp?.forEach(
       (store) {
-        if (store?.definirNombre == 0) {
+        if (store.definirNombre == 0) {
           mainStores.add(store);
         }
       },
@@ -21,10 +21,10 @@ class StoresService {
 
   Future<Stores> getAditionalStores() async {
     final response = await repository.getStores();
-    final List<Store?> mainStores = [];
+    final List<Store> mainStores = [];
     response.resp?.forEach(
       (store) {
-        if (store?.definirNombre == 1) {
+        if (store.definirNombre == 1) {
           mainStores.add(store);
         }
       },

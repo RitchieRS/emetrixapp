@@ -6,7 +6,7 @@ part 'state.freezed.dart';
 @freezed
 class RouteOTDState with _$RouteOTDState {
   const factory RouteOTDState({
-    @Default([]) List<Store> data,
+    @Default([]) List<StoreIsar> data,
     @Default(States.loading) States state,
   }) = _RouteOTD;
 }

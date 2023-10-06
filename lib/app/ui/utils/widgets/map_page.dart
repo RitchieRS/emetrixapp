@@ -6,9 +6,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 
 class MapsPage extends ConsumerStatefulWidget {
   const MapsPage({super.key, this.store});

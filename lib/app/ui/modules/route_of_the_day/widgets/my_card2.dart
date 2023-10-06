@@ -15,9 +15,9 @@ class MyCard2 extends ConsumerStatefulWidget {
       {super.key,
       required this.onDeleted,
       required this.index,
-      required this.resp});
+      required this.store});
   final int index;
-  final Store? resp;
+  final Store? store;
   final Function onDeleted;
 
   @override
@@ -49,7 +49,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
           background: backWidget,
           direction: DismissDirection.endToStart,
           confirmDismiss: (direction) => confirmDimiss(),
-          onDismissed: (direction) => widget.onDeleted(widget.index),
+          onDismissed: (direction) => widget.onDeleted(),
           child: ExpansionPanelList.radio(
             expandedHeaderPadding: const EdgeInsets.all(0),
             elevation: 0,
@@ -57,15 +57,19 @@ class _MyCardState extends ConsumerState<MyCard2> {
             children: [
               ExpansionPanelRadio(
                   canTapOnHeader: false, // True
-                  value: widget.resp ?? Store(),
+                  value: widget.store ?? Store(),
                   headerBuilder: (context, isExpanded) {
                     return ListTile(
-                      onTap: () =>
-                          showMsj2(widget.resp?.tienda ?? 'Tienda', size),
+                      onTap: () async {
+                        print('Index Isar: ${widget.store?.id}');
+                        print('Index ListView: ${widget.index}');
+
+                        await showMsj2(widget.store?.tienda ?? 'Tienda', size);
+                      },
                       minVerticalPadding: 0,
                       leading:
                           Icon(Icons.storefront_outlined, color: iconColor),
-                      title: Text('${widget.resp?.tienda}',
+                      title: Text('${widget.store?.tienda}',
                           style: t.mediumBold,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis),
@@ -84,9 +88,9 @@ class _MyCardState extends ConsumerState<MyCard2> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Cadena: ${widget.resp?.idCadena}',
+                              Text('Cadena: ${widget.store?.idCadena}',
                                   style: t.text),
-                              Text('Grupo: ${widget.resp?.idGrupo}',
+                              Text('Grupo: ${widget.store?.idGrupo}',
                                   style: t.text),
                             ]),
                       ),
@@ -99,7 +103,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
                                 PageTransition(
                                     duration: const Duration(milliseconds: 350),
                                     type: PageTransitionType.rightToLeft,
-                                    child: MapsPage(store: widget.resp))),
+                                    child: MapsPage(store: widget.store))),
                             icon: Icon(Icons.location_on,
                                 color: c.primary.withOpacity(0.8),
                                 size: size.height * 0.03)),
@@ -144,8 +148,8 @@ class _MyCardState extends ConsumerState<MyCard2> {
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('Cadena: ${widget.resp?.idCadena}', style: t.text),
-                    Text('Grupo: ${widget.resp?.idGrupo}', style: t.text),
+                    Text('Cadena: ${widget.store?.idCadena}', style: t.text),
+                    Text('Grupo: ${widget.store?.idGrupo}', style: t.text),
                   ],
                 ),
                 actionsAlignment: MainAxisAlignment.center,
@@ -197,7 +201,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
       navigator.push(MaterialPageRoute(builder: (context) {
         return SondeoPage(
             sondeosList: sondeos[index].resp ?? [],
-            store: widget.resp ?? Store());
+            store: widget.store ?? Store());
       }));
     }
   }

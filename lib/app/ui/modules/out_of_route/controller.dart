@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:emetrix_flutter/app/core/modules/stores/all_stores.dart';
+import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:emetrix_flutter/app/core/providers/providers.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/service.dart';
-import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/modules/out_of_route/state.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
 
@@ -21,51 +22,68 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
   OutOfRouteControllerNotifier(this.homeService)
       : super(const OutOfRouteState());
 
-  Future<List<Store>> getStoresDB() async {
-    List<Store> stores = [];
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? storesData = prefs.getStringList('storesData');
+  Future<List<StoreGeneral>> getAllStoresIsar(WidgetRef ref) async {
+    List<StoreGeneral> stores = [];
     state = state.copyWith(state: States.loading);
     await Future.delayed(const Duration(seconds: 1));
+    stores = await ref.watch(databaseProvider).getAllStores();
 
-    if (storesData != null) {
-      for (var store in storesData) {
-        stores.add(Store.fromJson(jsonDecode(store)));
-      }
+    if (stores.isNotEmpty) {
       state = state.copyWith(state: States.succes);
       return stores;
-    } else {
-      state = state.copyWith(state: States.error);
-      return [];
     }
+    state = state.copyWith(state: States.error);
+    return [];
   }
+  // Future<List<Store>> getStoresDB() async {
+  //   List<Store> stores = [];
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final List<String>? storesData = prefs.getStringList('storesData');
+  //   state = state.copyWith(state: States.loading);
+  //   await Future.delayed(const Duration(seconds: 1));
 
-  Future setRoutesOTD(List<String> routes) async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? savedList = prefs.getStringList('routes');
-    debugPrint('SavedList $savedList');
+  //   if (storesData != null) {
+  //     for (var store in storesData) {
+  //       stores.add(Store.fromJson(jsonDecode(store)));
+  //     }
+  //     state = state.copyWith(state: States.succes);
+  //     return stores;
+  //   } else {
+  //     state = state.copyWith(state: States.error);
+  //     return [];
+  //   }
+  // }
 
-    if (savedList != null) {
-      if (savedList.isNotEmpty) {
-        savedList.addAll(routes);
-        prefs
-            .setStringList('routes', savedList)
-            .whenComplete(() => debugPrint('ROTD Added $routes'));
-      }
-    } else {
-      prefs
-          .setStringList('routes', routes)
-          .whenComplete(() => debugPrint('ROTD Added FirstTime $routes'));
-    }
+  Future<void> saveStoresToIsar(
+      List<StoreGeneral> routes, WidgetRef ref) async {
+    await ref.watch(databaseProvider).saveStores(routes);
   }
+  // Future setRoutesOTD(List<String> routes) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final List<String>? savedList = prefs.getStringList('routes');
+  //   debugPrint('SavedList $savedList');
+
+  //   if (savedList != null) {
+  //     if (savedList.isNotEmpty) {
+  //       savedList.addAll(routes);
+  //       prefs
+  //           .setStringList('routes', savedList)
+  //           .whenComplete(() => debugPrint('ROTD Added $routes'));
+  //     }
+  //   } else {
+  //     prefs
+  //         .setStringList('routes', routes)
+  //         .whenComplete(() => debugPrint('ROTD Added FirstTime $routes'));
+  //   }
+  // }
 
   Future<List<String>> getSondeosFromApi(
-      List<Store> routes, WidgetRef ref) async {
+      List<StoreGeneral> routes, WidgetRef ref) async {
     List<String> sondeos = [];
 
     try {
       //Obtener los sondeos
-      for (Store element in routes) {
+      for (StoreGeneral element in routes) {
         final sondeo =
             await ref.read(routeOTD.notifier).getSondeo2(element.id ?? '');
         sondeos.add(jsonEncode(sondeo));

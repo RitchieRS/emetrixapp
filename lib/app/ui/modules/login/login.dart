@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +6,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/global/ui.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'controller.dart';
@@ -217,18 +217,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Future getStores() async {
-    List<String> storesJson = [];
+    List<Store> allStores = [];
     final stores = await ref.read(loginControllerProvider.notifier).getStores();
     final storesAdditional =
         await ref.read(loginControllerProvider.notifier).getAditionalStores();
 
     stores.resp?.forEach((store) {
-      storesJson.add(jsonEncode(store));
+      allStores.add(store);
     });
     storesAdditional.resp?.forEach((store) {
-      storesJson.add(jsonEncode(store));
+      allStores.add(store);
     });
 
-    ref.read(loginControllerProvider.notifier).saveStoresData(storesJson);
+    ref.read(loginControllerProvider.notifier).saveStoresData(allStores, ref);
   }
 }

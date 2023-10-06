@@ -1,35 +1,9 @@
-/* 
-// Example Usage
-Map<String, dynamic> map = jsonDecode(<myJSONString>);
-var myRootNode = Root.fromJson(map);
-*/
-
 import 'package:isar/isar.dart';
-part 'stores.g.dart';
+part 'all_stores.g.dart';
 
 @collection
-class StoreIsar {
-  Id id = Isar.autoIncrement;
-  Store? store;
-  double? progress;
-  int? totalQuestions;
-  int? currentQuestion;
-
-  List<String>? responsesQuestions;
-  List<String>? responsesSelectionList;
-
-  StoreIsar({
-    this.store,
-    this.progress,
-    this.totalQuestions,
-    this.currentQuestion,
-    this.responsesQuestions,
-    this.responsesSelectionList,
-  });
-}
-
-@embedded
-class Store {
+class StoreGeneral {
+  Id idIsar = Isar.autoIncrement;
   String? id;
   String? tienda;
   double? latitud;
@@ -41,7 +15,7 @@ class Store {
   int? rangoGPS;
   String? checkGPS;
 
-  Store(
+  StoreGeneral(
       {this.id,
       this.tienda,
       this.latitud,
@@ -53,7 +27,7 @@ class Store {
       this.rangoGPS,
       this.checkGPS});
 
-  factory Store.fromJson(Map<String, dynamic> json) => Store(
+  factory StoreGeneral.fromJson(Map<String, dynamic> json) => StoreGeneral(
         id: json["id"],
         tienda: json["tienda"],
         latitud: json["latitud"]?.toDouble(),
@@ -78,30 +52,6 @@ class Store {
     data['clasificacion'] = clasificacion;
     data['rangoGPS'] = rangoGPS;
     data['checkGPS'] = checkGPS;
-    return data;
-  }
-}
-
-class Stores {
-  int? idError;
-  List<Store>? resp;
-
-  Stores({this.idError, this.resp});
-
-  Stores.fromJson(Map<String, dynamic> json) {
-    idError = json['idError'];
-    if (json['resp'] != null) {
-      resp = <Store>[];
-      json['resp'].forEach((v) {
-        resp!.add(Store.fromJson(v));
-      });
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['idError'] = idError;
-    data['resp'] = resp != null ? resp!.map((v) => v.toJson()).toList() : null;
     return data;
   }
 }

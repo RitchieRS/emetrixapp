@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -168,7 +169,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       await ref.read(themeProvider.notifier).setLightTheme();
     }
 
-    await prefs.clear().whenComplete(() async {
+    await prefs.clear();
+    await ref.read(databaseProvider).clearDatabase().whenComplete(() async {
       setState(() {});
       await vibrate();
       navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) {

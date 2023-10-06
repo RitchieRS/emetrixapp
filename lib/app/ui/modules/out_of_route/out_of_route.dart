@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
-import 'dart:convert';
+// import 'dart:convert';
+import 'package:emetrix_flutter/app/core/modules/stores/all_stores.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
@@ -7,12 +8,12 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/general_loading.dart';
 import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/global/ui.dart';
 
 import 'controller.dart';
-import 'loading_view.dart';
 import 'state.dart';
 import 'widgets/my_card.dart';
 
@@ -24,15 +25,17 @@ class OutOfRoutePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<OutOfRoutePage> {
-  List<Store> storesMain = [];
-  List<Store> storesSelected = [];
-  List<String> stores = [];
+  List<StoreGeneral> storesMain = [];
+  List<StoreGeneral> storesSelected = [];
+  // List<String> stores = [];
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    getStoresDB();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await getStoresDB();
+    });
   }
 
   @override
@@ -78,7 +81,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                                   onChanged: (index) => selectedStores(index),
                                   canceled: ref.watch(cardProvider),
                                   index: index,
-                                  resp: storesMain[index]),
+                                  resp: toStore(storesMain[index])),
                             ),
                           ),
                         ),
@@ -86,7 +89,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                     ),
                   ),
                 ),
-                stores.isNotEmpty
+                storesSelected.isNotEmpty
                     ? FadeIn(
                         duration: const Duration(milliseconds: 100),
                         child: Padding(
@@ -101,7 +104,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                                 : ButonDimentions(
                                     background: c.primary,
                                     title:
-                                        'Agregar Ruta${stores.length <= 1 ? '' : 's'}',
+                                        'Agregar Ruta${storesSelected.length <= 1 ? '' : 's'}',
                                     style: t.mediumLight,
                                     onTap: () => start(),
                                     width: width,
@@ -116,6 +119,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
         );
       case States.error:
         return Scaffold(
+          appBar: const GradientTitle(title: 'Fuera de Ruta'),
           body: ListView(
             children: [
               Center(
@@ -127,24 +131,41 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
           ),
         );
       case States.loading:
-        return const LoadingView();
+        return const Scaffold(
+          appBar: GradientTitle(title: 'Fuera de Ruta'),
+          body: GeneralLoading(loadingCards: 4),
+        );
     }
+  }
+
+  Store toStore(StoreGeneral storeGeneral) {
+    return Store(
+      checkGPS: storeGeneral.checkGPS,
+      clasificacion: storeGeneral.clasificacion,
+      definirNombre: storeGeneral.definirNombre,
+      id: storeGeneral.id,
+      idCadena: storeGeneral.idCadena,
+      idGrupo: storeGeneral.idGrupo,
+      latitud: storeGeneral.latitud,
+      longitud: storeGeneral.longitud,
+      rangoGPS: storeGeneral.rangoGPS,
+      tienda: storeGeneral.tienda,
+    );
   }
 
   void selectedStores(int? index) {
     if (index != null) {
-      stores.add(jsonEncode(storesMain[index]));
       storesSelected.add(storesMain[index]);
       setState(() {});
       return;
     }
-    stores.removeAt(index ?? 0);
     storesSelected.removeAt(index ?? 0);
     setState(() {});
   }
 
   Future<void> getStoresDB() async {
-    storesMain = await ref.read(outORControllerProvider.notifier).getStoresDB();
+    storesMain =
+        await ref.read(outORControllerProvider.notifier).getAllStoresIsar(ref);
     setState(() {});
   }
 
@@ -170,7 +191,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     final navigator = Navigator.of(context);
     ref
         .read(outORControllerProvider.notifier)
-        .setRoutesOTD(stores)
+        .saveStoresToIsar(storesSelected, ref)
         .whenComplete(() async {
       setState(() {});
       final sondeos = await ref
@@ -179,7 +200,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
       ref.read(outORControllerProvider.notifier).setSondeosToDB(sondeos);
 
       ref.read(cardProvider.notifier).update((state) => !state);
-      stores.clear();
+      // stores.clear();
       storesSelected.clear();
 
       setState(() {

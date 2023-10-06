@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:emetrix_flutter/app/core/global/core.dart';
@@ -75,10 +76,9 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
     }
   }
 
-  Future<void> saveStoresData(List<String> stores) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('storesData', stores);
-    logger.d('STORES SET ON SHARED');
+  Future<void> saveStoresData(List<Store> stores, WidgetRef ref) async {
+    await ref.watch(databaseProvider).saveAllStores(stores);
+    logger.d('STORES SET ON ISAR');
   }
 
   //

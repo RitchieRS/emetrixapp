@@ -1,11 +1,10 @@
-import 'package:emetrix_flutter/app/ui/modules/out_of_route/controller.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/map_page.dart';
+import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:animate_do/animate_do.dart';
 
-import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
+import 'package:emetrix_flutter/app/ui/modules/out_of_route/controller.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/map_page.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class MyCard extends ConsumerStatefulWidget {
