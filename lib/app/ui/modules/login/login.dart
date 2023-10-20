@@ -104,7 +104,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ? Padding(
                             padding: buttonPadding,
                             child: ButonDimentions(
-                                background: c.primary,
+                                background: c.primary500,
                                 title: 'Entrar',
                                 style: t.mediumLight,
                                 onTap: () => start(),

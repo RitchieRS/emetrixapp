@@ -25,13 +25,15 @@ class Selection extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _SelectionState();
 }
 
-class _SelectionState extends ConsumerState<Selection> {
+class _SelectionState extends ConsumerState<Selection>
+    with AutomaticKeepAliveClientMixin {
   late String typeService = widget.yn[0];
   late String multi = widget.question.opciones?[0].opcion ?? '';
-  int? selectedOption;
+  int? selectedOption = 0;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final size = MediaQuery.of(context).size;
 
     return Column(
@@ -42,20 +44,18 @@ class _SelectionState extends ConsumerState<Selection> {
           padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
           child: Text(widget.pregunta.pregunta ?? 'NoData', style: t.subtitle),
         ),
-        SizedBox(height: size.height * 0.01),
-        Padding(
-          padding: EdgeInsets.only(bottom: size.height * 0.01),
-          child: Center(
-              child: ListView.builder(
+        Center(
+          child: ListView.builder(
             shrinkWrap: true,
-            physics: const BouncingScrollPhysics(),
+            // physics: const BouncingScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: widget.yn.length,
             itemBuilder: (BuildContext context, int index) {
               return widget.yesNo == true
                   ? RadioListTile(
                       title: Text(widget.yn[index]),
-                      activeColor: c.primary,
                       value: index,
+                      activeColor: c.primary,
                       groupValue: selectedOption,
                       onChanged: (value) => yesNoOnChanged(value))
                   : widget.oneSelection != true &&
@@ -69,8 +69,9 @@ class _SelectionState extends ConsumerState<Selection> {
                           onChanged: (value) => onChanged(value))
                       : const SizedBox();
             },
-          )),
+          ),
         ),
+        SizedBox(height: size.height * 0.02),
       ],
     );
   }
@@ -96,6 +97,9 @@ class _SelectionState extends ConsumerState<Selection> {
     widget.answer(null);
     return;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   //
 }

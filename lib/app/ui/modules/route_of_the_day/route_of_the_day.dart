@@ -18,7 +18,8 @@ class RouteOfTheDayPage extends ConsumerStatefulWidget {
       _RouteOfTheDayPageState();
 }
 
-class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
+class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
+    with AutomaticKeepAliveClientMixin {
   List<StoreIsar> list = [];
 
   @override
@@ -31,6 +32,7 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final state = ref.watch(routeOTD);
 
     switch (state.state) {
@@ -82,4 +84,7 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage> {
     list = await ref.read(routeOTD.notifier).getStoresFromIsar(ref);
     setState(() {});
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

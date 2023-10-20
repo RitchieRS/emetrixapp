@@ -7,16 +7,20 @@ import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 class Question extends ConsumerStatefulWidget {
   const Question({
     super.key,
-    this.max,
-    this.min,
+    this.charactersMin,
+    this.charactersMax,
+    this.valueMax,
+    this.valueMin,
     required this.answer,
     required this.pregunta,
     required this.index,
     required this.type,
   });
   final int index;
-  final int? min;
-  final int? max;
+  final num? charactersMin;
+  final num? charactersMax;
+  final num? valueMin;
+  final num? valueMax;
   final String textfieldValue = '';
   final Preguntas pregunta;
   final String type;
@@ -26,30 +30,23 @@ class Question extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _QuestionState();
 }
 
-class _QuestionState extends ConsumerState<Question> {
-  // TextEditingController questionController = TextEditingController();
-
+class _QuestionState extends ConsumerState<Question>
+    with AutomaticKeepAliveClientMixin {
   final formKey = GlobalKey<FormState>();
   static final errorBorder = OutlineInputBorder(
-      borderSide: BorderSide(color: c.error, width: 2),
+      borderSide: BorderSide(color: c.error, width: 1.5),
       borderRadius: BorderRadius.circular(10));
   static final focusedBorder = OutlineInputBorder(
-      borderSide: BorderSide(color: c.primary, width: 2),
+      borderSide: BorderSide(color: c.primary, width: 1.5),
       borderRadius: BorderRadius.circular(10));
-
-  @override
-  void dispose() {
-    // questionController.dispose();
-    formKey.currentState?.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final size = MediaQuery.of(context).size;
     Color color2 = Theme.of(context).hintColor.withOpacity(0.3);
     final defaultBorder = OutlineInputBorder(
-        borderSide: BorderSide(color: color2, width: 2),
+        borderSide: BorderSide(color: color2, width: 1.5),
         borderRadius: BorderRadius.circular(10));
 
     return Column(
@@ -60,7 +57,7 @@ class _QuestionState extends ConsumerState<Question> {
           padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
           child: Text(widget.pregunta.pregunta ?? 'NoData', style: t.subtitle),
         ),
-        SizedBox(height: size.height * 0.02),
+        SizedBox(height: size.height * 0.01),
         Center(
           child: Form(
             key: formKey,
@@ -68,7 +65,6 @@ class _QuestionState extends ConsumerState<Question> {
               // controller: questionController,
               validator: (value) => selectValidation(value),
               onChanged: (value) {
-                debugPrint('New Value: $value');
                 validateAndSave(value);
               },
               maxLines: 1,
@@ -80,14 +76,17 @@ class _QuestionState extends ConsumerState<Question> {
                 contentPadding: EdgeInsets.only(
                     left: 12, bottom: 0, top: size.height * 0.06 / 2),
                 labelStyle: t.text,
-                prefixIcon: const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Icon(Icons.question_answer),
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Icon(
+                      widget.type == 'numerico' || widget.type == 'decimal'
+                          ? Icons.numbers
+                          : Icons.question_answer),
                 ),
                 prefixIconColor: Colors.grey,
                 focusColor: c.primary,
                 constraints: BoxConstraints(
-                    minHeight: widget.max != null
+                    minHeight: widget.valueMax != null
                         ? size.height * 0.08
                         : size.height * 0.07,
                     maxWidth: size.width * 0.9),
@@ -100,6 +99,7 @@ class _QuestionState extends ConsumerState<Question> {
             ),
           ),
         ),
+        SizedBox(height: size.height * 0.02),
       ],
     );
   }
@@ -107,6 +107,7 @@ class _QuestionState extends ConsumerState<Question> {
   void validateAndSave(String value) {
     final form = formKey.currentState;
     final isValid = form!.validate();
+    setState(() {});
 
     if (isValid && value.isNotEmpty) {
       widget.answer(value);
@@ -117,26 +118,44 @@ class _QuestionState extends ConsumerState<Question> {
   }
 
   String? selectValidation(String? value) {
-    final validations = {
-      'numerico': validateNumer(value),
-      'decimal': validateNumerDecimal(value),
-      'email': validateEmail(value),
-      'abierta': validate(value),
-    };
+    if (widget.type == 'numerico') {
+      return validateNumer(value);
+    }
+    if (widget.type == 'decimal') {
+      return validateNumerDecimal(value);
+    }
+    if (widget.type == 'abierta') {
+      return validateString(value);
+    }
+    return null;
 
-    return validations[widget.type];
+    // final validations = {
+    //   'numerico': validateNumer(value),
+    //   'decimal': validateNumerDecimal(value),
+    //   'abierta': validateString(value),
+    //   // 'email': validateEmail(value),
+    // };
+
+    // return validations[widget.type];
   }
 
-  String? validate(String? value) {
+  String? validateString(String? value) {
+    final min = widget.charactersMin ?? 1;
+
     if (value == null || value.isEmpty || value == '') {
       return 'Completa el campo';
+    }
+    if (value.length < min) {
+      return '${value.length}: Completa $min caracteres como mínimo';
     }
     widget.answer(value);
     return null;
   }
 
   String? validateNumer(String? value) {
+    final min = widget.valueMin ?? 1;
     bool isNumber = double.tryParse(value ?? '') != null;
+    double number = double.parse(value ?? '');
 
     if (value == null || value.isEmpty || value == '') {
       return 'Completa el campo';
@@ -144,11 +163,18 @@ class _QuestionState extends ConsumerState<Question> {
     if (!isNumber) {
       return 'Debe ser un número';
     }
+
+    if (number < min) {
+      return 'Ingresa un valor de $min como mínimo';
+    }
+
     widget.answer(value);
     return null;
   }
 
   String? validateNumerDecimal(String? value) {
+    final min = widget.valueMin ?? 1;
+    final max = widget.valueMax ?? 1;
     bool isNumber = double.tryParse(value ?? '') != null;
     double valueNumber = 0;
 
@@ -160,8 +186,8 @@ class _QuestionState extends ConsumerState<Question> {
     }
     valueNumber = double.parse(value);
 
-    if (valueNumber < 5 || valueNumber > 10 || valueNumber % 1 == 0) {
-      return 'Debe ser un DECIMAL entre 5 - 10';
+    if (valueNumber < min || valueNumber > max || valueNumber % 1 == 0) {
+      return 'Debe ser un DECIMAL entre $min - $max';
     }
     widget.answer(value);
     return null;
@@ -181,4 +207,7 @@ class _QuestionState extends ConsumerState<Question> {
 
     return 'Completa el campo';
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

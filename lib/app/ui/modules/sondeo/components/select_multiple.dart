@@ -4,8 +4,13 @@ import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class SelectionMultiple extends ConsumerStatefulWidget {
-  const SelectionMultiple({super.key, required this.question});
+  const SelectionMultiple({
+    super.key,
+    required this.question,
+    required this.selectedItems,
+  });
   final Preguntas question;
+  final Function(List<String>?) selectedItems;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SelectionState();
@@ -13,16 +18,7 @@ class SelectionMultiple extends ConsumerStatefulWidget {
 
 class _SelectionState extends ConsumerState<SelectionMultiple>
     with AutomaticKeepAliveClientMixin {
-  List<bool>? boollist = [];
-
-  @override
-  void initState() {
-    super.initState();
-    final boollist2 = widget.question.opciones?.map((e) => false).toList();
-    boollist = boollist2;
-    setState(() {});
-    debugPrint(boollist.toString());
-  }
+  List<String>? selectedItems = [];
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +26,7 @@ class _SelectionState extends ConsumerState<SelectionMultiple>
     final size = MediaQuery.of(context).size;
     //top: size.height * 0.01
 
-    return ListView(
-      physics: const BouncingScrollPhysics(),
+    return Column(
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
@@ -45,38 +40,31 @@ class _SelectionState extends ConsumerState<SelectionMultiple>
               physics: const NeverScrollableScrollPhysics(),
               itemCount: widget.question.opciones?.length ?? 0,
               itemBuilder: (context, index) {
-                return Row(
-                  children: [
-                    Checkbox(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                        activeColor: c.primary,
-                        value: boollist?[index],
-                        onChanged: (newvalue) {
-                          setState(() => boollist?[index] = newvalue ?? false);
-                        }),
-                    GestureDetector(
-                      onTap: () {
-                        if (boollist?[index] == false) {
-                          setState(() => boollist?[index] = true);
-                          return;
-                        }
-                        setState(() => boollist?[index] = false);
-                      },
-                      child: SizedBox(
-                        width: size.width * 0.7,
-                        child: Text(
-                            widget.question.opciones?[index].opcion ?? '',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis),
-                      ),
-                    ),
-                  ],
+                return CheckboxListTile(
+                  value: selectedItems
+                      ?.contains(widget.question.opciones?[index].opcion),
+                  onChanged: (newvalue) => onSelectedTile(newvalue, index),
+                  title: Text(widget.question.opciones?[index].opcion ?? '',
+                      maxLines: 2, overflow: TextOverflow.ellipsis),
+                  activeColor: c.primary,
+                  checkboxShape: const CircleBorder(),
+                  controlAffinity: ListTileControlAffinity.leading,
                 );
               }),
         ),
       ],
     );
+  }
+
+  void onSelectedTile(bool? newvalue, int index) {
+    setState(() {
+      if (newvalue == true) {
+        selectedItems?.add(widget.question.opciones?[index].opcion ?? '');
+      } else {
+        selectedItems?.remove(widget.question.opciones?[index].opcion ?? '');
+      }
+      widget.selectedItems(selectedItems);
+    });
   }
 
   @override

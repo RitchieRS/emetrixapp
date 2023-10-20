@@ -26,14 +26,18 @@ class TypeSondeo extends ConsumerWidget {
     final size = MediaQuery.of(context).size;
     const int animationDuration = 1000;
     final currentOption = ref.watch(currentOptionProvider);
-    final theme = ref.watch(themeProvider);
-    const enebledColor = Color(0xff3C91E6);
+    final isDark = ref.watch(themeProvider);
+    final enebledColor = c.primary500;
     final disabledColor =
-        theme == ThemeMode.light ? Colors.grey[400] : c.disabled;
-    final finishedColor = c.ok.withOpacity(0.7);
+        isDark == ThemeMode.light ? Colors.grey[400] : c.disabled;
+    final finishedColor = c.ok;
     // final enabledColor = index <= currentOption - 1;
     final finishedSections = ref.watch(finishedSondeos);
     final isFinished = finishedSections.any((element) => element == index);
+    final side = size.height * 0.075;
+    final leftPadding = size.width * 0.06;
+    final lineTickness = size.height * 0.007;
+    // print('NUM: ${sondeoItem.id}');
 
     return Padding(
       padding: isLast
@@ -52,13 +56,13 @@ class TypeSondeo extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(width: size.width * 0.06),
+                  SizedBox(width: leftPadding),
                   AnimatedContainer(
                     duration:
                         const Duration(milliseconds: animationDuration + 300),
                     curve: Curves.bounceIn,
-                    height: size.height * 0.08,
-                    width: size.height * 0.08,
+                    height: side,
+                    width: side,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isFinished
@@ -85,8 +89,8 @@ class TypeSondeo extends ConsumerWidget {
                           : const SizedBox(),
                       Row(
                         children: [
-                          Text('PASO ${index + 1}', style: t.textDisabled2),
-                          SizedBox(width: size.width * 0.02),
+                          // Text('PASO ${index + 1}', style: t.textDisabled2),
+                          // SizedBox(width: size.width * 0.02),
                           isFinished
                               ? Text('Completado', style: t.textOk)
                               : const SizedBox(),
@@ -100,7 +104,11 @@ class TypeSondeo extends ConsumerWidget {
                         color: c.surface,
                         width: size.width * 0.4,
                         child: Text(sondeoItem.sondeo ?? 'Error',
-                            style: enebled ? t.mediumBold : t.mediumDisabled,
+                            style: enebled
+                                ? (isDark == ThemeMode.dark
+                                    ? t.mediumLight
+                                    : t.mediumBold)
+                                : t.mediumDisabled,
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis),
                       ),
@@ -113,8 +121,9 @@ class TypeSondeo extends ConsumerWidget {
                   ? const SizedBox()
                   : Expanded(
                       child: Padding(
-                        padding:
-                            EdgeInsets.only(left: size.width * 0.14, top: 0),
+                        padding: EdgeInsets.only(
+                            left: leftPadding + (side / 2 - lineTickness / 2),
+                            top: 0),
                         child: SizedBox(
                           height: size.height * 0.06,
                           child: RotatedBox(
@@ -136,7 +145,7 @@ class TypeSondeo extends ConsumerWidget {
                                     : enebled
                                         ? enebledColor
                                         : disabledColor,
-                                minHeight: size.height * 0.007,
+                                minHeight: lineTickness,
                                 backgroundColor: disabledColor,
                               ),
                             ),

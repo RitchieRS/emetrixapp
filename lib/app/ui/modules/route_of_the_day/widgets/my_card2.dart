@@ -39,7 +39,8 @@ class _MyCardState extends ConsumerState<MyCard2> {
         decoration: BoxDecoration(color: Colors.red.withOpacity(0.2)),
         alignment: Alignment.centerRight,
         child: const Icon(Icons.delete, color: Colors.redAccent));
-    final iconColor = Theme.of(context).textTheme.bodyLarge?.color;
+    final iconColor = c.primary500;
+    // final iconColor = Theme.of(context).textTheme.bodyLarge?.color;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
@@ -56,14 +57,12 @@ class _MyCardState extends ConsumerState<MyCard2> {
             animationDuration: const Duration(milliseconds: 350),
             children: [
               ExpansionPanelRadio(
+                  backgroundColor: c.primary200.withOpacity(0.2),
                   canTapOnHeader: false, // True
                   value: widget.store ?? Store(),
                   headerBuilder: (context, isExpanded) {
                     return ListTile(
                       onTap: () async {
-                        print('Index Isar: ${widget.store?.id}');
-                        print('Index ListView: ${widget.index}');
-
                         await showMsj2(widget.store?.tienda ?? 'Tienda', size);
                       },
                       minVerticalPadding: 0,
@@ -98,12 +97,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
                         padding: EdgeInsets.only(right: size.width * 0.1),
                         child: TextButton.icon(
                             label: const Text('Maps'),
-                            onPressed: () => Navigator.push(
-                                context,
-                                PageTransition(
-                                    duration: const Duration(milliseconds: 350),
-                                    type: PageTransitionType.rightToLeft,
-                                    child: MapsPage(store: widget.store))),
+                            onPressed: () => goMaps(),
                             icon: Icon(Icons.location_on,
                                 color: c.primary.withOpacity(0.8),
                                 size: size.height * 0.03)),
@@ -115,6 +109,15 @@ class _MyCardState extends ConsumerState<MyCard2> {
         ),
       ),
     );
+  }
+
+  void goMaps() {
+    Navigator.push(
+        context,
+        PageTransition(
+            duration: const Duration(milliseconds: 350),
+            type: PageTransitionType.rightToLeft,
+            child: MapsPage(store: widget.store)));
   }
 
   Future<bool> confirmDimiss() async {

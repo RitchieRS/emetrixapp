@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 
-import 'package:emetrix_flutter/app/core/services/services.dart';
+// import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class Gps extends ConsumerStatefulWidget {
-  const Gps({super.key, required this.pregunta});
+  const Gps({super.key, required this.pregunta, required this.answer});
   final String pregunta;
+  final Function(String?) answer;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _GpsState();
@@ -28,10 +29,7 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     final size = MediaQuery.of(context).size;
-    final theme = ref.watch(themeProvider);
-    final backColor = theme == ThemeMode.dark
-        ? Theme.of(context).hintColor
-        : Theme.of(context).highlightColor;
+    // final isDark = ref.watch(themeProvider) == ThemeMode.dark;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -48,7 +46,7 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
                 height: size.height * 0.05,
                 child: Center(
                     child:
-                        Text('${position?.longitude}, ${position?.latitude}')),
+                        Text('${position?.latitude}, ${position?.longitude}')),
               )
             : loading == true
                 ? SizedBox(
@@ -68,17 +66,23 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
         SizedBox(height: size.height * 0.01),
         Center(
           child: Buton(
-              background: backColor,
+              outlined: true,
+              background: c.primary400,
               title: 'Obtenet GPS',
-              style: t.medium,
+              style: t.mediumBlue2,
               onTap: () => getCurrentLocation()),
         ),
+        SizedBox(height: size.height * 0.02),
       ],
     );
   }
 
   Future<void> getCurrentLocation() async {
-    debugPrint(geolocator.toString());
+    if (position != null) {
+      widget.answer('${position?.latitude}, ${position?.longitude}');
+      return;
+    }
+
     setState(() {
       loading = !loading;
     });
@@ -87,6 +91,8 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
       position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.best,
           forceAndroidLocationManager: false);
+
+      widget.answer('${position?.latitude}, ${position?.longitude}');
 
       setState(() {});
     } catch (err) {

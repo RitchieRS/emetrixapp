@@ -42,7 +42,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     final onlyFirst = ref.watch(onlyFirstProvider);
     final finishedSections = ref.watch(finishedSondeos);
     final completeAll = finishedSections.length == sondeosList2.length;
-    debugPrint('Finished Sections: $finishedSections');
+    print('Finished Sections: $finishedSections');
     // final currentOption = ref.watch(currentOptionProvider);
 
     //*Close and save to db the current Navigator state, when the app restart, restore the Navigator state
@@ -75,7 +75,13 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
           toolbarHeight: size.height * 0.11,
           actions: [
             IconButton(
-                onPressed: () => onExit(finishedSections),
+                // onPressed: () => onExit(finishedSections),
+                onPressed: () async {
+                  final exit = await onPop();
+                  if (exit) {
+                    Navigator.pop(context);
+                  }
+                },
                 icon: Icon(Icons.exit_to_app,
                     color:
                         completeAll ? c.error : Theme.of(context).hintColor)),
@@ -151,7 +157,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     return Future.value(exit);
   }
 
-  Future onExit(List<int> finishedSections) async {
+  Future<void> onExit(List<int> finishedSections) async {
     final navigator = Navigator.of(context);
 
     //Check First Validations of each component

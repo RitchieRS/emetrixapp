@@ -1,4 +1,5 @@
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
+import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
@@ -24,15 +25,18 @@ class MyCard extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _MyCardState();
 }
 
-class _MyCardState extends ConsumerState<MyCard> {
-  bool isBlue = false;
+class _MyCardState extends ConsumerState<MyCard>
+    with AutomaticKeepAliveClientMixin {
+  bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final size = MediaQuery.of(context).size;
     final height = size.height * 0.125;
     final width = size.width * 0.95;
-    cancelColor();
+    final isDark = ref.watch(themeProvider) == ThemeMode.dark;
+    // cancelColor();
 
     return FadeIn(
       child: Padding(
@@ -42,16 +46,18 @@ class _MyCardState extends ConsumerState<MyCard> {
             borderRadius: const BorderRadius.all(Radius.circular(14)),
             child: InkWell(
               onTap: () {
-                setState(() => isBlue = !isBlue);
-                widget.onChanged(isBlue ? widget.index : null);
+                setState(() => isSelected = !isSelected);
+                widget.onChanged(isSelected ? widget.index : null);
               },
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 height: height,
                 width: width,
                 decoration: BoxDecoration(
-                  color: isBlue
-                      ? c.primary.withOpacity(0.1)
+                  color: isSelected
+                      ? isDark
+                          ? c.primary100.withOpacity(0.5)
+                          : c.primary100
                       : Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(14),
                 ),
@@ -93,9 +99,9 @@ class _MyCardState extends ConsumerState<MyCard> {
                     const Spacer(),
                     TextButton.icon(
                         label: const Text('Maps'),
-                        onPressed: isBlue ? () => goMapsPage() : null,
+                        onPressed: isSelected ? () => goMapsPage() : null,
                         icon: Icon(Icons.location_on,
-                            color: isBlue
+                            color: isSelected
                                 ? c.error.withOpacity(0.75)
                                 : Colors.grey,
                             size: size.height * 0.03))
@@ -110,13 +116,13 @@ class _MyCardState extends ConsumerState<MyCard> {
     );
   }
 
-  cancelColor() {
+  void cancelColor() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (widget.canceled != true) {
         return;
       } else {
         setState(() {
-          isBlue = false;
+          isSelected = false;
         });
         ref.read(cardProvider.notifier).update((state) => false);
       }
@@ -127,6 +133,9 @@ class _MyCardState extends ConsumerState<MyCard> {
     await Navigator.push(context,
         MaterialPageRoute(builder: (context) => MapsPage(store: widget.resp)));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   // Future goMaps() async {
   //   final lat = widget.resp?.latitud;

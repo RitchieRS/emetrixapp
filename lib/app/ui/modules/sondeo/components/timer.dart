@@ -15,23 +15,12 @@ class MyTimer extends ConsumerStatefulWidget {
 
 class _MyTimerState extends ConsumerState<MyTimer>
     with SingleTickerProviderStateMixin {
-  int _hours = 0;
   int _minutes = 0;
   int _seconds = 0;
+  int _milliseconds = 0;
   int _laps = 0;
   final Stopwatch _stopwatch = Stopwatch();
   final List<String> _lapTimes = [];
-  AnimationController? _animController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _animController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-  }
 
   @override
   void dispose() {
@@ -45,75 +34,61 @@ class _MyTimerState extends ConsumerState<MyTimer>
 
     return GestureDetector(
       onTap: () {
-        if (_laps < widget.times) {
-          _takeLap();
-        }
+        _handleLaps();
+        print('Tap Laps: $_laps');
+        print('Laps list: $_lapTimes');
       },
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
-              child: Text(widget.pregunta, style: t.subtitle),
-            ),
-            SizedBox(height: size.height * 0.01),
-            Text(
-              _formatTime(_hours, _minutes, _seconds),
-              style: const TextStyle(fontSize: 48.0),
-            ),
-            const SizedBox(height: 24.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                GestureDetector(
-                  onTap: _toggle,
-                  child: AnimatedIcon(
-                      icon: AnimatedIcons.play_pause,
-                      color: c.primary,
-                      progress: _animController!.view),
-                ),
-                IconButton(
-                    onPressed: () => _stopTimer(),
-                    icon: const Icon(Icons.stop),
-                    color: c.primary),
-                IconButton(
-                    onPressed: () => _restartTimer(),
-                    icon: const Icon(Icons.replay),
-                    color: c.primary),
-              ],
-            ),
-            const SizedBox(height: 24.0),
-            Text(
-              'Vueltas: $_laps',
-              style: const TextStyle(fontSize: 24.0),
-            ),
-            const SizedBox(height: 24.0),
-            Expanded(
-                child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: _lapTimes.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Text('Vuelta ${index + 1}: ${_lapTimes[index]}'),
-                );
-              },
-            ))
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+            child: Text(widget.pregunta, style: t.subtitle),
+          ),
+          SizedBox(height: size.height * 0.01),
+          Text(
+            style: const TextStyle(fontSize: 48.0),
+            _formatTime(_minutes, _seconds, _milliseconds),
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _lapTimes.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: Text(_lapTimes[index]),
+              );
+            },
+          )
+        ],
       ),
     );
   }
 
-  void _toggle() {
+  void _handleLaps() {
+    if (!_stopwatch.isRunning && _lapTimes.length < widget.times) {
+      _startTimer();
+      return;
+    }
+    if (_stopwatch.isRunning && _lapTimes.length < widget.times) {
+      _takeLap();
+      _restartTimer();
+      return;
+    }
+    if (_stopwatch.isRunning && _lapTimes.length == widget.times) {
+      _takeLap();
+      _stopTimer();
+      return;
+    }
+
+    _resetLaps();
+    _startTimer();
+  }
+
+  void _resetLaps() {
     setState(() {
-      if (_stopwatch.isRunning) {
-        _pauseTimer();
-        _animController!.reverse();
-      } else {
-        _startTimer();
-        _animController!.forward();
-      }
+      _laps = 0;
+      _lapTimes.clear();
     });
   }
 
@@ -123,21 +98,22 @@ class _MyTimerState extends ConsumerState<MyTimer>
       Timer.periodic(const Duration(milliseconds: 10), (timer) {
         if (!mounted) return;
         setState(() {
-          _hours = _stopwatch.elapsed.inHours;
           _minutes = _stopwatch.elapsed.inMinutes % 60;
           _seconds = _stopwatch.elapsed.inSeconds % 60;
+          _milliseconds = _stopwatch.elapsedMilliseconds;
         });
+        // if (_milliseconds == 1000) {
+        //   _milliseconds = 0;
+        //   setState(() {});
+        // }
       });
     }
   }
 
   void _takeLap() {
-    if (_stopwatch.isRunning) {
-      setState(() {
-        _laps++;
-        _lapTimes.add(_formatTime(_hours, _minutes, _seconds));
-      });
-    }
+    _laps++;
+    _lapTimes.add(_formatTime(_minutes, _seconds, _milliseconds));
+    setState(() {});
   }
 
   void _restartTimer() {
@@ -145,38 +121,29 @@ class _MyTimerState extends ConsumerState<MyTimer>
       _stopwatch.reset();
     }
     setState(() {
-      _hours = 0;
+      _milliseconds = 0;
       _minutes = 0;
       _seconds = 0;
-      _laps = 0;
-      _lapTimes.clear();
     });
   }
 
   void _stopTimer() {
     _stopwatch.reset();
     _stopwatch.stop();
-    _animController!.reverse();
-
     setState(() {
-      _hours = 0;
+      _milliseconds = 0;
       _minutes = 0;
       _seconds = 0;
-      _laps = 0;
-      _lapTimes.clear();
     });
   }
 
-  void _pauseTimer() {
-    if (_stopwatch.isRunning) {
-      _stopwatch.stop();
-    }
-  }
+  String _formatTime(int minutos, int segundos, int milisegundos) {
+    milisegundos = milisegundos % 1000;
 
-  String _formatTime(int horas, int minutos, int segundos) {
-    String horasStr = (horas < 10) ? '0$horas' : horas.toString();
     String minutosStr = (minutos < 10) ? '0$minutos' : minutos.toString();
     String segundosStr = (segundos < 10) ? '0$segundos' : segundos.toString();
-    return '$horasStr:$minutosStr:$segundosStr';
+    String milisegundosStr =
+        (milisegundos < 10) ? '0$milisegundos' : milisegundos.toString();
+    return '$minutosStr:$segundosStr:$milisegundosStr';
   }
 }

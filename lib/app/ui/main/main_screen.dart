@@ -17,6 +17,11 @@ class MainPage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<MainPage> {
+  List<Widget> screens = [
+    const RouteOfTheDayPage(),
+    const SettingsPage(),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -25,54 +30,115 @@ class _HomePageState extends ConsumerState<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = ref.watch(themeProvider);
+    final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     final indexMain = ref.watch(mainIndex);
-    List<Widget> screens = [
-      const RouteOfTheDayPage(),
-      const SettingsPage(),
-    ];
 
-    return Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          toolbarHeight: 0,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          elevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: c.surface,
-              statusBarIconBrightness: isDark == ThemeMode.light
-                  ? Brightness.dark
-                  : Brightness.light),
+    return
+        // DefaultTabController(
+        //   length: screens.length,
+        //   child:
+        Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        toolbarHeight: 0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: c.surface,
+            statusBarIconBrightness:
+                isDark ? Brightness.light : Brightness.dark),
+      ),
+      drawer: const MyDrawer(),
+      body: Material(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: IndexedStack(
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          index: ref.watch(mainIndex),
+          children: screens,
         ),
-        drawer: const MyDrawer(),
-        body: Material(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: IndexedStack(
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            index: ref.watch(mainIndex),
-            children: screens,
+      ),
+
+      //         TabBarView(
+      //       physics: const BouncingScrollPhysics(),
+      //       children: screens,
+      //     ),
+      bottomNavigationBar:
+          // TabBar(
+          //       enableFeedback: true,
+          //       automaticIndicatorColorAdjustment: true,
+          //       indicatorColor: c.primary500,
+          //       unselectedLabelColor: isDark
+          //           ? c.background.withOpacity(0.3)
+          //           : c.disabled.withOpacity(0.5),
+          //       labelColor: isDark == ThemeMode.dark ? c.background : c.black,
+          //       padding: const EdgeInsets.all(0),
+          //       tabs: const [
+          //         Tab(
+          //           icon: Icon(Icons.alt_route),
+          //           text: 'Ruta del dia',
+          //           height: 60,
+          //           iconMargin: EdgeInsets.all(5),
+          //         ),
+          //         Tab(
+          //           icon: Icon(Icons.settings),
+          //           text: 'Ajustes',
+          //           height: 60,
+          //           iconMargin: EdgeInsets.all(5),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // );
+
+          NavigationBar(
+        selectedIndex: indexMain,
+        onDestinationSelected: (int index) =>
+            ref.read(mainIndex.notifier).setIndex(index),
+        indicatorColor: c.primary200,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        destinations: [
+          NavigationDestination(
+            selectedIcon:
+                Icon(Icons.alt_route, color: isDark ? c.black : c.primary500),
+            icon: Icon(Icons.alt_route,
+                color: isDark ? c.black : c.disabled.withOpacity(0.5)),
+            label: 'Ruta del dia',
           ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: indexMain,
-          onTap: (value) => ref.read(mainIndex.notifier).setIndex(value),
-          elevation: 0,
-          selectedItemColor: c.primary,
-          unselectedItemColor: isDark == ThemeMode.dark
-              ? c.background.withOpacity(0.4)
-              : c.disabled.withOpacity(0.5),
-          showUnselectedLabels: true,
-          selectedFontSize: 12,
-          unselectedFontSize: 12,
-          enableFeedback: true,
-          selectedLabelStyle: t.text,
-          unselectedLabelStyle: t.text,
-          items: const [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.alt_route), label: 'Ruta del dia'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: 'Ajustes'),
-          ],
-        ));
+          NavigationDestination(
+            selectedIcon:
+                Icon(Icons.settings, color: isDark ? c.black : c.primary500),
+            icon: Icon(Icons.settings,
+                color: isDark ? c.black : c.disabled.withOpacity(0.5)),
+            label: 'Ajustes',
+          ),
+        ],
+      ),
+
+      //     BottomNavigationBar(
+      //   currentIndex: indexMain,
+      //   onTap: (value) => ref.read(mainIndex.notifier).setIndex(value),
+      //   elevation: 0,
+      //   selectedItemColor: c.primary500,
+      //   unselectedItemColor: isDark
+      //       ? c.background.withOpacity(0.4)
+      //       : c.disabled.withOpacity(0.5),
+      //   showUnselectedLabels: true,
+      //   selectedFontSize: 12,
+      //   unselectedFontSize: 12,
+      //   enableFeedback: true,
+      //   selectedLabelStyle: t.text,
+      //   unselectedLabelStyle: t.text,
+      //   items: const [
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.alt_route),
+      //       label: 'Ruta del dia',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.settings),
+      //       label: 'Ajustes',
+      //     ),
+      //   ],
+      // )
+    );
   }
 }

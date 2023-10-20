@@ -52,7 +52,7 @@ Future<bool> showMsj({
                         style: t.textLight,
                         onTap: () => Navigator.pop(context, true),
                         width: Dimentions().getWidth() * 0.3,
-                        height: Dimentions().getHeight() * 0.055,
+                        height: Dimentions().getHeight() * 0.052,
                       ),
                     ],
                   )

@@ -63,10 +63,10 @@ class _MapViewState extends ConsumerState<MapView> {
       zoom: 17,
     );
 
-    return Stack(
+    return Column(
       children: [
         Container(
-          height: size.height * 0.7,
+          height: size.height * 0.67,
           width: size.width,
           color: c.surface,
           child: permission.isGranted
@@ -88,54 +88,38 @@ class _MapViewState extends ConsumerState<MapView> {
                   ],
                 ),
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: FloatingActionButton(
-                onPressed: () => _centerMap(),
-                backgroundColor: c.onTertiary,
-                child: const Icon(Icons.location_searching),
-              ),
-            ),
-            Container(
-              height: size.height * 0.2,
-              width: size.width,
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: size.width * 0.5,
-                          color: c.surface,
-                          child: Text(widget.store.tienda ?? 'México',
-                              style: t.mediumBold),
-                        ),
-                        SizedBox(
-                          height: size.height * 0.01,
-                        ),
-                        Text('Cadena: ${widget.store.idCadena ?? '0123456'}',
-                            style: t.text),
-                        Text('Grupo: ${widget.store.idGrupo ?? '987654'}',
-                            style: t.text),
-                        Text(
-                            'Clasificación: ${widget.store.clasificacion ?? 'Clasified'}',
-                            style: t.text),
-                        Text('Rango Gps: ${widget.store.rangoGPS.toString()}',
-                            style: t.text),
-                      ]),
-                  SvgPicture.asset(AppAssets.store, height: size.height * 0.12),
-                ],
-              ),
-            ),
-          ],
+        // Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: FloatingActionButton(
+        //     onPressed: () => _centerMap(),
+        //     backgroundColor: c.onTertiary,
+        //     child: const Icon(Icons.location_searching),
+        //   ),
+        // ),
+        Container(
+          height: size.height * 0.12,
+          width: size.width,
+          color: Theme.of(context).scaffoldBackgroundColor,
+          // color: c.error,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        width: size.width * 0.5,
+                        color: c.surface,
+                        child: Text(widget.store.tienda ?? 'México',
+                            style: t.mediumBold)),
+                    Text('Rango Gps: ${widget.store.rangoGPS.toString()}',
+                        style: t.text),
+                  ]),
+              SvgPicture.asset(AppAssets.location2, height: size.height * 0.1),
+            ],
+          ),
         ),
       ],
     );

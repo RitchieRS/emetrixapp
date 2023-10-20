@@ -19,7 +19,9 @@ class GradientTitle extends ConsumerWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: c.surface,
       elevation: 0,
-      systemOverlayStyle: SystemUiOverlayStyle.dark,
+      systemOverlayStyle: isDark == ThemeMode.light
+          ? SystemUiOverlayStyle.dark
+          : SystemUiOverlayStyle.light,
       toolbarHeight: size.height * 0.1,
       foregroundColor: isDark == ThemeMode.dark ? c.onSecondary : c.black,
       centerTitle: true,

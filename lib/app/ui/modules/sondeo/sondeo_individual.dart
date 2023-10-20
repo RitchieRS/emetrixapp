@@ -1,14 +1,13 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
-
-import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/custom_title.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/bottom_buton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-
+import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/custom_title.dart';
 import 'components/components.dart';
 import 'controller.dart';
 
@@ -28,7 +27,6 @@ class SingleSondeoPage extends ConsumerStatefulWidget {
 }
 
 class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
-  final PageController pageController = PageController();
   double progressBar = 0; //* 1 = 100%
   int lenght = 0;
   int indexGlobal = 0;
@@ -40,240 +38,189 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
   String? textResponse;
   String? radioResponse;
   File? imageResponse;
-
-  @override
-  void dispose() {
-    super.dispose();
-    pageController.dispose();
-  }
+  File? signatureResponse; //*
+  String? positionGPSResponse;
+  DateTime? dateResponse;
+  DateTime? dateTimeResponse;
+  DateTime? timeResponse;
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    int lenght =
-        widget.sondeoItem.preguntas?.length ?? 0; //*Returns length from 1
-    final double progressValue = 1 / lenght;
     final finishedSections = ref.watch(finishedSondeos);
-    final height = size.height * 0.06;
-    final width = size.width * 0.9;
 
     return Scaffold(
-      appBar: CustomTitle(title: widget.sondeoItem.sondeo),
-      body: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Column(
-          children: [
-            Container(
-              color: c.surface,
-              child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 14.0, right: 14, bottom: 12),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: TweenAnimationBuilder<double>(
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut,
-                      tween: Tween<double>(
-                        begin: 0,
-                        end: progressBar,
-                      ),
-                      builder: (context, value, _) => LinearProgressIndicator(
-                          value: value,
-                          minHeight: size.height * 0.008,
-                          color: c.primary,
-                          backgroundColor:
-                              Theme.of(context).hintColor.withOpacity(0.2)),
-                    ),
-                  )),
-            ),
-            //* CONTENT ----
-            if (widget.sondeoItem.preguntas != null)
-              Expanded(
-                child: Container(
-                  color: c.surface,
-                  child: PageView.builder(
-                      controller: pageController,
-                      allowImplicitScrolling: false,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: widget.sondeoItem.preguntas?.length,
-                      onPageChanged: (value) {
-                        setState(() => indexGlobal = value);
-                      },
-                      itemBuilder: (context, index) {
-                        if (widget.sondeoItem.preguntas?[index].tipo ==
-                            'asistencia') {
-                          return MapView(store: widget.store);
-                        } else {
-                          return QuestionBuilder(
-                            answer: (response) {
-                              setState(() => textResponse = response);
-                            },
-                            answerRadio: (response) {
-                              setState(() => radioResponse = response);
-                            },
-                            image: (image) {
-                              setState(() => imageResponse = image);
-                            },
-                            index: index,
-                            store: widget.store,
-                            pregunta: widget.sondeoItem.preguntas?[index] ??
-                                Preguntas(),
-                          );
-                        }
-                      }),
-                ),
-              )
-            else
-              Center(child: Text('${widget.sondeoItem.linkWeb}')),
+        appBar: CustomTitle(title: widget.sondeoItem.sondeo),
+        body: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: CustomScrollView(
+            slivers: [
+              // if (widget.sondeoItem.preguntas?[index].tipo ==
+              //     'asistencia') {
+              //   return MapView(store: widget.store);
+              // } else {
+              if (widget.sondeoItem.preguntas != null)
+                SliverList.builder(
+                    itemCount: widget.sondeoItem.preguntas?.length,
+                    itemBuilder: (context, index) {
+                      print(widget.sondeoItem.preguntas?[index].tipo);
 
-            lenght != 0
-                ? Padding(
-                    padding: EdgeInsets.only(top: size.height * 0.01),
-                    child: Container(
-                        height: size.height * 0.03,
-                        color: c.surface,
-                        child: Text(
-                          'Pregunta ${indexGlobal + 1} de ${lenght.ceil()} \n',
-                          style: t.textDisabled,
-                        )),
-                  )
-                : const SizedBox(),
+                      return QuestionBuilder(
+                        answer: (response) {
+                          setState(() => textResponse = response);
+                        },
+                        answerRadio: (response) {
+                          setState(() => radioResponse = response);
+                        },
+                        image: (image) {
+                          setState(() => imageResponse = image);
+                        },
+                        positionGPS: (positionGPS) {
+                          setState(() => positionGPSResponse = positionGPS);
+                          print('GPS: $positionGPS');
+                        },
+                        signature: (signatureFile) {
+                          setState(() => signatureResponse = signatureFile);
+                          print('Signature: $signatureFile');
+                        },
+                        date: (date) {
+                          //Get only date
+                          setState(() => dateResponse = date);
+                          print(
+                              'Date: ${date?.day}/${date?.month}/${date?.year}');
+                        },
+                        dateTime: (dateTime) {
+                          //Get date n time
+                          setState(() => dateTimeResponse = dateTime);
+                          print('DateTime: $dateTime');
+                        },
+                        time: (time) {
+                          //Get only time
+                          setState(() => timeResponse = time);
+                          print('Time: ${time?.hour}:${time?.minute}');
+                        },
+                        index: index,
+                        store: widget.store,
+                        pregunta:
+                            widget.sondeoItem.preguntas?[index] ?? Preguntas(),
+                      );
+                    })
+              else
+                SliverToBoxAdapter(
+                    child: Center(child: Text('${widget.sondeoItem.linkWeb}'))),
 
-            //*BUTTONS
-            if (lenght == 1 || lenght == 0)
-              ButonDimentions(
-                height: height,
-                width: width,
-                background: c.onTertiary,
-                title: 'Finalizar',
-                style: t.mediumLight,
-                onTap: () => finalize(finishedSections),
-                padding: EdgeInsets.only(bottom: size.height * 0.02),
-              )
-            else if (indexGlobal + 1 != lenght)
-              ButonDimentions(
-                height: height,
-                width: width,
-                background: Theme.of(context).dialogBackgroundColor,
-                title: 'Next',
-                style: t.mediumBlue,
-                shadow: 2,
-                onTap: () =>
-                    nextPage(lenght: lenght, progressValue: progressValue),
-                padding: EdgeInsets.only(bottom: size.height * 0.02),
-              )
-            else
-              ButonDimentions(
-                height: height,
-                width: width,
-                background: Colors.blue[700] ?? c.secondary.withOpacity(0.8),
-                title: 'Finalizar',
-                style: t.mediumLight,
-                onTap: () => finalize(finishedSections),
-                padding: EdgeInsets.only(bottom: size.height * 0.02),
-              ),
-          ],
+              //*BUTTONS
+              // if (lenght == 1 || lenght == 0)
+              //   ButonDimentions(
+              //     height: height,
+              //     width: width,
+              //     background: Colors.blue[700] ?? c.secondary.withOpacity(0.8),
+              //     title: 'Finalizar',
+              //     style: t.mediumLight,
+              //     onTap: () => finalize(finishedSections),
+              //     padding: EdgeInsets.only(bottom: size.height * 0.02),
+              //   ),
+              // else if (indexGlobal + 1 != lenght)
+              //   ButonDimentions(
+              //     height: height,
+              //     width: width,
+              //     background: Theme.of(context).dialogBackgroundColor,
+              //     title: 'Next',
+              //     style: t.mediumBlue,
+              //     shadow: 2,
+              //     onTap: () =>
+              //         nextPage(lenght: lenght, progressValue: progressValue),
+              //     padding: EdgeInsets.only(bottom: size.height * 0.02),
+              //   )
+              // else
+              //   ButonDimentions(
+              //     height: height,
+              //     width: width,
+              //     background: Colors.blue[700] ?? c.secondary.withOpacity(0.8),
+              //     title: 'Finalizar',
+              //     style: t.mediumLight,
+              //     onTap: () => finalize(finishedSections),
+              //     padding: EdgeInsets.only(bottom: size.height * 0.02),
+              //   ),
+            ],
+          ),
         ),
-      ),
-    );
+        bottomNavigationBar: BottomButon(onTap: () {
+          if (widget.index == 0) {
+            finalize(finishedSections);
+            return;
+          }
+          validateAllComponents();
+        }
+            // onTap: () => finalize(finishedSections),
+            ));
   }
 
-  Future<void> nextPage({
-    required int lenght,
-    required double progressValue,
-  }) async {
-    final questionType = widget.sondeoItem.preguntas?[indexGlobal].tipo;
+  Future<void> validateAllComponents() async {
+    // final questionType = widget.sondeoItem.preguntas?[indexGlobal].tipo;
     FocusManager.instance.primaryFocus?.unfocus();
+    await validateInputs();
+    await validateRadios();
+    await validateImages();
 
-    print('--------------------------------------------------------------\n');
+    // Extract data from others components
 
-    // Validate
-    if (inputs.contains(questionType)) {
-      validateInputs(progressValue);
-    }
-    //
-    else if (radios.contains(questionType)) {
-      validateRadios(progressValue);
-    }
-    //
-    else if (images.contains(questionType)) {
-      print('Is an Image');
-      validateImages(progressValue);
-    }
-    //
-    else {
-      print('Is other component');
-      // Extract data from others components
-    }
-    //
-    print('--------------------------------------------------------------\n');
+    // // Validate
+    // if (inputs.contains(questionType)) {
+    //   validateInputs();
+    // }
+    // //
+    // else if (radios.contains(questionType)) {
+    //   validateRadios();
+    // }
+    // //
+    // else if (images.contains(questionType)) {
+    //   print('Is an Image');
+    //   validateImages();
+    // }
+    // //
+    // else {
+    //   print('Is other component');
+    //   // Extract data from others components
+    // }
   }
 
-  Future validateImages(double progressValue) async {
+  Future validateImages() async {
     if (imageResponse == null) {
       print('returned');
       return;
     }
-
-    setState(() => responses.add(imageResponse));
-    await goNextQuestion(progressValue);
     setState(() {
+      responses.add(imageResponse);
       printResponses();
       imageResponse = null;
     });
   }
 
-  Future validateInputs(double progressValue) async {
+  Future validateInputs() async {
     if (textResponse == null || textResponse!.isEmpty) {
       print('returned');
       return;
     }
-
     setState(() => responses.add(textResponse));
-    await goNextQuestion(progressValue);
     setState(() {
       printResponses();
       textResponse = null;
     });
   }
 
-  Future validateRadios(double progressValue) async {
+  Future validateRadios() async {
     if (radioResponse == null) {
       return;
     }
-
-    setState(() => responses.add(radioResponse));
-    await goNextQuestion(progressValue);
     setState(() {
+      responses.add(radioResponse);
       printResponses();
       radioResponse = null;
     });
   }
 
-  bool isLastPage(double currentPage) {
-    return currentPage.abs() == widget.sondeoItem.preguntas!.length - 1;
-  }
-
-  Future<void> goNextQuestion(double progressValue) async {
-    final progressBarStillLoading = progressBar != 1;
-
-    if (progressBarStillLoading) {
-      print('INDEX GLOBAL: $indexGlobal');
-      setState(() => progressBar += progressValue);
-
-      await pageController.nextPage(
-          duration: const Duration(milliseconds: 500), curve: Curves.ease);
-      setState(() {});
-    }
-  }
-
   void finalize(List<int> finishedSections) {
     //Save all progress and data to db
-
-    //* UI ProgressBar
-    if (progressBar != 1) {
-      setState(() => progressBar = 1);
-    }
 
     if (!finishedSections.contains(widget.index) ||
         finishedSections.isEmpty ||

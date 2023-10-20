@@ -27,6 +27,17 @@ abstract class IColors {
   Color get textSeis;
   Color get textSiete;
   Color get textNueve;
+
+  Color get primary100;
+  Color get primary200;
+  Color get primary300;
+  Color get primary400;
+  Color get primary500;
+  Color get primary600;
+  Color get primary700;
+  Color get primary800;
+  Color get primary900;
+  Color get primary950;
 }
 
 class _ColorsMain extends IColors {
@@ -61,7 +72,7 @@ class _ColorsMain extends IColors {
   Color error = const Color(0xffd42929);
 
   @override
-  Color ok = const Color(0xff29d429);
+  Color ok = const Color(0xff6bbf59);
 
   @override
   Color black = const Color(0xff404040);
@@ -100,13 +111,44 @@ class _ColorsMain extends IColors {
   @override
   Color textUno = const Color(0xffd42929);
 
+// -------
+
+  @override
+  Color primary100 = const Color(0xffdeedfb); //#deedfb
+
+  @override
+  Color primary200 = const Color(0xffc4e2f9); //#c4e2f9
+
+  @override
+  Color primary300 = const Color(0xff9bd0f5); // #9bd0f5
+
+  @override
+  Color primary400 = const Color(0xff6cb6ee); // #6cb6ee
+
+  @override
+  Color primary500 = const Color(0xff3c91e6); // * #3c91e6
+
+  @override
+  Color primary600 = const Color(0xff347ddc); // #347ddc
+
+  @override
+  Color primary700 = const Color(0xff2b68ca); // #2b68ca
+
+  @override
+  Color primary800 = const Color(0xff2955a4); //#2955a4
+
+  @override
+  Color primary900 = const Color(0xff264982); //#264982
+
+  @override
+  Color primary950 = const Color(0xff1c2e4f); //#1c2e4f
+
   // @override
   // Color secondary = const Color(0xfffafafa);
 }
 
-
 // struct StructAdvisorColors {
-    
+
 //     var azul            = UIColor.init(red: 0, green: 119.0/255.0, blue: 197.0/255.0, alpha: 1)
 //     var azulOscuro      = UIColor.init(red: 43.0/255.0, green: 54.0/255.0, blue: 90.0/255.0, alpha: 1)
 //     var azulClaro       = UIColor.init(red: 204.0/255.0, green: 228.0/255.0, blue: 243.0/255.0, alpha: 1)

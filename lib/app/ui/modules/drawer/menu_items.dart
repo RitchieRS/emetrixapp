@@ -14,36 +14,36 @@ class MenuItem {
   });
 }
 
-const appMenuItems = <MenuItem>[
-  MenuItem(
+List<MenuItem> appMenuItems = [
+  const MenuItem(
       title: 'Fuera de Ruta',
       subtitle: 'Fuera de Ruta',
       link: 'OFroute',
       icon: Icon(Icons.route)),
-  MenuItem(
-      title: 'Actividades Adicionales',
-      subtitle: 'Actividades Adicionales',
-      link: 'aditionalAct',
-      icon: Icon(Icons.task_outlined)),
-  MenuItem(
-      title: 'Pendientes',
-      subtitle: 'Pendientes',
-      link: 'pendings',
-      icon: Icon(Icons.pending_actions)),
-  MenuItem(
-    title: 'Tareas',
-    subtitle: 'Tareas',
-    link: '',
-    icon: Icon(Icons.task),
-  ),
-  MenuItem(
-      title: 'KPIs',
-      subtitle: 'KPIs',
-      link: '',
-      icon: Icon(Icons.workspace_premium)),
-  MenuItem(
-      title: 'Ventas',
-      subtitle: 'Ventas',
-      link: '',
-      icon: Icon(Icons.monetization_on_sharp)),
+  // const MenuItem(
+  //     title: 'Actividades Adicionales',
+  //     subtitle: 'Actividades Adicionales',
+  //     link: 'aditionalAct',
+  //     icon: Icon(Icons.task_outlined)),
+  // const MenuItem(
+  //     title: 'Pendientes',
+  //     subtitle: 'Pendientes',
+  //     link: 'pendings',
+  //     icon: Icon(Icons.pending_actions)),
+  // const MenuItem(
+  //   title: 'Tareas',
+  //   subtitle: 'Tareas',
+  //   link: '',
+  //   icon: Icon(Icons.task),
+  // ),
+  // const MenuItem(
+  //     title: 'KPIs',
+  //     subtitle: 'KPIs',
+  //     link: '',
+  //     icon: Icon(Icons.workspace_premium)),
+  // const MenuItem(
+  //     title: 'Ventas',
+  //     subtitle: 'Ventas',
+  //     link: '',
+  //     icon: Icon(Icons.monetization_on_sharp)),
 ];

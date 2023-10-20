@@ -30,16 +30,16 @@ class StoreIsar {
 
 @embedded
 class Store {
-  String? id;
-  String? tienda;
-  double? latitud;
-  double? longitud;
-  String? idGrupo;
-  String? idCadena;
-  int? definirNombre;
-  String? clasificacion;
-  int? rangoGPS;
-  String? checkGPS;
+  final String? id;
+  final String? tienda;
+  final double? latitud;
+  final double? longitud;
+  final String? idGrupo;
+  final String? idCadena;
+  final int? definirNombre;
+  final String? clasificacion;
+  final int? rangoGPS;
+  final String? checkGPS;
 
   Store(
       {this.id,

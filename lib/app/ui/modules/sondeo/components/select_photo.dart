@@ -23,12 +23,79 @@ class SelectPicture extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _SelectPictureState();
 }
 
-class _SelectPictureState extends ConsumerState<SelectPicture> {
+class _SelectPictureState extends ConsumerState<SelectPicture>
+    with AutomaticKeepAliveClientMixin {
   File? image;
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
+    super.build(context);
+
+    final size = MediaQuery.of(context).size;
+    final isDark = ref.watch(themeProvider) == ThemeMode.dark;
+    final backColor =
+        isDark ? Theme.of(context).hintColor : Theme.of(context).highlightColor;
+    final labelPadding = EdgeInsets.symmetric(horizontal: size.width * 0.04);
+    final side = size.height * 0.25;
+
+    return GestureDetector(
+        onTap: () => handleImage(size: size),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: labelPadding,
+              child:
+                  Text(widget.pregunta.pregunta ?? 'NoData', style: t.subtitle),
+            ),
+            SizedBox(height: size.height * 0.01),
+            GestureDetector(
+              onTap: () => selectCameraType(),
+              child: Center(
+                child: ClipRRect(
+                  clipBehavior: Clip.hardEdge,
+                  borderRadius: BorderRadius.circular(10),
+                  // borderRadius: BorderRadius.circular(90),
+                  child: Container(
+                    height: side,
+                    width: side,
+                    color: backColor,
+                    child: image != null
+                        ? Image.file(
+                            image ?? File(''),
+                            fit: BoxFit.cover,
+                            frameBuilder: (context, child, frame,
+                                wasSynchronouslyLoaded) {
+                              return frame == null
+                                  ? const Center(
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2))
+                                  : child;
+                            },
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.camera,
+                                color: c.disabled.withOpacity(0.8),
+                                size: size.height * 0.06,
+                              ),
+                              Text('Selecciona imagen', style: t.text),
+                            ],
+                          ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: size.height * 0.02),
+          ],
+        ));
+  }
+
+  void selectCameraType() {
     if (widget.pregunta.tipo == 'foto') {
       getImage(ImageSource.camera);
       return;
@@ -42,70 +109,6 @@ class _SelectPictureState extends ConsumerState<SelectPicture> {
       getImage(ImageSource.gallery);
       return;
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final theme = ref.watch(themeProvider);
-    final backColor = theme == ThemeMode.dark
-        ? Theme.of(context).hintColor
-        : Theme.of(context).highlightColor;
-    final labelPadding = EdgeInsets.symmetric(horizontal: size.width * 0.04);
-    final side = size.height * 0.4;
-    // final side = size.height * 0.2;
-
-    return GestureDetector(
-        onTap: () => handleImage(size: size),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: labelPadding,
-              child:
-                  Text(widget.pregunta.pregunta ?? 'NoData', style: t.subtitle),
-            ),
-            SizedBox(height: size.height * 0.02),
-            Center(
-              child: ClipRRect(
-                clipBehavior: Clip.hardEdge,
-                borderRadius: BorderRadius.circular(10),
-                // borderRadius: BorderRadius.circular(90),
-                child: Container(
-                  height: side,
-                  width: side,
-                  color: backColor,
-                  child: image != null
-                      ? Image.file(
-                          image ?? File(''),
-                          fit: BoxFit.cover,
-                          frameBuilder:
-                              (context, child, frame, wasSynchronouslyLoaded) {
-                            return frame == null
-                                ? const Center(
-                                    child: CircularProgressIndicator(
-                                        strokeWidth: 2))
-                                : child;
-                          },
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.camera,
-                              color: c.disabled.withOpacity(0.8),
-                              size: size.height * 0.06,
-                            ),
-                            Text('Selecciona imagen', style: t.text),
-                          ],
-                        ),
-                ),
-              ),
-            ),
-          ],
-        ));
   }
 
   Future pickImage(ImageSource source) async {
@@ -180,4 +183,7 @@ class _SelectPictureState extends ConsumerState<SelectPicture> {
           );
         });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

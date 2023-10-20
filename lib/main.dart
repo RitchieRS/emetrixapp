@@ -26,7 +26,8 @@ class MainApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('es'),
+        Locale('en', 'US'),
+        // Locale('es', 'MX'),
       ],
       theme: AppTheme.ligthTheme(),
       darkTheme: AppTheme.darkTheme(),

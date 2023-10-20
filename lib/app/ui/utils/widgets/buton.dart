@@ -9,6 +9,7 @@ class Buton extends ConsumerStatefulWidget {
       required this.style,
       required this.onTap,
       this.showShadow,
+      this.outlined = false,
       super.key});
 
   final VoidCallback onTap;
@@ -16,6 +17,7 @@ class Buton extends ConsumerStatefulWidget {
   final String title;
   final TextStyle style;
   final bool? showShadow;
+  final bool outlined;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ButonState();
@@ -27,12 +29,16 @@ class _ButonState extends ConsumerState<Buton> {
     final size = MediaQuery.of(context).size;
 
     return Material(
+      color: c.surface,
       child: InkWell(
         borderRadius: BorderRadius.circular(10),
         onTap: widget.onTap,
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
+            border: widget.outlined
+                ? Border.all(color: widget.background, width: 1.5)
+                : null,
             boxShadow: widget.showShadow == true
                 ? [
                     BoxShadow(
@@ -41,9 +47,9 @@ class _ButonState extends ConsumerState<Buton> {
                         offset: const Offset(1, 1))
                   ]
                 : [],
-            color: widget.background,
+            color: widget.outlined ? c.surface : widget.background,
           ),
-          height: size.height * 0.065,
+          height: size.height * 0.052,
           width: size.width * 0.85,
           child: Center(
             child: Text(

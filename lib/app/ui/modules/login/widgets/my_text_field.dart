@@ -24,6 +24,7 @@ class TxtField extends ConsumerStatefulWidget {
 class _TxtFieldState extends ConsumerState<TxtField> {
   bool obscure = true;
   Color iconColor = Colors.black54.withOpacity(0.4);
+  final colorPrimary = c.primary500;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,7 @@ class _TxtFieldState extends ConsumerState<TxtField> {
       borderRadius: radius,
     );
     final focusedBorder = OutlineInputBorder(
-      borderSide: BorderSide(color: c.primary),
+      borderSide: BorderSide(color: colorPrimary),
       borderRadius: radius,
     );
     final errorBorder = OutlineInputBorder(
@@ -85,7 +86,7 @@ class _TxtFieldState extends ConsumerState<TxtField> {
                                 : Icons.remove_red_eye,
                             color: obscure
                                 ? Colors.black54.withOpacity(0.4)
-                                : c.primary))
+                                : colorPrimary))
                     : null,
                 constraints: constraints,
                 focusedBorder: focusedBorder,
@@ -103,7 +104,7 @@ class _TxtFieldState extends ConsumerState<TxtField> {
     final form = widget.formKey.currentState;
     if (form != null) {
       if (form.validate()) {
-        setState(() => iconColor = c.primary);
+        setState(() => iconColor = colorPrimary);
         return;
       }
       setState(() => iconColor = c.error);

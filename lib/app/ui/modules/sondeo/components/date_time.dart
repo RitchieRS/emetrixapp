@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class PickerDT extends ConsumerStatefulWidget {
@@ -23,64 +22,74 @@ class PickerDT extends ConsumerStatefulWidget {
 
 class _PickerDTState extends ConsumerState<PickerDT>
     with AutomaticKeepAliveClientMixin {
-  // DateTime selectedDate = DateTime.now();
   DateTime? selectedDate;
+  TimeOfDay selectedTime = TimeOfDay.now();
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final size = MediaQuery.of(context).size;
+    final paddingVertical = size.height * 0.012;
+    final paddingHorizontal = size.width * 0.04;
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
-          child: Text(widget.pregunta, style: t.subtitle),
-        ),
-        SizedBox(height: size.height * 0.02),
-        Center(
-          child: Text(
-              widget.onlyDate == true && selectedDate != null
-                  ? '${selectedDate?.day}/${_months()}/${selectedDate?.year}'
-                  : widget.onlyDate == true && selectedDate == null
-                      ? 'dia/mes/año'
-                      : widget.onlyTime == true && selectedDate != null
-                          ? _formatTime(selectedDate?.hour ?? 0,
-                              selectedDate?.minute ?? 0)
-                          : widget.onlyTime == true && selectedDate == null
-                              ? 'hora:min'
-                              : selectedDate != null
-                                  ? '${selectedDate?.day}/${_months()}/${selectedDate?.year} \n ${_formatTime(selectedDate?.hour ?? 0, selectedDate?.minute ?? 0)}'
-                                  : 'dia/mes/año \n hora:min',
-              style: selectedDate == null ? t.mediumDisabled : t.mediumBlue,
-              textAlign: TextAlign.center),
-        ),
-        SizedBox(height: size.height * 0.02),
-        Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: ButonDimentions(
-              height: size.height * 0.065,
-              width: size.width * 0.85,
-              background: c.primary,
-              title:
-                  'Establece ${widget.onlyDate == true ? 'Fecha' : widget.onlyTime == true ? 'Hora' : 'Fecha y Hora'}',
-              style: t.mediumLight,
+    return Padding(
+      padding: EdgeInsets.only(bottom: paddingVertical * 2),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
+            child: Text(widget.pregunta, style: t.subtitle),
+          ),
+          SizedBox(height: paddingVertical),
+          Center(
+            child: Text(showDateOrTime(),
+                style: selectedDate == null ? t.text : t.text,
+                textAlign: TextAlign.center),
+          ),
+          SizedBox(height: paddingVertical),
+          Center(
+            child: Buton(
+              outlined: true,
+              background: c.primary500,
+              title: widget.onlyDate == true
+                  ? 'Fecha'
+                  : widget.onlyTime == true
+                      ? 'Hora'
+                      : 'Fecha/Hora',
+              style: t.mediumBlue2,
               onTap: () => _handleTime(),
-              shadow: 5,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  String _formatTime(int hours2, int minutes2) {
-    String hours = (hours2 < 10) ? '0$hours2' : hours2.toString();
-    String minutes = (minutes2 < 10) ? '0$minutes2' : minutes2.toString();
-    return '$hours:$minutes';
+  String showDateOrTime() {
+    if (widget.onlyDate == true) {
+      if (selectedDate != null) {
+        return '${selectedDate?.day}/${_months()}/${selectedDate?.year}';
+      } else {
+        return '';
+        // return 'dia/mes/año';
+      }
+    } else if (widget.onlyTime == true) {
+      if (selectedDate != null) {
+        return selectedTime.format(context);
+      } else {
+        return '';
+        // return 'hora:min';
+      }
+    } else {
+      if (selectedDate != null) {
+        return '${selectedDate?.day}/${_months()}/${selectedDate?.year} \n ${selectedTime.format(context)}';
+      } else {
+        return '';
+        // return 'dia/mes/año \n hora:min';
+      }
+    }
   }
 
   String _months() {
@@ -98,16 +107,17 @@ class _PickerDTState extends ConsumerState<PickerDT>
       11: 'Noviembre',
       12: 'Diciembre',
     };
-
     return months[selectedDate?.month] ?? 'Mes';
   }
 
   void _handleTime() async {
-    widget.onlyDate == true
-        ? _setDate()
-        : widget.onlyTime == true
-            ? _setTime(context)
-            : _setDateNTime(context);
+    if (widget.onlyDate == true) {
+      await _setDate();
+    } else if (widget.onlyTime == true) {
+      await _setTime(context);
+    } else {
+      await _setDateNTime(context);
+    }
   }
 
   Future _setDate() async {
@@ -125,12 +135,15 @@ class _PickerDTState extends ConsumerState<PickerDT>
   Future _setTime(BuildContext context) async {
     final hour = await showTimePicker(
       context: context,
+      initialEntryMode: TimePickerEntryMode.dial,
       initialTime: TimeOfDay.fromDateTime(selectedDate ?? DateTime.now()),
     );
 
     if (hour != null) {
       setState(() {
-        selectedDate = DateTime(2023, 1, 1, hour.hour, hour.minute);
+        selectedTime = hour;
+        selectedDate = DateTime(DateTime.now().year, DateTime.now().month,
+            DateTime.now().day, hour.hour, hour.minute);
         widget.getDateTime(selectedDate);
       });
     }
@@ -146,13 +159,15 @@ class _PickerDTState extends ConsumerState<PickerDT>
         DateTime.now();
 
     if (date != selectedDate) {
-      final hour = await showTimePicker(
+      TimeOfDay? hour = await showTimePicker(
         context: context,
+        initialEntryMode: TimePickerEntryMode.dial,
         initialTime: TimeOfDay.fromDateTime(selectedDate ?? DateTime.now()),
       );
 
       if (hour != null) {
         setState(() {
+          selectedTime = hour;
           selectedDate = DateTime(
             date.year,
             date.month,
