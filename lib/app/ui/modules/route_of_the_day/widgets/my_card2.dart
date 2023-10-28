@@ -40,7 +40,6 @@ class _MyCardState extends ConsumerState<MyCard2> {
         alignment: Alignment.centerRight,
         child: const Icon(Icons.delete, color: Colors.redAccent));
     final iconColor = c.primary500;
-    // final iconColor = Theme.of(context).textTheme.bodyLarge?.color;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
@@ -62,9 +61,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
                   value: widget.store ?? Store(),
                   headerBuilder: (context, isExpanded) {
                     return ListTile(
-                      onTap: () async {
-                        await showMsj2(widget.store?.tienda ?? 'Tienda', size);
-                      },
+                      onTap: () => showMsj2(),
                       minVerticalPadding: 0,
                       leading:
                           Icon(Icons.storefront_outlined, color: iconColor),
@@ -133,62 +130,32 @@ class _MyCardState extends ConsumerState<MyCard2> {
     return Future.value(delete);
   }
 
-  Future showMsj2(String store, Size size) async {
-    var result = await showDialog(
-        context: context,
-        // barrierDismissible: false,
-        builder: (context) {
-          return Consumer(
-            builder: (context, ref, child) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-                title: Text(store,
-                    style: t.subtitle,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('Cadena: ${widget.store?.idCadena}', style: t.text),
-                    Text('Grupo: ${widget.store?.idGrupo}', style: t.text),
-                  ],
-                ),
-                actionsAlignment: MainAxisAlignment.center,
-                actions: [
-                  ref.watch(showProgress1) == true
-                      ? Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ButonLoading(
-                              background: c.onTertiary,
-                              onFinish: () {},
-                              width: size.width * 0.6,
-                              height: size.height * 0.06),
-                        )
-                      : ButonDimentions(
-                          background: c.onTertiary,
-                          title: 'Comenzar',
-                          style: t.textLight,
-                          onTap: () => start(widget.index),
-                          width: size.width * 0.6,
-                          height: size.height * 0.06),
-                ],
-              );
-            },
-          );
-        });
-    return Future.value(result);
+  Future<void> showMsj2() async {
+    final startSondeo = await showMsj(
+      context: context,
+      title: widget.store?.tienda ?? '',
+      content:
+          'Cadena: ${widget.store?.idCadena}\nGrupo: ${widget.store?.idGrupo}',
+      buttonLabel: 'Comenzar',
+      destructive: false,
+      onlyOk: true,
+      justifyContent: false,
+      canTapOutside: true,
+    );
+
+    if (startSondeo) {
+      await start(widget.index);
+      return;
+    }
   }
 
   Future start(int index) async {
     final navigator = Navigator.of(context);
-    setState(() => ref.read(showProgress1.notifier).update((state) => true));
+    ref.read(showProgress1.notifier).update((state) => true);
     final sondeos = await ref.read(routeOTD.notifier).getSondeoFromDB();
 
     if (sondeos[index].idError != 0) {
-      setState(() => ref.read(showProgress1.notifier).update((state) => false));
-      navigator.pop(true);
+      ref.read(showProgress1.notifier).update((state) => false);
 
       showYesNoMsj(
           context: context,
@@ -198,9 +165,8 @@ class _MyCardState extends ConsumerState<MyCard2> {
               'Se produjo un error inesperado. Si el error persiste, elimina las tiendas e intentalo de nuevo.');
     } else {
       // Emulated Delay
-      await Future.delayed(const Duration(seconds: 1));
+      // await Future.delayed(const Duration(seconds: 1));
 
-      navigator.pop(true);
       navigator.push(MaterialPageRoute(builder: (context) {
         return SondeoPage(
             sondeosList: sondeos[index].resp ?? [],

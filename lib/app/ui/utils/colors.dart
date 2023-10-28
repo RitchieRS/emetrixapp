@@ -11,6 +11,7 @@ abstract class IColors {
   Color get backgroundDark;
   Color get disabled;
   Color get error;
+  Color get errorLight;
   Color get ok;
   Color get black;
   Color get surface;
@@ -70,6 +71,9 @@ class _ColorsMain extends IColors {
 
   @override
   Color error = const Color(0xffd42929);
+
+  @override
+  Color errorLight = const Color(0xffea4949);
 
   @override
   Color ok = const Color(0xff6bbf59);

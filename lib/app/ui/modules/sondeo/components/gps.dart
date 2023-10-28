@@ -6,9 +6,15 @@ import 'package:geolocator/geolocator.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class Gps extends ConsumerStatefulWidget {
-  const Gps({super.key, required this.pregunta, required this.answer});
+  const Gps({
+    super.key,
+    required this.pregunta,
+    required this.answer,
+    this.mandatory = false,
+  });
   final String pregunta;
   final Function(String?) answer;
+  final bool mandatory;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _GpsState();
@@ -31,49 +37,53 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
     final size = MediaQuery.of(context).size;
     // final isDark = ref.watch(themeProvider) == ThemeMode.dark;
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
-          child: Text(widget.pregunta, style: t.subtitle),
-        ),
-        SizedBox(height: size.height * 0.01),
-        geolocator == LocationPermission.always && position != null ||
-                geolocator == LocationPermission.whileInUse && position != null
-            ? SizedBox(
-                height: size.height * 0.05,
-                child: Center(
-                    child:
-                        Text('${position?.latitude}, ${position?.longitude}')),
-              )
-            : loading == true
-                ? SizedBox(
-                    height: size.height * 0.05,
-                    child: Center(
-                      child: SizedBox(
-                          height: size.height * 0.03,
-                          width: size.height * 0.03,
-                          child: Center(
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: c.primary))),
-                    ),
-                  )
-                : SizedBox(
-                    height: size.height * 0.05,
-                    child: const Center(child: Text('GPS'))),
-        SizedBox(height: size.height * 0.01),
-        Center(
-          child: Buton(
-              outlined: true,
-              background: c.primary400,
-              title: 'Obtenet GPS',
-              style: t.mediumBlue2,
-              onTap: () => getCurrentLocation()),
-        ),
-        SizedBox(height: size.height * 0.02),
-      ],
+    return Material(
+      color: widget.mandatory ? c.errorLight : c.surface,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+            child: Text(widget.pregunta, style: t.subtitle),
+          ),
+          SizedBox(height: size.height * 0.01),
+          geolocator == LocationPermission.always && position != null ||
+                  geolocator == LocationPermission.whileInUse &&
+                      position != null
+              ? SizedBox(
+                  height: size.height * 0.05,
+                  child: Center(
+                      child: Text(
+                          '${position?.latitude}, ${position?.longitude}')),
+                )
+              : loading == true
+                  ? SizedBox(
+                      height: size.height * 0.05,
+                      child: Center(
+                        child: SizedBox(
+                            height: size.height * 0.03,
+                            width: size.height * 0.03,
+                            child: Center(
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2, color: c.primary))),
+                      ),
+                    )
+                  : SizedBox(
+                      height: size.height * 0.05,
+                      child: const Center(child: Text('GPS'))),
+          SizedBox(height: size.height * 0.01),
+          Center(
+            child: Buton(
+                outlined: true,
+                background: c.primary400,
+                title: 'Obtenet GPS',
+                style: t.mediumBlue2,
+                onTap: () => getCurrentLocation()),
+          ),
+          SizedBox(height: size.height * 0.02),
+        ],
+      ),
     );
   }
 

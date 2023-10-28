@@ -11,6 +11,7 @@ import 'package:emetrix_flutter/app/ui/modules/sondeo/components/components.dart
 class QuestionBuilder extends ConsumerStatefulWidget {
   const QuestionBuilder({
     super.key,
+    this.mandatory = false,
     required this.pregunta,
     required this.store,
     required this.index,
@@ -22,17 +23,30 @@ class QuestionBuilder extends ConsumerStatefulWidget {
     required this.date,
     required this.dateTime,
     required this.time,
+    required this.numeric,
+    required this.decimal,
+    required this.email,
+    required this.yesnoRadio,
+    required this.photo,
+    required this.selectionMultiple,
   });
   final Preguntas pregunta;
   final Store store;
   final int index;
+  final bool mandatory;
   final Function(String?) answer;
+  final Function(String?) numeric;
+  final Function(String?) decimal;
+  final Function(String?) email;
   final Function(String?) answerRadio;
+  final Function(String?) yesnoRadio;
+  final Function(List<String>?) selectionMultiple;
   final Function(String?) positionGPS;
   final Function(DateTime?) date;
   final Function(DateTime?) dateTime;
   final Function(DateTime?) time;
   final Function(File?) image;
+  final Function(File?) photo;
   final Function(File?) signature;
 
   @override
@@ -54,6 +68,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           answer: (String? response) {
             widget.answerRadio(response);
           },
+          mandatory: widget.mandatory,
         );
 
       case 'fotoGuardarCopia':
@@ -64,6 +79,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             print('Image: $image');
             widget.image(image);
           },
+          mandatory: widget.mandatory,
         );
 
       // //todo
@@ -78,6 +94,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           },
           charactersMin: widget.pregunta.valorMinimo,
           charactersMax: widget.pregunta.valorMaximo,
+          mandatory: widget.mandatory,
         );
 
       case 'numerico':
@@ -86,10 +103,24 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           index: widget.index,
           pregunta: widget.pregunta,
           answer: (String? answer) {
-            widget.answer(answer);
+            widget.numeric(answer);
           },
           valueMin: widget.pregunta.valorMinimo,
           valueMax: widget.pregunta.valorMaximo,
+          mandatory: widget.mandatory,
+        );
+
+      case 'email':
+        return Question(
+          type: widget.pregunta.tipo ?? 'abierta',
+          index: widget.index,
+          pregunta: widget.pregunta,
+          answer: (String? answer) {
+            widget.email(answer);
+          },
+          valueMin: widget.pregunta.valorMinimo,
+          valueMax: widget.pregunta.valorMaximo,
+          mandatory: widget.mandatory,
         );
 
       case 'decimal':
@@ -98,10 +129,11 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           index: widget.index,
           pregunta: widget.pregunta,
           answer: (String? answer) {
-            widget.answer(answer);
+            widget.decimal(answer);
           },
           valueMin: widget.pregunta.valorMinimo,
           valueMax: widget.pregunta.valorMaximo,
+          mandatory: widget.mandatory,
         );
 
       case 'sino':
@@ -110,17 +142,18 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           question: widget.pregunta,
           yesNo: true,
           answer: (String? response) {
-            widget.answerRadio(response);
+            widget.yesnoRadio(response);
           },
+          mandatory: widget.mandatory,
         );
 
       case 'multiple':
         return SelectionMultiple(
           question: widget.pregunta,
           selectedItems: (selectedItems) {
-            //
-            print('SELECT MULTI: $selectedItems');
+            widget.selectionMultiple(selectedItems);
           },
+          mandatory: widget.mandatory,
         );
 
       case 'informativo':
@@ -130,8 +163,9 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         return SelectPicture(
           pregunta: widget.pregunta,
           image: (image) {
-            widget.image(image);
+            widget.photo(image);
           },
+          mandatory: widget.mandatory,
         );
 
       case 'gps':
@@ -140,11 +174,15 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           answer: (position) {
             widget.positionGPS(position);
           },
+          mandatory: widget.mandatory,
         );
 
       case 'tiempo':
         return MyTimer(
-            pregunta: widget.pregunta.pregunta ?? 'NoData', times: 2);
+          pregunta: widget.pregunta.pregunta ?? 'NoData',
+          times: 2,
+          mandatory: widget.mandatory,
+        );
 
       case 'imagen':
         return SelectPicture(
@@ -152,6 +190,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           image: (image) {
             widget.image(image);
           },
+          mandatory: widget.mandatory,
         );
 
       case 'firma':
@@ -160,45 +199,42 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           getSignature: (signatureFile) {
             widget.signature(signatureFile);
           },
+          mandatory: widget.mandatory,
         );
 
       case 'fecha':
         return PickerDT(
-            getDateTime: (date) {
-              widget.date(date);
-              print(date);
-            },
-            pregunta: widget.pregunta.pregunta ?? 'NoData',
-            onlyDate: true);
+          getDateTime: (date) {
+            widget.date(date);
+          },
+          pregunta: widget.pregunta.pregunta ?? 'NoData',
+          onlyDate: true,
+          mandatory: widget.mandatory,
+        );
 
       case 'fechaHora':
         return PickerDT(
-            getDateTime: (dateTime) {
-              widget.dateTime(dateTime);
-              print(dateTime);
-            },
-            pregunta: widget.pregunta.pregunta ?? 'NoData');
+          getDateTime: (dateTime) {
+            widget.dateTime(dateTime);
+          },
+          pregunta: widget.pregunta.pregunta ?? 'NoData',
+          mandatory: widget.mandatory,
+        );
 
       case 'hora':
         return PickerDT(
-            getDateTime: (time) {
-              widget.time(time);
-              print(time);
-            },
-            pregunta: widget.pregunta.pregunta ?? 'NoData',
-            onlyTime: true);
+          getDateTime: (time) {
+            widget.time(time);
+          },
+          pregunta: widget.pregunta.pregunta ?? 'NoData',
+          onlyTime: true,
+          mandatory: widget.mandatory,
+        );
 
       case 'scannerQR':
-        return Scanner(pregunta: widget.pregunta.pregunta ?? 'NoData');
-
-      case 'email':
-        return Question(
-          type: widget.pregunta.tipo ?? 'abierta',
-          index: widget.index,
-          pregunta: widget.pregunta,
-          answer: (String? answer) {
-            widget.answer(answer);
-          },
+        return Scanner(
+          pregunta: widget.pregunta.pregunta ?? 'NoData',
+          mandatory: widget.mandatory,
         );
     }
 

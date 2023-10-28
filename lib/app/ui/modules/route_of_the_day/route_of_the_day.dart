@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
-import 'package:emetrix_flutter/app/ui/modules/drawer/drawer.dart';
+// import 'package:emetrix_flutter/app/ui/modules/drawer/drawer.dart';
 import 'state.dart';
 import 'widgets/empty.dart';
 import 'widgets/my_card2.dart';
@@ -40,7 +40,7 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
         return SafeArea(
           child: Scaffold(
             appBar: const MyTitle(),
-            drawer: const MyDrawer(),
+            // drawer: const MyDrawer(),
             body: RefreshIndicator(
               onRefresh: () => getList(),
               child: ListView.builder(
@@ -58,7 +58,7 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
       case States.error:
         return Scaffold(
           appBar: const MyTitle(),
-          drawer: const MyDrawer(),
+          // drawer: const MyDrawer(),
           body: RefreshIndicator(
             onRefresh: () => getList(),
             child: const EmptyList(),
@@ -68,7 +68,7 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
       case States.loading:
         return const Scaffold(
           appBar: MyTitle(),
-          drawer: MyDrawer(),
+          // drawer: MyDrawer(),
           body: GeneralLoading(),
         );
     }

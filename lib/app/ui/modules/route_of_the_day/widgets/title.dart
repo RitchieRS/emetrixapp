@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/ui/modules/drawer/drawer.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +16,8 @@ class MyTitle extends ConsumerWidget implements PreferredSizeWidget {
 
     return AppBar(
       leading: IconButton(
-          onPressed: () => Scaffold.of(context).openDrawer(),
+          // onPressed: () => Scaffold.of(context).openDrawer(),
+          onPressed: () => showRoutes(context, size),
           icon: Icon(Icons.menu,
               color: isDark == ThemeMode.dark ? c.onSecondary : c.black)),
       centerTitle: true,
@@ -31,20 +33,6 @@ class MyTitle extends ConsumerWidget implements PreferredSizeWidget {
     );
   }
 
-  // String currentTime() {
-  //   final hour = DateTime.now().hour;
-
-  //   if (hour >= 5 && hour <= 12) {
-  //     return '¡Buenos Días! ☀';
-  //   }
-  //   if (hour >= 13 && hour <= 19) {
-  //     return '¡Buenas Tardes! ⛅';
-  //   }
-  //   return '¡Buenas Noches! 🌙';
-  // }
-
   @override
   Size get preferredSize => Size.fromHeight(Dimentions().getHeight() * 0.1);
-  // Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-  // Size get preferredSize => Size.fromHeight(Dimentions().getHeight() * 0.06);
 }

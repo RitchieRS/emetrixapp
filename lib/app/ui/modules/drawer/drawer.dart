@@ -74,3 +74,44 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
         ]);
   }
 }
+
+//---
+
+void showRoutes(BuildContext context, Size size) {
+  showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(14), topRight: Radius.circular(14))),
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                  top: size.height * 0.02, bottom: size.height * 0.01),
+              child: Text('Menú', style: t.subtitle),
+            ),
+            SizedBox(
+              height: size.height * 0.35,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: appMenuItems.length,
+                itemBuilder: (context, index) {
+                  final menuItem = appMenuItems[index];
+
+                  return ListTile(
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, menuItem.link);
+                    },
+                    leading: Icon(menuItem.icon.icon, color: c.primary500),
+                    title: Text(menuItem.title),
+                  );
+                },
+              ),
+            )
+          ],
+        );
+      });
+}

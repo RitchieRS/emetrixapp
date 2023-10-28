@@ -10,11 +10,13 @@ class PickerDT extends ConsumerStatefulWidget {
     this.onlyTime,
     required this.pregunta,
     required this.getDateTime,
+    this.mandatory = false,
   });
   final bool? onlyDate;
   final bool? onlyTime;
   final String pregunta;
   final Function(DateTime?) getDateTime;
+  final bool mandatory;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _PickerDTState();
@@ -32,37 +34,40 @@ class _PickerDTState extends ConsumerState<PickerDT>
     final paddingVertical = size.height * 0.012;
     final paddingHorizontal = size.width * 0.04;
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: paddingVertical * 2),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
-            child: Text(widget.pregunta, style: t.subtitle),
-          ),
-          SizedBox(height: paddingVertical),
-          Center(
-            child: Text(showDateOrTime(),
-                style: selectedDate == null ? t.text : t.text,
-                textAlign: TextAlign.center),
-          ),
-          SizedBox(height: paddingVertical),
-          Center(
-            child: Buton(
-              outlined: true,
-              background: c.primary500,
-              title: widget.onlyDate == true
-                  ? 'Fecha'
-                  : widget.onlyTime == true
-                      ? 'Hora'
-                      : 'Fecha/Hora',
-              style: t.mediumBlue2,
-              onTap: () => _handleTime(),
+    return Material(
+      color: widget.mandatory ? c.errorLight : c.surface,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: paddingVertical * 2),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
+              child: Text(widget.pregunta, style: t.subtitle),
             ),
-          ),
-        ],
+            SizedBox(height: paddingVertical),
+            Center(
+              child: Text(showDateOrTime(),
+                  style: selectedDate == null ? t.text : t.text,
+                  textAlign: TextAlign.center),
+            ),
+            SizedBox(height: paddingVertical),
+            Center(
+              child: Buton(
+                outlined: true,
+                background: c.primary500,
+                title: widget.onlyDate == true
+                    ? 'Fecha'
+                    : widget.onlyTime == true
+                        ? 'Hora'
+                        : 'Fecha/Hora',
+                style: t.mediumBlue2,
+                onTap: () => _handleTime(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

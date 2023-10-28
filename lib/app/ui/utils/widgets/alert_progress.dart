@@ -4,10 +4,11 @@ import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 showProgress({
   required BuildContext context,
   required String title,
+  bool canTapOutside = true,
 }) {
   return showDialog(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: canTapOutside,
       builder: (context) {
         return AlertDialog(
           shape:

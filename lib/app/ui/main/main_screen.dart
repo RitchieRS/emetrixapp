@@ -8,6 +8,7 @@ import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/route_of_the_day
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/settings/settings.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   const MainPage({super.key});
@@ -32,6 +33,7 @@ class _HomePageState extends ConsumerState<MainPage> {
   Widget build(BuildContext context) {
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     final indexMain = ref.watch(mainIndex);
+    final unselectedColor = Theme.of(context).textTheme.bodyLarge?.color;
 
     return
         // DefaultTabController(
@@ -90,27 +92,46 @@ class _HomePageState extends ConsumerState<MainPage> {
           //   ),
           // );
 
-          NavigationBar(
-        selectedIndex: indexMain,
-        onDestinationSelected: (int index) =>
-            ref.read(mainIndex.notifier).setIndex(index),
-        indicatorColor: c.primary200,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        destinations: [
-          NavigationDestination(
-            selectedIcon:
-                Icon(Icons.alt_route, color: isDark ? c.black : c.primary500),
-            icon: Icon(Icons.alt_route,
-                color: isDark ? c.black : c.disabled.withOpacity(0.5)),
-            label: 'Ruta del dia',
-          ),
-          NavigationDestination(
-            selectedIcon:
-                Icon(Icons.settings, color: isDark ? c.black : c.primary500),
-            icon: Icon(Icons.settings,
-                color: isDark ? c.black : c.disabled.withOpacity(0.5)),
-            label: 'Ajustes',
-          ),
+          //     NavigationBar(
+          //   selectedIndex: indexMain,
+          //   onDestinationSelected: (int index) =>
+          //       ref.read(mainIndex.notifier).setIndex(index),
+          //   indicatorColor: c.primary200,
+          //   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          //   destinations: [
+          //     NavigationDestination(
+          //       selectedIcon:
+          //           Icon(Icons.alt_route, color: isDark ? c.black : c.primary500),
+          //       icon: Icon(Icons.alt_route,
+          //           color: isDark ? c.black : c.disabled.withOpacity(0.5)),
+          //       label: 'Ruta del dia',
+          //     ),
+          //     NavigationDestination(
+          //       selectedIcon:
+          //           Icon(Icons.settings, color: isDark ? c.black : c.primary500),
+          //       icon: Icon(Icons.settings,
+          //           color: isDark ? c.black : c.disabled.withOpacity(0.5)),
+          //       label: 'Ajustes',
+          //     ),
+          //   ],
+          // ),
+
+          SalomonBottomBar(
+        currentIndex: indexMain,
+        onTap: (int index) => ref.read(mainIndex.notifier).setIndex(index),
+        items: [
+          SalomonBottomBarItem(
+              icon: const Icon(Icons.home_outlined),
+              activeIcon: const Icon(Icons.home),
+              title: const Text("Ruta del dia"),
+              selectedColor: c.primary500,
+              unselectedColor: unselectedColor),
+          SalomonBottomBarItem(
+              icon: const Icon(Icons.settings_outlined),
+              activeIcon: const Icon(Icons.settings),
+              title: const Text("Ajustes"),
+              selectedColor: c.primary500,
+              unselectedColor: unselectedColor),
         ],
       ),
 

@@ -48,9 +48,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     //*Close and save to db the current Navigator state, when the app restart, restore the Navigator state
 
     return WillPopScope(
-      onWillPop: () async {
-        return await onPop();
-      },
+      onWillPop: () => onPop(),
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -77,9 +75,11 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
             IconButton(
                 // onPressed: () => onExit(finishedSections),
                 onPressed: () async {
+                  final navigator = Navigator.of(context);
                   final exit = await onPop();
-                  if (exit) {
-                    Navigator.pop(context);
+                  print(exit);
+                  if (exit == true) {
+                    navigator.pop();
                   }
                 },
                 icon: Icon(Icons.exit_to_app,
@@ -108,6 +108,18 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
                   return TypeSondeo(
                     onTap: !enabled
                         ? () {
+                            // if (sondeosList2[index].preguntas?[index].tipo ==
+                            //     'asistencia') {
+                            //   Navigator.push(
+                            //       context,
+                            //       PageTransition(
+                            //           duration:
+                            //               const Duration(milliseconds: 350),
+                            //           type: PageTransitionType.rightToLeft,
+                            //           child: MapView(store: widget.store)));
+                            //   return;
+                            // }
+
                             Navigator.push(
                                 context,
                                 PageTransition(
@@ -147,13 +159,9 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     if (exit) {
       ref.read(currentOptionProvider.notifier).update((state) => 0);
       ref.read(onlyFirstProvider.notifier).update((state) => true);
-      ref.read(finishedSondeos.notifier).state = [];
+      ref.read(finishedSondeos.notifier).update((state) => []);
     }
-
-    setState(() {
-      ref.read(showProgress1.notifier).update((state) => false);
-    });
-
+    ref.read(showProgress1.notifier).update((state) => false);
     return Future.value(exit);
   }
 
@@ -175,11 +183,9 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
       if (option) {
         ref.read(currentOptionProvider.notifier).update((state) => 0);
         ref.read(onlyFirstProvider.notifier).update((state) => true);
-        ref.read(finishedSondeos.notifier).state = []; //
+        ref.read(finishedSondeos.notifier).update((state) => []); //
 
-        setState(() {
-          ref.read(showProgress1.notifier).update((state) => false);
-        });
+        ref.read(showProgress1.notifier).update((state) => false);
 
         showProgress(context: context, title: 'Guardando progreso..');
         await Future.delayed(const Duration(seconds: 1));

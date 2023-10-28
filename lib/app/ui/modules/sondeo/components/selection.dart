@@ -9,7 +9,7 @@ class Selection extends ConsumerStatefulWidget {
     super.key,
     this.yesNo,
     this.oneSelection,
-    this.yn = const ['Si', 'No'],
+    this.mandatory = false,
     required this.question,
     required this.pregunta,
     required this.answer,
@@ -17,9 +17,9 @@ class Selection extends ConsumerStatefulWidget {
   final bool? yesNo;
   final bool? oneSelection;
   final Preguntas question;
-  final List<String> yn;
   final Preguntas pregunta;
   final Function(String?) answer;
+  final bool mandatory;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SelectionState();
@@ -27,52 +27,67 @@ class Selection extends ConsumerStatefulWidget {
 
 class _SelectionState extends ConsumerState<Selection>
     with AutomaticKeepAliveClientMixin {
-  late String typeService = widget.yn[0];
+  final List<String> _yesnoOptions = ['Si', 'No'];
   late String multi = widget.question.opciones?[0].opcion ?? '';
-  int? selectedOption = 0;
+  int? selectedOption;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   if (widget.yesNo == true) {
+  //     widget.answer(_yesnoOptions[selectedOption ?? 0]);
+  //     return;
+  //   }
+  //   widget.answer(widget.question.opciones![selectedOption ?? 0].opcion);
+  // }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final size = MediaQuery.of(context).size;
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
-          child: Text(widget.pregunta.pregunta ?? 'NoData', style: t.subtitle),
-        ),
-        Center(
-          child: ListView.builder(
-            shrinkWrap: true,
-            // physics: const BouncingScrollPhysics(),
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: widget.yn.length,
-            itemBuilder: (BuildContext context, int index) {
-              return widget.yesNo == true
-                  ? RadioListTile(
-                      title: Text(widget.yn[index]),
-                      value: index,
-                      activeColor: c.primary,
-                      groupValue: selectedOption,
-                      onChanged: (value) => yesNoOnChanged(value))
-                  : widget.oneSelection != true &&
-                          widget.question.opciones != null
-                      ? RadioListTile(
-                          title: Text(widget.question.opciones![index].opcion ??
-                              'option'),
-                          value: index,
-                          activeColor: c.primary,
-                          groupValue: selectedOption,
-                          onChanged: (value) => onChanged(value))
-                      : const SizedBox();
-            },
+    return Material(
+      color: widget.mandatory ? c.errorLight : c.surface,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+            child:
+                Text(widget.pregunta.pregunta ?? 'NoData', style: t.subtitle),
           ),
-        ),
-        SizedBox(height: size.height * 0.02),
-      ],
+          Center(
+            child: ListView.builder(
+              shrinkWrap: true,
+              // physics: const BouncingScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _yesnoOptions.length,
+              itemBuilder: (BuildContext context, int index) {
+                return widget.yesNo == true
+                    ? RadioListTile(
+                        title: Text(_yesnoOptions[index]),
+                        value: index,
+                        activeColor: c.primary,
+                        groupValue: selectedOption,
+                        onChanged: (value) => yesNoOnChanged(value))
+                    : widget.oneSelection != true &&
+                            widget.question.opciones != null
+                        ? RadioListTile(
+                            title: Text(
+                                widget.question.opciones![index].opcion ??
+                                    'option'),
+                            value: index,
+                            activeColor: c.primary,
+                            groupValue: selectedOption,
+                            onChanged: (value) => onChanged(value))
+                        : const SizedBox();
+              },
+            ),
+          ),
+          SizedBox(height: size.height * 0.02),
+        ],
+      ),
     );
   }
 
@@ -81,7 +96,7 @@ class _SelectionState extends ConsumerState<Selection>
       setState(() {
         selectedOption = value;
       });
-      widget.answer(widget.yn[selectedOption ?? 0]);
+      widget.answer(_yesnoOptions[selectedOption ?? 0]);
       return;
     }
     widget.answer(null);

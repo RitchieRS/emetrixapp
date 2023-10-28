@@ -1,8 +1,8 @@
-import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 
 class Question extends ConsumerStatefulWidget {
   const Question({
@@ -11,6 +11,7 @@ class Question extends ConsumerStatefulWidget {
     this.charactersMax,
     this.valueMax,
     this.valueMin,
+    this.mandatory = false,
     required this.answer,
     required this.pregunta,
     required this.index,
@@ -24,6 +25,7 @@ class Question extends ConsumerStatefulWidget {
   final String textfieldValue = '';
   final Preguntas pregunta;
   final String type;
+  final bool mandatory;
   final Function(String?) answer;
 
   @override
@@ -39,6 +41,7 @@ class _QuestionState extends ConsumerState<Question>
   static final focusedBorder = OutlineInputBorder(
       borderSide: BorderSide(color: c.primary, width: 1.5),
       borderRadius: BorderRadius.circular(10));
+  String textValue = '';
 
   @override
   Widget build(BuildContext context) {
@@ -49,58 +52,73 @@ class _QuestionState extends ConsumerState<Question>
         borderSide: BorderSide(color: color2, width: 1.5),
         borderRadius: BorderRadius.circular(10));
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
-          child: Text(widget.pregunta.pregunta ?? 'NoData', style: t.subtitle),
-        ),
-        SizedBox(height: size.height * 0.01),
-        Center(
-          child: Form(
-            key: formKey,
-            child: TextFormField(
-              // controller: questionController,
-              validator: (value) => selectValidation(value),
-              onChanged: (value) {
-                validateAndSave(value);
-              },
-              maxLines: 1,
-              keyboardType:
-                  widget.type == 'numerico' || widget.type == 'decimal'
-                      ? TextInputType.phone
-                      : TextInputType.emailAddress,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.only(
-                    left: 12, bottom: 0, top: size.height * 0.06 / 2),
-                labelStyle: t.text,
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Icon(
-                      widget.type == 'numerico' || widget.type == 'decimal'
-                          ? Icons.numbers
-                          : Icons.question_answer),
+    return Material(
+      color: widget.mandatory ? c.errorLight : c.surface,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+            child:
+                Text(widget.pregunta.pregunta ?? 'NoData', style: t.subtitle),
+          ),
+          SizedBox(height: size.height * 0.01),
+          Center(
+            child: Form(
+              key: formKey,
+              child: TextFormField(
+                validator: (value) => selectValidation(value),
+                onChanged: (value) async {
+                  await Future.delayed(const Duration(milliseconds: 500))
+                      .whenComplete(() => validateAndSave(value));
+                  // validateAndSave(value);
+                  // setState(() {
+                  //   textValue = value;
+                  // });
+                },
+                // onEditingComplete: () {
+                //   validateAndSave(textValue);
+                // },
+                // onFieldSubmitted: (value) {
+                //   validateAndSave(textValue);
+                // },
+                maxLines: 1,
+                keyboardType:
+                    widget.type == 'numerico' || widget.type == 'decimal'
+                        ? TextInputType.phone
+                        : TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(
+                      left: 12, bottom: 0, top: size.height * 0.06 / 2),
+                  labelStyle: t.text,
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Icon(
+                        widget.type == 'numerico' || widget.type == 'decimal'
+                            ? Icons.numbers
+                            : Icons.question_answer),
+                  ),
+                  prefixIconColor: Colors.grey,
+                  focusColor: c.primary,
+                  constraints: BoxConstraints(
+                      minHeight: widget.valueMax != null
+                          ? size.height * 0.08
+                          : size.height * 0.07,
+                      maxWidth: size.width * 0.9),
+                  errorBorder: errorBorder,
+                  focusedErrorBorder: errorBorder,
+                  focusedBorder: focusedBorder,
+                  enabledBorder: defaultBorder,
+                  hintText: 'Respuesta',
                 ),
-                prefixIconColor: Colors.grey,
-                focusColor: c.primary,
-                constraints: BoxConstraints(
-                    minHeight: widget.valueMax != null
-                        ? size.height * 0.08
-                        : size.height * 0.07,
-                    maxWidth: size.width * 0.9),
-                errorBorder: errorBorder,
-                focusedErrorBorder: errorBorder,
-                focusedBorder: focusedBorder,
-                enabledBorder: defaultBorder,
-                hintText: 'Respuesta',
               ),
             ),
           ),
-        ),
-        SizedBox(height: size.height * 0.02),
-      ],
+          SizedBox(height: size.height * 0.02),
+        ],
+      ),
     );
   }
 
@@ -127,6 +145,9 @@ class _QuestionState extends ConsumerState<Question>
     if (widget.type == 'abierta') {
       return validateString(value);
     }
+    if (widget.type == 'email') {
+      return validateEmail(value);
+    }
     return null;
 
     // final validations = {
@@ -141,6 +162,7 @@ class _QuestionState extends ConsumerState<Question>
 
   String? validateString(String? value) {
     final min = widget.charactersMin ?? 1;
+    final max = widget.charactersMax;
 
     if (value == null || value.isEmpty || value == '') {
       return 'Completa el campo';
@@ -148,12 +170,18 @@ class _QuestionState extends ConsumerState<Question>
     if (value.length < min) {
       return '${value.length}: Completa $min caracteres como mínimo';
     }
+    if (max != null && max > 0) {
+      if (value.length > max) {
+        return '${value.length}: Completa $max caracteres como máximo';
+      }
+    }
     widget.answer(value);
     return null;
   }
 
   String? validateNumer(String? value) {
     final min = widget.valueMin ?? 1;
+    final max = widget.valueMax ?? 1;
     bool isNumber = double.tryParse(value ?? '') != null;
     double number = double.parse(value ?? '');
 
@@ -166,6 +194,9 @@ class _QuestionState extends ConsumerState<Question>
 
     if (number < min) {
       return 'Ingresa un valor de $min como mínimo';
+    }
+    if (number > max) {
+      return 'Ingresa un valor menor de $max';
     }
 
     widget.answer(value);

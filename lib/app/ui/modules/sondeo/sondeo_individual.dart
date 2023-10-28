@@ -1,13 +1,16 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/bottom_buton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/bottom_buton.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/custom_title.dart';
+import 'package:image_picker/image_picker.dart';
 import 'components/components.dart';
 import 'controller.dart';
 
@@ -27,22 +30,33 @@ class SingleSondeoPage extends ConsumerStatefulWidget {
 }
 
 class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
-  double progressBar = 0; //* 1 = 100%
-  int lenght = 0;
-  int indexGlobal = 0;
-  List<String> inputs = ['abierta', 'numerico', 'email', 'decimal'];
-  List<String> radios = ['unicaRadio', 'sino'];
-  List<String> images = ['fotoGuardarCopia', 'foto', 'imagen'];
   //* List Responses
-  List<dynamic> responses = [];
-  String? textResponse;
-  String? radioResponse;
-  File? imageResponse;
-  File? signatureResponse; //*
-  String? positionGPSResponse;
-  DateTime? dateResponse;
-  DateTime? dateTimeResponse;
-  DateTime? timeResponse;
+  ResponseIndex? textResponse;
+  ResponseIndex? numericResponse;
+  ResponseIndex? decimalResponse;
+  ResponseIndex? emailResponse;
+  ResponseIndex? radioResponse;
+  ResponseIndex? yesnoRadioResponse;
+  ResponseIndex? multipleResponse;
+  ResponseIndex? imageResponse;
+  ResponseIndex? photoResponse;
+  ResponseIndex? positionGPSResponse;
+  ResponseIndex? signatureResponse;
+  ResponseIndex? dateResponse;
+  ResponseIndex? dateTimeResponse;
+  ResponseIndex? timeResponse;
+  //ThisSondeo
+  List<QuestionResponse> questionsResponses = [];
+  List<(String, int)> mandatoryQuestions = [];
+  //Set color red
+  List<bool> mandatoryComponents = [];
+  bool validate = false;
+
+  @override
+  void initState() {
+    super.initState();
+    idenifyComponents();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,49 +68,112 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: CustomScrollView(
             slivers: [
-              // if (widget.sondeoItem.preguntas?[index].tipo ==
-              //     'asistencia') {
-              //   return MapView(store: widget.store);
-              // } else {
               if (widget.sondeoItem.preguntas != null)
                 SliverList.builder(
                     itemCount: widget.sondeoItem.preguntas?.length,
                     itemBuilder: (context, index) {
-                      print(widget.sondeoItem.preguntas?[index].tipo);
+                      print(mandatoryComponents);
 
                       return QuestionBuilder(
+                        mandatory:
+                            validate ? mandatoryComponents[index] : false,
                         answer: (response) {
-                          setState(() => textResponse = response);
+                          setState(() {
+                            validate = false;
+                            textResponse =
+                                ResponseIndex(index: index, response: response);
+                          });
+                        },
+                        numeric: (response) {
+                          setState(() {
+                            validate = false;
+                            numericResponse =
+                                ResponseIndex(index: index, response: response);
+                          });
+                        },
+                        decimal: (response) {
+                          setState(() {
+                            validate = false;
+                            decimalResponse =
+                                ResponseIndex(index: index, response: response);
+                          });
+                        },
+                        email: (response) {
+                          setState(() {
+                            validate = false;
+                            emailResponse =
+                                ResponseIndex(index: index, response: response);
+                          });
                         },
                         answerRadio: (response) {
-                          setState(() => radioResponse = response);
+                          setState(() {
+                            validate = false;
+                            radioResponse =
+                                ResponseIndex(index: index, response: response);
+                          });
+                        },
+                        yesnoRadio: (response) {
+                          setState(() {
+                            validate = false;
+                            yesnoRadioResponse =
+                                ResponseIndex(index: index, response: response);
+                          });
+                        },
+                        selectionMultiple: (selectedItems) {
+                          setState(() {
+                            validate = false;
+                            multipleResponse = ResponseIndex(
+                                index: index, response: selectedItems);
+                          });
                         },
                         image: (image) {
-                          setState(() => imageResponse = image);
+                          setState(() {
+                            validate = false;
+                            imageResponse =
+                                ResponseIndex(index: index, response: image);
+                          });
+                        },
+                        photo: (photo) {
+                          setState(() {
+                            validate = false;
+                            photoResponse =
+                                ResponseIndex(index: index, response: photo);
+                          });
                         },
                         positionGPS: (positionGPS) {
-                          setState(() => positionGPSResponse = positionGPS);
-                          print('GPS: $positionGPS');
+                          setState(() {
+                            validate = false;
+                            positionGPSResponse = ResponseIndex(
+                                index: index, response: positionGPS);
+                          });
                         },
                         signature: (signatureFile) {
-                          setState(() => signatureResponse = signatureFile);
-                          print('Signature: $signatureFile');
+                          setState(() {
+                            validate = false;
+                            signatureResponse = ResponseIndex(
+                                index: index, response: signatureFile);
+                          });
                         },
                         date: (date) {
-                          //Get only date
-                          setState(() => dateResponse = date);
-                          print(
-                              'Date: ${date?.day}/${date?.month}/${date?.year}');
+                          setState(() {
+                            validate = false;
+                            dateResponse =
+                                ResponseIndex(index: index, response: date);
+                          });
                         },
                         dateTime: (dateTime) {
-                          //Get date n time
-                          setState(() => dateTimeResponse = dateTime);
-                          print('DateTime: $dateTime');
+                          setState(() {
+                            validate = false;
+                            dateTimeResponse =
+                                ResponseIndex(index: index, response: dateTime);
+                          });
                         },
                         time: (time) {
-                          //Get only time
-                          setState(() => timeResponse = time);
-                          print('Time: ${time?.hour}:${time?.minute}');
+                          setState(() {
+                            validate = false;
+                            timeResponse =
+                                ResponseIndex(index: index, response: time);
+                          });
                         },
                         index: index,
                         store: widget.store,
@@ -107,124 +184,145 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
               else
                 SliverToBoxAdapter(
                     child: Center(child: Text('${widget.sondeoItem.linkWeb}'))),
-
-              //*BUTTONS
-              // if (lenght == 1 || lenght == 0)
-              //   ButonDimentions(
-              //     height: height,
-              //     width: width,
-              //     background: Colors.blue[700] ?? c.secondary.withOpacity(0.8),
-              //     title: 'Finalizar',
-              //     style: t.mediumLight,
-              //     onTap: () => finalize(finishedSections),
-              //     padding: EdgeInsets.only(bottom: size.height * 0.02),
-              //   ),
-              // else if (indexGlobal + 1 != lenght)
-              //   ButonDimentions(
-              //     height: height,
-              //     width: width,
-              //     background: Theme.of(context).dialogBackgroundColor,
-              //     title: 'Next',
-              //     style: t.mediumBlue,
-              //     shadow: 2,
-              //     onTap: () =>
-              //         nextPage(lenght: lenght, progressValue: progressValue),
-              //     padding: EdgeInsets.only(bottom: size.height * 0.02),
-              //   )
-              // else
-              //   ButonDimentions(
-              //     height: height,
-              //     width: width,
-              //     background: Colors.blue[700] ?? c.secondary.withOpacity(0.8),
-              //     title: 'Finalizar',
-              //     style: t.mediumLight,
-              //     onTap: () => finalize(finishedSections),
-              //     padding: EdgeInsets.only(bottom: size.height * 0.02),
-              //   ),
             ],
           ),
         ),
-        bottomNavigationBar: BottomButon(onTap: () {
+        bottomNavigationBar: BottomButon(onTap: () async {
           if (widget.index == 0) {
-            finalize(finishedSections);
+            final image = await pickImage(ImageSource.camera);
+            if (image != null) {
+              finalize(finishedSections);
+              return;
+            }
             return;
           }
           validateAllComponents();
+          // finalize(finishedSections);
         }
             // onTap: () => finalize(finishedSections),
             ));
   }
 
+  void idenifyComponents() {
+    widget.sondeoItem.preguntas?.forEach((sondeo) {
+      final index = widget.sondeoItem.preguntas?.indexOf(sondeo);
+      questionsResponses.add(
+        QuestionResponse(
+            question: sondeo.tipo ?? '', response: null, index: index!),
+      );
+
+      if (sondeo.obligatorio == 1) {
+        mandatoryComponents.add(true);
+        mandatoryQuestions.add((sondeo.tipo ?? '', index));
+        return;
+      }
+      mandatoryComponents.add(false);
+    });
+  }
+
+  Future<File?> pickImage(ImageSource source) async {
+    try {
+      final image2 = await ImagePicker().pickImage(source: source);
+      if (image2 == null) return null;
+
+      return File(image2.path);
+    } on PlatformException catch (e) {
+      debugPrint('Error extracting image:$e');
+    }
+    return null;
+  }
+
   Future<void> validateAllComponents() async {
-    // final questionType = widget.sondeoItem.preguntas?[indexGlobal].tipo;
     FocusManager.instance.primaryFocus?.unfocus();
-    await validateInputs();
-    await validateRadios();
-    await validateImages();
+    // final messenger = ScaffoldMessenger.of(context);
 
-    // Extract data from others components
+    Map<String, ResponseIndex?> typeResponses = {
+      'abierta': textResponse,
+      'numerico': numericResponse,
+      'decimal': decimalResponse,
+      'email': emailResponse,
+      'unicaRadio': radioResponse,
+      'sino': yesnoRadioResponse,
+      'imagen': imageResponse,
+      'foto': photoResponse,
+      'fotoGuardarCopia': imageResponse,
+      'multiple': multipleResponse,
+      'gps': positionGPSResponse,
+      'firma': signatureResponse,
+      'fecha': dateResponse,
+      'fechaHora': dateTimeResponse,
+      'hora': timeResponse,
+    };
 
-    // // Validate
-    // if (inputs.contains(questionType)) {
-    //   validateInputs();
-    // }
-    // //
-    // else if (radios.contains(questionType)) {
-    //   validateRadios();
-    // }
-    // //
-    // else if (images.contains(questionType)) {
-    //   print('Is an Image');
-    //   validateImages();
-    // }
-    // //
-    // else {
-    //   print('Is other component');
-    //   // Extract data from others components
-    // }
-  }
+    print('Obligatorias: $mandatoryQuestions');
 
-  Future validateImages() async {
-    if (imageResponse == null) {
-      print('returned');
+    //Guardar las respuestas
+    for (var question in questionsResponses) {
+      final response = typeResponses[question.question];
+      if (response != null) {
+        if (question.index == response.index) {
+          question.response = response.response;
+        }
+      }
+    }
+    setState(() {});
+    for (var element in questionsResponses) {
+      print('${element.question}: ${element.response}');
+    }
+
+    int missingAnswers = 0;
+    //Ver si las respuestas obligatorias estan vacias
+    for (var questionMandatory in mandatoryQuestions) {
+      for (var response in questionsResponses) {
+        if (questionMandatory.$2 == response.index) {
+          if (response.response != null) {
+            mandatoryComponents[response.index] = false;
+            missingAnswers--;
+          } else {
+            mandatoryComponents[response.index] = true;
+          }
+          missingAnswers++;
+        }
+      }
+    }
+
+    if (missingAnswers != 0) {
+      setState(() => validate = true);
+      print(mandatoryComponents);
+      await showUnfinishedMessage(missingAnswers);
       return;
     }
-    setState(() {
-      responses.add(imageResponse);
-      printResponses();
-      imageResponse = null;
+
+    //Armar el pendiente y guardar todas las preguntas a la Base de datos
+    print('Preguntas obligatorias contestadas');
+    showLoading();
+    await Future.delayed(const Duration(seconds: 2)).whenComplete(() {
+      Navigator.pop(context);
+      Navigator.pop(context);
     });
   }
 
-  Future validateInputs() async {
-    if (textResponse == null || textResponse!.isEmpty) {
-      print('returned');
-      return;
-    }
-    setState(() => responses.add(textResponse));
-    setState(() {
-      printResponses();
-      textResponse = null;
-    });
+  Future showUnfinishedMessage(int missingAnswers) async {
+    await showMsj(
+        context: context,
+        title: 'Sondeo Incompleto',
+        content: "Contesta las $missingAnswers preguntas requeridas",
+        destructive: false,
+        onlyOk: true,
+        canTapOutside: true,
+        buttonLabel: 'Ok');
   }
 
-  Future validateRadios() async {
-    if (radioResponse == null) {
-      return;
-    }
-    setState(() {
-      responses.add(radioResponse);
-      printResponses();
-      radioResponse = null;
-    });
+  Future showLoading() async {
+    await showProgress(
+      context: context,
+      title: 'Guardando respestas',
+    );
   }
 
   void finalize(List<int> finishedSections) {
     //Save all progress and data to db
-
-    if (!finishedSections.contains(widget.index) ||
-        finishedSections.isEmpty ||
-        finishedSections == []) {
+    if (!finishedSections.contains(widget.index) || finishedSections.isEmpty) {
       ref.read(finishedSondeos.notifier).state.add(widget.index);
     }
     ref
@@ -239,12 +337,26 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
 
   void printResponses() {
     print('*************************');
-    for (var element in responses) {
-      print('Response: $element');
+    for (var element in questionsResponses) {
+      print('Response: ${element.response}');
     }
-    print('Total Responses: ${responses.length}');
+    print('Total Responses: ${questionsResponses.length}');
     print('*************************');
   }
 
   //
+}
+
+class QuestionResponse {
+  QuestionResponse(
+      {required this.question, required this.index, required this.response});
+  String question;
+  dynamic response;
+  int index;
+}
+
+class ResponseIndex {
+  ResponseIndex({required this.index, required this.response});
+  int index;
+  dynamic response;
 }

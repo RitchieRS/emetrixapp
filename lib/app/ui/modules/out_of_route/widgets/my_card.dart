@@ -80,7 +80,7 @@ class _MyCardState extends ConsumerState<MyCard>
                           Padding(
                               padding: EdgeInsets.only(left: size.width * 0.02),
                               child: SizedBox(
-                                  width: size.width * 0.65,
+                                  width: size.width * 0.58,
                                   child: Text('${widget.resp?.tienda}',
                                       style: t.mediumBold,
                                       maxLines: 2,

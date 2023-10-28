@@ -26,37 +26,40 @@ class _Buton2State extends ConsumerState<ButonLoading> {
   Widget build(BuildContext context) {
     // final size = MediaQuery.of(context).size;
 
-    return Material(
-      child: InkWell(
-        borderRadius: BorderRadius.circular(10),
-        onTap: widget.onFinish,
-        child: Ink(
-            height: widget.height,
-            width: widget.width,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: widget.showShadow == true
-                  ? [
-                      BoxShadow(
-                          color: c.disabled.withOpacity(0.4),
-                          blurRadius: 20.0,
-                          offset: const Offset(1, 1))
-                    ]
-                  : [],
-              color: widget.background,
-            ),
-            child: Center(
-              heightFactor: 1,
-              widthFactor: 1,
-              child: SizedBox(
-                height: 22,
-                width: 22,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: c.background,
-                ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Material(
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: widget.onFinish,
+          child: Ink(
+              height: widget.height,
+              width: widget.width,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: widget.showShadow == true
+                    ? [
+                        BoxShadow(
+                            color: c.disabled.withOpacity(0.4),
+                            blurRadius: 20.0,
+                            offset: const Offset(1, 1))
+                      ]
+                    : [],
+                color: widget.background,
               ),
-            )),
+              child: Center(
+                heightFactor: 1,
+                widthFactor: 1,
+                child: SizedBox(
+                  height: 22,
+                  width: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: c.background,
+                  ),
+                ),
+              )),
+        ),
       ),
     );
   }

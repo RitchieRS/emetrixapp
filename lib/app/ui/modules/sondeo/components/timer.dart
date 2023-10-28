@@ -5,9 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MyTimer extends ConsumerStatefulWidget {
-  const MyTimer({super.key, required this.pregunta, required this.times});
+  const MyTimer({
+    super.key,
+    required this.pregunta,
+    required this.times,
+    this.mandatory = false,
+  });
   final String pregunta;
   final int times;
+  final bool mandatory;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MyTimerState();
@@ -38,29 +44,32 @@ class _MyTimerState extends ConsumerState<MyTimer>
         print('Tap Laps: $_laps');
         print('Laps list: $_lapTimes');
       },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
-            child: Text(widget.pregunta, style: t.subtitle),
-          ),
-          SizedBox(height: size.height * 0.01),
-          Text(
-            style: const TextStyle(fontSize: 48.0),
-            _formatTime(_minutes, _seconds, _milliseconds),
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _lapTimes.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text(_lapTimes[index]),
-              );
-            },
-          )
-        ],
+      child: Material(
+        color: widget.mandatory ? c.errorLight : c.surface,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+              child: Text(widget.pregunta, style: t.subtitle),
+            ),
+            SizedBox(height: size.height * 0.01),
+            Text(
+              style: const TextStyle(fontSize: 48.0),
+              _formatTime(_minutes, _seconds, _milliseconds),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _lapTimes.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text(_lapTimes[index]),
+                );
+              },
+            )
+          ],
+        ),
       ),
     );
   }

@@ -7,9 +7,11 @@ class SelectionMultiple extends ConsumerStatefulWidget {
   const SelectionMultiple({
     super.key,
     required this.question,
+    this.mandatory = false,
     required this.selectedItems,
   });
   final Preguntas question;
+  final bool mandatory;
   final Function(List<String>?) selectedItems;
 
   @override
@@ -26,33 +28,37 @@ class _SelectionState extends ConsumerState<SelectionMultiple>
     final size = MediaQuery.of(context).size;
     //top: size.height * 0.01
 
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
-          child: Text(widget.question.pregunta ?? 'NoData', style: t.subtitle),
-        ),
-        SizedBox(height: size.height * 0.01),
-        Padding(
-          padding: EdgeInsets.only(bottom: size.height * 0.01),
-          child: ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: widget.question.opciones?.length ?? 0,
-              itemBuilder: (context, index) {
-                return CheckboxListTile(
-                  value: selectedItems
-                      ?.contains(widget.question.opciones?[index].opcion),
-                  onChanged: (newvalue) => onSelectedTile(newvalue, index),
-                  title: Text(widget.question.opciones?[index].opcion ?? '',
-                      maxLines: 2, overflow: TextOverflow.ellipsis),
-                  activeColor: c.primary,
-                  checkboxShape: const CircleBorder(),
-                  controlAffinity: ListTileControlAffinity.leading,
-                );
-              }),
-        ),
-      ],
+    return Material(
+      color: widget.mandatory ? c.errorLight : c.surface,
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+            child:
+                Text(widget.question.pregunta ?? 'NoData', style: t.subtitle),
+          ),
+          SizedBox(height: size.height * 0.01),
+          Padding(
+            padding: EdgeInsets.only(bottom: size.height * 0.01),
+            child: ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: widget.question.opciones?.length ?? 0,
+                itemBuilder: (context, index) {
+                  return CheckboxListTile(
+                    value: selectedItems
+                        ?.contains(widget.question.opciones?[index].opcion),
+                    onChanged: (newvalue) => onSelectedTile(newvalue, index),
+                    title: Text(widget.question.opciones?[index].opcion ?? '',
+                        maxLines: 2, overflow: TextOverflow.ellipsis),
+                    activeColor: c.primary,
+                    checkboxShape: const CircleBorder(),
+                    controlAffinity: ListTileControlAffinity.leading,
+                  );
+                }),
+          ),
+        ],
+      ),
     );
   }
 
@@ -62,6 +68,11 @@ class _SelectionState extends ConsumerState<SelectionMultiple>
         selectedItems?.add(widget.question.opciones?[index].opcion ?? '');
       } else {
         selectedItems?.remove(widget.question.opciones?[index].opcion ?? '');
+        if (selectedItems?.isEmpty == true) {
+          setState(() {});
+          widget.selectedItems(null);
+          return;
+        }
       }
       widget.selectedItems(selectedItems);
     });

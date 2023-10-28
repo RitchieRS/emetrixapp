@@ -26,10 +26,10 @@ class TypeSondeo extends ConsumerWidget {
     final size = MediaQuery.of(context).size;
     const int animationDuration = 1000;
     final currentOption = ref.watch(currentOptionProvider);
-    final isDark = ref.watch(themeProvider);
+    final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     final enebledColor = c.primary500;
     final disabledColor =
-        isDark == ThemeMode.light ? Colors.grey[400] : c.disabled;
+        isDark ? Colors.grey[400] : c.disabled.withOpacity(0.3);
     final finishedColor = c.ok;
     // final enabledColor = index <= currentOption - 1;
     final finishedSections = ref.watch(finishedSondeos);
@@ -66,11 +66,15 @@ class TypeSondeo extends ConsumerWidget {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isFinished
-                            ? finishedColor
+                            ? finishedColor.withOpacity(0.35)
                             : enebled
-                                ? enebledColor
-                                : disabledColor),
-                    child: icons(c.background),
+                                ? enebledColor.withOpacity(0.35)
+                                : disabledColor?.withOpacity(0.3)),
+                    child: icons(isFinished
+                        ? finishedColor
+                        : enebled
+                            ? enebledColor
+                            : c.background),
                   ),
                   SizedBox(width: size.width * 0.04),
                   Column(
@@ -96,7 +100,9 @@ class TypeSondeo extends ConsumerWidget {
                               : const SizedBox(),
                           SizedBox(width: size.width * 0.01),
                           isFinished
-                              ? FadeIn(child: Icon(Icons.done, color: c.ok))
+                              ? FadeIn(
+                                  child:
+                                      Icon(Icons.done, color: c.ok, size: 15))
                               : SizedBox(width: size.width * 0.06),
                         ],
                       ),
@@ -105,9 +111,7 @@ class TypeSondeo extends ConsumerWidget {
                         width: size.width * 0.4,
                         child: Text(sondeoItem.sondeo ?? 'Error',
                             style: enebled
-                                ? (isDark == ThemeMode.dark
-                                    ? t.mediumLight
-                                    : t.mediumBold)
+                                ? (isDark ? t.mediumLight : t.mediumBold)
                                 : t.mediumDisabled,
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis),
@@ -124,33 +128,23 @@ class TypeSondeo extends ConsumerWidget {
                         padding: EdgeInsets.only(
                             left: leftPadding + (side / 2 - lineTickness / 2),
                             top: 0),
-                        child: SizedBox(
-                          height: size.height * 0.06,
-                          child: RotatedBox(
-                            quarterTurns: 5,
-                            child: TweenAnimationBuilder<double>(
-                              duration: const Duration(
-                                  milliseconds: animationDuration),
-                              curve: Curves.easeInOut,
-                              tween: Tween<double>(
-                                begin: 0,
-                                end: currentOption > 0 ? 1 : 0, //
-                                // end: enebled ? 1 : 0, //
-                              ),
-                              builder: (context, value, _) =>
-                                  LinearProgressIndicator(
-                                value: value,
-                                color: isFinished
-                                    ? finishedColor
-                                    : enebled
-                                        ? enebledColor
-                                        : disabledColor,
-                                minHeight: lineTickness,
-                                backgroundColor: disabledColor,
-                              ),
+                        child: TweenAnimationBuilder<double>(
+                            duration:
+                                const Duration(milliseconds: animationDuration),
+                            curve: Curves.easeInOut,
+                            tween: Tween<double>(
+                              begin: 0,
+                              end: currentOption > 0 ? 1 : 0, //
+                              // end: enebled ? 1 : 0, //
                             ),
-                          ),
-                        ),
+                            builder: (context, value, _) => Container(
+                                  color: isFinished
+                                      ? finishedColor.withOpacity(0.4)
+                                      : enebled
+                                          ? enebledColor.withOpacity(0.4)
+                                          : disabledColor,
+                                  width: lineTickness,
+                                )),
 
                         //
                       ),
@@ -165,23 +159,26 @@ class TypeSondeo extends ConsumerWidget {
   }
 
   Widget icons(Color color) {
-    final Map<String, Icon> icons = {
-      'Asistencia': Icon(Icons.location_on, color: color),
-      'Tomar Fotografía': Icon(Icons.camera, color: color),
-      'todo': Icon(Icons.task, color: color),
-      'FOTOS': Icon(Icons.photo, color: color),
-      'VIDEOS': Icon(Icons.video_collection, color: color),
-      'preguntas': Icon(Icons.question_answer, color: color),
-      'SOS': Icon(Icons.sos, color: color),
-      'cronometro 2': Icon(Icons.timer, color: color),
-      'cronometro 4': Icon(Icons.timer, color: color),
-      'Carga de Videos': Icon(Icons.upload, color: color),
-      'NFC': Icon(Icons.nfc, color: color),
-      'Nueva Tienda': Icon(Icons.store, color: color),
-      // 'Salida': Icon(Icons.exit_to_app, color: color),
-    };
+    // final Map<String, Icon> icons = {
+    //   'Asistencia': Icon(Icons.location_on, color: color),
+    //   'Tomar Fotografía': Icon(Icons.camera, color: color),
+    //   'todo': Icon(Icons.task, color: color),
+    //   'FOTOS': Icon(Icons.photo, color: color),
+    //   'VIDEOS': Icon(Icons.video_collection, color: color),
+    //   'preguntas': Icon(Icons.question_answer, color: color),
+    //   'SOS': Icon(Icons.sos, color: color),
+    //   'cronometro 2': Icon(Icons.timer, color: color),
+    //   'cronometro 4': Icon(Icons.timer, color: color),
+    //   'Carga de Videos': Icon(Icons.upload, color: color),
+    //   'NFC': Icon(Icons.nfc, color: color),
+    //   'Nueva Tienda': Icon(Icons.store, color: color),
+    // };
 
-    return icons[sondeoItem.sondeo] ??
-        Icon(Icons.question_answer, color: color);
+    return sondeoItem.sondeo == 'Asistencia'
+        ? Icon(Icons.location_on, color: color)
+        : Icon(Icons.task, color: color);
+
+    // return icons[sondeoItem.sondeo] ??
+    //     Icon(Icons.question_answer, color: color);
   }
 }

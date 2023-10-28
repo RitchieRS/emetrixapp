@@ -16,9 +16,11 @@ class Signature extends ConsumerStatefulWidget {
     super.key,
     required this.pregunta,
     required this.getSignature,
+    this.mandatory = false,
   });
   final String pregunta;
   final Function(File?) getSignature;
+  final bool mandatory;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SignatureState();
@@ -38,31 +40,34 @@ class _SignatureState extends ConsumerState<Signature>
 
     return GestureDetector(
       onTap: () => getSignature(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
-            child: Text(widget.pregunta, style: t.subtitle),
-          ),
-          SizedBox(height: size.height * 0.01),
-          Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Container(
-                color: backColor,
-                height: size.height * 0.12,
-                width: size.width * 0.9,
-                child: siganture != null
-                    ? Image.file(siganture!)
-                    : const Center(
-                        child: Text('Firmar'),
-                      ),
+      child: Material(
+        color: widget.mandatory ? c.errorLight : c.surface,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+              child: Text(widget.pregunta, style: t.subtitle),
+            ),
+            SizedBox(height: size.height * 0.01),
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  color: backColor,
+                  height: size.height * 0.12,
+                  width: size.width * 0.9,
+                  child: siganture != null
+                      ? Image.file(siganture!)
+                      : const Center(
+                          child: Text('Firmar'),
+                        ),
+                ),
               ),
             ),
-          ),
-          SizedBox(height: size.height * 0.02),
-        ],
+            SizedBox(height: size.height * 0.02),
+          ],
+        ),
       ),
     );
   }

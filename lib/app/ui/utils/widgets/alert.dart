@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
-Future<bool> showMsj({
-  required BuildContext context,
-  required String title,
-  required String content,
-  required bool destructive,
-  required String buttonLabel,
-  bool onlyOk = false,
-  bool justifyContent = false,
-}) async {
+Future<bool> showMsj(
+    {required BuildContext context,
+    required String title,
+    required String content,
+    required bool destructive,
+    required String buttonLabel,
+    bool onlyOk = false,
+    bool justifyContent = false,
+    bool canTapOutside = false}) async {
   final bool result = await showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: canTapOutside,
       builder: (context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -29,10 +29,10 @@ Future<bool> showMsj({
               ? [
                   ButonDimentions(
                     onTap: () => Navigator.pop(context, true),
-                    background: destructive ? c.error : c.primary,
+                    background: destructive ? c.error : c.primary500,
                     title: buttonLabel,
                     style: t.textLight,
-                    width: Dimentions().getWidth() * 0.4,
+                    width: Dimentions().getWidth() * 0.6,
                     height: Dimentions().getHeight() * 0.055,
                   ),
                 ]
@@ -47,7 +47,7 @@ Future<bool> showMsj({
                           child: Text('Cancelar', style: t.textDisabledBold)),
                       const SizedBox(width: 12),
                       ButonDimentions(
-                        background: destructive ? c.error : c.primary,
+                        background: destructive ? c.error : c.primary500,
                         title: buttonLabel,
                         style: t.textLight,
                         onTap: () => Navigator.pop(context, true),

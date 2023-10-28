@@ -7,8 +7,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class Scanner extends ConsumerStatefulWidget {
-  const Scanner({super.key, required this.pregunta});
+  const Scanner({
+    super.key,
+    required this.pregunta,
+    this.mandatory = false,
+  });
   final String pregunta;
+  final bool mandatory;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ScannerState();
@@ -25,29 +30,32 @@ class _ScannerState extends ConsumerState<Scanner>
     final paddingHorizontal = size.width * 0.04;
     final paddingVertical = size.height * 0.012;
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
-          child: Text(widget.pregunta, style: t.subtitle),
-        ),
-        SizedBox(height: paddingVertical),
-        Center(
-          child: Text(text, style: t.text, textAlign: TextAlign.center),
-        ),
-        SizedBox(height: paddingVertical),
-        Center(
-          child: Buton(
-            outlined: true,
-            background: c.primary500,
-            title: 'Scanner',
-            style: t.mediumBlue2,
-            onTap: () => _openScanner(),
+    return Material(
+      color: widget.mandatory ? c.errorLight : c.surface,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
+            child: Text(widget.pregunta, style: t.subtitle),
           ),
-        ),
-      ],
+          SizedBox(height: paddingVertical),
+          Center(
+            child: Text(text, style: t.text, textAlign: TextAlign.center),
+          ),
+          SizedBox(height: paddingVertical),
+          Center(
+            child: Buton(
+              outlined: true,
+              background: c.primary500,
+              title: 'Scanner',
+              style: t.mediumBlue2,
+              onTap: () => _openScanner(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
