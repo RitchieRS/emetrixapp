@@ -41,10 +41,11 @@ class _MyTimerState extends ConsumerState<MyTimer>
     return GestureDetector(
       onTap: () {
         _handleLaps();
-        print('Tap Laps: $_laps');
-        print('Laps list: $_lapTimes');
+        debugPrint('Tap Laps: $_laps');
+        debugPrint('Laps list: $_lapTimes');
       },
-      child: Material(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
         color: widget.mandatory ? c.errorLight : c.surface,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

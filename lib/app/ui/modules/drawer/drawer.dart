@@ -107,6 +107,8 @@ void showRoutes(BuildContext context, Size size) {
                     },
                     leading: Icon(menuItem.icon.icon, color: c.primary500),
                     title: Text(menuItem.title),
+                    subtitle: Text(menuItem.subtitle,
+                        style: const TextStyle(fontSize: 12)),
                   );
                 },
               ),

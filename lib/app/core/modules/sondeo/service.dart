@@ -16,7 +16,7 @@ class HomeService {
     debugPrint('USER ID--> ${obj.usuario.id}');
     debugPrint('PROYECT ID--> ${obj.proyectos.first.id}');
 
-    final resp = await repository.getStores(
+    final resp = await repository.getSondeos(
         user: obj.usuario.id,
         proyect: obj.proyectos.first.id,
         store: idTienda); //Mandar los ids para el sondeo

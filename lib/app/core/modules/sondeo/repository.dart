@@ -4,7 +4,7 @@ import 'package:emetrix_flutter/app/core/global/core.dart';
 
 class HomeRepository {
   //
-  Future<SondeoModel> getStores(
+  Future<SondeoModel> getSondeos(
       {required String proyect,
       required String user,
       required String store}) async {
@@ -19,8 +19,8 @@ class HomeRepository {
       logger.d('Sondeo StatusCode: ${response.statusCode}');
       SondeoModel home = SondeoModel.fromJson(json.decode(response.data));
       return home;
-    } catch (error) {
-      logger.d('Error Sondeo: ${error.toString()}');
+    } catch (error, s) {
+      logger.e('Error Sondeo: ${error.toString()}\n${s.toString()}');
       return SondeoModel(idError: 1, resp: []);
     }
   }

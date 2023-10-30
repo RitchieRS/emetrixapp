@@ -34,7 +34,6 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     final backColor =
@@ -42,7 +41,8 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
     final labelPadding = EdgeInsets.symmetric(horizontal: size.width * 0.04);
     final side = size.height * 0.25;
 
-    return Material(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       color: widget.mandatory ? c.errorLight : c.surface,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -99,7 +99,7 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
                   onChanged: null,
                   // onChanged: (newvalue) {},
                   title: const Text('Guardar copia'),
-                  activeColor: c.primary,
+                  activeColor: c.primary500,
                   checkboxShape: const CircleBorder(),
                   controlAffinity: ListTileControlAffinity.leading,
                 )

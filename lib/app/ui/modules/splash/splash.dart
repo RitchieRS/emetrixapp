@@ -52,7 +52,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
           stops: const [0.1, 0.5],
-          colors: [c.secondary, c.primary.withOpacity(0.55)],
+          colors: [c.secondary, c.primary500.withOpacity(0.55)],
         )),
         child: BounceInDown(
             delay: const Duration(seconds: 1),

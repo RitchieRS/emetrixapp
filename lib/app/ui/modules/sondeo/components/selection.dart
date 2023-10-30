@@ -31,22 +31,13 @@ class _SelectionState extends ConsumerState<Selection>
   late String multi = widget.question.opciones?[0].opcion ?? '';
   int? selectedOption;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   if (widget.yesNo == true) {
-  //     widget.answer(_yesnoOptions[selectedOption ?? 0]);
-  //     return;
-  //   }
-  //   widget.answer(widget.question.opciones![selectedOption ?? 0].opcion);
-  // }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final size = MediaQuery.of(context).size;
 
-    return Material(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       color: widget.mandatory ? c.errorLight : c.surface,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -68,7 +59,7 @@ class _SelectionState extends ConsumerState<Selection>
                     ? RadioListTile(
                         title: Text(_yesnoOptions[index]),
                         value: index,
-                        activeColor: c.primary,
+                        activeColor: c.primary500,
                         groupValue: selectedOption,
                         onChanged: (value) => yesNoOnChanged(value))
                     : widget.oneSelection != true &&
@@ -78,7 +69,7 @@ class _SelectionState extends ConsumerState<Selection>
                                 widget.question.opciones![index].opcion ??
                                     'option'),
                             value: index,
-                            activeColor: c.primary,
+                            activeColor: c.primary500,
                             groupValue: selectedOption,
                             onChanged: (value) => onChanged(value))
                         : const SizedBox();

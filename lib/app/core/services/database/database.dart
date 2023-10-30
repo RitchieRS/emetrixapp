@@ -1,8 +1,9 @@
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/core/modules/stores/all_stores.dart';
 import 'package:isar/isar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'package:emetrix_flutter/app/core/modules/stores/all_stores.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 
 final databaseProvider = Provider<Database>((ref) {
@@ -18,7 +19,7 @@ class Database {
   Future<Isar> _openDatabase() async {
     final dir = await getApplicationDocumentsDirectory();
     if (Isar.instanceNames.isEmpty) {
-      return await Isar.open([StoreIsarSchema, StoreGeneralSchema],
+      return await Isar.open([SondeosFromStoreSchema, StoreGeneralSchema],
           directory: dir.path);
     }
     return Future.value(Isar.getInstance());
@@ -31,7 +32,7 @@ class Database {
 
     await isar.writeTxn(() async {
       for (StoreGeneral store in routes) {
-        final storeG = Store(
+        final storeG = Store2(
           checkGPS: store.checkGPS,
           clasificacion: store.clasificacion,
           definirNombre: store.definirNombre,
@@ -43,23 +44,19 @@ class Database {
           rangoGPS: store.rangoGPS,
           tienda: store.tienda,
         );
-        final isarStore = StoreIsar(
+        final isarStore = SondeosFromStore(
           store: storeG,
-          currentQuestion: 0,
           progress: 0,
-          responsesQuestions: [],
-          responsesSelectionList: [],
-          totalQuestions: 0,
         );
 
-        await isar.storeIsars.put(isarStore); // insert & update
+        await isar.sondeosFromStores.put(isarStore); // insert & update
       }
     });
   }
 
-  Future<List<StoreIsar>> getStores() async {
+  Future<List<SondeosFromStore>> getStores() async {
     final isar = await database;
-    final list = await isar.storeIsars.where().findAll();
+    final list = await isar.sondeosFromStores.where().findAll();
     if (list.isNotEmpty) {
       return list;
     }
@@ -70,7 +67,7 @@ class Database {
     final isar = await database;
     bool deleted = false;
     await isar.writeTxn(() async {
-      deleted = await isar.storeIsars.delete(id);
+      deleted = await isar.sondeosFromStores.delete(id);
     });
     return deleted;
   }

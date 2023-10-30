@@ -1,10 +1,19 @@
-import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
-class MesagessService {
+// final messagesProvider = Provider<MesagessService>((ref) {
+//   return MesagessService();
+// });
+
+final messagesProvider = ChangeNotifierProvider<MesagessService>((ref) {
+  return MesagessService();
+});
+
+class MesagessService extends ChangeNotifier {
   static const int _duration = 3;
 
-  static void showError(BuildContext context, String message) {
+  void showError(BuildContext context, String message) {
     final snackbar = SnackBar(
       content: Text(message),
       backgroundColor: Colors.red,
@@ -13,8 +22,7 @@ class MesagessService {
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
-  static void showWarning(
-      {required BuildContext context, required String message}) {
+  void showWarning({required BuildContext context, required String message}) {
     final snackbar = SnackBar(
       content: Text(message),
       backgroundColor: Colors.yellow,
@@ -23,7 +31,7 @@ class MesagessService {
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
-  static void showSuccess(
+  void showSuccess(
       {required BuildContext context,
       required String message,
       EdgeInsetsGeometry? marginBottom}) {
@@ -39,7 +47,7 @@ class MesagessService {
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
-  static void showMessage(
+  void showMessage(
       {required BuildContext context,
       required String message,
       required IconData icon,
@@ -52,11 +60,11 @@ class MesagessService {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Icon(icon),
           ),
-          Text(message, style: t.text2),
+          Text(message, style: t.text2Light),
         ],
       ),
       // backgroundColor: Theme.of(context).highlightColor,
-      backgroundColor: c.primary.withOpacity(0.8),
+      backgroundColor: c.primary500,
       // backgroundColor: const Color(0xFF363636),
 
       duration: duration,

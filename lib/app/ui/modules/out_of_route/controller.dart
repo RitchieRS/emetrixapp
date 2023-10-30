@@ -35,57 +35,24 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
     state = state.copyWith(state: States.error);
     return [];
   }
-  // Future<List<Store>> getStoresDB() async {
-  //   List<Store> stores = [];
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final List<String>? storesData = prefs.getStringList('storesData');
-  //   state = state.copyWith(state: States.loading);
-  //   await Future.delayed(const Duration(seconds: 1));
-
-  //   if (storesData != null) {
-  //     for (var store in storesData) {
-  //       stores.add(Store.fromJson(jsonDecode(store)));
-  //     }
-  //     state = state.copyWith(state: States.succes);
-  //     return stores;
-  //   } else {
-  //     state = state.copyWith(state: States.error);
-  //     return [];
-  //   }
-  // }
 
   Future<void> saveStoresToIsar(
       List<StoreGeneral> routes, WidgetRef ref) async {
     await ref.watch(databaseProvider).saveStores(routes);
   }
-  // Future setRoutesOTD(List<String> routes) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final List<String>? savedList = prefs.getStringList('routes');
-  //   debugPrint('SavedList $savedList');
 
-  //   if (savedList != null) {
-  //     if (savedList.isNotEmpty) {
-  //       savedList.addAll(routes);
-  //       prefs
-  //           .setStringList('routes', savedList)
-  //           .whenComplete(() => debugPrint('ROTD Added $routes'));
-  //     }
-  //   } else {
-  //     prefs
-  //         .setStringList('routes', routes)
-  //         .whenComplete(() => debugPrint('ROTD Added FirstTime $routes'));
-  //   }
-  // }
-
-  Future<List<String>> getSondeosFromApi(
+  Future<List<String>?> getSondeosFromApi(
       List<StoreGeneral> routes, WidgetRef ref) async {
     List<String> sondeos = [];
 
     try {
       //Obtener los sondeos
-      for (StoreGeneral element in routes) {
+      for (StoreGeneral store in routes) {
         final sondeo =
-            await ref.read(routeOTD.notifier).getSondeo2(element.id ?? '');
+            await ref.read(routeOTD.notifier).getSondeo2(store.id ?? '');
+        if (sondeo.idError != 0) {
+          return null;
+        }
         sondeos.add(jsonEncode(sondeo));
       }
       return sondeos;

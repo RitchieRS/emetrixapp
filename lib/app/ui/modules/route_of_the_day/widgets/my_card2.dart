@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/map_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +18,7 @@ class MyCard2 extends ConsumerStatefulWidget {
       required this.index,
       required this.store});
   final int index;
-  final Store? store;
+  final Store2? store;
   final Function onDeleted;
 
   @override
@@ -170,7 +171,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
       navigator.push(MaterialPageRoute(builder: (context) {
         return SondeoPage(
             sondeosList: sondeos[index].resp ?? [],
-            store: widget.store ?? Store());
+            store: widget.store ?? Store2());
       }));
     }
   }

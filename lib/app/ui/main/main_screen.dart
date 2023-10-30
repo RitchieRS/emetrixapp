@@ -121,8 +121,8 @@ class _HomePageState extends ConsumerState<MainPage> {
         onTap: (int index) => ref.read(mainIndex.notifier).setIndex(index),
         items: [
           SalomonBottomBarItem(
-              icon: const Icon(Icons.home_outlined),
-              activeIcon: const Icon(Icons.home),
+              icon: const Icon(Icons.route_outlined),
+              activeIcon: const Icon(Icons.route),
               title: const Text("Ruta del dia"),
               selectedColor: c.primary500,
               unselectedColor: unselectedColor),

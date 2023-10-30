@@ -39,7 +39,7 @@ class _QuestionState extends ConsumerState<Question>
       borderSide: BorderSide(color: c.error, width: 1.5),
       borderRadius: BorderRadius.circular(10));
   static final focusedBorder = OutlineInputBorder(
-      borderSide: BorderSide(color: c.primary, width: 1.5),
+      borderSide: BorderSide(color: c.primary500, width: 1.5),
       borderRadius: BorderRadius.circular(10));
   String textValue = '';
 
@@ -52,7 +52,8 @@ class _QuestionState extends ConsumerState<Question>
         borderSide: BorderSide(color: color2, width: 1.5),
         borderRadius: BorderRadius.circular(10));
 
-    return Material(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       color: widget.mandatory ? c.errorLight : c.surface,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -101,7 +102,7 @@ class _QuestionState extends ConsumerState<Question>
                             : Icons.question_answer),
                   ),
                   prefixIconColor: Colors.grey,
-                  focusColor: c.primary,
+                  focusColor: c.primary500,
                   constraints: BoxConstraints(
                       minHeight: widget.valueMax != null
                           ? size.height * 0.08

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/out_of_route/widgets/my_card.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
@@ -18,8 +17,8 @@ class AditionalActivitiesPage extends ConsumerStatefulWidget {
 
 class _AditionalActivitiesPageState
     extends ConsumerState<AditionalActivitiesPage> {
-  List<Store> storesMain = [];
-  List<Store> storesSelected = [];
+  List<Store2> storesMain = [];
+  List<Store2> storesSelected = [];
   List<String> stores = [];
   bool isLoading = false;
 

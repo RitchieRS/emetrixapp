@@ -7,7 +7,6 @@ import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:emetrix_flutter/app/core/providers/providers.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/service.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 
 import 'state.dart';
 
@@ -23,7 +22,7 @@ class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
 
   RouteOTDControllerNotifier(this.sondeoService) : super(const RouteOTDState());
 
-  Future<List<StoreIsar>> getStoresFromIsar(WidgetRef ref) async {
+  Future<List<SondeosFromStore>> getStoresFromIsar(WidgetRef ref) async {
     state = state.copyWith(state: States.loading);
     await Future.delayed(const Duration(seconds: 1));
 

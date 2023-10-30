@@ -26,8 +26,8 @@ Future showYesNoMsj(
             OutlinedButton(
                 onPressed: () => Navigator.pop(context),
                 style: OutlinedButton.styleFrom(
-                    foregroundColor: c.primary,
-                    side: BorderSide(color: c.primary)),
+                    foregroundColor: c.primary500,
+                    side: BorderSide(color: c.primary500)),
                 child: Text('Aceptar', style: t.textBlue))
           ],
         );

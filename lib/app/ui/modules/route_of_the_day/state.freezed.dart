@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$RouteOTDState {
-  List<StoreIsar> get data => throw _privateConstructorUsedError;
+  List<SondeosFromStore> get data => throw _privateConstructorUsedError;
   States get state => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -30,7 +30,7 @@ abstract class $RouteOTDStateCopyWith<$Res> {
           RouteOTDState value, $Res Function(RouteOTDState) then) =
       _$RouteOTDStateCopyWithImpl<$Res, RouteOTDState>;
   @useResult
-  $Res call({List<StoreIsar> data, States state});
+  $Res call({List<SondeosFromStore> data, States state});
 }
 
 /// @nodoc
@@ -53,7 +53,7 @@ class _$RouteOTDStateCopyWithImpl<$Res, $Val extends RouteOTDState>
       data: null == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as List<StoreIsar>,
+              as List<SondeosFromStore>,
       state: null == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -70,7 +70,7 @@ abstract class _$$_RouteOTDCopyWith<$Res>
       __$$_RouteOTDCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<StoreIsar> data, States state});
+  $Res call({List<SondeosFromStore> data, States state});
 }
 
 /// @nodoc
@@ -91,7 +91,7 @@ class __$$_RouteOTDCopyWithImpl<$Res>
       data: null == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
-              as List<StoreIsar>,
+              as List<SondeosFromStore>,
       state: null == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -104,13 +104,14 @@ class __$$_RouteOTDCopyWithImpl<$Res>
 
 class _$_RouteOTD implements _RouteOTD {
   const _$_RouteOTD(
-      {final List<StoreIsar> data = const [], this.state = States.loading})
+      {final List<SondeosFromStore> data = const [],
+      this.state = States.loading})
       : _data = data;
 
-  final List<StoreIsar> _data;
+  final List<SondeosFromStore> _data;
   @override
   @JsonKey()
-  List<StoreIsar> get data {
+  List<SondeosFromStore> get data {
     if (_data is EqualUnmodifiableListView) return _data;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_data);
@@ -146,11 +147,11 @@ class _$_RouteOTD implements _RouteOTD {
 }
 
 abstract class _RouteOTD implements RouteOTDState {
-  const factory _RouteOTD({final List<StoreIsar> data, final States state}) =
-      _$_RouteOTD;
+  const factory _RouteOTD(
+      {final List<SondeosFromStore> data, final States state}) = _$_RouteOTD;
 
   @override
-  List<StoreIsar> get data;
+  List<SondeosFromStore> get data;
   @override
   States get state;
   @override

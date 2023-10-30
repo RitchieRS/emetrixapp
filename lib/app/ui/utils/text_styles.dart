@@ -24,6 +24,7 @@ abstract class IText {
   TextStyle get mediumOk;
   TextStyle get text;
   TextStyle get text2;
+  TextStyle get text2Light;
   TextStyle get textOk;
   TextStyle get textUnselected;
   TextStyle get textLight;
@@ -70,7 +71,7 @@ class _TextStylesMain implements IText {
       fontFamily: _mainFont,
       fontSize: 24,
       fontWeight: FontWeight.bold,
-      color: c.primary);
+      color: c.primary500);
 
   @override
   TextStyle titleLight = const TextStyle(
@@ -152,14 +153,14 @@ class _TextStylesMain implements IText {
       fontFamily: _mainFont,
       fontSize: 18,
       fontWeight: FontWeight.bold,
-      color: c.primary);
+      color: c.primary500);
 
   @override
   TextStyle mediumBlue2 = TextStyle(
       fontFamily: _mainFont,
       fontSize: 16,
       fontWeight: FontWeight.bold,
-      color: c.primary);
+      color: c.primary500);
 
   @override
   TextStyle mediumLight = TextStyle(
@@ -194,6 +195,10 @@ class _TextStylesMain implements IText {
   );
 
   @override
+  TextStyle text2Light =
+      const TextStyle(fontFamily: _mainFont, fontSize: 14, color: Colors.white);
+
+  @override
   TextStyle textOk = TextStyle(
     fontFamily: _mainFont,
     fontSize: 12,
@@ -209,7 +214,7 @@ class _TextStylesMain implements IText {
       fontFamily: _mainFont,
       fontSize: 14,
       fontWeight: FontWeight.bold,
-      color: c.primary);
+      color: c.primary500);
 
   @override
   TextStyle textError = const TextStyle(

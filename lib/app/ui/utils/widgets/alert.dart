@@ -29,7 +29,7 @@ Future<bool> showMsj(
               ? [
                   ButonDimentions(
                     onTap: () => Navigator.pop(context, true),
-                    background: destructive ? c.error : c.primary500,
+                    background: destructive ? c.error : c.primary600,
                     title: buttonLabel,
                     style: t.textLight,
                     width: Dimentions().getWidth() * 0.6,
@@ -47,7 +47,7 @@ Future<bool> showMsj(
                           child: Text('Cancelar', style: t.textDisabledBold)),
                       const SizedBox(width: 12),
                       ButonDimentions(
-                        background: destructive ? c.error : c.primary500,
+                        background: destructive ? c.error : c.primary600,
                         title: buttonLabel,
                         style: t.textLight,
                         onTap: () => Navigator.pop(context, true),

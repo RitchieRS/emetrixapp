@@ -40,7 +40,8 @@ class _SignatureState extends ConsumerState<Signature>
 
     return GestureDetector(
       onTap: () => getSignature(),
-      child: Material(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
         color: widget.mandatory ? c.errorLight : c.surface,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,7 +130,7 @@ class _SignatureFullPageState extends ConsumerState<SignatureFullPage> {
               onPressed: () {
                 control.stepBack();
               },
-              icon: Icon(Icons.undo, color: c.primary500)),
+              icon: Icon(Icons.undo, color: primaryColor)),
           IconButton(
               onPressed: _clear, icon: Icon(Icons.delete, color: primaryColor)),
         ],
@@ -191,7 +192,9 @@ class _SignatureFullPageState extends ConsumerState<SignatureFullPage> {
   Future _createImage(Size size, bool saveToGallery) async {
     try {
       if (!control.isFilled) {
-        MesagessService.showError(context, 'Dibuja tu firma');
+        ref
+            .read(messagesProvider.notifier)
+            .showError(context, 'Dibuja tu firma');
         return;
       }
       final imageBytes = await control.toImage();
@@ -208,7 +211,7 @@ class _SignatureFullPageState extends ConsumerState<SignatureFullPage> {
       //Save To Gallery
       if (saveToGallery) {
         await ImageGallerySaver.saveFile(signatureImage!.path);
-        MesagessService.showSuccess(
+        ref.read(messagesProvider.notifier).showSuccess(
             context: context, message: 'Firma descargada en galería');
         return;
       }
@@ -217,7 +220,9 @@ class _SignatureFullPageState extends ConsumerState<SignatureFullPage> {
 
       //
     } catch (error) {
-      MesagessService.showError(context, 'Error inseperado');
+      ref
+          .read(messagesProvider.notifier)
+          .showError(context, 'Error inseperado');
       //
     }
   }

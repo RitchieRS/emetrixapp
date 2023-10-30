@@ -30,7 +30,8 @@ class _ScannerState extends ConsumerState<Scanner>
     final paddingHorizontal = size.width * 0.04;
     final paddingVertical = size.height * 0.012;
 
-    return Material(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       color: widget.mandatory ? c.errorLight : c.surface,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -160,7 +161,9 @@ class _ScannerFullPageState extends ConsumerState<ScannerFullPage> {
 
   void _returnScan() {
     if (result?.code == null) {
-      MesagessService.showError(context, 'Escanee el código');
+      ref
+          .read(messagesProvider.notifier)
+          .showError(context, 'Escanee el código');
       return;
     }
     Navigator.pop(context, result?.code);

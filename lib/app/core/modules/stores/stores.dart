@@ -4,31 +4,6 @@ Map<String, dynamic> map = jsonDecode(<myJSONString>);
 var myRootNode = Root.fromJson(map);
 */
 
-import 'package:isar/isar.dart';
-part 'stores.g.dart';
-
-@collection
-class StoreIsar {
-  Id id = Isar.autoIncrement;
-  Store? store;
-  double? progress;
-  int? totalQuestions;
-  int? currentQuestion;
-
-  List<String>? responsesQuestions;
-  List<String>? responsesSelectionList;
-
-  StoreIsar({
-    this.store,
-    this.progress,
-    this.totalQuestions,
-    this.currentQuestion,
-    this.responsesQuestions,
-    this.responsesSelectionList,
-  });
-}
-
-@embedded
 class Store {
   final String? id;
   final String? tienda;

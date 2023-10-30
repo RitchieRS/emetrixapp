@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
-import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/all_stores.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/general_loading.dart';
 import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
@@ -25,13 +25,19 @@ class OutOfRoutePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<OutOfRoutePage> {
   List<StoreGeneral> storesMain = [];
   List<StoreGeneral> storesSelected = [];
-  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await getStoresDB();
+      Future.delayed(const Duration(seconds: 1)).whenComplete(() => ref
+          .read(messagesProvider.notifier)
+          .showMessage(
+              context: context,
+              duration: const Duration(seconds: 3),
+              message: 'Selecciona las tiendas que visitarás.',
+              icon: Icons.store));
     });
   }
 
@@ -76,13 +82,15 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                       child: Padding(
                         padding: EdgeInsets.only(top: size.height * 0.7),
                         child: Center(
-                          child: isLoading
-                              ? ButonLoading(
-                                  background: c.primary600,
-                                  onFinish: null,
-                                  width: width,
-                                  height: height)
-                              : ButonDimentions(
+                          child:
+                              // isLoading
+                              //     ? ButonLoading(
+                              //         background: c.primary600,
+                              //         onFinish: null,
+                              //         width: width,
+                              //         height: height)
+                              //     :
+                              ButonDimentions(
                                   background: c.primary600,
                                   title:
                                       'Agregar ${storesSelected.length <= 1 ? '' : storesSelected.length} Ruta${storesSelected.length <= 1 ? '' : 's'}',
@@ -123,8 +131,8 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     }
   }
 
-  Store _toStore(StoreGeneral storeGeneral) {
-    return Store(
+  Store2 _toStore(StoreGeneral storeGeneral) {
+    return Store2(
       checkGPS: storeGeneral.checkGPS,
       clasificacion: storeGeneral.clasificacion,
       definirNombre: storeGeneral.definirNombre,
@@ -156,6 +164,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
 
   Future<void> start() async {
     final networkResult = await (Connectivity().checkConnectivity());
+    final navigator = Navigator.of(context);
 
     if (networkResult == ConnectivityResult.none) {
       showYesNoMsj(
@@ -164,41 +173,59 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
           title: 'Sin Conexión',
           content:
               'Conéctate a internet para poder descargar los sondeos de la/s tiendas seleccionadas.');
+      return;
+    }
+    _showLoading();
+    final sondeos = await ref
+        .read(outORControllerProvider.notifier)
+        .getSondeosFromApi(storesSelected, ref);
+
+    if (sondeos == null) {
+      navigator.pop();
+      await _showMessage();
+      return;
     } else {
-      await setStores();
+      await _setStores(sondeos);
     }
   }
 
-  Future<void> setStores() async {
-    setState(() {
-      isLoading = true;
-    });
-    final navigator = Navigator.of(context);
-    ref
+  Future<void> _showMessage() async {
+    await showMsj(
+        context: context,
+        title: 'Error Inesperado',
+        content:
+            "Algo paso al intentar descargar estas rutas. Intenta de nuevo, o inténtalo de nuevo más tarde.",
+        destructive: false,
+        onlyOk: true,
+        canTapOutside: true,
+        buttonLabel: 'Ok');
+  }
+
+  Future<void> _showLoading() async {
+    await showProgress(
+      context: context,
+      title: 'Guardando rutas',
+      canTapOutside: false,
+    );
+  }
+
+  Future<void> _setStores(List<String> sondeos) async {
+    await ref
         .read(outORControllerProvider.notifier)
-        .saveStoresToIsar(storesSelected, ref)
-        .whenComplete(() async {
-      setState(() {});
-      final sondeos = await ref
-          .read(outORControllerProvider.notifier)
-          .getSondeosFromApi(storesSelected, ref);
-      ref.read(outORControllerProvider.notifier).setSondeosToDB(sondeos);
+        .saveStoresToIsar(storesSelected, ref);
 
-      ref.read(cardProvider.notifier).update((state) => !state);
-      // stores.clear();
-      storesSelected.clear();
+    await ref.read(outORControllerProvider.notifier).setSondeosToDB(sondeos);
+    ref.read(cardProvider.notifier).update((state) => !state);
+    storesSelected.clear();
 
-      setState(() {
-        isLoading = false;
-      });
+    ref
+        .read(messagesProvider.notifier)
+        .showSuccess(context: context, message: 'Agregados a Ruta del Dia!');
 
-      MesagessService.showSuccess(
-          context: context, message: 'Agregados a Ruta del Dia!');
-      await vibrate();
-      // navigator.pop();
-      navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) {
-        return const MainPage();
-      }), (route) => false);
-    });
+    await vibrate();
+    await Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (context) {
+      return const MainPage();
+    }), (route) => false);
   }
 }

@@ -22,16 +22,17 @@ class _SelectThemeState extends ConsumerState<SelectThemePage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isDark = ref.watch(themeProvider);
+    final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     final height = size.height * 0.065;
     final width = size.width * 0.9;
+    final primaryColor = c.primary500;
     final appbar = AppBar(
         backgroundColor: c.surface,
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: c.surface,
             statusBarIconBrightness:
-                isDark == ThemeMode.dark ? Brightness.light : Brightness.dark));
+                isDark ? Brightness.light : Brightness.dark));
     final minSize = Size(size.width * 0.7, size.height * 0.065);
     final miaxSize = Size(size.width * 0.9, size.height * 0.07);
     final radius =
@@ -41,14 +42,13 @@ class _SelectThemeState extends ConsumerState<SelectThemePage> {
         maximumSize: miaxSize,
         alignment: Alignment.center,
         shape: radius,
-        side: BorderSide(
-            color: isDark == ThemeMode.light ? c.primary : c.surface));
+        side: BorderSide(color: !isDark ? primaryColor : c.surface));
     final darkStyle = OutlinedButton.styleFrom(
         minimumSize: Size(size.width * 0.7, size.height * 0.065),
         maximumSize: Size(size.width * 0.9, size.height * 0.07),
         shape: radius,
         side: BorderSide(
-          color: isDark == ThemeMode.dark ? c.primary : c.surface,
+          color: isDark ? primaryColor : c.surface,
         ));
 
     return Scaffold(
@@ -83,7 +83,8 @@ class _SelectThemeState extends ConsumerState<SelectThemePage> {
                         children: [
                           Padding(
                               padding: padding,
-                              child: Icon(Icons.light_mode, color: c.primary)),
+                              child:
+                                  Icon(Icons.light_mode, color: primaryColor)),
                           const Text('Modo claro'),
                         ],
                       )),
@@ -99,7 +100,7 @@ class _SelectThemeState extends ConsumerState<SelectThemePage> {
                           Padding(
                               padding: padding,
                               child: Icon(Icons.dark_mode_outlined,
-                                  color: c.primary)),
+                                  color: primaryColor)),
                           const Text('Modo obscuro'),
                         ],
                       )),
@@ -108,7 +109,7 @@ class _SelectThemeState extends ConsumerState<SelectThemePage> {
                 Center(
                   child: isLoading
                       ? ButonLoading(
-                          background: c.primary,
+                          background: primaryColor,
                           onFinish: null,
                           height: height,
                           width: width,
@@ -116,7 +117,7 @@ class _SelectThemeState extends ConsumerState<SelectThemePage> {
                       : ButonDimentions(
                           height: height,
                           width: width,
-                          background: c.primary,
+                          background: primaryColor,
                           title: 'Siguiente',
                           style: t.mediumLight,
                           onTap: () => goToStores()),
@@ -132,13 +133,6 @@ class _SelectThemeState extends ConsumerState<SelectThemePage> {
   Future<void> goToStores() async {
     setState(() => isLoading = !isLoading);
     final navigator = Navigator.of(context);
-    await Future.delayed(const Duration(seconds: 2));
-
-    MesagessService.showMessage(
-        context: context,
-        duration: const Duration(seconds: 3),
-        message: 'Selecciona las tiendas que visitarás.',
-        icon: Icons.store);
 
     await navigator.pushReplacement(PageRouteBuilder(
         pageBuilder: (_, animation, __) => FadeTransition(

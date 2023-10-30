@@ -4,13 +4,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/bottom_buton.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
-import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
-import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/custom_title.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/bottom_buton.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/custom_title.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
 import 'components/components.dart';
 import 'controller.dart';
 
@@ -22,7 +20,7 @@ class SingleSondeoPage extends ConsumerStatefulWidget {
     required this.store,
   });
   final RespM sondeoItem;
-  final Store store;
+  final Store2 store;
   final int index;
 
   @override
@@ -123,21 +121,22 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
                           setState(() {
                             validate = false;
                             multipleResponse = ResponseIndex(
-                                index: index, response: selectedItems);
+                                index: index,
+                                response: selectedItems.toString());
                           });
                         },
                         image: (image) {
                           setState(() {
                             validate = false;
-                            imageResponse =
-                                ResponseIndex(index: index, response: image);
+                            imageResponse = ResponseIndex(
+                                index: index, response: image.toString());
                           });
                         },
                         photo: (photo) {
                           setState(() {
                             validate = false;
-                            photoResponse =
-                                ResponseIndex(index: index, response: photo);
+                            photoResponse = ResponseIndex(
+                                index: index, response: photo.toString());
                           });
                         },
                         positionGPS: (positionGPS) {
@@ -151,28 +150,29 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
                           setState(() {
                             validate = false;
                             signatureResponse = ResponseIndex(
-                                index: index, response: signatureFile);
+                                index: index,
+                                response: signatureFile.toString());
                           });
                         },
                         date: (date) {
                           setState(() {
                             validate = false;
-                            dateResponse =
-                                ResponseIndex(index: index, response: date);
+                            dateResponse = ResponseIndex(
+                                index: index, response: date.toString());
                           });
                         },
                         dateTime: (dateTime) {
                           setState(() {
                             validate = false;
-                            dateTimeResponse =
-                                ResponseIndex(index: index, response: dateTime);
+                            dateTimeResponse = ResponseIndex(
+                                index: index, response: dateTime.toString());
                           });
                         },
                         time: (time) {
                           setState(() {
                             validate = false;
-                            timeResponse =
-                                ResponseIndex(index: index, response: time);
+                            timeResponse = ResponseIndex(
+                                index: index, response: time.toString());
                           });
                         },
                         index: index,
@@ -191,12 +191,12 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
           if (widget.index == 0) {
             final image = await pickImage(ImageSource.camera);
             if (image != null) {
-              finalize(finishedSections);
+              await finalize(finishedSections);
               return;
             }
             return;
           }
-          validateAllComponents();
+          await validateAllComponents(finishedSections);
           // finalize(finishedSections);
         }
             // onTap: () => finalize(finishedSections),
@@ -207,8 +207,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
     widget.sondeoItem.preguntas?.forEach((sondeo) {
       final index = widget.sondeoItem.preguntas?.indexOf(sondeo);
       questionsResponses.add(
-        QuestionResponse(
-            question: sondeo.tipo ?? '', response: null, index: index!),
+        QuestionResponse(question: sondeo, response: null, index: index!),
       );
 
       if (sondeo.obligatorio == 1) {
@@ -232,9 +231,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
     return null;
   }
 
-  Future<void> validateAllComponents() async {
+  Future<void> validateAllComponents(List<int> finishedSections) async {
     FocusManager.instance.primaryFocus?.unfocus();
-    // final messenger = ScaffoldMessenger.of(context);
 
     Map<String, ResponseIndex?> typeResponses = {
       'abierta': textResponse,
@@ -258,7 +256,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
 
     //Guardar las respuestas
     for (var question in questionsResponses) {
-      final response = typeResponses[question.question];
+      final response = typeResponses[question.question?.tipo];
       if (response != null) {
         if (question.index == response.index) {
           question.response = response.response;
@@ -267,7 +265,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
     }
     setState(() {});
     for (var element in questionsResponses) {
-      print('${element.question}: ${element.response}');
+      print('${element.question?.tipo}: ${element.response}');
     }
 
     int missingAnswers = 0;
@@ -276,10 +274,10 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
       for (var response in questionsResponses) {
         if (questionMandatory.$2 == response.index) {
           if (response.response != null) {
-            mandatoryComponents[response.index] = false;
+            mandatoryComponents[response.index!] = false;
             missingAnswers--;
           } else {
-            mandatoryComponents[response.index] = true;
+            mandatoryComponents[response.index!] = true;
           }
           missingAnswers++;
         }
@@ -289,38 +287,40 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
     if (missingAnswers != 0) {
       setState(() => validate = true);
       print(mandatoryComponents);
-      await showUnfinishedMessage(missingAnswers);
+      await _showUnfinishedMessage(missingAnswers);
       return;
     }
 
     //Armar el pendiente y guardar todas las preguntas a la Base de datos
     print('Preguntas obligatorias contestadas');
-    showLoading();
+    _showLoading();
     await Future.delayed(const Duration(seconds: 2)).whenComplete(() {
       Navigator.pop(context);
-      Navigator.pop(context);
+      // Navigator.pop(context);
     });
+    await finalize(finishedSections);
   }
 
-  Future showUnfinishedMessage(int missingAnswers) async {
+  Future<void> _showUnfinishedMessage(int missingAnswers) async {
     await showMsj(
         context: context,
         title: 'Sondeo Incompleto',
-        content: "Contesta las $missingAnswers preguntas requeridas",
+        content: "Responde las $missingAnswers preguntas requeridas restantes",
         destructive: false,
         onlyOk: true,
         canTapOutside: true,
         buttonLabel: 'Ok');
   }
 
-  Future showLoading() async {
+  Future<void> _showLoading() async {
     await showProgress(
       context: context,
       title: 'Guardando respestas',
+      canTapOutside: false,
     );
   }
 
-  void finalize(List<int> finishedSections) {
+  Future<void> finalize(List<int> finishedSections) async {
     //Save all progress and data to db
     if (!finishedSections.contains(widget.index) || finishedSections.isEmpty) {
       ref.read(finishedSondeos.notifier).state.add(widget.index);
@@ -331,7 +331,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
     ref.read(onlyFirstProvider.notifier).update((state) => false);
 
     printResponses();
-    Future.delayed(const Duration(milliseconds: 800))
+    await Future.delayed(const Duration(milliseconds: 800))
         .whenComplete(() => Navigator.pop(context));
   }
 
@@ -347,15 +347,15 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
   //
 }
 
-class QuestionResponse {
-  QuestionResponse(
-      {required this.question, required this.index, required this.response});
-  String question;
-  dynamic response;
-  int index;
-}
+// final class QuestionResponse {
+//   QuestionResponse(
+//       {required this.question, required this.index, required this.response});
+//   RespM question;
+//   dynamic response;
+//   int index;
+// }
 
-class ResponseIndex {
+final class ResponseIndex {
   ResponseIndex({required this.index, required this.response});
   int index;
   dynamic response;

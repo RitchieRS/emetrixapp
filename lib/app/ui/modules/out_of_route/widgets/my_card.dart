@@ -1,4 +1,4 @@
-import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +17,7 @@ class MyCard extends ConsumerStatefulWidget {
     required this.canceled,
   });
   final int index;
-  final Store? resp;
+  final Store2? resp;
   final Function(int?) onChanged;
   final bool canceled;
 

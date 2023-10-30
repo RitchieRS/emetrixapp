@@ -37,7 +37,7 @@ class TypeSondeo extends ConsumerWidget {
     final side = size.height * 0.075;
     final leftPadding = size.width * 0.06;
     final lineTickness = size.height * 0.007;
-    // print('NUM: ${sondeoItem.id}');
+    final containerHeight = isLast ? size.height * 0.08 : size.height * 0.137;
 
     return Padding(
       padding: isLast
@@ -48,7 +48,7 @@ class TypeSondeo extends ConsumerWidget {
         borderRadius: BorderRadius.circular(14),
         child: Ink(
           width: size.width,
-          height: isLast ? size.height * 0.08 : size.height * 0.148,
+          height: containerHeight,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,

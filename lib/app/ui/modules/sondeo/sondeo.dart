@@ -7,7 +7,6 @@ import 'package:page_transition/page_transition.dart';
 
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/type_sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
@@ -17,7 +16,7 @@ import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 class SondeoPage extends ConsumerStatefulWidget {
   const SondeoPage({super.key, required this.sondeosList, required this.store});
   final List<RespM> sondeosList;
-  final Store store;
+  final Store2 store;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SondeoPageState();

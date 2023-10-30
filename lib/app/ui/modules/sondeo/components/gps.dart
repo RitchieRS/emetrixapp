@@ -37,7 +37,8 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
     final size = MediaQuery.of(context).size;
     // final isDark = ref.watch(themeProvider) == ThemeMode.dark;
 
-    return Material(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       color: widget.mandatory ? c.errorLight : c.surface,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -66,7 +67,7 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
                             width: size.height * 0.03,
                             child: Center(
                                 child: CircularProgressIndicator(
-                                    strokeWidth: 2, color: c.primary))),
+                                    strokeWidth: 2, color: c.primary500))),
                       ),
                     )
                   : SizedBox(

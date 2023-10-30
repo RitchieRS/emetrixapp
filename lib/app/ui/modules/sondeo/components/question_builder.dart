@@ -1,10 +1,7 @@
 // ignore_for_file: avoid_print
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/components.dart';
 
@@ -31,7 +28,7 @@ class QuestionBuilder extends ConsumerStatefulWidget {
     required this.selectionMultiple,
   });
   final Preguntas pregunta;
-  final Store store;
+  final Store2 store;
   final int index;
   final bool mandatory;
   final Function(String?) answer;

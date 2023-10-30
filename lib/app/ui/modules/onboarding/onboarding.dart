@@ -137,8 +137,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                         decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: currentPage == index
-                                ? c.primary
-                                : c.primary.withOpacity(0.2)),
+                                ? c.primary500
+                                : c.primary500.withOpacity(0.2)),
                       );
                     }),
               ),
@@ -149,7 +149,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
               ? FadeIn(
                   delay: const Duration(seconds: 1),
                   child: ButonDimentions(
-                      background: c.primary,
+                      background: c.primary500,
                       title: 'Comenzar',
                       style: t.mediumLight,
                       onTap: () => Navigator.pushReplacement(

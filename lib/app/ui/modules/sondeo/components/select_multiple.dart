@@ -28,7 +28,8 @@ class _SelectionState extends ConsumerState<SelectionMultiple>
     final size = MediaQuery.of(context).size;
     //top: size.height * 0.01
 
-    return Material(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       color: widget.mandatory ? c.errorLight : c.surface,
       child: Column(
         children: [
@@ -51,7 +52,7 @@ class _SelectionState extends ConsumerState<SelectionMultiple>
                     onChanged: (newvalue) => onSelectedTile(newvalue, index),
                     title: Text(widget.question.opciones?[index].opcion ?? '',
                         maxLines: 2, overflow: TextOverflow.ellipsis),
-                    activeColor: c.primary,
+                    activeColor: c.primary500,
                     checkboxShape: const CircleBorder(),
                     controlAffinity: ListTileControlAffinity.leading,
                   );

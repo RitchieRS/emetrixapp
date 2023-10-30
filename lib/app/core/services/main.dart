@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:emetrix_flutter/app/core/services/internet/conection_service.dart';
+import 'package:emetrix_flutter/app/core/services/messaging/mesagges.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class Services {
@@ -8,7 +8,8 @@ class Services {
 
     connectivity.onConnectivityChanged.listen((result) {
       if (result == ConnectivityResult.none) {
-        MesagessService.showMessage(
+        final messages = MesagessService();
+        messages.showMessage(
             context: context,
             message: 'Sin Conexión',
             icon: Icons.wifi_off_outlined);

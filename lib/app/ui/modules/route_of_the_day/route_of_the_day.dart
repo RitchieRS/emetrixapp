@@ -1,10 +1,9 @@
-import 'package:emetrix_flutter/app/ui/utils/widgets/general_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/general_loading.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
-// import 'package:emetrix_flutter/app/ui/modules/drawer/drawer.dart';
 import 'state.dart';
 import 'widgets/empty.dart';
 import 'widgets/my_card2.dart';
@@ -20,7 +19,7 @@ class RouteOfTheDayPage extends ConsumerStatefulWidget {
 
 class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
     with AutomaticKeepAliveClientMixin {
-  List<StoreIsar> list = [];
+  List<SondeosFromStore> list = [];
 
   @override
   void initState() {
@@ -66,10 +65,10 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
         );
 
       case States.loading:
-        return const Scaffold(
-          appBar: MyTitle(),
+        return Scaffold(
+          appBar: const MyTitle(),
           // drawer: MyDrawer(),
-          body: GeneralLoading(),
+          body: GeneralLoading(loadingCards: list.length),
         );
     }
   }

@@ -34,7 +34,8 @@ class _PickerDTState extends ConsumerState<PickerDT>
     final paddingVertical = size.height * 0.012;
     final paddingHorizontal = size.width * 0.04;
 
-    return Material(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       color: widget.mandatory ? c.errorLight : c.surface,
       child: Padding(
         padding: EdgeInsets.only(bottom: paddingVertical * 2),

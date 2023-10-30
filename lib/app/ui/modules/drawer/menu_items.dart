@@ -17,9 +17,9 @@ class MenuItem {
 List<MenuItem> appMenuItems = [
   const MenuItem(
       title: 'Fuera de Ruta',
-      subtitle: 'Fuera de Ruta',
+      subtitle: 'Rutas disponibles para visitación.',
       link: 'OFroute',
-      icon: Icon(Icons.route)),
+      icon: Icon(Icons.alt_route_rounded)),
   // const MenuItem(
   //     title: 'Actividades Adicionales',
   //     subtitle: 'Actividades Adicionales',
