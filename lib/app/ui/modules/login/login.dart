@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:emetrix_flutter/app/core/modules/productos/productos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -188,6 +189,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     if (userLoggedIn == true && isDark == false) {
       await getStores();
+      await getProducts();
       navigator.pushReplacementNamed('onboard');
       user.clear();
       password.clear();
@@ -197,6 +199,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
     if (userLoggedIn == true && isDark == true) {
       await getStores();
+      await getProducts();
       navigator.pushReplacementNamed('home');
       user.clear();
       password.clear();
@@ -230,5 +233,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
 
     ref.read(loginControllerProvider.notifier).saveStoresData(allStores, ref);
+  }
+
+   Future getProducts() async {
+    List<Productos> allProducts = [];
+    final stores = await ref.read(loginControllerProvider.notifier).getProductsCtrl();
+    stores.resp?.forEach((store) {
+      allProducts.add(store);
+    });
+   ref.read(loginControllerProvider.notifier).saveProductsData(allProducts, ref);
   }
 }

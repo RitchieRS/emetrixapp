@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/core/modules/productos/productos.dart';
 import 'package:isar/isar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
@@ -164,6 +165,38 @@ class Database {
     await isar.writeTxn(() async {
       await isar.clear();
     });
+  }
+
+  Future<void> saveAllProductsDB(List<Productos> stores) async {
+    final isar = await database;
+
+    await isar.writeTxn(() async {
+      for (Productos p in stores) {
+        final productosIsar = ProductosIsar(
+            idCategoria: p.idCategoria,
+            idMarca: p.idMarca,
+            sku: p.sku,
+            nombre: p.nombre,
+            descripcion: p.descripcion,
+            precioMax: p.precioMax,
+            precioMin: p.precioMin,
+            precioProm: p.precioProm,
+            precioPedido: p.precioPedido,
+            fotoUrl: p.fotoUrl,
+            unidadPedidos: p.unidadPedidos);
+
+        await isar.productosIsars.put(productosIsar); // insert & update
+      }
+    });
+  }
+
+  Future<List<ProductosIsar>> getAllProducts() async {
+    final isar = await database;
+    final list = await isar.productosIsars.where().findAll();
+    if (list.isNotEmpty) {
+      return list;
+    }
+    return [];
   }
 
   //   Future<void> deleteItem(int index) async {
