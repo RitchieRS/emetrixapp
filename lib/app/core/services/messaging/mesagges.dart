@@ -51,7 +51,7 @@ class MesagessService extends ChangeNotifier {
       {required BuildContext context,
       required String message,
       required IconData icon,
-      Duration duration = const Duration(seconds: 2)}) {
+      Duration duration = const Duration(seconds: 1)}) {
     final snackbar = SnackBar(
       content: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -66,7 +66,7 @@ class MesagessService extends ChangeNotifier {
       // backgroundColor: Theme.of(context).highlightColor,
       backgroundColor: c.primary500,
       // backgroundColor: const Color(0xFF363636),
-
+      dismissDirection: DismissDirection.up,
       duration: duration,
       behavior: SnackBarBehavior.floating,
       elevation: 0,

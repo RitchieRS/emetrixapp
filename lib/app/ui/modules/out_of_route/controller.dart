@@ -64,7 +64,6 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
   Future<void> setSondeosToDB(List<String> sondeos) async {
     final prefs = await SharedPreferences.getInstance();
     final List<String>? savedList = prefs.getStringList('sondeos');
-    debugPrint('Saved Sondeos: $savedList');
 
     if (savedList != null) {
       savedList.addAll(sondeos);

@@ -7,16 +7,22 @@ import 'package:page_transition/page_transition.dart';
 
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/components/type_sondeo.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/type_sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class SondeoPage extends ConsumerStatefulWidget {
-  const SondeoPage({super.key, required this.sondeosList, required this.store});
+  const SondeoPage({
+    super.key,
+    required this.sondeosList,
+    required this.store,
+    required this.storeUuid,
+  });
   final List<RespM> sondeosList;
   final Store2 store;
+  final String storeUuid;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SondeoPageState();
@@ -28,10 +34,9 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
   @override
   void initState() {
     super.initState();
-
-    setState(() {});
     sondeosList2 =
         ref.read(sondeoController.notifier).reorderList(widget.sondeosList);
+    setState(() {});
   }
 
   @override
@@ -41,13 +46,13 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     final onlyFirst = ref.watch(onlyFirstProvider);
     final finishedSections = ref.watch(finishedSondeos);
     final completeAll = finishedSections.length == sondeosList2.length;
-    print('Finished Sections: $finishedSections');
+    debugPrint('Finished Sections: $finishedSections');
     // final currentOption = ref.watch(currentOptionProvider);
-
     //*Close and save to db the current Navigator state, when the app restart, restore the Navigator state
 
     return WillPopScope(
-      onWillPop: () => onPop(),
+      // onWillPop: () => onPop(),
+      onWillPop: () => onExit(finishedSections),
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -72,72 +77,38 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
           toolbarHeight: size.height * 0.11,
           actions: [
             IconButton(
-                // onPressed: () => onExit(finishedSections),
-                onPressed: () async {
-                  final navigator = Navigator.of(context);
-                  final exit = await onPop();
-                  print(exit);
-                  if (exit == true) {
-                    navigator.pop();
-                  }
-                },
+                onPressed: () => onExit(finishedSections),
                 icon: Icon(Icons.exit_to_app,
                     color:
                         completeAll ? c.error : Theme.of(context).hintColor)),
           ],
           systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: c.surface),
         ),
-        body: ListView(
+        body: CustomScrollView(
           physics: const BouncingScrollPhysics(),
-          children: [
+          slivers: [
             //
 
-            FadeInRight(
-              child: ListView.builder(
-                padding: EdgeInsets.only(
-                    left: size.height * 0.01, right: size.height * 0.01),
-                itemCount: sondeosList2.length,
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, int index) {
-                  // final enabled = index <= currentOption;       //One by one
-                  // final enabled = index <= sondeosList2.length; //All
-                  final enabled = index != 0 && onlyFirst; //One then all
+            SliverList.builder(
+              // padding: EdgeInsets.only(
+              //     left: size.height * 0.01, right: size.height * 0.01),
+              itemCount: sondeosList2.length,
+              addAutomaticKeepAlives: true,
+              itemBuilder: (BuildContext context, int index) {
+                final enabled = index != 0 && onlyFirst; //One then all
+                // final enabled = index <= currentOption;        //One by one
+                // final enabled = index <= sondeosList2.length;  //All
 
-                  return TypeSondeo(
-                    onTap: !enabled
-                        ? () {
-                            // if (sondeosList2[index].preguntas?[index].tipo ==
-                            //     'asistencia') {
-                            //   Navigator.push(
-                            //       context,
-                            //       PageTransition(
-                            //           duration:
-                            //               const Duration(milliseconds: 350),
-                            //           type: PageTransitionType.rightToLeft,
-                            //           child: MapView(store: widget.store)));
-                            //   return;
-                            // }
-
-                            Navigator.push(
-                                context,
-                                PageTransition(
-                                    duration: const Duration(milliseconds: 350),
-                                    type: PageTransitionType.rightToLeft,
-                                    child: SingleSondeoPage(
-                                      store: widget.store,
-                                      sondeoItem: sondeosList2[index],
-                                      index: index,
-                                    )));
-                          }
-                        : null,
+                return FadeIn(
+                  child: TypeSondeo(
+                    onTap: !enabled ? () => navigateToSondeo(index) : null,
                     enebled: !enabled,
                     sondeoItem: sondeosList2[index],
                     index: index,
                     isLast: index + 1 == sondeosList2.length ? true : false,
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             )
             //
           ],
@@ -146,44 +117,39 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     );
   }
 
-  Future<bool> onPop() async {
-    final bool exit = await showMsj(
-        context: context,
-        title: 'Cuidado...',
-        content:
-            'Perderás todo el progreso si sales ahora. ¿Seguro deseas salir?',
-        destructive: true,
-        buttonLabel: 'Salir');
-
-    if (exit) {
-      ref.read(currentOptionProvider.notifier).update((state) => 0);
-      ref.read(onlyFirstProvider.notifier).update((state) => true);
-      ref.read(finishedSondeos.notifier).update((state) => []);
-    }
-    ref.read(showProgress1.notifier).update((state) => false);
-    return Future.value(exit);
+  void navigateToSondeo(int index) {
+    Navigator.push(
+        context,
+        PageTransition(
+            duration: const Duration(milliseconds: 350),
+            type: PageTransitionType.rightToLeft,
+            child: SingleSondeoPage(
+              store: widget.store,
+              sondeoItem: sondeosList2[index],
+              index: index,
+              stepsLenght: sondeosList2.length,
+              storeUuid: widget.storeUuid,
+            )));
   }
 
-  Future<void> onExit(List<int> finishedSections) async {
+  Future<bool> onExit(List<int> finishedSections) async {
     final navigator = Navigator.of(context);
-
-    //Check First Validations of each component
-    // sondeosList2.forEach((element) { })
 
     if (finishedSections.length == sondeosList2.length) {
       final option = await showMsj(
           context: context,
-          title: 'Salir',
+          title: 'Sondeo completado',
           content:
               'Excelente completaste los sondeos. Guarda el progreso para salir.',
           destructive: false,
+          onlyOk: true,
+          canTapOutside: true,
           buttonLabel: 'Guardar y Salir');
 
       if (option) {
         ref.read(currentOptionProvider.notifier).update((state) => 0);
         ref.read(onlyFirstProvider.notifier).update((state) => true);
         ref.read(finishedSondeos.notifier).update((state) => []); //
-
         ref.read(showProgress1.notifier).update((state) => false);
 
         showProgress(context: context, title: 'Guardando progreso..');
@@ -191,7 +157,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
         navigator.pop();
         navigator.pop();
       }
-      return;
+      return true;
     }
 
     await showMsj(
@@ -199,8 +165,10 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
         title: 'Cuidado...',
         content: 'Aun hay sondeos obligatorios.',
         destructive: false,
+        canTapOutside: true,
         onlyOk: true,
         buttonLabel: 'Aceptar');
+    return false;
   }
 
   //

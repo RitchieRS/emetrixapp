@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
+import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,11 +18,15 @@ class SingleSondeoPage extends ConsumerStatefulWidget {
     super.key,
     required this.sondeoItem,
     required this.index,
+    required this.stepsLenght,
     required this.store,
+    required this.storeUuid,
   });
   final RespM sondeoItem;
   final Store2 store;
   final int index;
+  final int stepsLenght;
+  final String storeUuid;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SondeosBuilderState();
@@ -196,7 +201,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
             }
             return;
           }
-          await validateAllComponents(finishedSections);
+          await validateAllComponents(finishedSections, ref);
           // finalize(finishedSections);
         }
             // onTap: () => finalize(finishedSections),
@@ -207,7 +212,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
     widget.sondeoItem.preguntas?.forEach((sondeo) {
       final index = widget.sondeoItem.preguntas?.indexOf(sondeo);
       questionsResponses.add(
-        QuestionResponse(question: sondeo, response: null, index: index!),
+        QuestionResponse(question: sondeo, response: null, indexSondeo: index!),
       );
 
       if (sondeo.obligatorio == 1) {
@@ -231,7 +236,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
     return null;
   }
 
-  Future<void> validateAllComponents(List<int> finishedSections) async {
+  Future<void> validateAllComponents(
+      List<int> finishedSections, WidgetRef ref) async {
     FocusManager.instance.primaryFocus?.unfocus();
 
     Map<String, ResponseIndex?> typeResponses = {
@@ -258,7 +264,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
     for (var question in questionsResponses) {
       final response = typeResponses[question.question?.tipo];
       if (response != null) {
-        if (question.index == response.index) {
+        if (question.indexSondeo == response.index) {
           question.response = response.response;
         }
       }
@@ -272,12 +278,12 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
     //Ver si las respuestas obligatorias estan vacias
     for (var questionMandatory in mandatoryQuestions) {
       for (var response in questionsResponses) {
-        if (questionMandatory.$2 == response.index) {
+        if (questionMandatory.$2 == response.indexSondeo) {
           if (response.response != null) {
-            mandatoryComponents[response.index!] = false;
+            mandatoryComponents[response.indexSondeo!] = false;
             missingAnswers--;
           } else {
-            mandatoryComponents[response.index!] = true;
+            mandatoryComponents[response.indexSondeo!] = true;
           }
           missingAnswers++;
         }
@@ -291,12 +297,30 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
       return;
     }
 
+    //Calculate progress
+    int questionsResponded = 0;
+    for (var element in questionsResponses) {
+      if (element.response != null) {
+        questionsResponded++;
+      }
+    }
+    double progress =
+        questionsResponded / (questionsResponses.length / 10) * 10;
+
     //Armar el pendiente y guardar todas las preguntas a la Base de datos
     print('Preguntas obligatorias contestadas');
     _showLoading();
-    await Future.delayed(const Duration(seconds: 2)).whenComplete(() {
+    //Insert data to save0
+    await ref.read(databaseProvider).updateSondeoFromStore(
+          storeUuid: widget.storeUuid,
+          stepIndex: widget.index,
+          progress: progress,
+          stepsLenght: widget.stepsLenght,
+          sondeoQuestionResponses: questionsResponses,
+        );
+    // Navigator.pop(context);
+    await Future.delayed(const Duration(milliseconds: 500)).whenComplete(() {
       Navigator.pop(context);
-      // Navigator.pop(context);
     });
     await finalize(finishedSections);
   }

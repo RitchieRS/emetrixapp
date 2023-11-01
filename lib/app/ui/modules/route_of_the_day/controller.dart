@@ -14,12 +14,10 @@ final routeOTD =
     StateNotifierProvider<RouteOTDControllerNotifier, RouteOTDState>((ref) {
   final service = ref.watch(sondeoServiceProvider);
   return RouteOTDControllerNotifier(service);
-  // return RouteOTDControllerNotifier();
 });
 
 class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
   final HomeService sondeoService;
-
   RouteOTDControllerNotifier(this.sondeoService) : super(const RouteOTDState());
 
   Future<List<SondeosFromStore>> getStoresFromIsar(WidgetRef ref) async {
@@ -34,24 +32,6 @@ class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
     state = state.copyWith(data: stores, state: States.error);
     return [];
   }
-  // Future<List<Store>> getStoresFromIsar() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final List<String>? routes = prefs.getStringList('routes');
-  //   final List<Store> stores = [];
-
-  //   if (routes != null) {
-  //     debugPrint('Exist stores in db: $routes ${routes.length}');
-  //     for (var element in routes) {
-  //       stores.add(Store.fromJson(jsonDecode(element)));
-  //     }
-  //     state = state.copyWith(data: stores, state: States.succes);
-  //     return stores;
-  //   } else {
-  //     debugPrint('NULL LIST');
-  //     state = state.copyWith(data: stores, state: States.error);
-  //     return [];
-  //   }
-  // }
 
   Future<void> deleteItem(int id, WidgetRef ref) async {
     final stores = await ref.watch(databaseProvider).getStores();
@@ -68,40 +48,6 @@ class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
     }
     //Mostrar mensaje de error al eliminar en este caso
   }
-
-  // Future<void> deleteItem(int index) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final List<String>? routes = prefs.getStringList('routes');
-  //   final List<String>? sondeos = prefs.getStringList('sondeos');
-
-  //   routes?.removeAt(index);
-  //   if (routes != null) {
-  //     if (routes.isEmpty) {
-  //       prefs.remove('routes');
-  //       state = state.copyWith(state: States.error);
-  //     } else {
-  //       prefs.setStringList('routes', routes);
-  //       state = state.copyWith(state: States.succes);
-  //     }
-  //   } else {
-  //     debugPrint('SHARED ERROR: Error deleting in db');
-  //   }
-
-  //   sondeos?.removeAt(index);
-  //   if (sondeos != null) {
-  //     if (sondeos.isEmpty) {
-  //       prefs.remove('sondeos');
-  //       state = state.copyWith(state: States.error);
-  //     } else {
-  //       prefs.setStringList('sondeos', sondeos);
-  //       state = state.copyWith(state: States.succes);
-  //     }
-  //   } else {
-  //     debugPrint('SHARED ERROR sondeos: Error deleting in db');
-  //   }
-
-  //   return;
-  // }
 
   Future<SondeoModel> getSondeo2(String idTienda) async {
     final sondeo = sondeoService.getStores(idTienda);

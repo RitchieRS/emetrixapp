@@ -47,7 +47,8 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
                   itemBuilder: (context, index) {
                     return MyCard2(
                       index: index,
-                      store: state.data[index].store,
+                      store: state.data[index],
+                      // store: state.data[index].store,
                       onDeleted: () => onDeleted(index),
                     );
                   }),
@@ -65,10 +66,10 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
         );
 
       case States.loading:
-        return Scaffold(
-          appBar: const MyTitle(),
+        return const Scaffold(
+          appBar: MyTitle(),
           // drawer: MyDrawer(),
-          body: GeneralLoading(loadingCards: list.length),
+          body: GeneralLoading(loadingCards: 3),
         );
     }
   }

@@ -18,7 +18,7 @@ class MyCard2 extends ConsumerStatefulWidget {
       required this.index,
       required this.store});
   final int index;
-  final Store2? store;
+  final SondeosFromStore? store;
   final Function onDeleted;
 
   @override
@@ -66,11 +66,12 @@ class _MyCardState extends ConsumerState<MyCard2> {
                       minVerticalPadding: 0,
                       leading:
                           Icon(Icons.storefront_outlined, color: iconColor),
-                      title: Text('${widget.store?.tienda}',
+                      title: Text('${widget.store?.store?.tienda}',
                           style: t.mediumBold,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis),
-                      subtitle: Text('Progreso: $progress%',
+                      subtitle: Text(
+                          'Progreso: ${(widget.store?.totalProgress?.toStringAsFixed(2) ?? 0)}%',
                           style: progress == 0 ? t.textDisabled2 : t.textBlue),
                     );
                   },
@@ -85,9 +86,9 @@ class _MyCardState extends ConsumerState<MyCard2> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Cadena: ${widget.store?.idCadena}',
+                              Text('Cadena: ${widget.store?.store?.idCadena}',
                                   style: t.text),
-                              Text('Grupo: ${widget.store?.idGrupo}',
+                              Text('Grupo: ${widget.store?.store?.idGrupo}',
                                   style: t.text),
                             ]),
                       ),
@@ -115,7 +116,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
         PageTransition(
             duration: const Duration(milliseconds: 350),
             type: PageTransitionType.rightToLeft,
-            child: MapsPage(store: widget.store)));
+            child: MapsPage(store: widget.store?.store)));
   }
 
   Future<bool> confirmDimiss() async {
@@ -134,9 +135,9 @@ class _MyCardState extends ConsumerState<MyCard2> {
   Future<void> showMsj2() async {
     final startSondeo = await showMsj(
       context: context,
-      title: widget.store?.tienda ?? '',
+      title: widget.store?.store?.tienda ?? '',
       content:
-          'Cadena: ${widget.store?.idCadena}\nGrupo: ${widget.store?.idGrupo}',
+          'Cadena: ${widget.store?.store?.idCadena}\nGrupo: ${widget.store?.store?.idGrupo}',
       buttonLabel: 'Comenzar',
       destructive: false,
       onlyOk: true,
@@ -145,12 +146,12 @@ class _MyCardState extends ConsumerState<MyCard2> {
     );
 
     if (startSondeo) {
-      await start(widget.index);
+      await _start(widget.index);
       return;
     }
   }
 
-  Future start(int index) async {
+  Future<void> _start(int index) async {
     final navigator = Navigator.of(context);
     ref.read(showProgress1.notifier).update((state) => true);
     final sondeos = await ref.read(routeOTD.notifier).getSondeoFromDB();
@@ -170,8 +171,9 @@ class _MyCardState extends ConsumerState<MyCard2> {
 
       navigator.push(MaterialPageRoute(builder: (context) {
         return SondeoPage(
+            storeUuid: widget.store?.uuid ?? '',
             sondeosList: sondeos[index].resp ?? [],
-            store: widget.store ?? Store2());
+            store: widget.store?.store ?? Store2());
       }));
     }
   }

@@ -1,39 +1,48 @@
 import 'dart:convert';
-
 import 'package:isar/isar.dart';
 part 'sondeo.g.dart';
 
+//Store
 @collection
 class SondeosFromStore {
   Id id = Isar.autoIncrement;
+  String? uuid;
   Store2? store;
-  double? progress;
-  List<SondeoCollection>? sondeosRespuestas;
+  double? totalProgress;
+  List<SondeoCollection>? storeSteps;
 
   SondeosFromStore({
     this.store,
-    this.progress,
-    this.sondeosRespuestas,
+    this.totalProgress,
+    this.uuid,
+    this.storeSteps,
   });
 }
 
+//StoreSteps
 @embedded
 class SondeoCollection {
-  int? indexSondeo;
-  List<QuestionResponse>? collection;
-  SondeoCollection({this.collection, this.indexSondeo});
+  SondeoCollection({
+    this.sondeos,
+    this.indexStep,
+    this.sondeoProgress,
+  });
+  int? indexStep;
+  double? sondeoProgress;
+  List<QuestionResponse>? sondeos;
 }
 
+//QuestionResponse
 @embedded
 class QuestionResponse {
   QuestionResponse({
     this.question,
-    this.index,
+    this.indexSondeo,
     this.response,
   });
   Preguntas? question;
   String? response;
-  int? index;
+  int? indexSondeo;
 }
 
 //---------

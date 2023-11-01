@@ -17,22 +17,27 @@ const SondeosFromStoreSchema = CollectionSchema(
   name: r'SondeosFromStore',
   id: 3029355790919089465,
   properties: {
-    r'progress': PropertySchema(
-      id: 0,
-      name: r'progress',
-      type: IsarType.double,
-    ),
-    r'sondeosRespuestas': PropertySchema(
-      id: 1,
-      name: r'sondeosRespuestas',
-      type: IsarType.objectList,
-      target: r'SondeoCollection',
-    ),
     r'store': PropertySchema(
-      id: 2,
+      id: 0,
       name: r'store',
       type: IsarType.object,
       target: r'Store2',
+    ),
+    r'storeSteps': PropertySchema(
+      id: 1,
+      name: r'storeSteps',
+      type: IsarType.objectList,
+      target: r'SondeoCollection',
+    ),
+    r'totalProgress': PropertySchema(
+      id: 2,
+      name: r'totalProgress',
+      type: IsarType.double,
+    ),
+    r'uuid': PropertySchema(
+      id: 3,
+      name: r'uuid',
+      type: IsarType.string,
     )
   },
   estimateSize: _sondeosFromStoreEstimateSize,
@@ -62,7 +67,14 @@ int _sondeosFromStoreEstimateSize(
 ) {
   var bytesCount = offsets.last;
   {
-    final list = object.sondeosRespuestas;
+    final value = object.store;
+    if (value != null) {
+      bytesCount +=
+          3 + Store2Schema.estimateSize(value, allOffsets[Store2]!, allOffsets);
+    }
+  }
+  {
+    final list = object.storeSteps;
     if (list != null) {
       bytesCount += 3 + list.length * 3;
       {
@@ -76,10 +88,9 @@ int _sondeosFromStoreEstimateSize(
     }
   }
   {
-    final value = object.store;
+    final value = object.uuid;
     if (value != null) {
-      bytesCount +=
-          3 + Store2Schema.estimateSize(value, allOffsets[Store2]!, allOffsets);
+      bytesCount += 3 + value.length * 3;
     }
   }
   return bytesCount;
@@ -91,19 +102,20 @@ void _sondeosFromStoreSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeDouble(offsets[0], object.progress);
-  writer.writeObjectList<SondeoCollection>(
-    offsets[1],
-    allOffsets,
-    SondeoCollectionSchema.serialize,
-    object.sondeosRespuestas,
-  );
   writer.writeObject<Store2>(
-    offsets[2],
+    offsets[0],
     allOffsets,
     Store2Schema.serialize,
     object.store,
   );
+  writer.writeObjectList<SondeoCollection>(
+    offsets[1],
+    allOffsets,
+    SondeoCollectionSchema.serialize,
+    object.storeSteps,
+  );
+  writer.writeDouble(offsets[2], object.totalProgress);
+  writer.writeString(offsets[3], object.uuid);
 }
 
 SondeosFromStore _sondeosFromStoreDeserialize(
@@ -113,18 +125,19 @@ SondeosFromStore _sondeosFromStoreDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = SondeosFromStore(
-    progress: reader.readDoubleOrNull(offsets[0]),
-    sondeosRespuestas: reader.readObjectList<SondeoCollection>(
+    store: reader.readObjectOrNull<Store2>(
+      offsets[0],
+      Store2Schema.deserialize,
+      allOffsets,
+    ),
+    storeSteps: reader.readObjectList<SondeoCollection>(
       offsets[1],
       SondeoCollectionSchema.deserialize,
       allOffsets,
       SondeoCollection(),
     ),
-    store: reader.readObjectOrNull<Store2>(
-      offsets[2],
-      Store2Schema.deserialize,
-      allOffsets,
-    ),
+    totalProgress: reader.readDoubleOrNull(offsets[2]),
+    uuid: reader.readStringOrNull(offsets[3]),
   );
   object.id = id;
   return object;
@@ -138,7 +151,11 @@ P _sondeosFromStoreDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readObjectOrNull<Store2>(
+        offset,
+        Store2Schema.deserialize,
+        allOffsets,
+      )) as P;
     case 1:
       return (reader.readObjectList<SondeoCollection>(
         offset,
@@ -147,11 +164,9 @@ P _sondeosFromStoreDeserializeProp<P>(
         SondeoCollection(),
       )) as P;
     case 2:
-      return (reader.readObjectOrNull<Store2>(
-        offset,
-        Store2Schema.deserialize,
-        allOffsets,
-      )) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 3:
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -308,197 +323,6 @@ extension SondeosFromStoreQueryFilter
   }
 
   QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      progressIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'progress',
-      ));
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      progressIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'progress',
-      ));
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      progressEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'progress',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      progressGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'progress',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      progressLessThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'progress',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      progressBetween(
-    double? lower,
-    double? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'progress',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      sondeosRespuestasIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'sondeosRespuestas',
-      ));
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      sondeosRespuestasIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'sondeosRespuestas',
-      ));
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      sondeosRespuestasLengthEqualTo(int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'sondeosRespuestas',
-        length,
-        true,
-        length,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      sondeosRespuestasIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'sondeosRespuestas',
-        0,
-        true,
-        0,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      sondeosRespuestasIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'sondeosRespuestas',
-        0,
-        false,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      sondeosRespuestasLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'sondeosRespuestas',
-        0,
-        true,
-        length,
-        include,
-      );
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      sondeosRespuestasLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'sondeosRespuestas',
-        length,
-        include,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      sondeosRespuestasLengthBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'sondeosRespuestas',
-        lower,
-        includeLower,
-        upper,
-        includeUpper,
-      );
-    });
-  }
-
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
       storeIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -515,21 +339,366 @@ extension SondeosFromStoreQueryFilter
       ));
     });
   }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      storeStepsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'storeSteps',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      storeStepsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'storeSteps',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      storeStepsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'storeSteps',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      storeStepsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'storeSteps',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      storeStepsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'storeSteps',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      storeStepsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'storeSteps',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      storeStepsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'storeSteps',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      storeStepsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'storeSteps',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      totalProgressIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'totalProgress',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      totalProgressIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'totalProgress',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      totalProgressEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'totalProgress',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      totalProgressGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'totalProgress',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      totalProgressLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'totalProgress',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      totalProgressBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'totalProgress',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      uuidIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'uuid',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      uuidIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'uuid',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      uuidEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'uuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      uuidGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'uuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      uuidLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'uuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      uuidBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'uuid',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      uuidStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'uuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      uuidEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'uuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      uuidContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'uuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      uuidMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'uuid',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      uuidIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'uuid',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      uuidIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'uuid',
+        value: '',
+      ));
+    });
+  }
 }
 
 extension SondeosFromStoreQueryObject
     on QueryBuilder<SondeosFromStore, SondeosFromStore, QFilterCondition> {
-  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
-      sondeosRespuestasElement(FilterQuery<SondeoCollection> q) {
-    return QueryBuilder.apply(this, (query) {
-      return query.object(q, r'sondeosRespuestas');
-    });
-  }
-
   QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition> store(
       FilterQuery<Store2> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'store');
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      storeStepsElement(FilterQuery<SondeoCollection> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'storeSteps');
     });
   }
 }
@@ -540,16 +709,29 @@ extension SondeosFromStoreQueryLinks
 extension SondeosFromStoreQuerySortBy
     on QueryBuilder<SondeosFromStore, SondeosFromStore, QSortBy> {
   QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
-      sortByProgress() {
+      sortByTotalProgress() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'progress', Sort.asc);
+      return query.addSortBy(r'totalProgress', Sort.asc);
     });
   }
 
   QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
-      sortByProgressDesc() {
+      sortByTotalProgressDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'progress', Sort.desc);
+      return query.addSortBy(r'totalProgress', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy> sortByUuid() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'uuid', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
+      sortByUuidDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'uuid', Sort.desc);
     });
   }
 }
@@ -570,16 +752,29 @@ extension SondeosFromStoreQuerySortThenBy
   }
 
   QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
-      thenByProgress() {
+      thenByTotalProgress() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'progress', Sort.asc);
+      return query.addSortBy(r'totalProgress', Sort.asc);
     });
   }
 
   QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
-      thenByProgressDesc() {
+      thenByTotalProgressDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'progress', Sort.desc);
+      return query.addSortBy(r'totalProgress', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy> thenByUuid() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'uuid', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
+      thenByUuidDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'uuid', Sort.desc);
     });
   }
 }
@@ -587,9 +782,16 @@ extension SondeosFromStoreQuerySortThenBy
 extension SondeosFromStoreQueryWhereDistinct
     on QueryBuilder<SondeosFromStore, SondeosFromStore, QDistinct> {
   QueryBuilder<SondeosFromStore, SondeosFromStore, QDistinct>
-      distinctByProgress() {
+      distinctByTotalProgress() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'progress');
+      return query.addDistinctBy(r'totalProgress');
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QDistinct> distinctByUuid(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'uuid', caseSensitive: caseSensitive);
     });
   }
 }
@@ -602,22 +804,29 @@ extension SondeosFromStoreQueryProperty
     });
   }
 
-  QueryBuilder<SondeosFromStore, double?, QQueryOperations> progressProperty() {
+  QueryBuilder<SondeosFromStore, Store2?, QQueryOperations> storeProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'progress');
+      return query.addPropertyName(r'store');
     });
   }
 
   QueryBuilder<SondeosFromStore, List<SondeoCollection>?, QQueryOperations>
-      sondeosRespuestasProperty() {
+      storeStepsProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'sondeosRespuestas');
+      return query.addPropertyName(r'storeSteps');
     });
   }
 
-  QueryBuilder<SondeosFromStore, Store2?, QQueryOperations> storeProperty() {
+  QueryBuilder<SondeosFromStore, double?, QQueryOperations>
+      totalProgressProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'store');
+      return query.addPropertyName(r'totalProgress');
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, String?, QQueryOperations> uuidProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'uuid');
     });
   }
 }
@@ -633,16 +842,21 @@ const SondeoCollectionSchema = Schema(
   name: r'SondeoCollection',
   id: 5887333037325574723,
   properties: {
-    r'collection': PropertySchema(
+    r'indexStep': PropertySchema(
       id: 0,
-      name: r'collection',
+      name: r'indexStep',
+      type: IsarType.long,
+    ),
+    r'sondeoProgress': PropertySchema(
+      id: 1,
+      name: r'sondeoProgress',
+      type: IsarType.double,
+    ),
+    r'sondeos': PropertySchema(
+      id: 2,
+      name: r'sondeos',
       type: IsarType.objectList,
       target: r'QuestionResponse',
-    ),
-    r'indexSondeo': PropertySchema(
-      id: 1,
-      name: r'indexSondeo',
-      type: IsarType.long,
     )
   },
   estimateSize: _sondeoCollectionEstimateSize,
@@ -658,7 +872,7 @@ int _sondeoCollectionEstimateSize(
 ) {
   var bytesCount = offsets.last;
   {
-    final list = object.collection;
+    final list = object.sondeos;
     if (list != null) {
       bytesCount += 3 + list.length * 3;
       {
@@ -680,13 +894,14 @@ void _sondeoCollectionSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
+  writer.writeLong(offsets[0], object.indexStep);
+  writer.writeDouble(offsets[1], object.sondeoProgress);
   writer.writeObjectList<QuestionResponse>(
-    offsets[0],
+    offsets[2],
     allOffsets,
     QuestionResponseSchema.serialize,
-    object.collection,
+    object.sondeos,
   );
-  writer.writeLong(offsets[1], object.indexSondeo);
 }
 
 SondeoCollection _sondeoCollectionDeserialize(
@@ -696,13 +911,14 @@ SondeoCollection _sondeoCollectionDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = SondeoCollection(
-    collection: reader.readObjectList<QuestionResponse>(
-      offsets[0],
+    indexStep: reader.readLongOrNull(offsets[0]),
+    sondeoProgress: reader.readDoubleOrNull(offsets[1]),
+    sondeos: reader.readObjectList<QuestionResponse>(
+      offsets[2],
       QuestionResponseSchema.deserialize,
       allOffsets,
       QuestionResponse(),
     ),
-    indexSondeo: reader.readLongOrNull(offsets[1]),
   );
   return object;
 }
@@ -715,14 +931,16 @@ P _sondeoCollectionDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
+      return (reader.readLongOrNull(offset)) as P;
+    case 1:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 2:
       return (reader.readObjectList<QuestionResponse>(
         offset,
         QuestionResponseSchema.deserialize,
         allOffsets,
         QuestionResponse(),
       )) as P;
-    case 1:
-      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -731,28 +949,186 @@ P _sondeoCollectionDeserializeProp<P>(
 extension SondeoCollectionQueryFilter
     on QueryBuilder<SondeoCollection, SondeoCollection, QFilterCondition> {
   QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      collectionIsNull() {
+      indexStepIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'collection',
+        property: r'indexStep',
       ));
     });
   }
 
   QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      collectionIsNotNull() {
+      indexStepIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'collection',
+        property: r'indexStep',
       ));
     });
   }
 
   QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      collectionLengthEqualTo(int length) {
+      indexStepEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'indexStep',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
+      indexStepGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'indexStep',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
+      indexStepLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'indexStep',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
+      indexStepBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'indexStep',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
+      sondeoProgressIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'sondeoProgress',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
+      sondeoProgressIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'sondeoProgress',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
+      sondeoProgressEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sondeoProgress',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
+      sondeoProgressGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'sondeoProgress',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
+      sondeoProgressLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'sondeoProgress',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
+      sondeoProgressBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'sondeoProgress',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
+      sondeosIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'sondeos',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
+      sondeosIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'sondeos',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
+      sondeosLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
-        r'collection',
+        r'sondeos',
         length,
         true,
         length,
@@ -762,10 +1138,10 @@ extension SondeoCollectionQueryFilter
   }
 
   QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      collectionIsEmpty() {
+      sondeosIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
-        r'collection',
+        r'sondeos',
         0,
         true,
         0,
@@ -775,10 +1151,10 @@ extension SondeoCollectionQueryFilter
   }
 
   QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      collectionIsNotEmpty() {
+      sondeosIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
-        r'collection',
+        r'sondeos',
         0,
         false,
         999999,
@@ -788,13 +1164,13 @@ extension SondeoCollectionQueryFilter
   }
 
   QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      collectionLengthLessThan(
+      sondeosLengthLessThan(
     int length, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
-        r'collection',
+        r'sondeos',
         0,
         true,
         length,
@@ -804,13 +1180,13 @@ extension SondeoCollectionQueryFilter
   }
 
   QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      collectionLengthGreaterThan(
+      sondeosLengthGreaterThan(
     int length, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
-        r'collection',
+        r'sondeos',
         length,
         include,
         999999,
@@ -820,7 +1196,7 @@ extension SondeoCollectionQueryFilter
   }
 
   QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      collectionLengthBetween(
+      sondeosLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -828,7 +1204,7 @@ extension SondeoCollectionQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
-        r'collection',
+        r'sondeos',
         lower,
         includeLower,
         upper,
@@ -836,88 +1212,14 @@ extension SondeoCollectionQueryFilter
       );
     });
   }
-
-  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      indexSondeoIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'indexSondeo',
-      ));
-    });
-  }
-
-  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      indexSondeoIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'indexSondeo',
-      ));
-    });
-  }
-
-  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      indexSondeoEqualTo(int? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'indexSondeo',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      indexSondeoGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'indexSondeo',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      indexSondeoLessThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'indexSondeo',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      indexSondeoBetween(
-    int? lower,
-    int? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'indexSondeo',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
 }
 
 extension SondeoCollectionQueryObject
     on QueryBuilder<SondeoCollection, SondeoCollection, QFilterCondition> {
   QueryBuilder<SondeoCollection, SondeoCollection, QAfterFilterCondition>
-      collectionElement(FilterQuery<QuestionResponse> q) {
+      sondeosElement(FilterQuery<QuestionResponse> q) {
     return QueryBuilder.apply(this, (query) {
-      return query.object(q, r'collection');
+      return query.object(q, r'sondeos');
     });
   }
 }
@@ -929,9 +1231,9 @@ const QuestionResponseSchema = Schema(
   name: r'QuestionResponse',
   id: -8930199761037548353,
   properties: {
-    r'index': PropertySchema(
+    r'indexSondeo': PropertySchema(
       id: 0,
-      name: r'index',
+      name: r'indexSondeo',
       type: IsarType.long,
     ),
     r'question': PropertySchema(
@@ -981,7 +1283,7 @@ void _questionResponseSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.index);
+  writer.writeLong(offsets[0], object.indexSondeo);
   writer.writeObject<Preguntas>(
     offsets[1],
     allOffsets,
@@ -998,7 +1300,7 @@ QuestionResponse _questionResponseDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = QuestionResponse(
-    index: reader.readLongOrNull(offsets[0]),
+    indexSondeo: reader.readLongOrNull(offsets[0]),
     question: reader.readObjectOrNull<Preguntas>(
       offsets[1],
       PreguntasSchema.deserialize,
@@ -1034,63 +1336,63 @@ P _questionResponseDeserializeProp<P>(
 extension QuestionResponseQueryFilter
     on QueryBuilder<QuestionResponse, QuestionResponse, QFilterCondition> {
   QueryBuilder<QuestionResponse, QuestionResponse, QAfterFilterCondition>
-      indexIsNull() {
+      indexSondeoIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'index',
+        property: r'indexSondeo',
       ));
     });
   }
 
   QueryBuilder<QuestionResponse, QuestionResponse, QAfterFilterCondition>
-      indexIsNotNull() {
+      indexSondeoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'index',
+        property: r'indexSondeo',
       ));
     });
   }
 
   QueryBuilder<QuestionResponse, QuestionResponse, QAfterFilterCondition>
-      indexEqualTo(int? value) {
+      indexSondeoEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'index',
+        property: r'indexSondeo',
         value: value,
       ));
     });
   }
 
   QueryBuilder<QuestionResponse, QuestionResponse, QAfterFilterCondition>
-      indexGreaterThan(
+      indexSondeoGreaterThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'index',
+        property: r'indexSondeo',
         value: value,
       ));
     });
   }
 
   QueryBuilder<QuestionResponse, QuestionResponse, QAfterFilterCondition>
-      indexLessThan(
+      indexSondeoLessThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'index',
+        property: r'indexSondeo',
         value: value,
       ));
     });
   }
 
   QueryBuilder<QuestionResponse, QuestionResponse, QAfterFilterCondition>
-      indexBetween(
+      indexSondeoBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -1098,7 +1400,7 @@ extension QuestionResponseQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'index',
+        property: r'indexSondeo',
         lower: lower,
         includeLower: includeLower,
         upper: upper,

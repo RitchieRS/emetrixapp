@@ -1,9 +1,10 @@
-import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/core/modules/stores/all_stores.dart';
 import 'package:isar/isar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/core/modules/stores/all_stores.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 
 final databaseProvider = Provider<Database>((ref) {
@@ -11,6 +12,7 @@ final databaseProvider = Provider<Database>((ref) {
 });
 
 class Database {
+  final uuid = const Uuid();
   late Future<Isar> database;
   Database() {
     database = _openDatabase();
@@ -26,7 +28,7 @@ class Database {
   }
 
   //
-
+  // Save SondeosFromStore
   Future<void> saveStores(List<StoreGeneral> routes) async {
     final isar = await database;
 
@@ -46,7 +48,8 @@ class Database {
         );
         final isarStore = SondeosFromStore(
           store: storeG,
-          progress: 0,
+          totalProgress: 0,
+          uuid: uuid.v4(),
         );
 
         await isar.sondeosFromStores.put(isarStore); // insert & update
@@ -54,6 +57,7 @@ class Database {
     });
   }
 
+  //Get all sondeosFromStore
   Future<List<SondeosFromStore>> getStores() async {
     final isar = await database;
     final list = await isar.sondeosFromStores.where().findAll();
@@ -63,17 +67,64 @@ class Database {
     return [];
   }
 
+  //Deleta an item from sondeosFromStore
   Future<bool> deleteStore(int id) async {
     final isar = await database;
     bool deleted = false;
     await isar.writeTxn(() async {
+      final lenght = await isar.sondeosFromStores.count();
+      if (lenght <= 1) {
+        deleted = await isar.sondeosFromStores.delete(id);
+        await isar.sondeosFromStores.clear();
+        return deleted;
+      }
       deleted = await isar.sondeosFromStores.delete(id);
     });
     return deleted;
   }
 
-  //
+  //Insert data to an specific SondeoFromStore
+  Future<void> updateSondeoFromStore(
+      {required String storeUuid,
+      required int stepIndex,
+      required int stepsLenght,
+      required double progress,
+      required List<QuestionResponse> sondeoQuestionResponses}) async {
+    final isar = await database;
 
+    await isar.writeTxn(() async {
+      final store = await isar.sondeosFromStores
+          .filter()
+          .uuidEqualTo(storeUuid)
+          .findFirst();
+
+      if (store == null) return;
+      final step = SondeoCollection(
+        indexStep: stepIndex,
+        sondeos: sondeoQuestionResponses,
+        sondeoProgress: progress,
+      );
+
+      //Save data the sondeos on db
+      store.storeSteps = [...?store.storeSteps, step];
+      //Save the totalProgress
+      double totalProgress = 0;
+      double sondeoProgress = 0;
+      double stepProgress = 0;
+      store.storeSteps?.forEach((element) {
+        sondeoProgress = element.sondeoProgress ?? 0;
+        stepProgress = (stepProgress + sondeoProgress);
+      });
+      totalProgress = stepProgress / sondeoQuestionResponses.length;
+      store.totalProgress = totalProgress / stepsLenght;
+      await isar.sondeosFromStores.put(store);
+
+      //
+    });
+  }
+
+  //
+  //Save all stores available
   Future<void> saveAllStores(List<Store> stores) async {
     final isar = await database;
 

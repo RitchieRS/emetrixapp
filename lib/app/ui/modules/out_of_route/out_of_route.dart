@@ -1,7 +1,6 @@
-// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
@@ -31,13 +30,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await getStoresDB();
-      Future.delayed(const Duration(seconds: 1)).whenComplete(() => ref
-          .read(messagesProvider.notifier)
-          .showMessage(
-              context: context,
-              duration: const Duration(seconds: 3),
-              message: 'Selecciona las tiendas que visitarás.',
-              icon: Icons.store));
+      await showInitialMessage();
     });
   }
 
@@ -82,22 +75,14 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                       child: Padding(
                         padding: EdgeInsets.only(top: size.height * 0.7),
                         child: Center(
-                          child:
-                              // isLoading
-                              //     ? ButonLoading(
-                              //         background: c.primary600,
-                              //         onFinish: null,
-                              //         width: width,
-                              //         height: height)
-                              //     :
-                              ButonDimentions(
-                                  background: c.primary600,
-                                  title:
-                                      'Agregar ${storesSelected.length <= 1 ? '' : storesSelected.length} Ruta${storesSelected.length <= 1 ? '' : 's'}',
-                                  style: t.mediumLight,
-                                  onTap: () => start(),
-                                  width: width,
-                                  height: height),
+                          child: ButonDimentions(
+                              background: c.primary600,
+                              title:
+                                  'Agregar ${storesSelected.length <= 1 ? '' : storesSelected.length} Ruta${storesSelected.length <= 1 ? '' : 's'}',
+                              style: t.mediumLight,
+                              onTap: () => _start(),
+                              width: width,
+                              height: height),
                         ),
                       ),
                     )
@@ -146,6 +131,18 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     );
   }
 
+  Future<void> showInitialMessage() async {
+    await Future.delayed(const Duration(seconds: 1)).whenComplete(() => ref
+        .read(messagesProvider.notifier)
+        .showMessage(
+            context: context,
+            duration: const Duration(seconds: 3),
+            message: 'Selecciona las tiendas que visitarás.',
+            icon: Icons.store));
+  }
+
+  //-----
+
   void selectedStores(int? index) {
     if (index != null) {
       storesSelected.add(storesMain[index]);
@@ -162,12 +159,13 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     setState(() {});
   }
 
-  Future<void> start() async {
-    final networkResult = await (Connectivity().checkConnectivity());
+  Future<void> _start() async {
     final navigator = Navigator.of(context);
+    final networkResult = await (Connectivity().checkConnectivity());
 
     if (networkResult == ConnectivityResult.none) {
-      showYesNoMsj(
+      if (!context.mounted) return;
+      await showYesNoMsj(
           context: context,
           yesOnly: true,
           title: 'Sin Conexión',
@@ -210,6 +208,8 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
   }
 
   Future<void> _setStores(List<String> sondeos) async {
+    final navigator = Navigator.of(context);
+
     await ref
         .read(outORControllerProvider.notifier)
         .saveStoresToIsar(storesSelected, ref);
@@ -218,13 +218,13 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     ref.read(cardProvider.notifier).update((state) => !state);
     storesSelected.clear();
 
+    if (!context.mounted) return;
     ref
         .read(messagesProvider.notifier)
         .showSuccess(context: context, message: 'Agregados a Ruta del Dia!');
 
     await vibrate();
-    await Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(builder: (context) {
+    await navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) {
       return const MainPage();
     }), (route) => false);
   }
