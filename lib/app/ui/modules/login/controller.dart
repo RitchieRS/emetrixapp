@@ -1,3 +1,5 @@
+import 'package:emetrix_flutter/app/core/modules/productos/productos.dart';
+import 'package:emetrix_flutter/app/core/modules/productos/service.dart';
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,14 +16,16 @@ final loginControllerProvider =
     StateNotifierProvider<LoginControllerNotifier, LoginState>((ref) {
   final service = ref.watch(loginServiceProvider);
   final service2 = ref.watch(storesServiceProvider);
-  return LoginControllerNotifier(service, service2);
+  final productsSrv = ref.watch(productosServiceProvider);
+  return LoginControllerNotifier(service, service2,productsSrv);
 });
 
 class LoginControllerNotifier extends StateNotifier<LoginState> {
   final LoginService loginService;
   final StoresService homeService;
+  final ProductosService productsService;
 
-  LoginControllerNotifier(this.loginService, this.homeService)
+  LoginControllerNotifier(this.loginService, this.homeService,this.productsService)
       : super(const LoginState());
 
   Future<bool> sendRequest(String name, String pass) async {
@@ -82,4 +86,21 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
   }
 
   //
+
+    Future<ProductosJson> getProductsCtrl() async {
+    final response = await productsService.getProductsService();
+    if (response.idError != 0) {
+      state = state.copyWith(state: States.error);
+      return ProductosJson(idError: 1, resp: []);
+    } else {
+      state = state.copyWith(state: States.succes);
+      return response;
+    }
+  }
+
+    Future<void> saveProductsData(List<Productos> p, WidgetRef ref) async {
+    await ref.watch(databaseProvider).saveAllProductsDB(p);
+    logger.d('STORES SET ON ISAR');
+  }
+
 }

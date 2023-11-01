@@ -1,3 +1,5 @@
+import 'package:emetrix_flutter/app/core/modules/productos/repository.dart';
+import 'package:emetrix_flutter/app/core/modules/productos/service.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/repository.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/service.dart';
 import 'package:emetrix_flutter/app/core/modules/login/repository.dart';
@@ -35,4 +37,16 @@ final storesRepoProvider = Provider<StoresRepository>((ref) {
 final storesServiceProvider = Provider<StoresService>((ref) {
   final respository = ref.watch(storesRepoProvider);
   return StoresService(respository);
+});
+
+
+//-----------------------------------
+
+final productosRepoProvider = Provider<ProductosRepository>((ref) {
+  return ProductosRepository();
+});
+
+final productosServiceProvider = Provider<ProductosService>((ref) {
+  final respository = ref.watch(productosRepoProvider);
+  return ProductosService(respository);
 });
