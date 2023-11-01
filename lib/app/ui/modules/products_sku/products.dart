@@ -1,15 +1,16 @@
-import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+// import 'package:emetrix_flutter/app/core/services/database/database.dart';
 
 class ProductsSkuPage extends ConsumerStatefulWidget {
   const ProductsSkuPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _ProductsSkuPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _ProductsSkuPageState();
 }
 
 class _ProductsSkuPageState extends ConsumerState<ProductsSkuPage> {

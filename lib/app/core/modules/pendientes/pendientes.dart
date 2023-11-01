@@ -1,10 +1,9 @@
-
 import 'package:isar/isar.dart';
-
 part 'pendientes.g.dart';
 
 @collection
 class Pendiente {
+  Id id = Isar.autoIncrement;
   String? idProyecto;
   String? idUsuario;
   String? quien;
@@ -25,7 +24,7 @@ class Pendiente {
       this.info,
       this.config});
 
-Pendiente.fromJson(Map<String, dynamic> json) {
+  Pendiente.fromJson(Map<String, dynamic> json) {
     idProyecto = json['idProyecto'];
     idUsuario = json['idUsuario'];
     quien = json['quien'];
@@ -33,34 +32,34 @@ Pendiente.fromJson(Map<String, dynamic> json) {
     tipo = json['tipo'];
     conteo = json['conteo'];
     contenido = json['contenido'] != null
-        ? new Contenido.fromJson(json['contenido'])
+        ? Contenido.fromJson(json['contenido'])
         : null;
-    info = json['info'] != null ? new Info.fromJson(json['info']) : null;
-    config =
-        json['config'] != null ? new Config.fromJson(json['config']) : null;
+    info = json['info'] != null ? Info.fromJson(json['info']) : null;
+    config = json['config'] != null ? Config.fromJson(json['config']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['idProyecto'] = this.idProyecto;
-    data['idUsuario'] = this.idUsuario;
-    data['quien'] = this.quien;
-    data['fecha'] = this.fecha;
-    data['tipo'] = this.tipo;
-    data['conteo'] = this.conteo;
-    if (this.contenido != null) {
-      data['contenido'] = this.contenido!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['idProyecto'] = idProyecto;
+    data['idUsuario'] = idUsuario;
+    data['quien'] = quien;
+    data['fecha'] = fecha;
+    data['tipo'] = tipo;
+    data['conteo'] = conteo;
+    if (contenido != null) {
+      data['contenido'] = contenido!.toJson();
     }
-    if (this.info != null) {
-      data['info'] = this.info!.toJson();
+    if (info != null) {
+      data['info'] = info!.toJson();
     }
-    if (this.config != null) {
-      data['config'] = this.config!.toJson();
+    if (config != null) {
+      data['config'] = config!.toJson();
     }
     return data;
   }
 }
 
+@embedded
 class Contenido {
   String? idTienda;
   String? estadoTienda;
@@ -89,26 +88,27 @@ class Contenido {
     if (json['respuestas'] != null) {
       respuestas = <Respuestas>[];
       json['respuestas'].forEach((v) {
-        respuestas!.add(new Respuestas.fromJson(v));
+        respuestas!.add(Respuestas.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['idTienda'] = this.idTienda;
-    data['estadoTienda'] = this.estadoTienda;
-    data['idSondeo'] = this.idSondeo;
-    data['sku'] = this.sku;
-    data['latitud'] = this.latitud;
-    data['longitud'] = this.longitud;
-    if (this.respuestas != null) {
-      data['respuestas'] = this.respuestas!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['idTienda'] = idTienda;
+    data['estadoTienda'] = estadoTienda;
+    data['idSondeo'] = idSondeo;
+    data['sku'] = sku;
+    data['latitud'] = latitud;
+    data['longitud'] = longitud;
+    if (respuestas != null) {
+      data['respuestas'] = respuestas!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
+@embedded
 class Respuestas {
   String? idPregunta;
   String? tipo;
@@ -124,15 +124,16 @@ class Respuestas {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['idPregunta'] = this.idPregunta;
-    data['tipo'] = this.tipo;
-    data['size'] = this.size;
-    data['respuesta'] = this.respuesta;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['idPregunta'] = idPregunta;
+    data['tipo'] = tipo;
+    data['size'] = size;
+    data['respuesta'] = respuesta;
     return data;
   }
 }
 
+@embedded
 class Info {
   String? hotspot;
   String? conexion;
@@ -171,21 +172,22 @@ class Info {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['hotspot'] = this.hotspot;
-    data['conexion'] = this.conexion;
-    data['brillo'] = this.brillo;
-    data['bateria'] = this.bateria;
-    data['gps'] = this.gps;
-    data['imei'] = this.imei;
-    data['tag'] = this.tag;
-    data['gps2'] = this.gps2;
-    data['version'] = this.version;
-    data['datos'] = this.datos;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['hotspot'] = hotspot;
+    data['conexion'] = conexion;
+    data['brillo'] = brillo;
+    data['bateria'] = bateria;
+    data['gps'] = gps;
+    data['imei'] = imei;
+    data['tag'] = tag;
+    data['gps2'] = gps2;
+    data['version'] = version;
+    data['datos'] = datos;
     return data;
   }
 }
 
+@embedded
 class Config {
   String? gpsProyecto;
   String? resolucionImagen;
@@ -212,13 +214,13 @@ class Config {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['gpsProyecto'] = this.gpsProyecto;
-    data['resolucionImagen'] = this.resolucionImagen;
-    data['sondeoObligatorio'] = this.sondeoObligatorio;
-    data['capturaSku'] = this.capturaSku;
-    data['gpsTienda'] = this.gpsTienda;
-    data['rangoTienda'] = this.rangoTienda;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['gpsProyecto'] = gpsProyecto;
+    data['resolucionImagen'] = resolucionImagen;
+    data['sondeoObligatorio'] = sondeoObligatorio;
+    data['capturaSku'] = capturaSku;
+    data['gpsTienda'] = gpsTienda;
+    data['rangoTienda'] = rangoTienda;
     return data;
   }
 }
