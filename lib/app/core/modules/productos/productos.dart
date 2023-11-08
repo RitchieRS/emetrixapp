@@ -4,109 +4,144 @@ Map<String, dynamic> map = jsonDecode(<myJSONString>);
 var myRootNode = Root.fromJson(map);
 */
 
+import 'dart:convert';
 import 'package:isar/isar.dart';
 part 'productos.g.dart';
 
 @collection
 class ProductosIsar {
   Id id = Isar.autoIncrement;
-  Productos? productos;
-  
-
+  String? idCategoria;
+    String? idMarca;
+    String? sku;
+    String? nombre;
+    String? descripcion;
+    double? precioMax;
+    double? precioMin;
+    int? precioProm;
+    String? precioPedido;
+    String? fotoUrl;
+    String? unidadPedidos;
+ //List<Productos>? productos;
   ProductosIsar({
-    String? idCategoria,
-    String? idMarca,
-    String? sku,
-    String? nombre,
-    String? descripcion,
-    double? precioMax,
-    double? precioMin,
-    int? precioProm,
-    String? precioPedido,
-    String? fotoUrl,
-    String? unidadPedidos,
+    this.idCategoria,
+    this.idMarca,
+    this.sku,
+    this.nombre,
+    this.descripcion,
+    this.precioMax,
+    this.precioMin,
+    this.precioProm,
+    this.precioPedido,
+    this.fotoUrl,
+    this.unidadPedidos,
   });
+}
+
+
+class ProductosJson {
+    int? idError;
+    ProductsResp? resp;
+
+    ProductosJson({
+        this.idError,
+        this.resp,
+    });
+
+    factory  ProductosJson.fromRawJson(String str) =>
+       ProductosJson.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+     factory ProductosJson.fromJson(Map<String, dynamic> json) => ProductosJson(
+        idError: json["idError"],
+        resp: ProductsResp.fromJson(json["resp"]),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "idError": idError,
+        "resp": resp?.toJson(),
+    };
+
+      
+}
+
+class ProductsResp {
+   ProductsResp({
+    required this.productos,
+  });
+  late final List<Productos> productos;
+  
+  ProductsResp.fromJson(Map<String, dynamic> json){
+    productos = List.from(json['productos']).map((e)=>Productos.fromJson(e)).toList();
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['productos'] = productos.map((e)=>e.toJson()).toList();
+    return _data;
+  }
 }
 
 @embedded
 class Productos {
-  String? idCategoria;
-  String? idMarca;
-  String? sku;
-  String? nombre;
-  String? descripcion;
-  double? precioMax;
-  double? precioMin;
-  int? precioProm;
-  String? precioPedido;
-  String? fotoUrl;
-  String? unidadPedidos;
+    String? idCategoria;
+    String? idMarca;
+    String? sku;
+    String? nombre;
+    String? descripcion;
+    double? precioMax;
+    double? precioMin;
+    int? precioProm;
+    String? precioPedido;
+    String? fotoUrl;
+    String? unidadPedidos;
 
-  Productos(
-      {this.idCategoria,
-      this.idMarca,
-      this.sku,
-      this.nombre,
-      this.descripcion,
-      this.precioMax,
-      this.precioMin,
-      this.precioProm,
-      this.precioPedido,
-      this.fotoUrl,
-      this.unidadPedidos});
+    Productos({
+        this.idCategoria,
+        this.idMarca,
+        this.sku,
+        this.nombre,
+        this.descripcion,
+        this.precioMax,
+        this.precioMin,
+        this.precioProm,
+        this.precioPedido,
+        this.fotoUrl,
+        this.unidadPedidos,
+    });
 
-  Productos.fromJson(Map<String, dynamic> json) {
-    idCategoria = json['idCategoria'];
-    idMarca = json['idMarca'];
-    sku = json['sku'];
-    nombre = json['nombre'];
-    descripcion = json['descripcion'];
-    precioMax = json['precioMax'];
-    precioMin = json['precioMin'];
-    precioProm = json['precioProm'];
-    precioPedido = json['precioPedido'];
-    fotoUrl = json['fotoUrl'];
-    unidadPedidos = json['unidadPedidos'];
-  }
+    factory Productos.fromRawJson(String str) => Productos.fromJson(json.decode(str));
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['idCategoria'] = this.idCategoria;
-    data['idMarca'] = this.idMarca;
-    data['sku'] = this.sku;
-    data['nombre'] = this.nombre;
-    data['descripcion'] = this.descripcion;
-    data['precioMax'] = this.precioMax;
-    data['precioMin'] = this.precioMin;
-    data['precioProm'] = this.precioProm;
-    data['precioPedido'] = this.precioPedido;
-    data['fotoUrl'] = this.fotoUrl;
-    data['unidadPedidos'] = this.unidadPedidos;
-    return data;
-  }
+    String toRawJson() => json.encode(toJson());
+
+    factory Productos.fromJson(Map<String, dynamic> json) => Productos(
+        idCategoria: json["idCategoria"],
+        idMarca: json["idMarca"],
+        sku: json["sku"],
+        nombre: json["nombre"],
+        descripcion: json["descripcion"],
+        precioMax: json["precioMax"].toDouble(),
+        precioMin: json["precioMin"].toDouble(),
+        precioProm: json["precioProm"],
+        precioPedido: json["precioPedido"],
+        fotoUrl: json["fotoUrl"],
+        unidadPedidos: json["unidadPedidos"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "idCategoria": idCategoria,
+        "idMarca": idMarca,
+        "sku": sku,
+        "nombre": nombre,
+        "descripcion": descripcion,
+        "precioMax": precioMax,
+        "precioMin": precioMin,
+        "precioProm": precioProm,
+        "precioPedido": precioPedido,
+        "fotoUrl": fotoUrl,
+        "unidadPedidos": unidadPedidos,
+    };
 }
 
-class ProductosJson {
-  int? idError;
-  List<Productos>? resp;
-
-  ProductosJson({this.idError, this.resp});
-
-  ProductosJson.fromJson(Map<String, dynamic> json) {
-    idError = json['idError'];
-    if (json['resp'] != null) {
-      resp = <Productos>[];
-      json['resp'].forEach((v) {
-        resp!.add(Productos.fromJson(v));
-      });
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['idError'] = idError;
-    data['resp'] = resp != null ? resp!.map((v) => v.toJson()).toList() : null;
-    return data;
-  }
-}
 

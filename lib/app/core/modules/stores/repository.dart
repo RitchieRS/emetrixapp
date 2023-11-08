@@ -18,7 +18,7 @@ class StoresRepository {
 
     try {
       final response = await dio.getUri(url);
-      logger.d('Stores StatusCode: ${response.statusCode}');
+      logger.d('Stores StatusCode: ${response.data}');
       final Stores stores = Stores.fromJson(jsonDecode(response.data));
       return stores;
       //

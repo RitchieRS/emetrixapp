@@ -87,20 +87,22 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
 
   //
 
-    Future<ProductosJson> getProductsCtrl() async {
+    Future<List<Productos>?> getProductsCtrl() async {
     final response = await productsService.getProductsService();
+    final List<Productos>? productsArry = response.resp?.productos;
+    //logger.d('Products isar ${productsArry.}');
     if (response.idError != 0) {
       state = state.copyWith(state: States.error);
-      return ProductosJson(idError: 1, resp: []);
+      return [];
     } else {
       state = state.copyWith(state: States.succes);
-      return response;
+      return productsArry;
     }
   }
 
     Future<void> saveProductsData(List<Productos> p, WidgetRef ref) async {
     await ref.watch(databaseProvider).saveAllProductsDB(p);
-    logger.d('STORES SET ON ISAR');
+    logger.d('Products isar $p');
   }
 
 }

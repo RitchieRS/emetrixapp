@@ -22,7 +22,7 @@ class Database {
   Future<Isar> _openDatabase() async {
     final dir = await getApplicationDocumentsDirectory();
     if (Isar.instanceNames.isEmpty) {
-      return await Isar.open([SondeosFromStoreSchema, StoreGeneralSchema],
+      return await Isar.open([SondeosFromStoreSchema, StoreGeneralSchema,ProductosIsarSchema],
           directory: dir.path);
     }
     return Future.value(Isar.getInstance());
@@ -169,9 +169,10 @@ class Database {
 
   Future<void> saveAllProductsDB(List<Productos> stores) async {
     final isar = await database;
-
+    print('STORES SET ON ISAR');
     await isar.writeTxn(() async {
       for (Productos p in stores) {
+        print('PRDUCTS ${p.sku}');
         final productosIsar = ProductosIsar(
             idCategoria: p.idCategoria,
             idMarca: p.idMarca,

@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/modules/productos/productos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -236,10 +237,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
    Future getProducts() async {
+    logger.d('Inicia getProducts()');
     List<Productos> allProducts = [];
     final stores = await ref.read(loginControllerProvider.notifier).getProductsCtrl();
-    stores.resp?.forEach((store) {
-      allProducts.add(store);
+    logger.d('$stores');
+    stores?.forEach((p) {
+      logger.d('Products:${p.nombre}');
+      allProducts.add(p);
     });
    ref.read(loginControllerProvider.notifier).saveProductsData(allProducts, ref);
   }
