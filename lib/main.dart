@@ -17,6 +17,7 @@ class MainApp extends ConsumerWidget {
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
 
     return MaterialApp(
+      restorationScopeId: 'root',
       showPerformanceOverlay: false,
       themeAnimationCurve: Curves.bounceIn,
       home: const SplashPage(), //Splash or Home
