@@ -96,6 +96,8 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
 
   Future<ProductosJson> getProductsCtrl() async {
     final response = await productsService.getProductsService();
+    // final List<Producto> productsArry = response.resp.productos;
+    //logger.d('Products isar ${productsArry.}');
     if (response.idError != 0) {
       state = state.copyWith(state: States.error);
       return ProductosJson(idError: 1, resp: RespProd(productos: []));

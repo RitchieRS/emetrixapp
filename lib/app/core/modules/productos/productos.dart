@@ -5,7 +5,6 @@ var myRootNode = Root.fromJson(map);
 */
 
 import 'dart:convert';
-
 import 'package:isar/isar.dart';
 part 'productos.g.dart';
 
@@ -15,6 +14,24 @@ class ProductosIsar {
   Producto? productos;
 
   ProductosIsar({this.productos});
+}
+
+class ProductsResp {
+  ProductsResp({
+    required this.productos,
+  });
+  late final List<Producto> productos;
+
+  ProductsResp.fromJson(Map<String, dynamic> json) {
+    productos =
+        List.from(json['productos']).map((e) => Producto.fromJson(e)).toList();
+  }
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['productos'] = productos.map((e) => e.toJson()).toList();
+    return data;
+  }
 }
 
 @embedded

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import 'dart:convert';
 import 'package:isar/isar.dart';
 part 'pendientes.g.dart';
@@ -221,3 +222,5 @@ class Config {
     return data;
   }
 }
+=======
+>>>>>>> 6b32a84a443bb3bb90934a45879115be35273de2

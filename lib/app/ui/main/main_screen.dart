@@ -141,6 +141,12 @@ class _HomePageState extends ConsumerState<MainPage> {
               title: const Text("Ajustes"),
               selectedColor: c.primary500,
               unselectedColor: unselectedColor),
+          SalomonBottomBarItem(
+              icon: const Icon(Icons.settings_outlined),
+              activeIcon: const Icon(Icons.settings),
+              title: const Text("SKU"),
+              selectedColor: c.primary500,
+              unselectedColor: unselectedColor),
         ],
       ),
 
