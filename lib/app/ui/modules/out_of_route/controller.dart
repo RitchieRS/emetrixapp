@@ -25,7 +25,6 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
   Future<List<StoreGeneral>> getAllStoresIsar(WidgetRef ref) async {
     List<StoreGeneral> stores = [];
     state = state.copyWith(state: States.loading);
-    await Future.delayed(const Duration(seconds: 1));
     stores = await ref.watch(databaseProvider).getAllStores();
 
     if (stores.isNotEmpty) {

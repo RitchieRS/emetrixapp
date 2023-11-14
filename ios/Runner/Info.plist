@@ -14,6 +14,10 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>Emetrix</string>
+	<key>io.flutter.embedded_views_preview</key>
+    <true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+    <string>Se necesita permiso de ubicación</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

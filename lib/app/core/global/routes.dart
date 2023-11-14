@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/ui/modules/settings/options/support.dart';
 import 'package:flutter/material.dart';
 
 import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
@@ -19,5 +20,6 @@ Map<String, WidgetBuilder> appRoutes() {
     'settings': (context) => const SettingsPage(),
     'onboard': (context) => const OnBoardingPage(),
     'theme': (context) => const SelectThemePage(),
+    'support': (context) => const SupportPage(),
   };
 }

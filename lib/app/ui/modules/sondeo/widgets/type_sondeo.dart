@@ -40,8 +40,9 @@ class TypeSondeo extends ConsumerWidget {
 
     return Padding(
       padding: isLast
-          ? EdgeInsets.only(bottom: size.height * 0.05)
-          : const EdgeInsets.all(0),
+          ? EdgeInsets.only(
+              bottom: size.height * 0.05, left: size.height * 0.01)
+          : EdgeInsets.only(left: size.height * 0.01),
       child: GestureDetector(
         onTap: onTap,
         child: SizedBox(
@@ -78,7 +79,7 @@ class TypeSondeo extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      sondeoItem.obligatorio != 0
+                      sondeoItem.obligatorio == 1
                           ? Container(
                               color: c.surface,
                               width: size.width * 0.4,
@@ -116,34 +117,35 @@ class TypeSondeo extends ConsumerWidget {
                 ],
               ),
 
-              isLast
-                  ? const SizedBox()
-                  : Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            left: leftPadding + (side / 2 - lineTickness / 2),
-                            top: 0),
-                        child: TweenAnimationBuilder<double>(
-                            duration:
-                                const Duration(milliseconds: animationDuration),
-                            curve: Curves.easeInOut,
-                            tween: Tween<double>(
-                              begin: 0,
-                              end: currentOption > 0 ? 1 : 0, //
-                              // end: enebled ? 1 : 0, //
-                            ),
-                            builder: (context, value, _) => Container(
-                                  color: isFinished
-                                      ? finishedColor.withOpacity(0.4)
-                                      : enebled
-                                          ? enebledColor.withOpacity(0.4)
-                                          : disabledColor,
-                                  width: lineTickness,
-                                )),
+              // isLast
+              //     ? const SizedBox()
+              if (!isLast)
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        left: leftPadding + (side / 2 - lineTickness / 2),
+                        top: 0),
+                    child: TweenAnimationBuilder<double>(
+                        duration:
+                            const Duration(milliseconds: animationDuration),
+                        curve: Curves.easeInOut,
+                        tween: Tween<double>(
+                          begin: 0,
+                          end: currentOption > 0 ? 1 : 0, //
+                          // end: enebled ? 1 : 0, //
+                        ),
+                        builder: (context, value, _) => Container(
+                              color: isFinished
+                                  ? finishedColor.withOpacity(0.4)
+                                  : enebled
+                                      ? enebledColor.withOpacity(0.4)
+                                      : disabledColor,
+                              width: lineTickness,
+                            )),
 
-                        //
-                      ),
-                    )
+                    //
+                  ),
+                )
 
               //
             ],

@@ -5,4 +5,4 @@ export 'buton.dart';
 export 'buton_disable.dart';
 export 'button_dimentions.dart';
 export 'button_loading.dart';
-export 'gradient_title.dart';
+export 'general_title.dart';

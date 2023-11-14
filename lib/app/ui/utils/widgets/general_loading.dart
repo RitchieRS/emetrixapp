@@ -30,7 +30,7 @@ class GeneralLoading extends StatelessWidget {
 
 class LoadingCard extends StatelessWidget {
   const LoadingCard(
-      {super.key, this.height = 0.125, this.width = 0.95, this.index = 0});
+      {super.key, this.height = 0.11, this.width = 0.95, this.index = 0});
   final double height;
   final double width;
   final int index;
@@ -44,7 +44,7 @@ class LoadingCard extends StatelessWidget {
       padding: EdgeInsets.only(bottom: padding, left: padding, right: padding),
       child: Center(
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(8),
           child: Shimmer.fromColors(
             baseColor: c.black.withOpacity(0.2),
             highlightColor: Colors.white.withOpacity(0.8),

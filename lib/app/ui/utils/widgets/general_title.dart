@@ -1,15 +1,18 @@
 import 'package:emetrix_flutter/app/core/services/services.dart';
+import 'package:emetrix_flutter/app/ui/modules/drawer/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
-class GradientTitle extends ConsumerWidget implements PreferredSizeWidget {
-  const GradientTitle({
+class GeneralTitle extends ConsumerWidget implements PreferredSizeWidget {
+  const GeneralTitle({
     super.key,
     required this.title,
+    this.showMenu = false,
   });
   final String title;
+  final bool showMenu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,6 +20,13 @@ class GradientTitle extends ConsumerWidget implements PreferredSizeWidget {
     final isDark = ref.watch(themeProvider);
 
     return AppBar(
+      leading: showMenu
+          ? IconButton(
+              // onPressed: () => Scaffold.of(context).openDrawer(),
+              onPressed: () => showRoutes(context, size),
+              icon: Icon(Icons.menu,
+                  color: isDark == ThemeMode.dark ? c.onSecondary : c.black))
+          : null,
       backgroundColor: c.surface,
       elevation: 0,
       systemOverlayStyle: isDark == ThemeMode.light

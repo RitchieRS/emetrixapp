@@ -32,9 +32,9 @@ class _MapsPageState extends ConsumerState<MapsPage> {
   @override
   void initState() {
     super.initState();
+    requestLocationPermission();
     _loadMapStyles();
     _setMapStyle(ref);
-    requestLocationPermission();
   }
 
   @override

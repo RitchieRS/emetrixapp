@@ -31,11 +31,11 @@ class _ButonState extends ConsumerState<Buton> {
     return Material(
       color: c.surface,
       child: InkWell(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
         onTap: widget.onTap,
         child: Ink(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
             border: widget.outlined
                 ? Border.all(color: widget.background, width: 1.5)
                 : null,
@@ -47,10 +47,12 @@ class _ButonState extends ConsumerState<Buton> {
                         offset: const Offset(1, 1))
                   ]
                 : [],
-            color: widget.outlined ? c.surface : widget.background,
+            color: widget.outlined
+                ? Theme.of(context).scaffoldBackgroundColor
+                : widget.background,
           ),
           height: size.height * 0.052,
-          width: size.width * 0.85,
+          width: size.width * 0.9,
           child: Center(
             child: Text(
               widget.title,

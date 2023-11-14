@@ -36,9 +36,6 @@ flutter pub run flutter_launcher_icons
 - Usuario de prueba: gpoevogto
 Contraseña: wer
 
-- Usuario de prueba: gpoevogto
-Contraseña: wer
-
 
  Versón de Flutter
 • Flutter 3.13.2 

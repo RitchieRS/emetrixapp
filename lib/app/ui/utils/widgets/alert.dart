@@ -10,7 +10,7 @@ Future<bool> showMsj(
     bool onlyOk = false,
     bool justifyContent = false,
     bool canTapOutside = false}) async {
-  final bool result = await showDialog(
+  final bool? result = await showDialog(
       context: context,
       barrierDismissible: canTapOutside,
       builder: (context) {
@@ -33,7 +33,7 @@ Future<bool> showMsj(
                     title: buttonLabel,
                     style: t.textLight,
                     width: Dimentions().getWidth() * 0.6,
-                    height: Dimentions().getHeight() * 0.055,
+                    height: Dimentions().getHeight() * 0.052,
                   ),
                 ]
               : [
@@ -59,5 +59,6 @@ Future<bool> showMsj(
                 ],
         );
       });
+  if (result == null) return false;
   return Future.value(result);
 }

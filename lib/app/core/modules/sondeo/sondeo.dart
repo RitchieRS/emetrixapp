@@ -8,6 +8,8 @@ class SondeosFromStore {
   Id id = Isar.autoIncrement;
   String? uuid;
   Store2? store;
+  CheckInOut? checkIn;
+  CheckInOut? checkOut;
   double? totalProgress;
   List<SondeoCollection>? storeSteps;
 
@@ -43,6 +45,18 @@ class QuestionResponse {
   Preguntas? question;
   String? response;
   int? indexSondeo;
+}
+
+@embedded
+class CheckInOut {
+  CheckInOut({
+    this.latitud,
+    this.longitud,
+    this.picture,
+  });
+  String? latitud;
+  String? longitud;
+  String? picture;
 }
 
 //---------

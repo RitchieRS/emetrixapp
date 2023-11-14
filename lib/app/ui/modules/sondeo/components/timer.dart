@@ -24,7 +24,7 @@ class _MyTimerState extends ConsumerState<MyTimer>
   int _minutes = 0;
   int _seconds = 0;
   int _milliseconds = 0;
-  int _laps = 0;
+  // int _laps = 0;
   final Stopwatch _stopwatch = Stopwatch();
   final List<String> _lapTimes = [];
 
@@ -39,11 +39,12 @@ class _MyTimerState extends ConsumerState<MyTimer>
     final size = MediaQuery.of(context).size;
 
     return GestureDetector(
-      onTap: () {
-        _handleLaps();
-        debugPrint('Tap Laps: $_laps');
-        debugPrint('Laps list: $_lapTimes');
-      },
+      onTap: () => _handleLaps(),
+      // onTap: () {
+      //   _handleLaps();
+      //   debugPrint('Tap Laps: $_laps');
+      //   debugPrint('Laps list: $_lapTimes');
+      // },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         color: widget.mandatory ? c.errorLight : c.surface,
@@ -76,28 +77,24 @@ class _MyTimerState extends ConsumerState<MyTimer>
   }
 
   void _handleLaps() {
-    if (!_stopwatch.isRunning && _lapTimes.length < widget.times) {
+    if (!_stopwatch.isRunning) {
+      _resetLaps();
       _startTimer();
       return;
     }
     if (_stopwatch.isRunning && _lapTimes.length < widget.times) {
       _takeLap();
       _restartTimer();
-      return;
     }
     if (_stopwatch.isRunning && _lapTimes.length == widget.times) {
-      _takeLap();
       _stopTimer();
       return;
     }
-
-    _resetLaps();
-    _startTimer();
   }
 
   void _resetLaps() {
     setState(() {
-      _laps = 0;
+      // _laps = 0;
       _lapTimes.clear();
     });
   }
@@ -112,16 +109,12 @@ class _MyTimerState extends ConsumerState<MyTimer>
           _seconds = _stopwatch.elapsed.inSeconds % 60;
           _milliseconds = _stopwatch.elapsedMilliseconds;
         });
-        // if (_milliseconds == 1000) {
-        //   _milliseconds = 0;
-        //   setState(() {});
-        // }
       });
     }
   }
 
   void _takeLap() {
-    _laps++;
+    // _laps++;
     _lapTimes.add(_formatTime(_minutes, _seconds, _milliseconds));
     setState(() {});
   }

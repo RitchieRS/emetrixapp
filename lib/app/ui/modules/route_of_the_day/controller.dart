@@ -22,8 +22,6 @@ class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
 
   Future<List<SondeosFromStore>> getStoresFromIsar(WidgetRef ref) async {
     state = state.copyWith(state: States.loading);
-    await Future.delayed(const Duration(seconds: 1));
-
     final stores = await ref.watch(databaseProvider).getStores();
     if (stores.isNotEmpty) {
       state = state.copyWith(data: stores, state: States.succes);
@@ -71,7 +69,3 @@ class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
 
 //
 }
-
-final showProgress1 = StateProvider<bool>((ref) {
-  return false;
-});

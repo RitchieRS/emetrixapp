@@ -17,7 +17,7 @@ final loginControllerProvider =
   final service = ref.watch(loginServiceProvider);
   final service2 = ref.watch(storesServiceProvider);
   final productsSrv = ref.watch(productosServiceProvider);
-  return LoginControllerNotifier(service, service2,productsSrv);
+  return LoginControllerNotifier(service, service2, productsSrv);
 });
 
 class LoginControllerNotifier extends StateNotifier<LoginState> {
@@ -25,7 +25,8 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
   final StoresService homeService;
   final ProductosService productsService;
 
-  LoginControllerNotifier(this.loginService, this.homeService,this.productsService)
+  LoginControllerNotifier(
+      this.loginService, this.homeService, this.productsService)
       : super(const LoginState());
 
   Future<bool> sendRequest(String name, String pass) async {
@@ -38,10 +39,16 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
       final resp = response.resp;
       final obj = resp.toRawJson();
       await _saveUserDataToDB(obj);
+      await _setSessionActive();
       state = state.copyWith(state: States.succes, loginData: response);
       logger.d('Login Success save to DB');
       return true;
     }
+  }
+
+  Future _setSessionActive() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('sesionStarted', true);
   }
 
   Future<void> _saveUserDataToDB(String objToString) async {
@@ -87,20 +94,19 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
 
   //
 
-    Future<ProductosJson> getProductsCtrl() async {
+  Future<ProductosJson> getProductsCtrl() async {
     final response = await productsService.getProductsService();
     if (response.idError != 0) {
       state = state.copyWith(state: States.error);
-      return ProductosJson(idError: 1, resp: []);
+      return ProductosJson(idError: 1, resp: RespProd(productos: []));
     } else {
       state = state.copyWith(state: States.succes);
       return response;
     }
   }
 
-    Future<void> saveProductsData(List<Productos> p, WidgetRef ref) async {
-    await ref.watch(databaseProvider).saveAllProductsDB(p);
-    logger.d('STORES SET ON ISAR');
+  Future<void> saveProductsData(List<Producto> products, WidgetRef ref) async {
+    await ref.watch(databaseProvider).saveAllProductsDB(products);
+    logger.d('Products SET ON ISAR');
   }
-
 }

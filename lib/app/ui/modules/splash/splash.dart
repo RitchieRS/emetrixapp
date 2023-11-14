@@ -18,7 +18,8 @@ class SplashPage extends ConsumerStatefulWidget {
 }
 
 class _SplashPageState extends ConsumerState<SplashPage> {
-  String? session;
+  // String? session;
+  bool? session;
   bool? theme;
 
   @override
@@ -32,7 +33,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isDark = ref.watch(themeProvider);
+    final isDark = ref.watch(themeProvider) == ThemeMode.dark;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -42,7 +43,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
         systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: c.surface,
             statusBarIconBrightness:
-                isDark == ThemeMode.light ? Brightness.dark : Brightness.light),
+                isDark ? Brightness.light : Brightness.dark),
       ),
       body: Container(
         height: size.height,
@@ -67,14 +68,15 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
   Future<void> _checkData() async {
     final prefs = await SharedPreferences.getInstance();
-    session = prefs.getString('loginInfo');
+    // session = prefs.getString('loginInfo');
+    session = prefs.getBool('sesionStarted');
     setState(() {});
   }
 
   Future<void> _checkRoute() async {
     await Future.delayed(const Duration(milliseconds: 2000))
         .whenComplete(() async {
-      if (session != null) {
+      if (session == true) {
         await Navigator.pushReplacement(
             context,
             PageRouteBuilder(

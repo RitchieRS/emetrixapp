@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'package:isar/isar.dart';
 part 'pendientes.g.dart';
 
 @collection
 class Pendiente {
   Id id = Isar.autoIncrement;
+  int? estado; // 0 no enviado, 1 enviado, 2 error
   String? idProyecto;
   String? idUsuario;
   String? quien;
@@ -16,6 +18,7 @@ class Pendiente {
   Pendiente(
       {this.idProyecto,
       this.idUsuario,
+      this.estado,
       this.quien,
       this.fecha,
       this.tipo,
@@ -38,25 +41,19 @@ class Pendiente {
     config = json['config'] != null ? Config.fromJson(json['config']) : null;
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['idProyecto'] = idProyecto;
-    data['idUsuario'] = idUsuario;
-    data['quien'] = quien;
-    data['fecha'] = fecha;
-    data['tipo'] = tipo;
-    data['conteo'] = conteo;
-    if (contenido != null) {
-      data['contenido'] = contenido!.toJson();
-    }
-    if (info != null) {
-      data['info'] = info!.toJson();
-    }
-    if (config != null) {
-      data['config'] = config!.toJson();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        "idProyecto": idProyecto,
+        "idUsuario": idUsuario,
+        "quien": quien,
+        "fecha": fecha.toString(),
+        "tipo": tipo,
+        "conteo": conteo,
+        "contenido": contenido?.toJson(),
+        "info": info?.toJson(),
+        "config": config?.toJson(),
+      };
+
+  String toRawJson() => json.encode(toJson());
 }
 
 @embedded

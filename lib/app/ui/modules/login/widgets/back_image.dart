@@ -10,6 +10,7 @@ class BackImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final primaryColor = c.primary600;
 
     return Container(
       height: size.height,
@@ -28,33 +29,34 @@ class BackImage extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          const CircleAvatar(),
+          CircleAvatar(backgroundColor: primaryColor),
           Padding(
             padding: EdgeInsets.only(
                 top: size.height * 0.1,
                 left: size.width * 0.3,
                 right: size.width * 0.3),
-            child: CircleAvatar(radius: size.width * 0.12),
+            child: CircleAvatar(
+                radius: size.width * 0.12, backgroundColor: primaryColor),
           ),
           Padding(
             padding: EdgeInsets.only(
                 top: size.height * 0.04, left: size.width * 0.8, right: 05),
-            child: const CircleAvatar(),
+            child: CircleAvatar(backgroundColor: primaryColor),
           ),
           Padding(
             padding: EdgeInsets.only(
                 top: size.height * 0.84, left: size.width * 0.1, right: 100),
-            child: const CircleAvatar(),
+            child: CircleAvatar(backgroundColor: primaryColor),
           ),
           Padding(
             padding: EdgeInsets.only(
                 top: size.height * 0.9, left: size.width * 0.8, right: 0),
-            child: const CircleAvatar(),
+            child: CircleAvatar(backgroundColor: primaryColor),
           ),
           Padding(
             padding: EdgeInsets.only(
                 top: size.height * 0.6, left: size.width * 0.9, right: 200),
-            child: const CircleAvatar(),
+            child: CircleAvatar(backgroundColor: primaryColor),
           ),
           SizedBox(
             height: size.height,

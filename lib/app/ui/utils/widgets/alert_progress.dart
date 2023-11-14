@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
-showProgress({
+Future showProgress({
   required BuildContext context,
   required String title,
   bool canTapOutside = true,

@@ -42,68 +42,81 @@ class _MyCardState extends ConsumerState<MyCard2> {
         child: const Icon(Icons.delete, color: Colors.redAccent));
     final iconColor = c.primary500;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: FadeIn(
-        child: Dismissible(
-          key: UniqueKey(),
-          background: backWidget,
-          direction: DismissDirection.endToStart,
-          confirmDismiss: (direction) => confirmDimiss(),
-          onDismissed: (direction) => widget.onDeleted(),
-          child: ExpansionPanelList.radio(
-            expandedHeaderPadding: const EdgeInsets.all(0),
-            elevation: 0,
-            animationDuration: const Duration(milliseconds: 350),
-            children: [
-              ExpansionPanelRadio(
-                  backgroundColor: c.primary200.withOpacity(0.2),
-                  canTapOnHeader: false, // True
-                  value: widget.store ?? Store(),
-                  headerBuilder: (context, isExpanded) {
-                    return ListTile(
-                      onTap: () => showMsj2(),
-                      minVerticalPadding: 0,
-                      leading:
-                          Icon(Icons.storefront_outlined, color: iconColor),
-                      title: Text('${widget.store?.store?.tienda}',
-                          style: t.mediumBold,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis),
-                      subtitle: Text(
-                          'Progreso: ${(widget.store?.totalProgress?.toStringAsFixed(2) ?? 0)}%',
-                          style: progress == 0 ? t.textDisabled2 : t.textBlue),
-                    );
-                  },
-                  body: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsets.only(left: size.width * 0.2, top: 0),
-                        child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Cadena: ${widget.store?.store?.idCadena}',
-                                  style: t.text),
-                              Text('Grupo: ${widget.store?.store?.idGrupo}',
-                                  style: t.text),
-                            ]),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(right: size.width * 0.1),
-                        child: TextButton.icon(
-                            label: const Text('Maps'),
-                            onPressed: () => goMaps(),
-                            icon: Icon(Icons.location_on,
-                                color: c.primary.withOpacity(0.8),
-                                size: size.height * 0.03)),
-                      )
-                    ],
-                  )),
-            ],
+    return Center(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          width: width,
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: FadeIn(
+              child: Dismissible(
+                key: UniqueKey(),
+                background: backWidget,
+                direction: DismissDirection.endToStart,
+                confirmDismiss: (direction) => confirmDimiss(),
+                onDismissed: (direction) => widget.onDeleted(),
+                child: ExpansionPanelList.radio(
+                  expandedHeaderPadding: const EdgeInsets.all(0),
+                  elevation: 0,
+                  animationDuration: const Duration(milliseconds: 350),
+                  children: [
+                    ExpansionPanelRadio(
+                        backgroundColor: c.primary200.withOpacity(0.2),
+                        canTapOnHeader: false, // True
+                        value: widget.store ?? Store(),
+                        headerBuilder: (context, isExpanded) {
+                          return ListTile(
+                            onTap: () => showMsj2(),
+                            minVerticalPadding: 0,
+                            leading: Icon(Icons.storefront_outlined,
+                                color: iconColor),
+                            title: Text('${widget.store?.store?.tienda}',
+                                style: t.mediumBold,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis),
+                            subtitle: Text(
+                                'Progreso: ${(widget.store?.totalProgress?.toStringAsFixed(2) ?? 0)}%',
+                                style: progress == 0
+                                    ? t.textDisabled2
+                                    : t.textBlue),
+                          );
+                        },
+                        body: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: size.width * 0.2, top: 0),
+                              child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        'Cadena: ${widget.store?.store?.idCadena}',
+                                        style: t.text),
+                                    Text(
+                                        'Grupo: ${widget.store?.store?.idGrupo}',
+                                        style: t.text),
+                                  ]),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(right: size.width * 0.1),
+                              child: TextButton.icon(
+                                  label: const Text('Maps'),
+                                  onPressed: () => goMaps(),
+                                  icon: Icon(Icons.location_on,
+                                      color: c.primary.withOpacity(0.8),
+                                      size: size.height * 0.03)),
+                            )
+                          ],
+                        )),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -153,12 +166,9 @@ class _MyCardState extends ConsumerState<MyCard2> {
 
   Future<void> _start(int index) async {
     final navigator = Navigator.of(context);
-    ref.read(showProgress1.notifier).update((state) => true);
     final sondeos = await ref.read(routeOTD.notifier).getSondeoFromDB();
 
     if (sondeos[index].idError != 0) {
-      ref.read(showProgress1.notifier).update((state) => false);
-
       showYesNoMsj(
           context: context,
           yesOnly: true,
@@ -166,9 +176,6 @@ class _MyCardState extends ConsumerState<MyCard2> {
           content:
               'Se produjo un error inesperado. Si el error persiste, elimina las tiendas e intentalo de nuevo.');
     } else {
-      // Emulated Delay
-      // await Future.delayed(const Duration(seconds: 1));
-
       navigator.push(MaterialPageRoute(builder: (context) {
         return SondeoPage(
             storeUuid: widget.store?.uuid ?? '',

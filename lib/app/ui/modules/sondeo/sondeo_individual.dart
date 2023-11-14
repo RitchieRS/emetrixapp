@@ -1,11 +1,7 @@
-// ignore_for_file: avoid_print
-
-import 'dart:io';
-import 'package:emetrix_flutter/app/core/services/database/database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/bottom_buton.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/custom_title.dart';
@@ -72,11 +68,12 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
           child: CustomScrollView(
             slivers: [
               if (widget.sondeoItem.preguntas != null)
+                // if (widget.sondeoItem.preguntas![0].tipo == 'asistencia')
+                //   SliverToBoxAdapter(child: MapView(store: widget.store))
+                // else
                 SliverList.builder(
                     itemCount: widget.sondeoItem.preguntas?.length,
                     itemBuilder: (context, index) {
-                      print(mandatoryComponents);
-
                       return QuestionBuilder(
                         mandatory:
                             validate ? mandatoryComponents[index] : false,
@@ -193,19 +190,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
           ),
         ),
         bottomNavigationBar: BottomButon(onTap: () async {
-          if (widget.index == 0) {
-            final image = await pickImage(ImageSource.camera);
-            if (image != null) {
-              await finalize(finishedSections);
-              return;
-            }
-            return;
-          }
           await validateAllComponents(finishedSections, ref);
-          // finalize(finishedSections);
-        }
-            // onTap: () => finalize(finishedSections),
-            ));
+        }));
   }
 
   void idenifyComponents() {
@@ -222,18 +208,6 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
       }
       mandatoryComponents.add(false);
     });
-  }
-
-  Future<File?> pickImage(ImageSource source) async {
-    try {
-      final image2 = await ImagePicker().pickImage(source: source);
-      if (image2 == null) return null;
-
-      return File(image2.path);
-    } on PlatformException catch (e) {
-      debugPrint('Error extracting image:$e');
-    }
-    return null;
   }
 
   Future<void> validateAllComponents(
@@ -258,8 +232,6 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
       'hora': timeResponse,
     };
 
-    print('Obligatorias: $mandatoryQuestions');
-
     //Guardar las respuestas
     for (var question in questionsResponses) {
       final response = typeResponses[question.question?.tipo];
@@ -270,9 +242,9 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
       }
     }
     setState(() {});
-    for (var element in questionsResponses) {
-      print('${element.question?.tipo}: ${element.response}');
-    }
+    // for (var element in questionsResponses) {
+    //   print('${element.question?.tipo}: ${element.response}');
+    // }
 
     int missingAnswers = 0;
     //Ver si las respuestas obligatorias estan vacias
@@ -360,24 +332,18 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
   }
 
   void printResponses() {
-    print('*************************');
-    for (var element in questionsResponses) {
-      print('Response: ${element.response}');
+    if (kDebugMode) {
+      debugPrint('*************************');
+      for (var element in questionsResponses) {
+        debugPrint('Response: ${element.response}');
+      }
+      debugPrint('Total Responses: ${questionsResponses.length}');
+      debugPrint('*************************');
     }
-    print('Total Responses: ${questionsResponses.length}');
-    print('*************************');
   }
 
   //
 }
-
-// final class QuestionResponse {
-//   QuestionResponse(
-//       {required this.question, required this.index, required this.response});
-//   RespM question;
-//   dynamic response;
-//   int index;
-// }
 
 final class ResponseIndex {
   ResponseIndex({required this.index, required this.response});

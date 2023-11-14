@@ -11,4 +11,7 @@ class AppAssets {
   static const String appMobile = '$baseFiles/app_mobile.svg';
   static const String wifi = '$baseFiles/wifi.svg';
   static const String map = '$baseFiles/map.svg';
+  static const String contactUs = '$baseFiles/contact_us.svg';
+  static const String noData = '$baseFiles/no_data.svg';
+  static const String error = '$baseFiles/error.svg';
 }

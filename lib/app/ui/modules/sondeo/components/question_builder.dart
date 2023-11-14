@@ -55,8 +55,8 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
   @override
   Widget build(BuildContext context) {
     switch (widget.pregunta.tipo) {
-      case 'asistencia':
-        return MapView(store: widget.store);
+      // case 'asistencia':
+      //   return MapView(store: widget.store);
 
       case 'unicaRadio':
         return Selection(
@@ -177,7 +177,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
       case 'tiempo':
         return MyTimer(
           pregunta: widget.pregunta.pregunta ?? 'NoData',
-          times: 2,
+          times: widget.pregunta.capturaNTiempos ?? 1,
           mandatory: widget.mandatory,
         );
 

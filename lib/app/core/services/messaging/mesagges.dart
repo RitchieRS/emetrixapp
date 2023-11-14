@@ -34,16 +34,18 @@ class MesagessService extends ChangeNotifier {
   void showSuccess(
       {required BuildContext context,
       required String message,
-      EdgeInsetsGeometry? marginBottom}) {
+      EdgeInsetsGeometry? marginBottom,
+      Duration? duration}) {
     final snackbar = SnackBar(
-      behavior: marginBottom != null
-          ? SnackBarBehavior.floating
-          : SnackBarBehavior.fixed,
-      content: Text(message),
-      backgroundColor: Colors.green,
-      duration: const Duration(seconds: _duration),
-      margin: marginBottom,
-    );
+        behavior: SnackBarBehavior.floating,
+        // : SnackBarBehavior.fixed,
+        content: Text(message),
+        backgroundColor: Colors.green,
+        duration: duration ?? const Duration(seconds: _duration),
+        margin: marginBottom,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ));
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
@@ -57,7 +59,7 @@ class MesagessService extends ChangeNotifier {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.only(right: 8.0),
             child: Icon(icon),
           ),
           Text(message, style: t.text2Light),
@@ -71,12 +73,13 @@ class MesagessService extends ChangeNotifier {
       behavior: SnackBarBehavior.floating,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
       ),
       margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height * 0.8,
-          right: 10,
-          left: 10),
+        bottom: MediaQuery.of(context).size.height * 0.8,
+        right: 10,
+        left: 10,
+      ),
     );
 
     ScaffoldMessenger.of(context).showSnackBar(snackbar).close;

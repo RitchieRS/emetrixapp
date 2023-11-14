@@ -34,34 +34,39 @@ const PendienteSchema = CollectionSchema(
       name: r'conteo',
       type: IsarType.string,
     ),
-    r'fecha': PropertySchema(
+    r'estado': PropertySchema(
       id: 3,
+      name: r'estado',
+      type: IsarType.long,
+    ),
+    r'fecha': PropertySchema(
+      id: 4,
       name: r'fecha',
       type: IsarType.string,
     ),
     r'idProyecto': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'idProyecto',
       type: IsarType.string,
     ),
     r'idUsuario': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'idUsuario',
       type: IsarType.string,
     ),
     r'info': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'info',
       type: IsarType.object,
       target: r'Info',
     ),
     r'quien': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'quien',
       type: IsarType.string,
     ),
     r'tipo': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'tipo',
       type: IsarType.string,
     )
@@ -171,17 +176,18 @@ void _pendienteSerialize(
     object.contenido,
   );
   writer.writeString(offsets[2], object.conteo);
-  writer.writeString(offsets[3], object.fecha);
-  writer.writeString(offsets[4], object.idProyecto);
-  writer.writeString(offsets[5], object.idUsuario);
+  writer.writeLong(offsets[3], object.estado);
+  writer.writeString(offsets[4], object.fecha);
+  writer.writeString(offsets[5], object.idProyecto);
+  writer.writeString(offsets[6], object.idUsuario);
   writer.writeObject<Info>(
-    offsets[6],
+    offsets[7],
     allOffsets,
     InfoSchema.serialize,
     object.info,
   );
-  writer.writeString(offsets[7], object.quien);
-  writer.writeString(offsets[8], object.tipo);
+  writer.writeString(offsets[8], object.quien);
+  writer.writeString(offsets[9], object.tipo);
 }
 
 Pendiente _pendienteDeserialize(
@@ -202,16 +208,17 @@ Pendiente _pendienteDeserialize(
       allOffsets,
     ),
     conteo: reader.readStringOrNull(offsets[2]),
-    fecha: reader.readStringOrNull(offsets[3]),
-    idProyecto: reader.readStringOrNull(offsets[4]),
-    idUsuario: reader.readStringOrNull(offsets[5]),
+    estado: reader.readLongOrNull(offsets[3]),
+    fecha: reader.readStringOrNull(offsets[4]),
+    idProyecto: reader.readStringOrNull(offsets[5]),
+    idUsuario: reader.readStringOrNull(offsets[6]),
     info: reader.readObjectOrNull<Info>(
-      offsets[6],
+      offsets[7],
       InfoSchema.deserialize,
       allOffsets,
     ),
-    quien: reader.readStringOrNull(offsets[7]),
-    tipo: reader.readStringOrNull(offsets[8]),
+    quien: reader.readStringOrNull(offsets[8]),
+    tipo: reader.readStringOrNull(offsets[9]),
   );
   object.id = id;
   return object;
@@ -239,20 +246,22 @@ P _pendienteDeserializeProp<P>(
     case 2:
       return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 4:
       return (reader.readStringOrNull(offset)) as P;
     case 5:
       return (reader.readStringOrNull(offset)) as P;
     case 6:
+      return (reader.readStringOrNull(offset)) as P;
+    case 7:
       return (reader.readObjectOrNull<Info>(
         offset,
         InfoSchema.deserialize,
         allOffsets,
       )) as P;
-    case 7:
-      return (reader.readStringOrNull(offset)) as P;
     case 8:
+      return (reader.readStringOrNull(offset)) as P;
+    case 9:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -525,6 +534,75 @@ extension PendienteQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'conteo',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Pendiente, Pendiente, QAfterFilterCondition> estadoIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'estado',
+      ));
+    });
+  }
+
+  QueryBuilder<Pendiente, Pendiente, QAfterFilterCondition> estadoIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'estado',
+      ));
+    });
+  }
+
+  QueryBuilder<Pendiente, Pendiente, QAfterFilterCondition> estadoEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'estado',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Pendiente, Pendiente, QAfterFilterCondition> estadoGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'estado',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Pendiente, Pendiente, QAfterFilterCondition> estadoLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'estado',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Pendiente, Pendiente, QAfterFilterCondition> estadoBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'estado',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -1377,6 +1455,18 @@ extension PendienteQuerySortBy on QueryBuilder<Pendiente, Pendiente, QSortBy> {
     });
   }
 
+  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByEstado() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'estado', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByEstadoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'estado', Sort.desc);
+    });
+  }
+
   QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByFecha() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'fecha', Sort.asc);
@@ -1449,6 +1539,18 @@ extension PendienteQuerySortThenBy
   QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByConteoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'conteo', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByEstado() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'estado', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByEstadoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'estado', Sort.desc);
     });
   }
 
@@ -1534,6 +1636,12 @@ extension PendienteQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Pendiente, Pendiente, QDistinct> distinctByEstado() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'estado');
+    });
+  }
+
   QueryBuilder<Pendiente, Pendiente, QDistinct> distinctByFecha(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1593,6 +1701,12 @@ extension PendienteQueryProperty
   QueryBuilder<Pendiente, String?, QQueryOperations> conteoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'conteo');
+    });
+  }
+
+  QueryBuilder<Pendiente, int?, QQueryOperations> estadoProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'estado');
     });
   }
 

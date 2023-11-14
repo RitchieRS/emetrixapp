@@ -1,9 +1,10 @@
-import 'package:emetrix_flutter/app/core/modules/productos/productos.dart';
 import 'package:isar/isar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:emetrix_flutter/app/core/modules/pendientes/pendientes.dart';
+import 'package:emetrix_flutter/app/core/modules/productos/productos.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/all_stores.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
@@ -22,10 +23,34 @@ class Database {
   Future<Isar> _openDatabase() async {
     final dir = await getApplicationDocumentsDirectory();
     if (Isar.instanceNames.isEmpty) {
-      return await Isar.open([SondeosFromStoreSchema, StoreGeneralSchema],
-          directory: dir.path);
+      return await Isar.open([
+        SondeosFromStoreSchema,
+        StoreGeneralSchema,
+        PendienteSchema,
+        ProductosIsarSchema,
+      ], directory: dir.path);
     }
     return Future.value(Isar.getInstance());
+  }
+
+  Future<bool> isStoreGeneralsEmpty() async {
+    final isar = await database;
+    final count = await isar.storeGenerals.count();
+    if (count > 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> isProductsEmpty() async {
+    final isar = await database;
+    final count = await isar.productosIsars.count();
+    if (count > 0) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   //
@@ -124,6 +149,81 @@ class Database {
     });
   }
 
+  //SetCheckIn/Checkout
+  Future<void> setCheckInOut(
+      {required String storeUuid,
+      required String lat,
+      required String long,
+      required String pic,
+      required bool isCheckin}) async {
+    final isar = await database;
+    final checkinout = CheckInOut(latitud: lat, longitud: long, picture: pic);
+
+    await isar.writeTxn(() async {
+      final store = await isar.sondeosFromStores
+          .filter()
+          .uuidEqualTo(storeUuid)
+          .findFirst();
+
+      if (store == null) return;
+
+      if (isCheckin) {
+        store.checkIn = checkinout;
+      } else {
+        store.checkOut = checkinout;
+      }
+
+      await isar.sondeosFromStores.put(store);
+      //
+    });
+  }
+
+  //GetASpecificStoreByUuid
+  Future<SondeosFromStore?> getStoreByUuid({required String storeUuid}) async {
+    final isar = await database;
+    final store = await isar.sondeosFromStores
+        .filter()
+        .uuidEqualTo(storeUuid)
+        .findFirst();
+
+    if (store == null) return null;
+    return store;
+  }
+
+  //SavePending
+  Future<void> savePending(Pendiente pending) async {
+    final isar = await database;
+    await isar.writeTxn(() async {
+      await isar.pendientes.put(pending); // insert & update
+    });
+  }
+
+  //GetAllPendings
+  Future<List<Pendiente>> getAllPendings() async {
+    final isar = await database;
+    final list = await isar.pendientes.where().findAll();
+    if (list.isNotEmpty) {
+      return list;
+    }
+    return [];
+  }
+
+  //DeletePending
+  Future<bool> deletePending(int id) async {
+    final isar = await database;
+    bool deleted = false;
+    await isar.writeTxn(() async {
+      final lenght = await isar.pendientes.count();
+      if (lenght <= 1) {
+        deleted = await isar.pendientes.delete(id);
+        await isar.pendientes.clear();
+        return deleted;
+      }
+      deleted = await isar.pendientes.delete(id);
+    });
+    return deleted;
+  }
+
   //
   //Save all stores available
   Future<void> saveAllStores(List<Store> stores) async {
@@ -167,26 +267,17 @@ class Database {
     });
   }
 
-  Future<void> saveAllProductsDB(List<Productos> stores) async {
+  Future<void> saveAllProductsDB(List<Producto> listProducts) async {
     final isar = await database;
+    final List<ProductosIsar> list = [];
+
+    for (Producto product in listProducts) {
+      final productosIsar = ProductosIsar(productos: product);
+      list.add(productosIsar);
+    }
 
     await isar.writeTxn(() async {
-      for (Productos p in stores) {
-        final productosIsar = ProductosIsar(
-            idCategoria: p.idCategoria,
-            idMarca: p.idMarca,
-            sku: p.sku,
-            nombre: p.nombre,
-            descripcion: p.descripcion,
-            precioMax: p.precioMax,
-            precioMin: p.precioMin,
-            precioProm: p.precioProm,
-            precioPedido: p.precioPedido,
-            fotoUrl: p.fotoUrl,
-            unidadPedidos: p.unidadPedidos);
-
-        await isar.productosIsars.put(productosIsar); // insert & update
-      }
+      await isar.productosIsars.putAll(list); // insert & update
     });
   }
 
@@ -199,37 +290,5 @@ class Database {
     return [];
   }
 
-  //   Future<void> deleteItem(int index) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final List<String>? routes = prefs.getStringList('routes');
-  //   final List<String>? sondeos = prefs.getStringList('sondeos');
-
-  //   routes?.removeAt(index);
-  //   if (routes != null) {
-  //     if (routes.isEmpty) {
-  //       prefs.remove('routes');
-  //       state = state.copyWith(state: States.error);
-  //     } else {
-  //       prefs.setStringList('routes', routes);
-  //       state = state.copyWith(state: States.succes);
-  //     }
-  //   } else {
-  //     debugPrint('SHARED ERROR: Error deleting in db');
-  //   }
-
-  //   sondeos?.removeAt(index);
-  //   if (sondeos != null) {
-  //     if (sondeos.isEmpty) {
-  //       prefs.remove('sondeos');
-  //       state = state.copyWith(state: States.error);
-  //     } else {
-  //       prefs.setStringList('sondeos', sondeos);
-  //       state = state.copyWith(state: States.succes);
-  //     }
-  //   } else {
-  //     debugPrint('SHARED ERROR sondeos: Error deleting in db');
-  //   }
-
-  //   return;
-  // }
+//
 }

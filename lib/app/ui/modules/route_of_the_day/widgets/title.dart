@@ -1,13 +1,16 @@
-import 'package:emetrix_flutter/app/ui/modules/drawer/drawer.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
+import 'package:emetrix_flutter/app/ui/modules/drawer/drawer.dart';
+import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/utils/search.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class MyTitle extends ConsumerWidget implements PreferredSizeWidget {
-  const MyTitle({super.key});
+  const MyTitle({super.key, required this.sondeos});
+  final List<SondeosFromStore> sondeos;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,6 +33,15 @@ class MyTitle extends ConsumerWidget implements PreferredSizeWidget {
       systemOverlayStyle: isDark == ThemeMode.dark
           ? SystemUiOverlayStyle.light
           : SystemUiOverlayStyle.dark,
+      actions: [
+        IconButton(
+            onPressed: () {
+              showSearch(
+                  context: context,
+                  delegate: CustomSearchDelegate(sondeos: sondeos, ref: ref));
+            },
+            icon: const Icon(Icons.search)),
+      ],
     );
   }
 

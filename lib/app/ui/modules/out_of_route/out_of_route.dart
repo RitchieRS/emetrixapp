@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/ui/modules/out_of_route/widgets/error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +31,6 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await getStoresDB();
-      await showInitialMessage();
     });
   }
 
@@ -38,14 +38,13 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
   Widget build(BuildContext context) {
     final state = ref.watch(outORControllerProvider);
     final size = MediaQuery.of(context).size;
-    final width = size.width * 0.85;
-    final height = size.height * 0.065;
-    final isDark = ref.watch(themeProvider);
+    final buttonWidth = size.width * 0.9;
+    final buttonHeight = size.height * 0.052;
 
     switch (state.state) {
       case States.succes:
         return Scaffold(
-          appBar: const GradientTitle(title: 'Fuera de Ruta'),
+          appBar: const GeneralTitle(title: 'Fuera de Ruta'),
           body: Stack(
             alignment: Alignment.bottomCenter,
             children: [
@@ -54,20 +53,20 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                 height: size.height * 0.87,
                 width: size.width,
                 color: Theme.of(context).dialogBackgroundColor,
-                child: Padding(
-                    padding: EdgeInsets.only(top: size.height * 0.02),
-                    child: CustomScrollView(
-                      slivers: [
-                        SliverList.builder(
-                          itemCount: storesMain.length,
-                          itemBuilder: (context, index) => MyCard(
-                              onChanged: (index) => selectedStores(index),
-                              canceled: ref.watch(cardProvider),
-                              index: index,
-                              resp: _toStore(storesMain[index])),
-                        )
-                      ],
-                    )),
+                child: CustomScrollView(
+                  slivers: [
+                    SliverList.separated(
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: buttonHeight * 0.2),
+                      itemCount: storesMain.length,
+                      itemBuilder: (context, index) => MyCard(
+                          onChanged: (index) => selectedStores(index),
+                          canceled: ref.watch(cardProvider),
+                          index: index,
+                          resp: _toStore(storesMain[index])),
+                    )
+                  ],
+                ),
               ),
               storesSelected.isNotEmpty
                   ? FadeIn(
@@ -78,11 +77,11 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                           child: ButonDimentions(
                               background: c.primary600,
                               title:
-                                  'Agregar ${storesSelected.length <= 1 ? '' : storesSelected.length} Ruta${storesSelected.length <= 1 ? '' : 's'}',
+                                  'Descargar ${storesSelected.length <= 1 ? '' : storesSelected.length} Ruta${storesSelected.length <= 1 ? '' : 's'}',
                               style: t.mediumLight,
                               onTap: () => _start(),
-                              width: width,
-                              height: height),
+                              width: buttonWidth,
+                              height: buttonHeight),
                         ),
                       ),
                     )
@@ -92,25 +91,15 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
         );
       case States.error:
         return Scaffold(
-          appBar: const GradientTitle(title: 'Fuera de Ruta'),
+          appBar: const GeneralTitle(title: 'Fuera de Ruta'),
           body: RefreshIndicator(
             onRefresh: () => getStoresDB(),
-            child: ListView(
-              children: [
-                Text(
-                  state.homeData?.idError.toString() ??
-                      'Hubo un problema con la descarga de tiendas. Inténtalo de nuevo.',
-                  style:
-                      isDark == ThemeMode.dark ? t.mediumLight : t.mediumDark,
-                  textAlign: TextAlign.center,
-                )
-              ],
-            ),
+            child: const ErrorView(),
           ),
         );
       case States.loading:
         return const Scaffold(
-          appBar: GradientTitle(title: 'Fuera de Ruta'),
+          appBar: GeneralTitle(title: 'Fuera de Ruta'),
           body: GeneralLoading(loadingCards: 6),
         );
     }
@@ -154,9 +143,12 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
   }
 
   Future<void> getStoresDB() async {
-    storesMain =
+    final list =
         await ref.read(outORControllerProvider.notifier).getAllStoresIsar(ref);
-    setState(() {});
+    if (list.isNotEmpty) {
+      setState(() => storesMain = list);
+      await showInitialMessage();
+    }
   }
 
   Future<void> _start() async {
@@ -202,7 +194,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
   Future<void> _showLoading() async {
     await showProgress(
       context: context,
-      title: 'Guardando rutas',
+      title: 'Descargando rutas',
       canTapOutside: false,
     );
   }

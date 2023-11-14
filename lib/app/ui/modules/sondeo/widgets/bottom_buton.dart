@@ -21,7 +21,7 @@ class BottomButon extends StatelessWidget {
             EdgeInsets.only(bottom: Platform.isIOS ? size.height * 0.04 : 0),
         child: Center(
           child: Buton(
-            background: c.onTertiary,
+            background: c.primary600,
             title: 'Enviar',
             style: t.mediumLight,
             onTap: () => onTap(),

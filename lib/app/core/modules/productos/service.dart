@@ -1,4 +1,3 @@
-
 import 'package:emetrix_flutter/app/core/modules/productos/productos.dart';
 import 'package:emetrix_flutter/app/core/modules/productos/repository.dart';
 
@@ -8,13 +7,12 @@ class ProductosService {
 
   Future<ProductosJson> getProductsService() async {
     final response = await repository.getProducts();
-    final List<Productos> mainProductos = [];
-    response.resp?.forEach(
-      (producto) {
-          mainProductos.add(producto);
-      },
-    );
-    final ProductosJson productosJson = ProductosJson(idError: response.idError, resp: mainProductos);
+    final List<Producto> mainProductos = [];
+    for (var producto in response.resp.productos) {
+      mainProductos.add(producto);
+    }
+    final ProductosJson productosJson = ProductosJson(
+        idError: response.idError, resp: RespProd(productos: mainProductos));
     return productosJson;
   }
 }

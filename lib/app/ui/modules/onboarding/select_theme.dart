@@ -23,7 +23,7 @@ class _SelectThemeState extends ConsumerState<SelectThemePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
-    final height = size.height * 0.065;
+    final height = size.height * 0.052;
     final width = size.width * 0.9;
     final primaryColor = c.primary500;
     final appbar = AppBar(
@@ -57,6 +57,7 @@ class _SelectThemeState extends ConsumerState<SelectThemePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          SizedBox(height: size.height * 0.15),
           FadeIn(
               delay: const Duration(milliseconds: 500),
               child: Center(child: Text('Ponte cómodo.', style: t.subtitle))),
@@ -66,9 +67,7 @@ class _SelectThemeState extends ConsumerState<SelectThemePage> {
                 child:
                     Text('Elige el tema de tu preferencia.', style: t.medium)),
           ),
-          SizedBox(
-            height: size.height * 0.03,
-          ),
+          SizedBox(height: size.height * 0.03),
           FadeIn(
             delay: const Duration(milliseconds: 1500),
             child: Column(
@@ -106,21 +105,24 @@ class _SelectThemeState extends ConsumerState<SelectThemePage> {
                       )),
                 ),
                 SizedBox(height: size.height * 0.05),
-                Center(
-                  child: isLoading
-                      ? ButonLoading(
-                          background: primaryColor,
-                          onFinish: null,
-                          height: height,
-                          width: width,
-                        )
-                      : ButonDimentions(
-                          height: height,
-                          width: width,
-                          background: primaryColor,
-                          title: 'Siguiente',
-                          style: t.mediumLight,
-                          onTap: () => goToStores()),
+                Padding(
+                  padding: EdgeInsets.only(top: size.height * 0.2),
+                  child: Center(
+                    child: isLoading
+                        ? ButonLoading(
+                            background: primaryColor,
+                            onFinish: null,
+                            height: height,
+                            width: width,
+                          )
+                        : ButonDimentions(
+                            height: height,
+                            width: width,
+                            background: primaryColor,
+                            title: 'Siguiente',
+                            style: t.mediumLight,
+                            onTap: () => goToStores()),
+                  ),
                 )
               ],
             ),

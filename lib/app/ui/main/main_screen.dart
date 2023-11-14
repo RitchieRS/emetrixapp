@@ -1,5 +1,6 @@
 import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/modules/drawer/drawer.dart';
+import 'package:emetrix_flutter/app/ui/modules/pendings/pendings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,6 +21,7 @@ class MainPage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<MainPage> {
   List<Widget> screens = [
     const RouteOfTheDayPage(),
+    const PendingsPage(),
     const SettingsPage(),
   ];
 
@@ -119,11 +121,18 @@ class _HomePageState extends ConsumerState<MainPage> {
           SalomonBottomBar(
         currentIndex: indexMain,
         onTap: (int index) => ref.read(mainIndex.notifier).setIndex(index),
+        margin: const EdgeInsets.all(10),
         items: [
           SalomonBottomBarItem(
               icon: const Icon(Icons.route_outlined),
               activeIcon: const Icon(Icons.route),
               title: const Text("Ruta del dia"),
+              selectedColor: c.primary500,
+              unselectedColor: unselectedColor),
+          SalomonBottomBarItem(
+              icon: const Icon(Icons.task_outlined),
+              activeIcon: const Icon(Icons.task_rounded),
+              title: const Text("Pendientes"),
               selectedColor: c.primary500,
               unselectedColor: unselectedColor),
           SalomonBottomBarItem(

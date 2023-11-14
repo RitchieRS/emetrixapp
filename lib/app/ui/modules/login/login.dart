@@ -1,5 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
-import 'package:emetrix_flutter/app/core/modules/productos/productos.dart';
+import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -108,7 +108,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 background: c.primary500,
                                 title: 'Entrar',
                                 style: t.mediumLight,
-                                onTap: () => start(),
+                                onTap: () => _start(),
                                 width: width,
                                 height: height))
                         : Padding(
@@ -131,18 +131,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 
-  Future start() async {
+  Future<void> _start() async {
     final networkResult = await (Connectivity().checkConnectivity());
     setState(() => switchButton = !switchButton);
 
-    if (!validateForm(userKey.currentState) &&
-        !validateForm(passKey.currentState)) {
+    if (!_validateForm(userKey.currentState) &&
+        !_validateForm(passKey.currentState)) {
       setState(() {});
       return;
     }
 
-    if (!validateForm(userKey.currentState) ||
-        !validateForm(passKey.currentState)) {
+    if (!_validateForm(userKey.currentState) ||
+        !_validateForm(passKey.currentState)) {
       setState(() {});
       return;
     }
@@ -158,11 +158,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       return;
     }
 
-    await requestAccess();
+    await _requestAccess();
     //
   }
 
-  bool validateForm(FormState? form) {
+  bool _validateForm(FormState? form) {
     if (form != null) {
       if (form.validate()) {
         //Form is valid
@@ -178,29 +178,28 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return false;
   }
 
-  Future requestAccess() async {
+  Future<void> _requestAccess() async {
     final prefs = await SharedPreferences.getInstance();
-    final isDark = prefs.containsKey('isDarkMode');
+    // final isDark = prefs.containsKey('isDarkMode');
+    final haveData = prefs.containsKey('loginInfo');
     final navigator = Navigator.of(context);
 
-    bool userLoggedIn = await ref
+    bool loginSucces = await ref
         .read(loginControllerProvider.notifier)
         .sendRequest(user.text, password.text);
 
-    if (userLoggedIn == true && isDark == false) {
-      await getStores();
-      await getProducts();
+    if (loginSucces == true && haveData == false) {
+      await _verifyDatabase();
+      await vibrate();
       navigator.pushReplacementNamed('onboard');
       user.clear();
       password.clear();
       setState(() => switchButton = false);
-      await vibrate();
       return;
     }
-    if (userLoggedIn == true && isDark == true) {
-      await getStores();
-      await getProducts();
-      navigator.pushReplacementNamed('home');
+    if (loginSucces == true && haveData == true) {
+      await _verifyDatabase();
+      navigator.pushReplacementNamed('home'); //home
       user.clear();
       password.clear();
       setState(() => switchButton = false);
@@ -219,7 +218,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
   }
 
-  Future getStores() async {
+  Future<void> _verifyDatabase() async {
+    final products = await ref.read(databaseProvider).isProductsEmpty();
+    final stores = await ref.read(databaseProvider).isStoreGeneralsEmpty();
+    if (products && stores) {
+      await _getStores();
+      await _getProducts();
+    }
+  }
+
+  Future<void> _getStores() async {
     List<Store> allStores = [];
     final stores = await ref.read(loginControllerProvider.notifier).getStores();
     final storesAdditional =
@@ -235,12 +243,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     ref.read(loginControllerProvider.notifier).saveStoresData(allStores, ref);
   }
 
-   Future getProducts() async {
-    List<Productos> allProducts = [];
-    final stores = await ref.read(loginControllerProvider.notifier).getProductsCtrl();
-    stores.resp?.forEach((store) {
-      allProducts.add(store);
-    });
-   ref.read(loginControllerProvider.notifier).saveProductsData(allProducts, ref);
+  Future<void> _getProducts() async {
+    final products =
+        await ref.read(loginControllerProvider.notifier).getProductsCtrl();
+    await ref
+        .read(loginControllerProvider.notifier)
+        .saveProductsData(products.resp.productos, ref);
   }
 }

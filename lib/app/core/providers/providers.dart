@@ -1,3 +1,5 @@
+import 'package:emetrix_flutter/app/core/modules/pendientes/respository.dart';
+import 'package:emetrix_flutter/app/core/modules/pendientes/service.dart';
 import 'package:emetrix_flutter/app/core/modules/productos/repository.dart';
 import 'package:emetrix_flutter/app/core/modules/productos/service.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/repository.dart';
@@ -39,7 +41,6 @@ final storesServiceProvider = Provider<StoresService>((ref) {
   return StoresService(respository);
 });
 
-
 //-----------------------------------
 
 final productosRepoProvider = Provider<ProductosRepository>((ref) {
@@ -49,4 +50,15 @@ final productosRepoProvider = Provider<ProductosRepository>((ref) {
 final productosServiceProvider = Provider<ProductosService>((ref) {
   final respository = ref.watch(productosRepoProvider);
   return ProductosService(respository);
+});
+
+//-----------------------------------
+
+final pendingsRepoProvider = Provider<PendingsRepository>((ref) {
+  return PendingsRepository();
+});
+
+final pendingsServiceProvider = Provider<PendingsService>((ref) {
+  final respository = ref.watch(pendingsRepoProvider);
+  return PendingsService(respository);
 });

@@ -38,8 +38,7 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
       case States.succes:
         return SafeArea(
           child: Scaffold(
-            appBar: const MyTitle(),
-            // drawer: const MyDrawer(),
+            appBar: MyTitle(sondeos: list),
             body: RefreshIndicator(
               onRefresh: () => getList(),
               child: ListView.builder(
@@ -48,7 +47,6 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
                     return MyCard2(
                       index: index,
                       store: state.data[index],
-                      // store: state.data[index].store,
                       onDeleted: () => onDeleted(index),
                     );
                   }),
@@ -57,7 +55,7 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
         );
       case States.error:
         return Scaffold(
-          appBar: const MyTitle(),
+          appBar: MyTitle(sondeos: list),
           // drawer: const MyDrawer(),
           body: RefreshIndicator(
             onRefresh: () => getList(),
@@ -66,10 +64,10 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
         );
 
       case States.loading:
-        return const Scaffold(
-          appBar: MyTitle(),
+        return Scaffold(
+          appBar: MyTitle(sondeos: list),
           // drawer: MyDrawer(),
-          body: GeneralLoading(loadingCards: 3),
+          body: const GeneralLoading(loadingCards: 3),
         );
     }
   }
