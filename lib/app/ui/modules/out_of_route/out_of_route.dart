@@ -1,9 +1,8 @@
-import 'package:emetrix_flutter/app/ui/modules/out_of_route/widgets/error_view.dart';
 import 'package:flutter/material.dart';
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import 'package:emetrix_flutter/app/ui/modules/out_of_route/widgets/error_view.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/all_stores.dart';
@@ -68,24 +67,23 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                   ],
                 ),
               ),
-              storesSelected.isNotEmpty
-                  ? FadeIn(
-                      duration: const Duration(milliseconds: 100),
-                      child: Padding(
-                        padding: EdgeInsets.only(top: size.height * 0.7),
-                        child: Center(
-                          child: ButonDimentions(
-                              background: c.primary600,
-                              title:
-                                  'Descargar ${storesSelected.length <= 1 ? '' : storesSelected.length} Ruta${storesSelected.length <= 1 ? '' : 's'}',
-                              style: t.mediumLight,
-                              onTap: () => _start(),
-                              width: buttonWidth,
-                              height: buttonHeight),
-                        ),
-                      ),
-                    )
-                  : const SizedBox()
+              AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: storesSelected.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(top: size.height * 0.7),
+                          child: Center(
+                            child: ButonDimentions(
+                                background: c.primary600,
+                                title:
+                                    'Descargar ${storesSelected.length <= 1 ? '' : storesSelected.length} Ruta${storesSelected.length <= 1 ? '' : 's'}',
+                                style: t.mediumLight,
+                                onTap: () => _start(),
+                                width: buttonWidth,
+                                height: buttonHeight),
+                          ),
+                        )
+                      : const SizedBox()),
             ],
           ),
         );

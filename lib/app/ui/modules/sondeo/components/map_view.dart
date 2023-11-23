@@ -163,6 +163,10 @@ class _MapViewState extends ConsumerState<MapView> {
 //Crear Calculo de Check-In / CheckOut
     final storePosition =
         (widget.store.latitud ?? 0, widget.store.longitud ?? 0);
+    position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best,
+        forceAndroidLocationManager: false);
+    setState(() {});
 
     if (position != null) {
       final distance = Geolocator.distanceBetween(position!.latitude,

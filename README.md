@@ -38,6 +38,6 @@ Contraseña: wer
 
 
  Versón de Flutter
-• Flutter 3.13.2 
-• Dart 3.1.0 
+• Flutter 3.16.0
+• Dart 3.2.0 
 • App Version 1.0.0

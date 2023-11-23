@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,7 +28,8 @@ class SondeoPage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _SondeoPageState();
 }
 
-class _SondeoPageState extends ConsumerState<SondeoPage> {
+class _SondeoPageState extends ConsumerState<SondeoPage>
+    with AutomaticKeepAliveClientMixin {
   List<RespM> sondeosList2 = [];
   List<(String, int)> mandatorySteps = [];
   int missingSteps = 0;
@@ -43,6 +45,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     final onlyFirst = ref.watch(onlyFirstProvider);
@@ -77,9 +80,9 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     debugPrint('Finished Sections: $finishedSections');
     //*Close and save to db the current Navigator state, when the app restart, restore the Navigator state
 
-    return WillPopScope(
-      onWillPop: () => Future.value(false),
-      // onWillPop: () => onExit(finishedSections, false),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {},
       child: Scaffold(
         appBar: appbar,
         body: CustomScrollView(
@@ -88,6 +91,8 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
             SliverList.builder(
               itemCount: sondeosList2.length,
               addAutomaticKeepAlives: true,
+              addRepaintBoundaries: true,
+              addSemanticIndexes: true,
               itemBuilder: (BuildContext context, int index) {
                 final enabled = index != 0 && onlyFirst; //One then all
                 // final enabled = index <= currentOption;        //One by one
@@ -95,9 +100,16 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
 
                 return FadeIn(
                   child: TypeSondeo(
-                    onTap: !enabled
-                        ? () => navigateToSondeo(index, finishedSections)
-                        : null,
+                    onTap: () {
+                      try {
+                        if (!enabled) {
+                          navigateToSondeo(index, finishedSections);
+                          return;
+                        }
+                      } catch (error) {
+                        logger.e(error);
+                      }
+                    },
                     enebled: !enabled,
                     sondeoItem: sondeosList2[index],
                     index: index,
@@ -125,7 +137,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
         buttonLabel: butonLabel ?? 'Aceptar');
   }
 
-  void navigateToSondeo(int index, List<int> finishedSections) async {
+  Future<void> navigateToSondeo(int index, List<int> finishedSections) async {
     if (sondeosList2[index].sondeo == 'Asistencia') {
       if (finishedSections.contains(index)) {
         await _messaje('Cuidado', 'Ya tomaste asistencia.', null);
@@ -149,7 +161,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
         return;
       }
     }
-    Navigator.push(
+    await Navigator.push(
         context,
         PageTransition(
             duration: const Duration(milliseconds: 350),
@@ -261,6 +273,9 @@ class _SondeoPageState extends ConsumerState<SondeoPage> {
     return;
     // return false;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   //
 }

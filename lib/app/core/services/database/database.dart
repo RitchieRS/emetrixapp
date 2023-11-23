@@ -179,6 +179,18 @@ class Database {
   }
 
   //GetASpecificStoreByUuid
+  Future<bool> existStoreData({required String storeUuid}) async {
+    final isar = await database;
+    final store = await isar.sondeosFromStores
+        .filter()
+        .uuidEqualTo(storeUuid)
+        .findFirst();
+
+    if (store == null) return false;
+    return true;
+  }
+
+  //GetASpecificStoreByUuid
   Future<SondeosFromStore?> getStoreByUuid({required String storeUuid}) async {
     final isar = await database;
     final store = await isar.sondeosFromStores

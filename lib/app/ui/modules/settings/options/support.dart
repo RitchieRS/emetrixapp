@@ -34,6 +34,11 @@ class _SupportPageState extends ConsumerState<SupportPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final horizontalPadding = size.width * 0.06;
+    final Widget image = SvgPicture.asset(
+      AppAssets.contactUs,
+      height: size.height * 0.2,
+      fit: BoxFit.cover,
+    );
 
     return Scaffold(
       appBar: const GeneralTitle(title: 'Soporte Técnico'),
@@ -42,12 +47,7 @@ class _SupportPageState extends ConsumerState<SupportPage> {
           Padding(
             padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
             child: Center(
-              child: FadeIn(
-                  child: SvgPicture.asset(
-                AppAssets.contactUs,
-                height: size.height * 0.2,
-                fit: BoxFit.cover,
-              )),
+              child: FadeIn(child: image),
             ),
           ),
           Padding(

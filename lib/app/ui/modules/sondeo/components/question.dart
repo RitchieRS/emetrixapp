@@ -16,24 +16,24 @@ class Question extends ConsumerStatefulWidget {
     required this.pregunta,
     required this.index,
     required this.type,
+    this.textfieldValue,
   });
   final int index;
   final num? charactersMin;
   final num? charactersMax;
   final num? valueMin;
   final num? valueMax;
-  final String textfieldValue = '';
+  final String? textfieldValue;
   final Preguntas pregunta;
   final String type;
   final bool mandatory;
-  final Function(String?) answer;
+  final Function(String? response, bool error) answer;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _QuestionState();
 }
 
-class _QuestionState extends ConsumerState<Question>
-    with AutomaticKeepAliveClientMixin {
+class _QuestionState extends ConsumerState<Question> {
   final formKey = GlobalKey<FormState>();
   static final errorBorder = OutlineInputBorder(
       borderSide: BorderSide(color: c.error, width: 1.5),
@@ -44,8 +44,12 @@ class _QuestionState extends ConsumerState<Question>
   String textValue = '';
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    super.build(context);
     final size = MediaQuery.of(context).size;
     Color color2 = Theme.of(context).hintColor.withOpacity(0.3);
     final defaultBorder = OutlineInputBorder(
@@ -71,9 +75,10 @@ class _QuestionState extends ConsumerState<Question>
               key: formKey,
               child: TextFormField(
                 validator: (value) => selectValidation(value),
+                initialValue: widget.textfieldValue,
                 onChanged: (value) async {
-                  await Future.delayed(const Duration(milliseconds: 500))
-                      .whenComplete(() => validateAndSave(value));
+                  await Future.delayed(const Duration(milliseconds: 500));
+                  validateAndSave(value);
                   // validateAndSave(value);
                   // setState(() {
                   //   textValue = value;
@@ -129,10 +134,10 @@ class _QuestionState extends ConsumerState<Question>
     setState(() {});
 
     if (isValid && value.isNotEmpty) {
-      widget.answer(value);
+      widget.answer(value, false);
       return;
     }
-    widget.answer(null);
+    widget.answer(value, true);
     return;
   }
 
@@ -176,7 +181,7 @@ class _QuestionState extends ConsumerState<Question>
         return '${value.length}: Completa $max caracteres como máximo';
       }
     }
-    widget.answer(value);
+    widget.answer(value, false);
     return null;
   }
 
@@ -200,7 +205,7 @@ class _QuestionState extends ConsumerState<Question>
       return 'Ingresa un valor menor de $max';
     }
 
-    widget.answer(value);
+    widget.answer(value, false);
     return null;
   }
 
@@ -221,7 +226,7 @@ class _QuestionState extends ConsumerState<Question>
     if (valueNumber < min || valueNumber > max || valueNumber % 1 == 0) {
       return 'Debe ser un DECIMAL entre $min - $max';
     }
-    widget.answer(value);
+    widget.answer(value, false);
     return null;
   }
 
@@ -231,7 +236,7 @@ class _QuestionState extends ConsumerState<Question>
 
     if (email != null) {
       if (emailRegExp.hasMatch(email)) {
-        widget.answer(email);
+        widget.answer(email, false);
         return null;
       }
       return 'E-mail incorrecto';
@@ -239,7 +244,4 @@ class _QuestionState extends ConsumerState<Question>
 
     return 'Completa el campo';
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

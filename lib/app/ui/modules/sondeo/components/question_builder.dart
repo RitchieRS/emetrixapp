@@ -9,6 +9,7 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   const QuestionBuilder({
     super.key,
     this.mandatory = false,
+    this.answerValue,
     required this.pregunta,
     required this.store,
     required this.index,
@@ -31,10 +32,11 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Store2 store;
   final int index;
   final bool mandatory;
-  final Function(String?) answer;
-  final Function(String?) numeric;
-  final Function(String?) decimal;
-  final Function(String?) email;
+  final String? answerValue;
+  final Function(String? response, bool error) answer;
+  final Function(String? response) numeric;
+  final Function(String? response) decimal;
+  final Function(String? response) email;
   final Function(String?) answerRadio;
   final Function(String?) yesnoRadio;
   final Function(List<String>?) selectionMultiple;
@@ -85,8 +87,9 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           type: widget.pregunta.tipo ?? 'abierta',
           index: widget.index,
           pregunta: widget.pregunta,
-          answer: (String? answer) {
-            widget.answer(answer);
+          textfieldValue: widget.answerValue,
+          answer: (String? answer, bool error) {
+            widget.answer(answer, error);
             //Get the value of the textfield and save it to validate and send to endpoint;
           },
           charactersMin: widget.pregunta.valorMinimo,
@@ -99,7 +102,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           type: widget.pregunta.tipo ?? 'abierta',
           index: widget.index,
           pregunta: widget.pregunta,
-          answer: (String? answer) {
+          answer: (String? answer, bool error) {
             widget.numeric(answer);
           },
           valueMin: widget.pregunta.valorMinimo,
@@ -112,7 +115,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           type: widget.pregunta.tipo ?? 'abierta',
           index: widget.index,
           pregunta: widget.pregunta,
-          answer: (String? answer) {
+          answer: (String? answer, bool error) {
             widget.email(answer);
           },
           valueMin: widget.pregunta.valorMinimo,
@@ -125,7 +128,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           type: widget.pregunta.tipo ?? 'abierta',
           index: widget.index,
           pregunta: widget.pregunta,
-          answer: (String? answer) {
+          answer: (String? answer, bool error) {
             widget.decimal(answer);
           },
           valueMin: widget.pregunta.valorMinimo,

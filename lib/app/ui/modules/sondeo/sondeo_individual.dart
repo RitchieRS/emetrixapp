@@ -28,7 +28,8 @@ class SingleSondeoPage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _SondeosBuilderState();
 }
 
-class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
+class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
+    with AutomaticKeepAliveClientMixin {
   //* List Responses
   ResponseIndex? textResponse;
   ResponseIndex? numericResponse;
@@ -55,143 +56,221 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
   void initState() {
     super.initState();
     idenifyComponents();
+    getTempResponses();
+    //Traer los datos de la bd, para pasarlos a los widgets hijos
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final finishedSections = ref.watch(finishedSondeos);
 
-    return Scaffold(
-        appBar: CustomTitle(title: widget.sondeoItem.sondeo),
-        body: GestureDetector(
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: CustomScrollView(
-            slivers: [
-              if (widget.sondeoItem.preguntas != null)
-                // if (widget.sondeoItem.preguntas![0].tipo == 'asistencia')
-                //   SliverToBoxAdapter(child: MapView(store: widget.store))
-                // else
-                SliverList.builder(
-                    itemCount: widget.sondeoItem.preguntas?.length,
-                    itemBuilder: (context, index) {
-                      return QuestionBuilder(
-                        mandatory:
-                            validate ? mandatoryComponents[index] : false,
-                        answer: (response) {
-                          setState(() {
-                            validate = false;
-                            textResponse =
-                                ResponseIndex(index: index, response: response);
-                          });
-                        },
-                        numeric: (response) {
-                          setState(() {
-                            validate = false;
-                            numericResponse =
-                                ResponseIndex(index: index, response: response);
-                          });
-                        },
-                        decimal: (response) {
-                          setState(() {
-                            validate = false;
-                            decimalResponse =
-                                ResponseIndex(index: index, response: response);
-                          });
-                        },
-                        email: (response) {
-                          setState(() {
-                            validate = false;
-                            emailResponse =
-                                ResponseIndex(index: index, response: response);
-                          });
-                        },
-                        answerRadio: (response) {
-                          setState(() {
-                            validate = false;
-                            radioResponse =
-                                ResponseIndex(index: index, response: response);
-                          });
-                        },
-                        yesnoRadio: (response) {
-                          setState(() {
-                            validate = false;
-                            yesnoRadioResponse =
-                                ResponseIndex(index: index, response: response);
-                          });
-                        },
-                        selectionMultiple: (selectedItems) {
-                          setState(() {
-                            validate = false;
-                            multipleResponse = ResponseIndex(
+    return PopScope(
+      onPopInvoked: (didPop) async {
+        final storeExist = await ref
+            .read(databaseProvider)
+            .existStoreData(storeUuid: widget.storeUuid);
+        if (storeExist) {
+          //update values
+          buildResponses();
+          // -->
+        }
+        //save values
+        buildResponses();
+        await ref.read(databaseProvider).updateSondeoFromStore(
+              storeUuid: widget.storeUuid,
+              stepIndex: widget.index,
+              progress: 0,
+              stepsLenght: widget.stepsLenght,
+              sondeoQuestionResponses: questionsResponses,
+            );
+        // return Future.value(true);
+      },
+      child: Scaffold(
+          appBar: CustomTitle(title: widget.sondeoItem.sondeo),
+          body: GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: CustomScrollView(
+              slivers: [
+                if (widget.sondeoItem.preguntas != null)
+                  SliverList.builder(
+                      itemCount: widget.sondeoItem.preguntas?.length,
+                      itemBuilder: (context, index) {
+                        // final item = widget.sondeoItem.preguntas?[index];
+
+                        return QuestionBuilder(
+                          mandatory:
+                              validate ? mandatoryComponents[index] : false,
+                          answerValue: textResponse?.response,
+                          answer: (response, error) async {
+                            // if (error) {
+                            //   await showMsj(
+                            //       context: context,
+                            //       title: 'Error',
+                            //       content:
+                            //           'Respuesta invalida en ${item?.pregunta}',
+                            //       destructive: false,
+                            //       onlyOk: true,
+                            //       buttonLabel: 'Ok');
+                            //   return;
+                            // }
+                            print(response);
+                            setState(() {
+                              validate = false;
+                              textResponse = ResponseIndex(
                                 index: index,
-                                response: selectedItems.toString());
-                          });
-                        },
-                        image: (image) {
-                          setState(() {
-                            validate = false;
-                            imageResponse = ResponseIndex(
-                                index: index, response: image.toString());
-                          });
-                        },
-                        photo: (photo) {
-                          setState(() {
-                            validate = false;
-                            photoResponse = ResponseIndex(
-                                index: index, response: photo.toString());
-                          });
-                        },
-                        positionGPS: (positionGPS) {
-                          setState(() {
-                            validate = false;
-                            positionGPSResponse = ResponseIndex(
-                                index: index, response: positionGPS);
-                          });
-                        },
-                        signature: (signatureFile) {
-                          setState(() {
-                            validate = false;
-                            signatureResponse = ResponseIndex(
+                                response: response,
+                                error: error,
+                              );
+                            });
+                          },
+                          numeric: (response) {
+                            setState(() {
+                              validate = false;
+                              numericResponse = ResponseIndex(
                                 index: index,
-                                response: signatureFile.toString());
-                          });
-                        },
-                        date: (date) {
-                          setState(() {
-                            validate = false;
-                            dateResponse = ResponseIndex(
-                                index: index, response: date.toString());
-                          });
-                        },
-                        dateTime: (dateTime) {
-                          setState(() {
-                            validate = false;
-                            dateTimeResponse = ResponseIndex(
-                                index: index, response: dateTime.toString());
-                          });
-                        },
-                        time: (time) {
-                          setState(() {
-                            validate = false;
-                            timeResponse = ResponseIndex(
-                                index: index, response: time.toString());
-                          });
-                        },
-                        index: index,
-                        store: widget.store,
-                        pregunta:
-                            widget.sondeoItem.preguntas?[index] ?? Preguntas(),
-                      );
-                    })
-              else
-                SliverToBoxAdapter(
-                    child: Center(child: Text('${widget.sondeoItem.linkWeb}'))),
-            ],
+                                response: response,
+                                error: false,
+                              );
+                            });
+                          },
+                          decimal: (response) {
+                            setState(() {
+                              validate = false;
+                              decimalResponse = ResponseIndex(
+                                index: index,
+                                response: response,
+                                error: false,
+                              );
+                            });
+                          },
+                          email: (response) {
+                            setState(() {
+                              validate = false;
+                              emailResponse = ResponseIndex(
+                                index: index,
+                                response: response,
+                                error: false,
+                              );
+                            });
+                          },
+                          answerRadio: (response) {
+                            setState(() {
+                              validate = false;
+                              radioResponse = ResponseIndex(
+                                index: index,
+                                response: response,
+                                error: false,
+                              );
+                            });
+                          },
+                          yesnoRadio: (response) {
+                            setState(() {
+                              validate = false;
+                              yesnoRadioResponse = ResponseIndex(
+                                index: index,
+                                response: response,
+                                error: false,
+                              );
+                            });
+                          },
+                          selectionMultiple: (selectedItems) {
+                            setState(() {
+                              validate = false;
+                              multipleResponse = ResponseIndex(
+                                index: index,
+                                response: selectedItems.toString(),
+                                error: false,
+                              );
+                            });
+                          },
+                          image: (image) {
+                            setState(() {
+                              validate = false;
+                              imageResponse = ResponseIndex(
+                                index: index,
+                                response: image.toString(),
+                                error: false,
+                              );
+                            });
+                          },
+                          photo: (photo) {
+                            setState(() {
+                              validate = false;
+                              photoResponse = ResponseIndex(
+                                index: index,
+                                response: photo.toString(),
+                                error: false,
+                              );
+                            });
+                          },
+                          positionGPS: (positionGPS) {
+                            setState(() {
+                              validate = false;
+                              positionGPSResponse = ResponseIndex(
+                                index: index,
+                                response: positionGPS,
+                                error: false,
+                              );
+                            });
+                          },
+                          signature: (signatureFile) {
+                            setState(() {
+                              validate = false;
+                              signatureResponse = ResponseIndex(
+                                index: index,
+                                response: signatureFile.toString(),
+                                error: false,
+                              );
+                            });
+                          },
+                          date: (date) {
+                            setState(() {
+                              validate = false;
+                              dateResponse = ResponseIndex(
+                                index: index,
+                                response: date.toString(),
+                                error: false,
+                              );
+                            });
+                          },
+                          dateTime: (dateTime) {
+                            setState(() {
+                              validate = false;
+                              dateTimeResponse = ResponseIndex(
+                                index: index,
+                                response: dateTime.toString(),
+                                error: false,
+                              );
+                            });
+                          },
+                          time: (time) {
+                            setState(() {
+                              validate = false;
+                              timeResponse = ResponseIndex(
+                                index: index,
+                                response: time.toString(),
+                                error: false,
+                              );
+                            });
+                          },
+                          index: index,
+                          store: widget.store,
+                          pregunta: widget.sondeoItem.preguntas?[index] ??
+                              Preguntas(),
+                        );
+                      })
+                else
+                  SliverToBoxAdapter(
+                      child:
+                          Center(child: Text('${widget.sondeoItem.linkWeb}'))),
+              ],
+            ),
           ),
-        ),
-        bottomNavigationBar: BottomButon(onTap: () async {
-          await validateAllComponents(finishedSections, ref);
-        }));
+          bottomNavigationBar: BottomButon(onTap: () async {
+            await validateAllComponents(finishedSections, ref);
+          })),
+    );
   }
 
   void idenifyComponents() {
@@ -210,10 +289,23 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
     });
   }
 
-  Future<void> validateAllComponents(
-      List<int> finishedSections, WidgetRef ref) async {
-    FocusManager.instance.primaryFocus?.unfocus();
+  Future<void> getTempResponses() async {
+    final store = await ref
+        .read(databaseProvider)
+        .getStoreByUuid(storeUuid: widget.storeUuid);
 
+    final responses = store?.storeSteps?[widget.index];
+    print('Si trae las respuestas de este paso');
+
+    responses?.sondeos?.forEach((element) {
+      if (textResponse?.index == element.indexSondeo) {
+        print('este sondeo coincide');
+        setState(() {});
+      }
+    });
+  }
+
+  void buildResponses() {
     Map<String, ResponseIndex?> typeResponses = {
       'abierta': textResponse,
       'numerico': numericResponse,
@@ -242,9 +334,12 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
       }
     }
     setState(() {});
-    // for (var element in questionsResponses) {
-    //   print('${element.question?.tipo}: ${element.response}');
-    // }
+  }
+
+  Future<void> validateAllComponents(
+      List<int> finishedSections, WidgetRef ref) async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    buildResponses();
 
     int missingAnswers = 0;
     //Ver si las respuestas obligatorias estan vacias
@@ -342,11 +437,19 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
     }
   }
 
+  @override
+  bool get wantKeepAlive => true;
+
   //
 }
 
 final class ResponseIndex {
-  ResponseIndex({required this.index, required this.response});
+  ResponseIndex({
+    required this.index,
+    required this.response,
+    required this.error,
+  });
   int index;
+  bool error;
   dynamic response;
 }

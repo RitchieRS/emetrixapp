@@ -100,6 +100,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             child: Center(
                 child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
+                        enableFeedback: true,
+                        side: BorderSide(color: c.error),
                         foregroundColor: c.error,
                         minimumSize:
                             Size(size.width * 0.9, size.height * 0.052)),
@@ -146,17 +148,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               Padding(
                 padding: EdgeInsets.only(
                     top: size.height * 0.02, bottom: size.height * 0.01),
-                child: Text('Cuidado', style: t.subtitle2),
+                child: Text('Precaución', style: t.subtitle2),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: size.height * 0.03),
                 child: Text(
-                    'Ten en cuenta que se borrará todo tu progreso guardado en tu teléfono hasta el momento. \nIncluyendo: \n\n - Rutas del dia. \n - Pendientes. \n - Actividades adicionales.\n - Sondeos. ',
+                    'Borraremos tu sesión activa de este dispositivo.\nNo te preocupes, tu información no se borrará. ',
                     style: t.medium),
               ),
               Padding(
                 padding: EdgeInsets.all(size.height * 0.01),
-                child: Text('¿Estás seguro?', style: t.medium),
+                child: Text('¿Continuar?', style: t.medium),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: size.height * 0.03),

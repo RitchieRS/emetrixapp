@@ -1,15 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
-import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/ui/utils/widgets/map_page.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:animate_do/animate_do.dart';
+import 'package:page_transition/page_transition.dart';
 
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
+import 'package:emetrix_flutter/app/ui/utils/widgets/map_page.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:page_transition/page_transition.dart';
 
 class MyCard2 extends ConsumerStatefulWidget {
   const MyCard2(
@@ -42,15 +42,15 @@ class _MyCardState extends ConsumerState<MyCard2> {
         child: const Icon(Icons.delete, color: Colors.redAccent));
     final iconColor = c.primary500;
 
-    return Center(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          width: width,
-          color: Colors.transparent,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: FadeIn(
+    return FadeIn(
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              width: width,
+              color: c.primary200.withOpacity(0.2),
               child: Dismissible(
                 key: UniqueKey(),
                 background: backWidget,
@@ -63,7 +63,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
                   animationDuration: const Duration(milliseconds: 350),
                   children: [
                     ExpansionPanelRadio(
-                        backgroundColor: c.primary200.withOpacity(0.2),
+                        backgroundColor: c.surface,
                         canTapOnHeader: false, // True
                         value: widget.store ?? Store(),
                         headerBuilder: (context, isExpanded) {

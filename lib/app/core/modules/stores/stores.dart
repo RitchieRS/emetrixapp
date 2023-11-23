@@ -38,7 +38,11 @@ class Store {
         definirNombre: json["definirNombre"],
         clasificacion: json["clasificacion"],
         rangoGPS: json["rangoGPS"],
-        checkGPS: json["checkGPS"],
+        checkGPS: json["checkGPS"] is String
+            ? json["checkGPS"]
+            : json["checkGPS"] is int
+                ? json["checkGPS"].toString()
+                : null,
       );
 
   Map<String, dynamic> toJson() {
