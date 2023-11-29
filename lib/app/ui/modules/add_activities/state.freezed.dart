@@ -63,19 +63,22 @@ class _$AddActStateCopyWithImpl<$Res, $Val extends AddActState>
 }
 
 /// @nodoc
-abstract class _$$_AddActCopyWith<$Res> implements $AddActStateCopyWith<$Res> {
-  factory _$$_AddActCopyWith(_$_AddAct value, $Res Function(_$_AddAct) then) =
-      __$$_AddActCopyWithImpl<$Res>;
+abstract class _$$AddActImplCopyWith<$Res>
+    implements $AddActStateCopyWith<$Res> {
+  factory _$$AddActImplCopyWith(
+          _$AddActImpl value, $Res Function(_$AddActImpl) then) =
+      __$$AddActImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({Stores? addActStores, States state});
 }
 
 /// @nodoc
-class __$$_AddActCopyWithImpl<$Res>
-    extends _$AddActStateCopyWithImpl<$Res, _$_AddAct>
-    implements _$$_AddActCopyWith<$Res> {
-  __$$_AddActCopyWithImpl(_$_AddAct _value, $Res Function(_$_AddAct) _then)
+class __$$AddActImplCopyWithImpl<$Res>
+    extends _$AddActStateCopyWithImpl<$Res, _$AddActImpl>
+    implements _$$AddActImplCopyWith<$Res> {
+  __$$AddActImplCopyWithImpl(
+      _$AddActImpl _value, $Res Function(_$AddActImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -84,7 +87,7 @@ class __$$_AddActCopyWithImpl<$Res>
     Object? addActStores = freezed,
     Object? state = null,
   }) {
-    return _then(_$_AddAct(
+    return _then(_$AddActImpl(
       addActStores: freezed == addActStores
           ? _value.addActStores
           : addActStores // ignore: cast_nullable_to_non_nullable
@@ -99,8 +102,8 @@ class __$$_AddActCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_AddAct implements _AddAct {
-  const _$_AddAct({this.addActStores, this.state = States.loading});
+class _$AddActImpl implements _AddAct {
+  const _$AddActImpl({this.addActStores, this.state = States.loading});
 
   @override
   final Stores? addActStores;
@@ -117,7 +120,7 @@ class _$_AddAct implements _AddAct {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AddAct &&
+            other is _$AddActImpl &&
             (identical(other.addActStores, addActStores) ||
                 other.addActStores == addActStores) &&
             (identical(other.state, state) || other.state == state));
@@ -129,13 +132,13 @@ class _$_AddAct implements _AddAct {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AddActCopyWith<_$_AddAct> get copyWith =>
-      __$$_AddActCopyWithImpl<_$_AddAct>(this, _$identity);
+  _$$AddActImplCopyWith<_$AddActImpl> get copyWith =>
+      __$$AddActImplCopyWithImpl<_$AddActImpl>(this, _$identity);
 }
 
 abstract class _AddAct implements AddActState {
   const factory _AddAct({final Stores? addActStores, final States state}) =
-      _$_AddAct;
+      _$AddActImpl;
 
   @override
   Stores? get addActStores;
@@ -143,6 +146,6 @@ abstract class _AddAct implements AddActState {
   States get state;
   @override
   @JsonKey(ignore: true)
-  _$$_AddActCopyWith<_$_AddAct> get copyWith =>
+  _$$AddActImplCopyWith<_$AddActImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -42,11 +42,11 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
             body: RefreshIndicator(
               onRefresh: () => getList(),
               child: ListView.builder(
-                  itemCount: state.data.length,
+                  itemCount: list.length,
                   itemBuilder: (context, index) {
                     return MyCard2(
                       index: index,
-                      store: state.data[index],
+                      store: list[index],
                       onDeleted: () => onDeleted(index),
                     );
                   }),

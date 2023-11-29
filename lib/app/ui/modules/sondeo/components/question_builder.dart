@@ -9,7 +9,6 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   const QuestionBuilder({
     super.key,
     this.mandatory = false,
-    this.answerValue,
     required this.pregunta,
     required this.store,
     required this.index,
@@ -27,13 +26,13 @@ class QuestionBuilder extends ConsumerStatefulWidget {
     required this.yesnoRadio,
     required this.photo,
     required this.selectionMultiple,
+    required this.answerController,
   });
   final Preguntas pregunta;
   final Store2 store;
   final int index;
   final bool mandatory;
-  final String? answerValue;
-  final Function(String? response, bool error) answer;
+  final Function(String? response) answer;
   final Function(String? response) numeric;
   final Function(String? response) decimal;
   final Function(String? response) email;
@@ -47,6 +46,7 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Function(File?) image;
   final Function(File?) photo;
   final Function(File?) signature;
+  final Function(TextEditingController? controller) answerController;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -87,9 +87,11 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           type: widget.pregunta.tipo ?? 'abierta',
           index: widget.index,
           pregunta: widget.pregunta,
-          textfieldValue: widget.answerValue,
-          answer: (String? answer, bool error) {
-            widget.answer(answer, error);
+          sendController: (TextEditingController controller) {
+            widget.answerController(controller);
+          },
+          answer: (String? answer) {
+            widget.answer(answer);
             //Get the value of the textfield and save it to validate and send to endpoint;
           },
           charactersMin: widget.pregunta.valorMinimo,
@@ -99,10 +101,13 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
 
       case 'numerico':
         return Question(
-          type: widget.pregunta.tipo ?? 'abierta',
+          type: widget.pregunta.tipo ?? 'numerico',
           index: widget.index,
           pregunta: widget.pregunta,
-          answer: (String? answer, bool error) {
+          sendController: (TextEditingController controller) {
+            //
+          },
+          answer: (String? answer) {
             widget.numeric(answer);
           },
           valueMin: widget.pregunta.valorMinimo,
@@ -112,10 +117,13 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
 
       case 'email':
         return Question(
-          type: widget.pregunta.tipo ?? 'abierta',
+          type: widget.pregunta.tipo ?? 'email',
           index: widget.index,
           pregunta: widget.pregunta,
-          answer: (String? answer, bool error) {
+          sendController: (TextEditingController controller) {
+            //
+          },
+          answer: (String? answer) {
             widget.email(answer);
           },
           valueMin: widget.pregunta.valorMinimo,
@@ -125,10 +133,13 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
 
       case 'decimal':
         return Question(
-          type: widget.pregunta.tipo ?? 'abierta',
+          type: widget.pregunta.tipo ?? 'decimal',
           index: widget.index,
           pregunta: widget.pregunta,
-          answer: (String? answer, bool error) {
+          sendController: (TextEditingController controller) {
+            //
+          },
+          answer: (String? answer) {
             widget.decimal(answer);
           },
           valueMin: widget.pregunta.valorMinimo,

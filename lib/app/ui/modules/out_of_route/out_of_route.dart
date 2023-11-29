@@ -197,14 +197,14 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     );
   }
 
-  Future<void> _setStores(List<String> sondeos) async {
+  Future<void> _setStores(List<SondeoModel> sondeos) async {
     final navigator = Navigator.of(context);
 
     await ref
         .read(outORControllerProvider.notifier)
-        .saveStoresToIsar(storesSelected, ref);
+        .saveStoresToIsar(storesSelected, sondeos, ref);
 
-    await ref.read(outORControllerProvider.notifier).setSondeosToDB(sondeos);
+    // await ref.read(outORControllerProvider.notifier).setSondeosToDB(sondeos);
     ref.read(cardProvider.notifier).update((state) => !state);
     storesSelected.clear();
 

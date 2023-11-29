@@ -63,22 +63,22 @@ class _$OutOfRouteStateCopyWithImpl<$Res, $Val extends OutOfRouteState>
 }
 
 /// @nodoc
-abstract class _$$_OutOfRouteCopyWith<$Res>
+abstract class _$$OutOfRouteImplCopyWith<$Res>
     implements $OutOfRouteStateCopyWith<$Res> {
-  factory _$$_OutOfRouteCopyWith(
-          _$_OutOfRoute value, $Res Function(_$_OutOfRoute) then) =
-      __$$_OutOfRouteCopyWithImpl<$Res>;
+  factory _$$OutOfRouteImplCopyWith(
+          _$OutOfRouteImpl value, $Res Function(_$OutOfRouteImpl) then) =
+      __$$OutOfRouteImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({Stores? homeData, States state});
 }
 
 /// @nodoc
-class __$$_OutOfRouteCopyWithImpl<$Res>
-    extends _$OutOfRouteStateCopyWithImpl<$Res, _$_OutOfRoute>
-    implements _$$_OutOfRouteCopyWith<$Res> {
-  __$$_OutOfRouteCopyWithImpl(
-      _$_OutOfRoute _value, $Res Function(_$_OutOfRoute) _then)
+class __$$OutOfRouteImplCopyWithImpl<$Res>
+    extends _$OutOfRouteStateCopyWithImpl<$Res, _$OutOfRouteImpl>
+    implements _$$OutOfRouteImplCopyWith<$Res> {
+  __$$OutOfRouteImplCopyWithImpl(
+      _$OutOfRouteImpl _value, $Res Function(_$OutOfRouteImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -87,7 +87,7 @@ class __$$_OutOfRouteCopyWithImpl<$Res>
     Object? homeData = freezed,
     Object? state = null,
   }) {
-    return _then(_$_OutOfRoute(
+    return _then(_$OutOfRouteImpl(
       homeData: freezed == homeData
           ? _value.homeData
           : homeData // ignore: cast_nullable_to_non_nullable
@@ -102,8 +102,8 @@ class __$$_OutOfRouteCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_OutOfRoute implements _OutOfRoute {
-  const _$_OutOfRoute({this.homeData, this.state = States.loading});
+class _$OutOfRouteImpl implements _OutOfRoute {
+  const _$OutOfRouteImpl({this.homeData, this.state = States.loading});
 
   @override
   final Stores? homeData;
@@ -120,7 +120,7 @@ class _$_OutOfRoute implements _OutOfRoute {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_OutOfRoute &&
+            other is _$OutOfRouteImpl &&
             (identical(other.homeData, homeData) ||
                 other.homeData == homeData) &&
             (identical(other.state, state) || other.state == state));
@@ -132,13 +132,13 @@ class _$_OutOfRoute implements _OutOfRoute {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_OutOfRouteCopyWith<_$_OutOfRoute> get copyWith =>
-      __$$_OutOfRouteCopyWithImpl<_$_OutOfRoute>(this, _$identity);
+  _$$OutOfRouteImplCopyWith<_$OutOfRouteImpl> get copyWith =>
+      __$$OutOfRouteImplCopyWithImpl<_$OutOfRouteImpl>(this, _$identity);
 }
 
 abstract class _OutOfRoute implements OutOfRouteState {
   const factory _OutOfRoute({final Stores? homeData, final States state}) =
-      _$_OutOfRoute;
+      _$OutOfRouteImpl;
 
   @override
   Stores? get homeData;
@@ -146,6 +146,6 @@ abstract class _OutOfRoute implements OutOfRouteState {
   States get state;
   @override
   @JsonKey(ignore: true)
-  _$$_OutOfRouteCopyWith<_$_OutOfRoute> get copyWith =>
+  _$$OutOfRouteImplCopyWith<_$OutOfRouteImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

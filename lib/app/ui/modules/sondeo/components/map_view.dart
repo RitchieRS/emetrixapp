@@ -161,6 +161,7 @@ class _MapViewState extends ConsumerState<MapView> {
 
   Future<void> calculateChekInOut(List<int> finishedSections) async {
 //Crear Calculo de Check-In / CheckOut
+    showProgress(context: context, title: 'Calculando');
     final storePosition =
         (widget.store.latitud ?? 0, widget.store.longitud ?? 0);
     position = await Geolocator.getCurrentPosition(
@@ -175,9 +176,11 @@ class _MapViewState extends ConsumerState<MapView> {
 
       if (distance <= rango) {
         //SI Pasa
+        Navigator.pop(context);
         await setEntrance(finishedSections);
       } else {
         //No pasa
+        Navigator.pop(context);
         await _showMessage('Fuera de rango',
             'No te encuentras a una distancia correcta, Acercate.');
       }
@@ -186,14 +189,15 @@ class _MapViewState extends ConsumerState<MapView> {
 
   Future setEntrance(List<int> finishedSections) async {
     final image = await pickImage(ImageSource.camera);
+    if (image == null) return;
     showProgress(context: context, title: 'Calculando');
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best,
         forceAndroidLocationManager: false);
     setState(() {});
     // await _getLocation();
-    await Future.delayed(const Duration(seconds: 2));
-    if (image != null && position != null) {
+    await Future.delayed(const Duration(milliseconds: 1500));
+    if (position != null) {
       await ref.read(databaseProvider).setCheckInOut(
             storeUuid: widget.storeUuid,
             lat: position?.latitude.toString() ?? '',

@@ -7,7 +7,6 @@ import 'package:page_transition/page_transition.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/map_page.dart';
-import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
@@ -166,23 +165,25 @@ class _MyCardState extends ConsumerState<MyCard2> {
 
   Future<void> _start(int index) async {
     final navigator = Navigator.of(context);
-    final sondeos = await ref.read(routeOTD.notifier).getSondeoFromDB();
+    // final sondeos = await ref.read(routeOTD.notifier).getSondeoFromDB();
 
-    if (sondeos[index].idError != 0) {
-      showYesNoMsj(
-          context: context,
-          yesOnly: true,
-          title: 'Error',
-          content:
-              'Se produjo un error inesperado. Si el error persiste, elimina las tiendas e intentalo de nuevo.');
-    } else {
-      navigator.push(MaterialPageRoute(builder: (context) {
-        return SondeoPage(
-            storeUuid: widget.store?.uuid ?? '',
-            sondeosList: sondeos[index].resp ?? [],
-            store: widget.store?.store ?? Store2());
-      }));
-    }
+    // if (sondeos[index].idError != 0) {
+    //   showYesNoMsj(
+    //       context: context,
+    //       yesOnly: true,
+    //       title: 'Error',
+    //       content:
+    //           'Se produjo un error inesperado. Si el error persiste, elimina las tiendas e intentalo de nuevo.');
+    // } else {
+    // }
+
+    navigator.push(MaterialPageRoute(builder: (context) {
+      return SondeoPage(
+          storeUuid: widget.store?.uuid ?? '',
+          mainStore: widget.store,
+          sondeosList: widget.store?.sondeo?.resp ?? [],
+          store: widget.store?.store ?? Store2());
+    }));
   }
 
   //

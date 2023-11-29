@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,12 +18,14 @@ class SingleSondeoPage extends ConsumerStatefulWidget {
     required this.stepsLenght,
     required this.store,
     required this.storeUuid,
+    required this.stepUuid,
   });
   final RespM sondeoItem;
   final Store2 store;
   final int index;
   final int stepsLenght;
   final String storeUuid;
+  final String stepUuid;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SondeosBuilderState();
@@ -30,6 +33,8 @@ class SingleSondeoPage extends ConsumerStatefulWidget {
 
 class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     with AutomaticKeepAliveClientMixin {
+  SondeosFromStore? store;
+  TextEditingController? answerController;
   //* List Responses
   ResponseIndex? textResponse;
   ResponseIndex? numericResponse;
@@ -66,26 +71,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     final finishedSections = ref.watch(finishedSondeos);
 
     return PopScope(
-      onPopInvoked: (didPop) async {
-        final storeExist = await ref
-            .read(databaseProvider)
-            .existStoreData(storeUuid: widget.storeUuid);
-        if (storeExist) {
-          //update values
-          buildResponses();
-          // -->
-        }
-        //save values
-        buildResponses();
-        await ref.read(databaseProvider).updateSondeoFromStore(
-              storeUuid: widget.storeUuid,
-              stepIndex: widget.index,
-              progress: 0,
-              stepsLenght: widget.stepsLenght,
-              sondeoQuestionResponses: questionsResponses,
-            );
-        // return Future.value(true);
-      },
+      onPopInvoked: (didPop) => onExit(didPop),
       child: Scaffold(
           appBar: CustomTitle(title: widget.sondeoItem.sondeo),
           body: GestureDetector(
@@ -101,26 +87,18 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                         return QuestionBuilder(
                           mandatory:
                               validate ? mandatoryComponents[index] : false,
-                          answerValue: textResponse?.response,
-                          answer: (response, error) async {
-                            // if (error) {
-                            //   await showMsj(
-                            //       context: context,
-                            //       title: 'Error',
-                            //       content:
-                            //           'Respuesta invalida en ${item?.pregunta}',
-                            //       destructive: false,
-                            //       onlyOk: true,
-                            //       buttonLabel: 'Ok');
-                            //   return;
-                            // }
-                            print(response);
+                          answerController: (controller) {
+                            setState(() {
+                              answerController = controller;
+                            });
+                          },
+                          answer: (response) async {
                             setState(() {
                               validate = false;
                               textResponse = ResponseIndex(
                                 index: index,
                                 response: response,
-                                error: error,
+                                error: false,
                               );
                             });
                           },
@@ -273,6 +251,52 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     );
   }
 
+  void onExit(bool didpop) async {
+    final store = await ref
+        .read(databaseProvider)
+        .getStoreByUuid(storeUuid: widget.storeUuid);
+    if (store?.storeSteps == null) {
+      logger.i('No hay pasos');
+      //save responses from this step
+      buildResponses();
+      await ref.read(databaseProvider).saveStepData(
+            storeUuid: widget.storeUuid,
+            progress: 0,
+            stepsLenght: widget.stepsLenght,
+            stepUuid: widget.stepUuid,
+            sondeoQuestionResponses: questionsResponses,
+          );
+      logger.i('guardamos el paso actual');
+      return;
+    }
+
+    logger.i('Si hay pasos');
+    store?.storeSteps?.forEach((element) async {
+      //identify every list
+      if (element.stepUuid == widget.stepUuid) {
+        //update responses from this step
+        buildResponses();
+        await ref.read(databaseProvider).updateStepData(
+            sondeoQuestionResponses: questionsResponses,
+            storeUuid: widget.storeUuid,
+            stepUuid: widget.stepUuid);
+        logger.i('Actualizamos las respuestas que hay');
+        return;
+      }
+    });
+
+    //save responses from this step
+    buildResponses();
+    await ref.read(databaseProvider).saveStepData(
+          storeUuid: widget.storeUuid,
+          progress: 0,
+          stepsLenght: widget.stepsLenght,
+          stepUuid: widget.stepUuid,
+          sondeoQuestionResponses: questionsResponses,
+        );
+    logger.i('guardamos el paso actual');
+  }
+
   void idenifyComponents() {
     widget.sondeoItem.preguntas?.forEach((sondeo) {
       final index = widget.sondeoItem.preguntas?.indexOf(sondeo);
@@ -290,19 +314,69 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   }
 
   Future<void> getTempResponses() async {
-    final store = await ref
+    store = await ref
         .read(databaseProvider)
         .getStoreByUuid(storeUuid: widget.storeUuid);
+    setState(() {});
 
-    final responses = store?.storeSteps?[widget.index];
-    print('Si trae las respuestas de este paso');
+    if (store?.storeSteps != null) {
+      try {
+        // final responses = store?.storeSteps
+        //     ?.firstWhere((element) => element.stepUuid == widget.stepUuid);
 
-    responses?.sondeos?.forEach((element) {
-      if (textResponse?.index == element.indexSondeo) {
-        print('este sondeo coincide');
-        setState(() {});
+        SondeoCollection? responses;
+
+        store?.storeSteps?.forEach((element) {
+          if (element.stepUuid == widget.stepUuid) {
+            setState(() {
+              responses = element;
+            });
+          }
+        });
+
+        if (responses != null) {
+          widget.sondeoItem.preguntas?.forEach((element2) async {
+            final index = widget.sondeoItem.preguntas?.indexOf(element2);
+            final element = responses?.sondeos?[index!];
+            // print(element?.response);
+
+            if (element2.uuid == element?.question?.uuid) {
+              print('--------------');
+              print(element2.tipo);
+              print(element2.uuid);
+              print(element?.question?.tipo);
+              print(element?.question?.uuid);
+              print(element?.response);
+              print('--------------');
+              //Identificar el tipo de componente
+              // await Future.delayed(const Duration(milliseconds: 800));
+
+              // print(element?.response); // Esta es la respuesta guardada anteriormente
+              // print(element2.tipo);
+              // print(answerController?.text); //Este es el valor del textfield
+              if (element?.response != null) {
+                indentifyHints(element?.response, element2.tipo!);
+                setState(() {});
+              }
+            }
+          });
+        } else {
+          logger.i('Aun no esta en bd');
+        }
+      } catch (error) {
+        logger.e(error);
+        return;
       }
-    });
+    }
+  }
+
+  void indentifyHints(String? response, String? type) {
+    switch (type) {
+      case 'abierta':
+        if (response != null) {
+          setState(() => answerController?.text = response);
+        }
+    }
   }
 
   void buildResponses() {
@@ -378,11 +452,11 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     print('Preguntas obligatorias contestadas');
     _showLoading();
     //Insert data to save0
-    await ref.read(databaseProvider).updateSondeoFromStore(
+    await ref.read(databaseProvider).saveStepData(
           storeUuid: widget.storeUuid,
-          stepIndex: widget.index,
           progress: progress,
           stepsLenght: widget.stepsLenght,
+          stepUuid: widget.stepUuid,
           sondeoQuestionResponses: questionsResponses,
         );
     // Navigator.pop(context);

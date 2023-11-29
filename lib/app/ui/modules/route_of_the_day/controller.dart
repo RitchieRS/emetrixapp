@@ -1,13 +1,9 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:emetrix_flutter/app/core/providers/providers.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/service.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
-
 import 'state.dart';
 
 final routeOTD =
@@ -52,20 +48,20 @@ class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
     return sondeo;
   }
 
-  Future<List<SondeoModel>> getSondeoFromDB() async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? sondeos = prefs.getStringList('sondeos');
-    final List<SondeoModel> sondeosObj = [];
+  // Future<List<SondeoModel>> getSondeoFromDB() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final List<String>? sondeos = prefs.getStringList('sondeos');
+  //   final List<SondeoModel> sondeosObj = [];
 
-    if (sondeos != null) {
-      for (var element in sondeos) {
-        sondeosObj.add(SondeoModel.fromJson(jsonDecode(element)));
-      }
-    } else {
-      debugPrint('SHARED ERROR sondeos: Error get in db');
-    }
-    return sondeosObj;
-  }
+  //   if (sondeos != null) {
+  //     for (var element in sondeos) {
+  //       sondeosObj.add(SondeoModel.fromJson(jsonDecode(element)));
+  //     }
+  //   } else {
+  //     debugPrint('SHARED ERROR sondeos: Error get in db');
+  //   }
+  //   return sondeosObj;
+  // }
 
 //
 }

@@ -1,8 +1,8 @@
 import 'package:isar/isar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:uuid/uuid.dart';
 
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/modules/pendientes/pendientes.dart';
 import 'package:emetrix_flutter/app/core/modules/productos/productos.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
@@ -14,7 +14,6 @@ final databaseProvider = Provider<Database>((ref) {
 });
 
 class Database {
-  final uuid = const Uuid();
   late Future<Isar> database;
   Database() {
     database = _openDatabase();
@@ -55,31 +54,38 @@ class Database {
 
   //
   // Save SondeosFromStore
-  Future<void> saveStores(List<StoreGeneral> routes) async {
+  Future<void> saveStores(
+      List<StoreGeneral> routes, List<SondeoModel> sondeos) async {
     final isar = await database;
+    final List<SondeosFromStore> list = [];
+
+    for (StoreGeneral store in routes) {
+      final index = routes.indexOf(store);
+
+      final storeG = Store2(
+        checkGPS: store.checkGPS,
+        clasificacion: store.clasificacion,
+        definirNombre: store.definirNombre,
+        id: store.id,
+        idCadena: store.idCadena,
+        idGrupo: store.idGrupo,
+        latitud: store.latitud,
+        longitud: store.longitud,
+        rangoGPS: store.rangoGPS,
+        tienda: store.tienda,
+      );
+      final isarStore = SondeosFromStore(
+        store: storeG,
+        totalProgress: 0,
+        uuid: uuidU.v4(),
+        storeSteps: null,
+        sondeo: sondeos[index],
+      );
+      list.add(isarStore);
+    }
 
     await isar.writeTxn(() async {
-      for (StoreGeneral store in routes) {
-        final storeG = Store2(
-          checkGPS: store.checkGPS,
-          clasificacion: store.clasificacion,
-          definirNombre: store.definirNombre,
-          id: store.id,
-          idCadena: store.idCadena,
-          idGrupo: store.idGrupo,
-          latitud: store.latitud,
-          longitud: store.longitud,
-          rangoGPS: store.rangoGPS,
-          tienda: store.tienda,
-        );
-        final isarStore = SondeosFromStore(
-          store: storeG,
-          totalProgress: 0,
-          uuid: uuid.v4(),
-        );
-
-        await isar.sondeosFromStores.put(isarStore); // insert & update
-      }
+      await isar.sondeosFromStores.putAll(list); // insert & update
     });
   }
 
@@ -110,9 +116,9 @@ class Database {
   }
 
   //Insert data to an specific SondeoFromStore
-  Future<void> updateSondeoFromStore(
+  Future<void> saveStepData(
       {required String storeUuid,
-      required int stepIndex,
+      required String stepUuid,
       required int stepsLenght,
       required double progress,
       required List<QuestionResponse> sondeoQuestionResponses}) async {
@@ -126,7 +132,7 @@ class Database {
 
       if (store == null) return;
       final step = SondeoCollection(
-        indexStep: stepIndex,
+        stepUuid: stepUuid,
         sondeos: sondeoQuestionResponses,
         sondeoProgress: progress,
       );
@@ -143,6 +149,45 @@ class Database {
       });
       totalProgress = stepProgress / sondeoQuestionResponses.length;
       store.totalProgress = totalProgress / stepsLenght;
+      await isar.sondeosFromStores.put(store);
+
+      //
+    });
+  }
+
+  //Update data to an specific Step in a Sondeo
+  Future<void> updateStepData(
+      {required String storeUuid,
+      required String stepUuid,
+      required List<QuestionResponse> sondeoQuestionResponses}) async {
+    final isar = await database;
+
+    await isar.writeTxn(() async {
+      final store = await isar.sondeosFromStores
+          .filter()
+          .uuidEqualTo(storeUuid)
+          .findFirst();
+
+      if (store == null) return;
+
+      final responses = store.storeSteps
+          ?.firstWhere((element) => element.stepUuid == stepUuid);
+
+      responses?.sondeos?.forEach((element) {
+        final index = responses.sondeos?.indexOf(element);
+
+        //fusionar 2 listas con el mismo tamaño
+        if (element.response != null &&
+                sondeoQuestionResponses[index!].response == null ||
+            element.response != null &&
+                sondeoQuestionResponses[index!].response!.isEmpty) {
+          return;
+        }
+        element.response = sondeoQuestionResponses[index!].response;
+      });
+
+      //Save data the sondeos on db
+      store.storeSteps = [...?store.storeSteps];
       await isar.sondeosFromStores.put(store);
 
       //
@@ -176,18 +221,6 @@ class Database {
       await isar.sondeosFromStores.put(store);
       //
     });
-  }
-
-  //GetASpecificStoreByUuid
-  Future<bool> existStoreData({required String storeUuid}) async {
-    final isar = await database;
-    final store = await isar.sondeosFromStores
-        .filter()
-        .uuidEqualTo(storeUuid)
-        .findFirst();
-
-    if (store == null) return false;
-    return true;
   }
 
   //GetASpecificStoreByUuid

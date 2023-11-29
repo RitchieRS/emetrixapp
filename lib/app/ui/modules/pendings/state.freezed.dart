@@ -63,22 +63,22 @@ class _$PendingsStateCopyWithImpl<$Res, $Val extends PendingsState>
 }
 
 /// @nodoc
-abstract class _$$_PendingsCopyWith<$Res>
+abstract class _$$PendingsImplCopyWith<$Res>
     implements $PendingsStateCopyWith<$Res> {
-  factory _$$_PendingsCopyWith(
-          _$_Pendings value, $Res Function(_$_Pendings) then) =
-      __$$_PendingsCopyWithImpl<$Res>;
+  factory _$$PendingsImplCopyWith(
+          _$PendingsImpl value, $Res Function(_$PendingsImpl) then) =
+      __$$PendingsImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({List<Pendiente> data, States state});
 }
 
 /// @nodoc
-class __$$_PendingsCopyWithImpl<$Res>
-    extends _$PendingsStateCopyWithImpl<$Res, _$_Pendings>
-    implements _$$_PendingsCopyWith<$Res> {
-  __$$_PendingsCopyWithImpl(
-      _$_Pendings _value, $Res Function(_$_Pendings) _then)
+class __$$PendingsImplCopyWithImpl<$Res>
+    extends _$PendingsStateCopyWithImpl<$Res, _$PendingsImpl>
+    implements _$$PendingsImplCopyWith<$Res> {
+  __$$PendingsImplCopyWithImpl(
+      _$PendingsImpl _value, $Res Function(_$PendingsImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -87,7 +87,7 @@ class __$$_PendingsCopyWithImpl<$Res>
     Object? data = null,
     Object? state = null,
   }) {
-    return _then(_$_Pendings(
+    return _then(_$PendingsImpl(
       data: null == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
@@ -102,8 +102,8 @@ class __$$_PendingsCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Pendings implements _Pendings {
-  const _$_Pendings(
+class _$PendingsImpl implements _Pendings {
+  const _$PendingsImpl(
       {final List<Pendiente> data = const [], this.state = States.loading})
       : _data = data;
 
@@ -129,7 +129,7 @@ class _$_Pendings implements _Pendings {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Pendings &&
+            other is _$PendingsImpl &&
             const DeepCollectionEquality().equals(other._data, _data) &&
             (identical(other.state, state) || other.state == state));
   }
@@ -141,13 +141,13 @@ class _$_Pendings implements _Pendings {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_PendingsCopyWith<_$_Pendings> get copyWith =>
-      __$$_PendingsCopyWithImpl<_$_Pendings>(this, _$identity);
+  _$$PendingsImplCopyWith<_$PendingsImpl> get copyWith =>
+      __$$PendingsImplCopyWithImpl<_$PendingsImpl>(this, _$identity);
 }
 
 abstract class _Pendings implements PendingsState {
   const factory _Pendings({final List<Pendiente> data, final States state}) =
-      _$_Pendings;
+      _$PendingsImpl;
 
   @override
   List<Pendiente> get data;
@@ -155,6 +155,6 @@ abstract class _Pendings implements PendingsState {
   States get state;
   @override
   @JsonKey(ignore: true)
-  _$$_PendingsCopyWith<_$_Pendings> get copyWith =>
+  _$$PendingsImplCopyWith<_$PendingsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

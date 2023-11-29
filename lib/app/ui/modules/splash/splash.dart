@@ -26,7 +26,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _checkData().whenComplete(() => _checkRoute());
+      await _getSession().whenComplete(() => _checkRoute());
     });
   }
 
@@ -66,7 +66,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     );
   }
 
-  Future<void> _checkData() async {
+  Future<void> _getSession() async {
     final prefs = await SharedPreferences.getInstance();
     // session = prefs.getString('loginInfo');
     session = prefs.getBool('sesionStarted');

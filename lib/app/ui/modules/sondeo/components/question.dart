@@ -16,24 +16,25 @@ class Question extends ConsumerStatefulWidget {
     required this.pregunta,
     required this.index,
     required this.type,
-    this.textfieldValue,
+    required this.sendController,
   });
   final int index;
   final num? charactersMin;
   final num? charactersMax;
   final num? valueMin;
   final num? valueMax;
-  final String? textfieldValue;
   final Preguntas pregunta;
   final String type;
   final bool mandatory;
-  final Function(String? response, bool error) answer;
+  final Function(String? response) answer;
+  final Function(TextEditingController controller) sendController;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _QuestionState();
 }
 
-class _QuestionState extends ConsumerState<Question> {
+class _QuestionState extends ConsumerState<Question>
+    with AutomaticKeepAliveClientMixin {
   final formKey = GlobalKey<FormState>();
   static final errorBorder = OutlineInputBorder(
       borderSide: BorderSide(color: c.error, width: 1.5),
@@ -42,14 +43,27 @@ class _QuestionState extends ConsumerState<Question> {
       borderSide: BorderSide(color: c.primary500, width: 1.5),
       borderRadius: BorderRadius.circular(10));
   String textValue = '';
+  final controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.sendController(controller);
+      // controller.text = 'tipo';
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final size = MediaQuery.of(context).size;
     Color color2 = Theme.of(context).hintColor.withOpacity(0.3);
     final defaultBorder = OutlineInputBorder(
@@ -74,8 +88,9 @@ class _QuestionState extends ConsumerState<Question> {
             child: Form(
               key: formKey,
               child: TextFormField(
+                controller: controller,
                 validator: (value) => selectValidation(value),
-                initialValue: widget.textfieldValue,
+                // initialValue: widget.textfieldValue,
                 onChanged: (value) async {
                   await Future.delayed(const Duration(milliseconds: 500));
                   validateAndSave(value);
@@ -134,10 +149,10 @@ class _QuestionState extends ConsumerState<Question> {
     setState(() {});
 
     if (isValid && value.isNotEmpty) {
-      widget.answer(value, false);
+      widget.answer(value);
       return;
     }
-    widget.answer(value, true);
+    widget.answer(value);
     return;
   }
 
@@ -181,7 +196,7 @@ class _QuestionState extends ConsumerState<Question> {
         return '${value.length}: Completa $max caracteres como máximo';
       }
     }
-    widget.answer(value, false);
+    widget.answer(value);
     return null;
   }
 
@@ -205,7 +220,7 @@ class _QuestionState extends ConsumerState<Question> {
       return 'Ingresa un valor menor de $max';
     }
 
-    widget.answer(value, false);
+    widget.answer(value);
     return null;
   }
 
@@ -226,7 +241,7 @@ class _QuestionState extends ConsumerState<Question> {
     if (valueNumber < min || valueNumber > max || valueNumber % 1 == 0) {
       return 'Debe ser un DECIMAL entre $min - $max';
     }
-    widget.answer(value, false);
+    widget.answer(value);
     return null;
   }
 
@@ -236,7 +251,7 @@ class _QuestionState extends ConsumerState<Question> {
 
     if (email != null) {
       if (emailRegExp.hasMatch(email)) {
-        widget.answer(email, false);
+        widget.answer(email);
         return null;
       }
       return 'E-mail incorrecto';
@@ -244,4 +259,7 @@ class _QuestionState extends ConsumerState<Question> {
 
     return 'Completa el campo';
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

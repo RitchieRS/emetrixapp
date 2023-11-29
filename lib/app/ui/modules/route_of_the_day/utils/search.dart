@@ -1,5 +1,4 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -123,26 +122,27 @@ class CustomSearchDelegate extends SearchDelegate<SondeosFromStore?> {
 //------
   Future<void> _getSondeoFromAStore(BuildContext context, int index) async {
     final navigator = Navigator.of(context);
-    final sondeos2 = await ref.read(routeOTD.notifier).getSondeoFromDB();
-    final currentElement = matchQuery[index];
-    final index2 = sondeos.indexOf(currentElement);
+    // // final sondeos2 = await ref.read(routeOTD.notifier).getSondeoFromDB();
+    // final currentElement = matchQuery[index];
+    // final index2 = sondeos.indexOf(currentElement);
 
-    if (sondeos2[index2].idError != 0) {
-      if (!context.mounted) return;
-      showYesNoMsj(
-          context: context,
-          yesOnly: true,
-          title: 'Error',
-          content:
-              'Se produjo un error inesperado. Si el error persiste, elimina las tiendas e intentalo de nuevo.');
-    } else {
-      navigator.pop();
-      navigator.push(MaterialPageRoute(builder: (context) {
-        return SondeoPage(
-            storeUuid: matchQuery[index].uuid ?? '',
-            sondeosList: sondeos2[index2].resp ?? [],
-            store: matchQuery[index].store ?? Store2());
-      }));
-    }
+    // if (sondeos2[index2].idError != 0) {
+    //   if (!context.mounted) return;
+    //   showYesNoMsj(
+    //       context: context,
+    //       yesOnly: true,
+    //       title: 'Error',
+    //       content:
+    //           'Se produjo un error inesperado. Si el error persiste, elimina las tiendas e intentalo de nuevo.');
+    // } else {
+    // }
+    navigator.pop();
+    navigator.push(MaterialPageRoute(builder: (context) {
+      return SondeoPage(
+          mainStore: matchQuery[index],
+          storeUuid: matchQuery[index].uuid ?? '',
+          sondeosList: matchQuery[index].sondeo?.resp ?? [],
+          store: matchQuery[index].store ?? Store2());
+    }));
   }
 }

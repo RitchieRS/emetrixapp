@@ -19,10 +19,12 @@ class SondeoPage extends ConsumerStatefulWidget {
     required this.sondeosList,
     required this.store,
     required this.storeUuid,
+    required this.mainStore,
   });
   final List<RespM> sondeosList;
   final Store2 store;
   final String storeUuid;
+  final SondeosFromStore? mainStore;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SondeoPageState();
@@ -30,17 +32,13 @@ class SondeoPage extends ConsumerStatefulWidget {
 
 class _SondeoPageState extends ConsumerState<SondeoPage>
     with AutomaticKeepAliveClientMixin {
-  List<RespM> sondeosList2 = [];
   List<(String, int)> mandatorySteps = [];
   int missingSteps = 0;
 
   @override
   void initState() {
     super.initState();
-    sondeosList2 =
-        ref.read(sondeoController.notifier).reorderList(widget.sondeosList);
     identifyRequiredSteps();
-    setState(() {});
   }
 
   @override
@@ -50,7 +48,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     final onlyFirst = ref.watch(onlyFirstProvider);
     final finishedSections = ref.watch(finishedSondeos);
-    final completeAll = finishedSections.length == sondeosList2.length;
+    final completeAll = finishedSections.length == widget.sondeosList.length;
     final appbar = AppBar(
       automaticallyImplyLeading: false,
       title: Column(
@@ -61,7 +59,8 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               maxLines: 2),
-          Text('${finishedSections.length} de ${sondeosList2.length} sondeos',
+          Text(
+              '${finishedSections.length} de ${widget.sondeosList.length} sondeos',
               style: t.textDisabled)
         ],
       ),
@@ -81,7 +80,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
     //*Close and save to db the current Navigator state, when the app restart, restore the Navigator state
 
     return PopScope(
-      canPop: false,
+      canPop: finishedSections.isEmpty ? true : false,
       onPopInvoked: (didPop) {},
       child: Scaffold(
         appBar: appbar,
@@ -89,7 +88,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
           physics: const BouncingScrollPhysics(),
           slivers: [
             SliverList.builder(
-              itemCount: sondeosList2.length,
+              itemCount: widget.sondeosList.length,
               addAutomaticKeepAlives: true,
               addRepaintBoundaries: true,
               addSemanticIndexes: true,
@@ -111,9 +110,10 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
                       }
                     },
                     enebled: !enabled,
-                    sondeoItem: sondeosList2[index],
+                    sondeoItem: widget.sondeosList[index],
                     index: index,
-                    isLast: index + 1 == sondeosList2.length ? true : false,
+                    isLast:
+                        index + 1 == widget.sondeosList.length ? true : false,
                   ),
                 );
               },
@@ -138,13 +138,13 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
   }
 
   Future<void> navigateToSondeo(int index, List<int> finishedSections) async {
-    if (sondeosList2[index].sondeo == 'Asistencia') {
+    if (widget.sondeosList[index].sondeo == 'Asistencia') {
       if (finishedSections.contains(index)) {
         await _messaje('Cuidado', 'Ya tomaste asistencia.', null);
         return;
       }
     }
-    if (sondeosList2[index].sondeo == 'Salida') {
+    if (widget.sondeosList[index].sondeo == 'Salida') {
       if (finishedSections.contains(index)) {
         await _messaje('Cuidado', 'Ya hicíste checkOut.', null);
         return;
@@ -168,31 +168,33 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
             type: PageTransitionType.rightToLeft,
             child:
                 // sondeosList2[index].preguntas?.first.tipo == 'asistencia'
-                sondeosList2[index].sondeo == 'Asistencia' ||
-                        sondeosList2[index].sondeo == 'Salida'
+                widget.sondeosList[index].sondeo == 'Asistencia' ||
+                        widget.sondeosList[index].sondeo == 'Salida'
                     ? MapView(
                         store: widget.store,
-                        sondeoItem: sondeosList2[index],
+                        sondeoItem: widget.sondeosList[index],
                         index: index,
                         storeUuid: widget.storeUuid,
                       )
                     : SingleSondeoPage(
                         store: widget.store,
-                        sondeoItem: sondeosList2[index],
+                        sondeoItem: widget.sondeosList[index],
                         index: index,
-                        stepsLenght: sondeosList2.length,
+                        stepsLenght: widget.sondeosList.length,
                         storeUuid: widget.storeUuid,
+                        stepUuid: widget.sondeosList[index].uuid ?? '',
                       )));
   }
 
   void identifyRequiredSteps() {
-    for (final sondeo in sondeosList2) {
+    for (final sondeo in widget.sondeosList) {
       if (sondeo.obligatorio == 1) {
-        final index = sondeosList2.indexOf(sondeo);
+        final index = widget.sondeosList.indexOf(sondeo);
         mandatorySteps.add((sondeo.sondeo ?? '', index));
       }
     }
     debugPrint(mandatorySteps.toString());
+    setState(() {});
   }
 
   void verifyIsFinished(List<int> finishedSections) {
@@ -240,7 +242,8 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
       return;
       // return false;
     }
-    if (!finishedSections.contains(sondeosList2.indexOf(sondeosList2.last))) {
+    if (!finishedSections
+        .contains(widget.sondeosList.indexOf(widget.sondeosList.last))) {
       await _messaje('Sondeo Incompleto', 'Debes Hacer CheckOut', null);
       return;
       // return false;
@@ -259,9 +262,8 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
       showProgress(context: context, title: 'Guardando progreso');
       await Future.delayed(const Duration(seconds: 1));
       //Build Pending
-      await ref
-          .read(sondeoController.notifier)
-          .buildPending(sondeosList2[0], widget.store, ref, widget.storeUuid);
+      await ref.read(sondeoController.notifier).buildPending(
+          widget.sondeosList[0], widget.store, ref, widget.storeUuid);
 
       navigator.pop();
       ref.read(mainIndex.notifier).setIndex(1);

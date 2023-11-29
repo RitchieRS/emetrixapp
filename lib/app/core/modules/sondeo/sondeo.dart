@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:isar/isar.dart';
 part 'sondeo.g.dart';
 
@@ -11,12 +12,16 @@ class SondeosFromStore {
   CheckInOut? checkIn;
   CheckInOut? checkOut;
   double? totalProgress;
+  SondeoModel? sondeo;
   List<SondeoCollection>? storeSteps;
 
   SondeosFromStore({
     this.store,
     this.totalProgress,
     this.uuid,
+    this.checkIn,
+    this.checkOut,
+    this.sondeo,
     this.storeSteps,
   });
 }
@@ -26,10 +31,10 @@ class SondeosFromStore {
 class SondeoCollection {
   SondeoCollection({
     this.sondeos,
-    this.indexStep,
+    this.stepUuid,
     this.sondeoProgress,
   });
-  int? indexStep;
+  String? stepUuid;
   double? sondeoProgress;
   List<QuestionResponse>? sondeos;
 }
@@ -60,7 +65,7 @@ class CheckInOut {
 }
 
 //---------
-
+@embedded
 class SondeoModel {
   int? idError;
   List<RespM>? resp;
@@ -90,7 +95,9 @@ class SondeoModel {
       };
 }
 
+@embedded
 class RespM {
+  String? uuid;
   String? id;
   String? sondeo;
   String? orden;
@@ -107,6 +114,7 @@ class RespM {
   List<Preguntas>? preguntas;
 
   RespM({
+    this.uuid,
     this.id,
     this.sondeo,
     this.orden,
@@ -128,6 +136,7 @@ class RespM {
   String toRawJson() => json.encode(toJson());
 
   factory RespM.fromJson(Map<String, dynamic> json) => RespM(
+        uuid: uuidU.v4(),
         id: json["id"],
         sondeo: json["sondeo"],
         orden: json["orden"],
@@ -170,6 +179,7 @@ class RespM {
 @embedded
 class Preguntas {
   String? id;
+  String? uuid;
   String? pregunta;
   String? tipo;
   double? puntaje;
@@ -190,6 +200,7 @@ class Preguntas {
 
   Preguntas({
     this.id,
+    this.uuid,
     this.pregunta,
     this.tipo,
     this.puntaje,
@@ -215,6 +226,7 @@ class Preguntas {
   String toRawJson() => json.encode(toJson());
 
   factory Preguntas.fromJson(Map<String, dynamic> json) => Preguntas(
+        uuid: uuidU.v4(),
         id: json["id"],
         pregunta: json["pregunta"],
         tipo: json["tipo"],

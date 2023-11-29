@@ -20,8 +20,8 @@ class Auth extends StateNotifier {
   Auth(super.state);
 
   List<RespM> reorderList(List<RespM> list) {
-    List<(int, RespM)> list2 = [];
-    List<RespM> reorderList = [];
+    List<(int, RespM)> list2 = List.empty(growable: true);
+    List<RespM> reorderList = List.empty(growable: true);
 
     //Clonacion de asistencia para checkout
     final checkin =

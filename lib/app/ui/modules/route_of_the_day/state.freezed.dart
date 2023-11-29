@@ -63,22 +63,22 @@ class _$RouteOTDStateCopyWithImpl<$Res, $Val extends RouteOTDState>
 }
 
 /// @nodoc
-abstract class _$$_RouteOTDCopyWith<$Res>
+abstract class _$$RouteOTDImplCopyWith<$Res>
     implements $RouteOTDStateCopyWith<$Res> {
-  factory _$$_RouteOTDCopyWith(
-          _$_RouteOTD value, $Res Function(_$_RouteOTD) then) =
-      __$$_RouteOTDCopyWithImpl<$Res>;
+  factory _$$RouteOTDImplCopyWith(
+          _$RouteOTDImpl value, $Res Function(_$RouteOTDImpl) then) =
+      __$$RouteOTDImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({List<SondeosFromStore> data, States state});
 }
 
 /// @nodoc
-class __$$_RouteOTDCopyWithImpl<$Res>
-    extends _$RouteOTDStateCopyWithImpl<$Res, _$_RouteOTD>
-    implements _$$_RouteOTDCopyWith<$Res> {
-  __$$_RouteOTDCopyWithImpl(
-      _$_RouteOTD _value, $Res Function(_$_RouteOTD) _then)
+class __$$RouteOTDImplCopyWithImpl<$Res>
+    extends _$RouteOTDStateCopyWithImpl<$Res, _$RouteOTDImpl>
+    implements _$$RouteOTDImplCopyWith<$Res> {
+  __$$RouteOTDImplCopyWithImpl(
+      _$RouteOTDImpl _value, $Res Function(_$RouteOTDImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -87,7 +87,7 @@ class __$$_RouteOTDCopyWithImpl<$Res>
     Object? data = null,
     Object? state = null,
   }) {
-    return _then(_$_RouteOTD(
+    return _then(_$RouteOTDImpl(
       data: null == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
@@ -102,8 +102,8 @@ class __$$_RouteOTDCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_RouteOTD implements _RouteOTD {
-  const _$_RouteOTD(
+class _$RouteOTDImpl implements _RouteOTD {
+  const _$RouteOTDImpl(
       {final List<SondeosFromStore> data = const [],
       this.state = States.loading})
       : _data = data;
@@ -130,7 +130,7 @@ class _$_RouteOTD implements _RouteOTD {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_RouteOTD &&
+            other is _$RouteOTDImpl &&
             const DeepCollectionEquality().equals(other._data, _data) &&
             (identical(other.state, state) || other.state == state));
   }
@@ -142,13 +142,13 @@ class _$_RouteOTD implements _RouteOTD {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_RouteOTDCopyWith<_$_RouteOTD> get copyWith =>
-      __$$_RouteOTDCopyWithImpl<_$_RouteOTD>(this, _$identity);
+  _$$RouteOTDImplCopyWith<_$RouteOTDImpl> get copyWith =>
+      __$$RouteOTDImplCopyWithImpl<_$RouteOTDImpl>(this, _$identity);
 }
 
 abstract class _RouteOTD implements RouteOTDState {
   const factory _RouteOTD(
-      {final List<SondeosFromStore> data, final States state}) = _$_RouteOTD;
+      {final List<SondeosFromStore> data, final States state}) = _$RouteOTDImpl;
 
   @override
   List<SondeosFromStore> get data;
@@ -156,6 +156,6 @@ abstract class _RouteOTD implements RouteOTDState {
   States get state;
   @override
   @JsonKey(ignore: true)
-  _$$_RouteOTDCopyWith<_$_RouteOTD> get copyWith =>
+  _$$RouteOTDImplCopyWith<_$RouteOTDImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
