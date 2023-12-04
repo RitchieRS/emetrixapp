@@ -56,7 +56,7 @@ class QuestionBuilder extends ConsumerStatefulWidget {
 class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
   @override
   Widget build(BuildContext context) {
-    switch (widget.pregunta.tipo) {
+    switch (widget.pregunta.tipo ) {
       // case 'asistencia':
       //   return MapView(store: widget.store);
 

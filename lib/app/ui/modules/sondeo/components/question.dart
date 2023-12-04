@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,7 +29,6 @@ class Question extends ConsumerStatefulWidget {
   final bool mandatory;
   final Function(String? response) answer;
   final Function(TextEditingController controller) sendController;
-
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _QuestionState();
 }
@@ -43,11 +43,12 @@ class _QuestionState extends ConsumerState<Question>
       borderSide: BorderSide(color: c.primary500, width: 1.5),
       borderRadius: BorderRadius.circular(10));
   String textValue = '';
-  final controller = TextEditingController();
+  var controller; 
 
   @override
   void initState() {
     super.initState();
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.sendController(controller);
       // controller.text = 'tipo';
@@ -57,13 +58,14 @@ class _QuestionState extends ConsumerState<Question>
 
   @override
   void dispose() {
-    controller.dispose();
+    //controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    controller = ref.watch(textEditingControllerProvider(widget.index));
     final size = MediaQuery.of(context).size;
     Color color2 = Theme.of(context).hintColor.withOpacity(0.3);
     final defaultBorder = OutlineInputBorder(
