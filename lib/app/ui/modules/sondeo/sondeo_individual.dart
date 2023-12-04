@@ -56,12 +56,15 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   //Set color red
   List<bool> mandatoryComponents = [];
   bool validate = false;
+  bool startTextAsignation = false;
 
   @override
   void initState() {
     super.initState();
     idenifyComponents();
-    getTempResponses();
+    getTempResponses()
+        // .whenComplete(() => setState(() => startTextAsignation = true))
+        ;
     //Traer los datos de la bd, para pasarlos a los widgets hijos
   }
 
@@ -87,10 +90,31 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                         return QuestionBuilder(
                           mandatory:
                               validate ? mandatoryComponents[index] : false,
-                          answerController: (controller) {
-                            setState(() {
-                              answerController = controller;
-                            });
+                          answerController: (controller, uuid) {
+                            // setState(() => answerController = controller);
+                            // setState(() {
+                            //   validate = false;
+                            //   textResponse = ResponseIndex(
+                            //     index: index,
+                            //     response: answerController?.text,
+                            //     error: false,
+                            //   );
+                            // });
+                            // if (!startTextAsignation) return;
+
+                            if (uuid ==
+                                widget.sondeoItem.preguntas?[index].uuid) {
+                              // if (textResponse != null) {
+                              setState(() => answerController = controller);
+                              //   print('RESPONSE');
+                              //   print(textResponse?.response);
+
+                              //   setState(() => controller.text =
+                              //       textResponse?.response.toString() ?? '');
+                              // }
+                              // setState(() => controller?.text =
+                              //     textResponse?.response.toString() ?? '');
+                            }
                           },
                           answer: (response) async {
                             setState(() {
@@ -282,19 +306,19 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
             stepUuid: widget.stepUuid);
         logger.i('Actualizamos las respuestas que hay');
         return;
+      } else {
+        //save responses from this step
+        buildResponses();
+        await ref.read(databaseProvider).saveStepData(
+              storeUuid: widget.storeUuid,
+              progress: 0,
+              stepsLenght: widget.stepsLenght,
+              stepUuid: widget.stepUuid,
+              sondeoQuestionResponses: questionsResponses,
+            );
+        logger.i('guardamos el paso actual');
       }
     });
-
-    //save responses from this step
-    buildResponses();
-    await ref.read(databaseProvider).saveStepData(
-          storeUuid: widget.storeUuid,
-          progress: 0,
-          stepsLenght: widget.stepsLenght,
-          stepUuid: widget.stepUuid,
-          sondeoQuestionResponses: questionsResponses,
-        );
-    logger.i('guardamos el paso actual');
   }
 
   void idenifyComponents() {
@@ -303,6 +327,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       questionsResponses.add(
         QuestionResponse(question: sondeo, response: null, indexSondeo: index!),
       );
+      setState(() {});
 
       if (sondeo.obligatorio == 1) {
         mandatoryComponents.add(true);
@@ -342,6 +367,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
 
             if (element2.uuid == element?.question?.uuid) {
               print('--------------');
+              print(index);
               print(element2.tipo);
               print(element2.uuid);
               print(element?.question?.tipo);
@@ -355,7 +381,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
               // print(element2.tipo);
               // print(answerController?.text); //Este es el valor del textfield
               if (element?.response != null) {
-                indentifyHints(element?.response, element2.tipo!);
+                indentifyHints(element?.response, element2.tipo!, index!);
                 setState(() {});
               }
             }
@@ -370,11 +396,17 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     }
   }
 
-  void indentifyHints(String? response, String? type) {
+  void indentifyHints(String? response, String? type, int index) {
     switch (type) {
       case 'abierta':
         if (response != null) {
           setState(() => answerController?.text = response);
+
+          // setState(() => textResponse = ResponseIndex(
+          //       index: index,
+          //       response: response,
+          //       error: false,
+          //     ));
         }
     }
   }
