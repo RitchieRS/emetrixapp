@@ -361,11 +361,14 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
             }
           });
         } else {
-          logger.i('Aun no esta en bd');
+          logger.i('Aun no esta en bd jsahjsjs');
         }
       } catch (error) {
         logger.e(error);
         return;
+
+
+
       }
     }
   }
