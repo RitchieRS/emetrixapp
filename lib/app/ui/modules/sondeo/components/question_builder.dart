@@ -46,7 +46,8 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Function(File?) image;
   final Function(File?) photo;
   final Function(File?) signature;
-  final Function(TextEditingController? controller) answerController;
+  final Function(TextEditingController controller, String uuid)
+      answerController;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -88,7 +89,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           index: widget.index,
           pregunta: widget.pregunta,
           sendController: (TextEditingController controller) {
-            widget.answerController(controller);
+            widget.answerController(controller, widget.pregunta.uuid ?? '');
           },
           answer: (String? answer) {
             widget.answer(answer);
