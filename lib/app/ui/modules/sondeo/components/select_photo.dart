@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,11 +30,14 @@ class SelectPicture extends ConsumerStatefulWidget {
 
 class _SelectPictureState extends ConsumerState<SelectPicture>
     with AutomaticKeepAliveClientMixin {
-  File? image;
+  //File? image;
+
+  var image;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    image = ref.watch(imageFileProviderFamily(int.parse(widget.pregunta.id ?? '0')));
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     final backColor =
@@ -64,9 +68,9 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
                   height: side,
                   width: side,
                   color: backColor,
-                  child: image != null
+                  child: image.file != null
                       ? Image.file(
-                          image ?? File(''),
+                          image.file ?? File(''),
                           fit: BoxFit.cover,
                           frameBuilder:
                               (context, child, frame, wasSynchronouslyLoaded) {
@@ -117,7 +121,7 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
     }
     if (widget.pregunta.tipo == 'fotoGuardarCopia') {
       pickImage(ImageSource.camera);
-      await saveImageOnGallery();
+      //await saveImageOnGallery();
       return;
     }
     if (widget.pregunta.tipo == 'imagen') {
@@ -131,8 +135,8 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
       final image2 = await ImagePicker().pickImage(source: source);
       if (image2 == null) return;
 
-      setState(() => image = File(image2.path));
-      widget.image(image);
+      setState(() => image.file = File(image2.path));
+      widget.image(image.file);
     } on PlatformException catch (e) {
       debugPrint('error:$e');
       widget.image(null);
@@ -142,8 +146,8 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
   Future<void> saveImageOnGallery() async {
     final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/image.jpg';
-    await File(path).writeAsBytes(await image!.readAsBytes());
-    await ImageGallerySaver.saveFile(image!.path);
+    await File(path).writeAsBytes(await image.readAsBytes());
+    await ImageGallerySaver.saveFile(image.path);
   }
 
   @override

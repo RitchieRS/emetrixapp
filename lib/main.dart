@@ -4,8 +4,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/core/global/routes.dart';
 import 'package:emetrix_flutter/app/ui/modules/splash/splash.dart';
+import 'package:wakelock/wakelock.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Wakelock.enable();
   runApp(const ProviderScope(child: MainApp()));
 }
 
@@ -15,7 +18,6 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
-
     return MaterialApp(
       restorationScopeId: 'root',
       showPerformanceOverlay: false,

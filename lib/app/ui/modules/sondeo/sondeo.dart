@@ -12,7 +12,6 @@ import 'package:emetrix_flutter/app/ui/modules/sondeo/components/components.dart
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-
 class SondeoPage extends ConsumerStatefulWidget {
   const SondeoPage({
     super.key,
@@ -43,6 +42,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
 
   @override
   Widget build(BuildContext context) {
+   
     super.build(context);
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
@@ -123,6 +123,14 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
         ),
       ),
     );
+  }
+
+  @override
+  Future<bool> onWillPop() async {
+    // Custom logic when back button is pressed
+    print('Back button pressed!');
+    // Return true to allow the default back button behavior, or false to prevent it
+    return true;
   }
 
   Future<bool> _messaje(
