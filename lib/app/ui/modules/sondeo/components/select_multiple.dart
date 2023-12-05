@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
@@ -20,12 +21,15 @@ class SelectionMultiple extends ConsumerStatefulWidget {
 
 class _SelectionState extends ConsumerState<SelectionMultiple>
     with AutomaticKeepAliveClientMixin {
-  List<String>? selectedItems = [];
+  // List<String>? selectedItems = [];
+  var selectRadios;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final size = MediaQuery.of(context).size;
+    selectRadios =
+        ref.watch(radiosMultipleProvider(int.parse(widget.question.id ?? '0')));
     //top: size.height * 0.01
 
     return AnimatedContainer(
@@ -47,7 +51,7 @@ class _SelectionState extends ConsumerState<SelectionMultiple>
                 itemCount: widget.question.opciones?.length ?? 0,
                 itemBuilder: (context, index) {
                   return CheckboxListTile(
-                    value: selectedItems
+                    value: selectRadios
                         ?.contains(widget.question.opciones?[index].opcion),
                     onChanged: (newvalue) => onSelectedTile(newvalue, index),
                     title: Text(widget.question.opciones?[index].opcion ?? '',
@@ -66,16 +70,16 @@ class _SelectionState extends ConsumerState<SelectionMultiple>
   void onSelectedTile(bool? newvalue, int index) {
     setState(() {
       if (newvalue == true) {
-        selectedItems?.add(widget.question.opciones?[index].opcion ?? '');
+        selectRadios?.add(widget.question.opciones?[index].opcion ?? '');
       } else {
-        selectedItems?.remove(widget.question.opciones?[index].opcion ?? '');
-        if (selectedItems?.isEmpty == true) {
+        selectRadios?.remove(widget.question.opciones?[index].opcion ?? '');
+        if (selectRadios?.isEmpty == true) {
           setState(() {});
           widget.selectedItems(null);
           return;
         }
       }
-      widget.selectedItems(selectedItems);
+      widget.selectedItems(selectRadios);
     });
   }
 

@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +19,8 @@ class Signature extends ConsumerStatefulWidget {
     super.key,
     required this.pregunta,
     required this.getSignature,
-    this.mandatory = false, required this.preguntawid,
+    this.mandatory = false,
+    required this.preguntawid,
   });
   final String pregunta;
   final Function(File?) getSignature;
@@ -36,7 +38,8 @@ class _SignatureState extends ConsumerState<Signature>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    signature = ref.watch(imageFileProviderFamily(int.parse(widget.preguntawid.id ?? '0')));
+    signature = ref.watch(
+        imageFileProviderFamily(int.parse(widget.preguntawid.id ?? '0')));
 
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
@@ -81,7 +84,7 @@ class _SignatureState extends ConsumerState<Signature>
   Future<void> getSignature() async {
     final result = await Navigator.push<File>(
         context,
-        MaterialPageRoute(
+        CupertinoPageRoute(
           builder: (context) => const SignatureFullPage(),
         ));
     imageCache.clear();

@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -29,12 +30,15 @@ class _SelectionState extends ConsumerState<Selection>
     with AutomaticKeepAliveClientMixin {
   final List<String> _yesnoOptions = ['Si', 'No'];
   late String multi = widget.question.opciones?[0].opcion ?? '';
-  int? selectedOption;
+  // int? selectedOption;
+  var selectedOption;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final size = MediaQuery.of(context).size;
+    selectedOption =
+        ref.watch(radiosProvider(int.parse(widget.pregunta.id ?? '0')));
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -60,8 +64,8 @@ class _SelectionState extends ConsumerState<Selection>
                         title: Text(_yesnoOptions[index]),
                         value: index,
                         activeColor: c.primary500,
-                        groupValue: selectedOption,
-                        onChanged: (value) => yesNoOnChanged(value))
+                        groupValue: selectedOption.currentValue,
+                        onChanged: (value) => yesNoOnChanged(value as int?))
                     : widget.oneSelection != true &&
                             widget.question.opciones != null
                         ? RadioListTile(
@@ -70,8 +74,8 @@ class _SelectionState extends ConsumerState<Selection>
                                     'option'),
                             value: index,
                             activeColor: c.primary500,
-                            groupValue: selectedOption,
-                            onChanged: (value) => onChanged(value))
+                            groupValue: selectedOption.currentValue,
+                            onChanged: (value) => onChanged(value as int?))
                         : const SizedBox();
               },
             ),
@@ -84,10 +88,10 @@ class _SelectionState extends ConsumerState<Selection>
 
   void yesNoOnChanged(int? value) {
     if (value != null) {
-      setState(() {
-        selectedOption = value;
-      });
-      widget.answer(_yesnoOptions[selectedOption ?? 0]);
+      selectedOption.updateValue(value);
+      // selectedOption = value;
+      setState(() {});
+      widget.answer(_yesnoOptions[selectedOption.currentValue ?? 0]);
       return;
     }
     widget.answer(null);
@@ -96,8 +100,11 @@ class _SelectionState extends ConsumerState<Selection>
 
   void onChanged(int? value) {
     if (value != null) {
-      setState(() => selectedOption = value);
-      widget.answer(widget.question.opciones![selectedOption ?? 0].opcion);
+      // setState(() => selectedOption = value);
+      selectedOption.updateValue(value);
+      setState(() {});
+      widget.answer(
+          widget.question.opciones![selectedOption.currentValue ?? 0].opcion);
       return;
     }
     widget.answer(null);

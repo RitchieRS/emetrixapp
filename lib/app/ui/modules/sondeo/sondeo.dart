@@ -1,17 +1,19 @@
 // ignore_for_file: use_build_context_synchronously
-import 'package:emetrix_flutter/app/core/global/core.dart';
-import 'package:emetrix_flutter/app/ui/main/controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:page_transition/page_transition.dart';
+
+import 'package:emetrix_flutter/app/core/global/core.dart';
+import 'package:emetrix_flutter/app/ui/main/controller.dart';
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/components.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+
 class SondeoPage extends ConsumerStatefulWidget {
   const SondeoPage({
     super.key,
@@ -42,7 +44,6 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
 
   @override
   Widget build(BuildContext context) {
-   
     super.build(context);
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
@@ -125,13 +126,13 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
     );
   }
 
-  @override
-  Future<bool> onWillPop() async {
-    // Custom logic when back button is pressed
-    print('Back button pressed!');
-    // Return true to allow the default back button behavior, or false to prevent it
-    return true;
-  }
+  // @override
+  // Future<bool> onWillPop() async {
+  //   // Custom logic when back button is pressed
+  //   print('Back button pressed!');
+  //   // Return true to allow the default back button behavior, or false to prevent it
+  //   return true;
+  // }
 
   Future<bool> _messaje(
       String title, String content, String? butonLabel) async {
@@ -169,29 +170,31 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
         return;
       }
     }
-    await Navigator.push(
-        context,
-        PageTransition(
-            duration: const Duration(milliseconds: 350),
-            type: PageTransitionType.rightToLeft,
-            child:
-                // sondeosList2[index].preguntas?.first.tipo == 'asistencia'
-                widget.sondeosList[index].sondeo == 'Asistencia' ||
-                        widget.sondeosList[index].sondeo == 'Salida'
-                    ? MapView(
-                        store: widget.store,
-                        sondeoItem: widget.sondeosList[index],
-                        index: index,
-                        storeUuid: widget.storeUuid,
-                      )
-                    : SingleSondeoPage(
-                        store: widget.store,
-                        sondeoItem: widget.sondeosList[index],
-                        index: index,
-                        stepsLenght: widget.sondeosList.length,
-                        storeUuid: widget.storeUuid,
-                        stepUuid: widget.sondeosList[index].uuid ?? '',
-                      )));
+    await Navigator.push(context, CupertinoPageRoute(builder: (context) {
+      return // sondeosList2[index].preguntas?.first.tipo == 'asistencia'
+          widget.sondeosList[index].sondeo == 'Asistencia' ||
+                  widget.sondeosList[index].sondeo == 'Salida'
+              ? MapView(
+                  store: widget.store,
+                  sondeoItem: widget.sondeosList[index],
+                  index: index,
+                  storeUuid: widget.storeUuid,
+                )
+              : SingleSondeoPage(
+                  store: widget.store,
+                  sondeoItem: widget.sondeosList[index],
+                  index: index,
+                  stepsLenght: widget.sondeosList.length,
+                  storeUuid: widget.storeUuid,
+                  stepUuid: widget.sondeosList[index].uuid ?? '',
+                );
+    })
+        // PageTransition(
+        //     duration: const Duration(milliseconds: 350),
+        //     type: PageTransitionType.rightToLeft,
+        //     child:
+        //         )
+        );
   }
 
   void identifyRequiredSteps() {

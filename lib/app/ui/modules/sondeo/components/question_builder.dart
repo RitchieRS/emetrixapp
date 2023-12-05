@@ -223,7 +223,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             widget.date(date);
           },
           pregunta: widget.pregunta.pregunta ?? 'NoData',
-          preguntawid: widget.pregunta,
+          preguntaId: widget.pregunta,
           onlyDate: true,
           mandatory: widget.mandatory,
         );
@@ -233,7 +233,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           getDateTime: (dateTime) {
             widget.dateTime(dateTime);
           },
-          preguntawid: widget.pregunta,
+          preguntaId: widget.pregunta,
           pregunta: widget.pregunta.pregunta ?? 'NoData',
           mandatory: widget.mandatory,
         );
@@ -243,7 +243,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           getDateTime: (time) {
             widget.time(time);
           },
-          preguntawid: widget.pregunta,
+          preguntaId: widget.pregunta,
           pregunta: widget.pregunta.pregunta ?? 'NoData',
           onlyTime: true,
           mandatory: widget.mandatory,

@@ -1,17 +1,18 @@
-
 import 'dart:async';
 import 'dart:core';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
-final textEditingControllerProvider = ProviderFamily<TextEditingController, int>((ref, index) {
+//Textfilelds
+final textEditingControllerProvider =
+    ProviderFamily<TextEditingController, int>((ref, index) {
   return TextEditingController();
 });
 
+//DateTime & GPS
 class StringManager {
   String _myString;
-
   StringManager(this._myString);
 
   String get currentString => _myString;
@@ -21,19 +22,11 @@ class StringManager {
   }
 }
 
-
-// Create a provider family for the StringManager
-final stringManagerProvider =
-    ProviderFamily<StringManager, int>((ref, index) {
+final stringManagerProvider = ProviderFamily<StringManager, int>((ref, index) {
   return StringManager('');
 });
 
-final textControllerListProvider = Provider<List<int>>((ref) {
-  return [];
-});
-
-
-
+//Timer
 final stopwatchProviderFamily =
     ProviderFamily<StopwatchProvider, int>((ref, id) {
   return StopwatchProvider(id: id);
@@ -55,35 +48,36 @@ class StopwatchProvider with ChangeNotifier {
     if (!_stopwatch.isRunning) {
       _stopwatch.start();
       Timer.periodic(const Duration(milliseconds: 10), (timer) {
-          _minutes = _stopwatch.elapsed.inMinutes % 60;
-          _seconds = _stopwatch.elapsed.inSeconds % 60;
-          _milliseconds = _stopwatch.elapsedMilliseconds;
+        _minutes = _stopwatch.elapsed.inMinutes % 60;
+        _seconds = _stopwatch.elapsed.inSeconds % 60;
+        _milliseconds = _stopwatch.elapsedMilliseconds;
         notifyListeners();
-      
       });
     }
   }
 
-  int minutes(){
+  int minutes() {
     return _minutes;
   }
-  int seconds(){
+
+  int seconds() {
     return _seconds;
   }
-  int milliseconds(){
+
+  int milliseconds() {
     return _milliseconds;
   }
 
-  bool isRunning(){
+  bool isRunning() {
     return _stopwatch.isRunning;
   }
 
-  void reset(){
-     _stopwatch.reset();
+  void reset() {
+    _stopwatch.reset();
   }
 
-  void stop(){
-     _stopwatch.stop();
+  void stop() {
+    _stopwatch.stop();
   }
 
   void stopStopwatch() {
@@ -96,28 +90,40 @@ class StopwatchProvider with ChangeNotifier {
   }
 }
 
-final stringListProvider =
-    ProviderFamily<List<String>, int>((ref, id) {
-  // Puedes inicializar la lista aquí si es necesario
+final stringListProvider = ProviderFamily<List<String>, int>((ref, id) {
   return <String>[];
 });
 
-final imageFileProviderFamily =
-    ProviderFamily<FileState?, int>((ref, id) {
+//Images & Photos
+final imageFileProviderFamily = ProviderFamily<FileState?, int>((ref, id) {
   return FileState();
 });
 
 class FileState {
   File? file;
 
-  readAsBytes(){
+  readAsBytes() {
     return file?.readAsBytes();
   }
 }
 
+//Radios
+final radiosProvider = ProviderFamily<IntManager, int>((ref, index) {
+  return IntManager(0);
+});
 
-enum RadioOption { option1, option2 }
+class IntManager {
+  int _myInt;
+  IntManager(this._myInt);
 
-final radioOptionProviderFamily = StateProviderFamily<StateProvider, String>((ref, formKey) {
-  return StateProvider<int>((ref) => 1);
+  int get currentValue => _myInt;
+
+  void updateValue(int newInt) {
+    _myInt = newInt;
+  }
+}
+
+//RadiosMultiple
+final radiosMultipleProvider = ProviderFamily<List<String>, int>((ref, id) {
+  return <String>[];
 });

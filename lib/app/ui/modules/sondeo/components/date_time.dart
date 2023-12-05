@@ -12,16 +12,15 @@ class PickerDT extends ConsumerStatefulWidget {
     this.onlyTime,
     required this.pregunta,
     required this.getDateTime,
-    this.mandatory = false, 
-    required Preguntas this.preguntawid,
+    this.mandatory = false,
+    required this.preguntaId,
   });
   final bool? onlyDate;
   final bool? onlyTime;
   final String pregunta;
-  final Preguntas preguntawid;
+  final Preguntas preguntaId;
   final Function(DateTime?) getDateTime;
   final bool mandatory;
-  //var stringManager;
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _PickerDTState();
 }
@@ -35,9 +34,9 @@ class _PickerDTState extends ConsumerState<PickerDT>
   Widget build(BuildContext context) {
     super.build(context);
 
-    stringManager = ref.watch(stringManagerProvider(int.parse( widget.preguntawid.id ?? '0')));
-    
-    
+    stringManager = ref
+        .watch(stringManagerProvider(int.parse(widget.preguntaId.id ?? '0')));
+
     final size = MediaQuery.of(context).size;
     final paddingVertical = size.height * 0.012;
     final paddingHorizontal = size.width * 0.04;
@@ -57,7 +56,7 @@ class _PickerDTState extends ConsumerState<PickerDT>
             ),
             SizedBox(height: paddingVertical),
             Center(
-              child: Text(stringManager.currentString ,
+              child: Text(stringManager.currentString,
                   style: selectedDate == null ? t.text : t.text,
                   textAlign: TextAlign.center),
             ),
@@ -84,7 +83,8 @@ class _PickerDTState extends ConsumerState<PickerDT>
   String showDateOrTime() {
     if (widget.onlyDate == true) {
       if (selectedDate != null) {
-        stringManager.updateString('${selectedDate?.day}/${_months()}/${selectedDate?.year}');
+        stringManager.updateString(
+            '${selectedDate?.day}/${_months()}/${selectedDate?.year}');
         return '${selectedDate?.day}/${_months()}/${selectedDate?.year}';
       } else {
         return '';
@@ -100,7 +100,8 @@ class _PickerDTState extends ConsumerState<PickerDT>
       }
     } else {
       if (selectedDate != null) {
-        stringManager.updateString('${selectedDate?.day}/${_months()}/${selectedDate?.year} \n ${selectedTime.format(context)}');
+        stringManager.updateString(
+            '${selectedDate?.day}/${_months()}/${selectedDate?.year} \n ${selectedTime.format(context)}');
         return '${selectedDate?.day}/${_months()}/${selectedDate?.year} \n ${selectedTime.format(context)}';
       } else {
         return '';
@@ -136,7 +137,6 @@ class _PickerDTState extends ConsumerState<PickerDT>
       await _setDateNTime(context);
     }
     showDateOrTime();
-    
   }
 
   Future _setDate() async {
