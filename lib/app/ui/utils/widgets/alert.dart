@@ -9,6 +9,7 @@ Future<bool> showMsj(
     required String buttonLabel,
     bool onlyOk = false,
     bool justifyContent = false,
+    Widget? children,
     bool canTapOutside = false}) async {
   final bool? result = await showDialog(
       context: context,
@@ -21,9 +22,21 @@ Future<bool> showMsj(
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis),
-          content: Text(content,
-              style: t.text2,
-              textAlign: justifyContent ? TextAlign.justify : TextAlign.center),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (children != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: children,
+                ),
+              Text(content,
+                  style: t.text2,
+                  textAlign:
+                      justifyContent ? TextAlign.justify : TextAlign.center),
+            ],
+          ),
           actionsAlignment: MainAxisAlignment.center,
           actions: onlyOk == true
               ? [

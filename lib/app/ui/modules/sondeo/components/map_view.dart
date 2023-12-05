@@ -149,12 +149,13 @@ class _MapViewState extends ConsumerState<MapView> {
         ),
         bottomNavigationBar: BottomButon(
           onTap: () async {
-            if (widget.store.checkGPS == '1') {
-              await calculateChekInOut(finishedSections);
-              return;
-            } else {
-              await setEntrance(finishedSections);
-            }
+            await calculateChekInOut(finishedSections);
+            // if (widget.store.checkGPS == '1') {
+            //   await calculateChekInOut(finishedSections);
+            //   return;
+            // } else {
+            //   await setEntrance(finishedSections);
+            // }
           },
         ));
   }

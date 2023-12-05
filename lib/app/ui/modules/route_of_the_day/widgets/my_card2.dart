@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:page_transition/page_transition.dart';
 
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
@@ -67,7 +69,16 @@ class _MyCardState extends ConsumerState<MyCard2> {
                         value: widget.store ?? Store(),
                         headerBuilder: (context, isExpanded) {
                           return ListTile(
-                            onTap: () => showMsj2(),
+                            onTap: () async {
+                              print(widget.store?.store?.checkGPS);
+                              if (widget.store?.store?.checkGPS == '1' ||
+                                  widget.store?.store?.checkGPS == 1) {
+                                final gps = await verifyGps();
+
+                                if (!gps) return;
+                              }
+                              await showMsj2();
+                            },
                             minVerticalPadding: 0,
                             leading: Icon(Icons.storefront_outlined,
                                 color: iconColor),
@@ -120,6 +131,25 @@ class _MyCardState extends ConsumerState<MyCard2> {
         ),
       ),
     );
+  }
+
+  Future<bool> verifyGps() async {
+    final permission = await Geolocator.isLocationServiceEnabled();
+    if (permission) {
+      return true;
+    } else {
+      await showMsj(
+          context: context,
+          title: 'Gps',
+          content:
+              'Actíva la ubicación de tu dispositivo para poder continuar.',
+          buttonLabel: 'Aceptar',
+          destructive: false,
+          children:
+              Icon(Icons.location_on_outlined, size: 50, color: c.primary500),
+          onlyOk: true);
+      return false;
+    }
   }
 
   void goMaps() {
@@ -177,7 +207,7 @@ class _MyCardState extends ConsumerState<MyCard2> {
     // } else {
     // }
 
-    navigator.push(MaterialPageRoute(builder: (context) {
+    navigator.push(CupertinoPageRoute(builder: (context) {
       return SondeoPage(
           storeUuid: widget.store?.uuid ?? '',
           mainStore: widget.store,
