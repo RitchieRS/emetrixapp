@@ -1,4 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
@@ -10,14 +12,16 @@ class PickerDT extends ConsumerStatefulWidget {
     this.onlyTime,
     required this.pregunta,
     required this.getDateTime,
-    this.mandatory = false,
+    this.mandatory = false, 
+    required Preguntas this.preguntawid,
   });
   final bool? onlyDate;
   final bool? onlyTime;
   final String pregunta;
+  final Preguntas preguntawid;
   final Function(DateTime?) getDateTime;
   final bool mandatory;
-
+  //var stringManager;
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _PickerDTState();
 }
@@ -26,10 +30,14 @@ class _PickerDTState extends ConsumerState<PickerDT>
     with AutomaticKeepAliveClientMixin {
   DateTime? selectedDate;
   TimeOfDay selectedTime = TimeOfDay.now();
-
+  var stringManager;
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    stringManager = ref.watch(stringManagerProvider(int.parse( widget.preguntawid.id ?? '0')));
+    
+    
     final size = MediaQuery.of(context).size;
     final paddingVertical = size.height * 0.012;
     final paddingHorizontal = size.width * 0.04;
@@ -49,7 +57,7 @@ class _PickerDTState extends ConsumerState<PickerDT>
             ),
             SizedBox(height: paddingVertical),
             Center(
-              child: Text(showDateOrTime(),
+              child: Text(stringManager.currentString ,
                   style: selectedDate == null ? t.text : t.text,
                   textAlign: TextAlign.center),
             ),
@@ -76,6 +84,7 @@ class _PickerDTState extends ConsumerState<PickerDT>
   String showDateOrTime() {
     if (widget.onlyDate == true) {
       if (selectedDate != null) {
+        stringManager.updateString('${selectedDate?.day}/${_months()}/${selectedDate?.year}');
         return '${selectedDate?.day}/${_months()}/${selectedDate?.year}';
       } else {
         return '';
@@ -83,6 +92,7 @@ class _PickerDTState extends ConsumerState<PickerDT>
       }
     } else if (widget.onlyTime == true) {
       if (selectedDate != null) {
+        stringManager.updateString(selectedTime.format(context));
         return selectedTime.format(context);
       } else {
         return '';
@@ -90,6 +100,7 @@ class _PickerDTState extends ConsumerState<PickerDT>
       }
     } else {
       if (selectedDate != null) {
+        stringManager.updateString('${selectedDate?.day}/${_months()}/${selectedDate?.year} \n ${selectedTime.format(context)}');
         return '${selectedDate?.day}/${_months()}/${selectedDate?.year} \n ${selectedTime.format(context)}';
       } else {
         return '';
@@ -124,6 +135,8 @@ class _PickerDTState extends ConsumerState<PickerDT>
     } else {
       await _setDateNTime(context);
     }
+    showDateOrTime();
+    
   }
 
   Future _setDate() async {

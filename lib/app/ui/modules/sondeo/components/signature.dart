@@ -2,6 +2,8 @@
 
 import 'dart:io';
 
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,11 +18,12 @@ class Signature extends ConsumerStatefulWidget {
     super.key,
     required this.pregunta,
     required this.getSignature,
-    this.mandatory = false,
+    this.mandatory = false, required this.preguntawid,
   });
   final String pregunta;
   final Function(File?) getSignature;
   final bool mandatory;
+  final Preguntas preguntawid;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SignatureState();
@@ -28,11 +31,13 @@ class Signature extends ConsumerStatefulWidget {
 
 class _SignatureState extends ConsumerState<Signature>
     with AutomaticKeepAliveClientMixin {
-  File? siganture;
+  late var signature;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    signature = ref.watch(imageFileProviderFamily(int.parse(widget.preguntawid.id ?? '0')));
+
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     final backColor =
@@ -58,8 +63,8 @@ class _SignatureState extends ConsumerState<Signature>
                   color: backColor,
                   height: size.height * 0.12,
                   width: size.width * 0.9,
-                  child: siganture != null
-                      ? Image.file(siganture!)
+                  child: signature.file != null
+                      ? Image.file(signature.file!)
                       : const Center(
                           child: Text('Firmar'),
                         ),
@@ -81,7 +86,7 @@ class _SignatureState extends ConsumerState<Signature>
         ));
     imageCache.clear();
     setState(() {
-      siganture = result;
+      signature?.file = result;
     });
     widget.getSignature(result);
   }

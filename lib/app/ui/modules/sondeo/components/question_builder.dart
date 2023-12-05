@@ -183,6 +183,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
       case 'gps':
         return Gps(
           pregunta: widget.pregunta.pregunta ?? 'NoData',
+          preguntawid: widget.pregunta,
           answer: (position) {
             widget.positionGPS(position);
           },
@@ -192,6 +193,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
       case 'tiempo':
         return MyTimer(
           pregunta: widget.pregunta.pregunta ?? 'NoData',
+          preguntawid: widget.pregunta,
           times: widget.pregunta.capturaNTiempos ?? 1,
           mandatory: widget.mandatory,
         );
@@ -208,6 +210,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
       case 'firma':
         return Signature(
           pregunta: widget.pregunta.pregunta ?? 'NoData',
+          preguntawid: widget.pregunta,
           getSignature: (signatureFile) {
             widget.signature(signatureFile);
           },
@@ -220,6 +223,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             widget.date(date);
           },
           pregunta: widget.pregunta.pregunta ?? 'NoData',
+          preguntawid: widget.pregunta,
           onlyDate: true,
           mandatory: widget.mandatory,
         );
@@ -229,6 +233,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           getDateTime: (dateTime) {
             widget.dateTime(dateTime);
           },
+          preguntawid: widget.pregunta,
           pregunta: widget.pregunta.pregunta ?? 'NoData',
           mandatory: widget.mandatory,
         );
@@ -238,6 +243,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           getDateTime: (time) {
             widget.time(time);
           },
+          preguntawid: widget.pregunta,
           pregunta: widget.pregunta.pregunta ?? 'NoData',
           onlyTime: true,
           mandatory: widget.mandatory,

@@ -1,3 +1,5 @@
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,11 +12,13 @@ class Gps extends ConsumerStatefulWidget {
     super.key,
     required this.pregunta,
     required this.answer,
-    this.mandatory = false,
+    this.mandatory = false, 
+    required this.preguntawid,
   });
   final String pregunta;
   final Function(String?) answer;
   final bool mandatory;
+  final Preguntas preguntawid;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _GpsState();
@@ -24,7 +28,7 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
   Position? position;
   LocationPermission? geolocator;
   bool loading = false;
-
+  var stringManager;
   @override
   void initState() {
     super.initState();
@@ -36,7 +40,7 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
     super.build(context);
     final size = MediaQuery.of(context).size;
     // final isDark = ref.watch(themeProvider) == ThemeMode.dark;
-
+    stringManager = ref.watch(stringManagerProvider(int.parse(widget.preguntawid.id ?? '0')));
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       color: widget.mandatory ? c.errorLight : c.surface,
@@ -49,6 +53,13 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
             child: Text(widget.pregunta, style: t.subtitle),
           ),
           SizedBox(height: size.height * 0.01),
+          stringManager.currentString.toString().isNotEmpty ?
+          SizedBox(
+                  height: size.height * 0.05,
+                  child: Center(
+                      child: Text(
+                          stringManager.currentString)),
+                ):
           geolocator == LocationPermission.always && position != null ||
                   geolocator == LocationPermission.whileInUse &&
                       position != null
@@ -72,7 +83,7 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
                     )
                   : SizedBox(
                       height: size.height * 0.05,
-                      child: const Center(child: Text('GPS'))),
+                      child: const Center(child: Text('GPS') )),
           SizedBox(height: size.height * 0.01),
           Center(
             child: Buton(
@@ -90,6 +101,7 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
 
   Future<void> getCurrentLocation() async {
     if (position != null) {
+      stringManager.updateString('${position?.latitude}, ${position?.longitude}');
       widget.answer('${position?.latitude}, ${position?.longitude}');
       return;
     }
@@ -102,7 +114,7 @@ class _GpsState extends ConsumerState<Gps> with AutomaticKeepAliveClientMixin {
       position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.best,
           forceAndroidLocationManager: false);
-
+      stringManager.updateString('${position?.latitude}, ${position?.longitude}');
       widget.answer('${position?.latitude}, ${position?.longitude}');
 
       setState(() {});
