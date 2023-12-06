@@ -1,12 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:async';
 import 'dart:io';
-import 'package:emetrix_flutter/app/core/global/core.dart';
-import 'package:emetrix_flutter/app/core/services/database/database.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/bottom_buton.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/custom_title.dart';
+import 'dart:async';
 import 'package:flutter/services.dart' show PlatformException, rootBundle;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,8 +9,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'package:emetrix_flutter/app/core/services/database/database.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/bottom_buton.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/custom_title.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
@@ -188,10 +188,16 @@ class _MapViewState extends ConsumerState<MapView> {
     }
   }
 
-  Future setEntrance(List<int> finishedSections) async {
+  Future<void> setEntrance(List<int> finishedSections) async {
     final image = await pickImage(ImageSource.camera);
     if (image == null) return;
     showProgress(context: context, title: 'Calculando');
+    final tempImage = File(image.path);
+    final directory =
+        await getApplicationDocumentsDirectory(); // AppData folder path
+    final savedImagePath = '${directory.path}/${DateTime.now()}.jpg';
+    File savedImage = await tempImage.copy(savedImagePath);
+
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best,
         forceAndroidLocationManager: false);
@@ -203,7 +209,7 @@ class _MapViewState extends ConsumerState<MapView> {
             storeUuid: widget.storeUuid,
             lat: position?.latitude.toString() ?? '',
             long: position?.longitude.toString() ?? '',
-            pic: image.toString(),
+            pic: savedImage.path,
             isCheckin: widget.index == 0 ? true : false,
           );
       Navigator.pop(context);
@@ -224,35 +230,6 @@ class _MapViewState extends ConsumerState<MapView> {
         canTapOutside: false,
         buttonLabel: 'Ok');
   }
-
-  Future<void> _getLocation() async {
-    try {
-      if (geolocator == LocationPermission.always ||
-          geolocator == LocationPermission.whileInUse) {
-        position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.best,
-            forceAndroidLocationManager: false);
-        setState(() {});
-      } else {
-        geolocator = await Geolocator.requestPermission();
-        setState(() {});
-        if (geolocator == LocationPermission.always ||
-            geolocator == LocationPermission.whileInUse) {
-          position = await Geolocator.getCurrentPosition(
-              desiredAccuracy: LocationAccuracy.best,
-              forceAndroidLocationManager: false);
-          setState(() {});
-        }
-      }
-    } catch (err) {
-      logger.e(err.toString());
-    }
-  }
-
-  // Future<void> _checkPermission() async {
-  //   geolocator = await Geolocator.checkPermission();
-  //   setState(() {});
-  // }
 
   Future<void> finalize(List<int> finishedSections) async {
     //Save all progress and data to db
@@ -285,18 +262,6 @@ class _MapViewState extends ConsumerState<MapView> {
     // permission = await Permission.locationWhenInUse.status;
     setState(() {});
   }
-
-  // Future<void> _centerMap() async {
-  //   final double lat = widget.store.latitud ?? 0;
-  //   final double long = widget.store.longitud ?? 0;
-  //   CameraPosition kLake = CameraPosition(
-  //     target: LatLng(lat, long),
-  //     zoom: 19,
-  //   );
-
-  //   final GoogleMapController controller = await _controller.future;
-  //   controller.animateCamera(CameraUpdate.newCameraPosition(kLake));
-  // }
 
   Future<void> _loadMapStyles() async {
     _darkMapStyle = await rootBundle.loadString('assets/theme/maps_dark.json');

@@ -138,8 +138,8 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
       final tempImage = File(image2.path);
       final directory =
           await getApplicationDocumentsDirectory(); // AppData folder path
-      File savedImage =
-          await tempImage.copy('${directory.path}/saved_image.jpg');
+      final savedImagePath = '${directory.path}/${DateTime.now()}.jpg';
+      File savedImage = await tempImage.copy(savedImagePath);
 
       setState(() => image.file = File(savedImage.path));
       widget.image(image.file);

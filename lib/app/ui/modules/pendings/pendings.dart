@@ -195,7 +195,7 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
           tipo: 'checkin',
           ref: ref,
           storeUuid: storeUuid,
-          image: File(''),
+          image: File(storeIsar.checkIn!.picture!),
         );
 
     if (images.isNotEmpty) {
@@ -219,7 +219,7 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
           tipo: 'checkout',
           ref: ref,
           storeUuid: storeUuid,
-          image: File(''),
+          image: File(storeIsar.checkOut!.picture!),
         );
 
     Navigator.pop(context);

@@ -13,8 +13,8 @@ class PendingsRepository {
     String fileName = image.path.split('/').last;
     final pendingJson = jsonEncode(pending);
     FormData formData = FormData.fromMap({
-      "file": await MultipartFile.fromFile(image.path, filename: fileName),
       "params": pendingJson,
+      "file": await MultipartFile.fromFile(image.path, filename: fileName),
     });
 
     try {
