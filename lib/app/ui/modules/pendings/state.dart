@@ -6,7 +6,7 @@ part 'state.freezed.dart';
 @freezed
 class PendingsState with _$PendingsState {
   const factory PendingsState({
-    @Default([]) List<Pendiente> data,
+    @Default([]) List<PendienteIsar> data,
     @Default(States.loading) States state,
   }) = _Pendings;
 }

@@ -37,7 +37,8 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    image = ref.watch(imageFileProviderFamily(int.parse(widget.pregunta.id ?? '0')));
+    image = ref
+        .watch(imageFileProviderFamily(int.parse(widget.pregunta.id ?? '0')));
     final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     final backColor =
@@ -134,8 +135,13 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
     try {
       final image2 = await ImagePicker().pickImage(source: source);
       if (image2 == null) return;
+      final tempImage = File(image2.path);
+      final directory =
+          await getApplicationDocumentsDirectory(); // AppData folder path
+      File savedImage =
+          await tempImage.copy('${directory.path}/saved_image.jpg');
 
-      setState(() => image.file = File(image2.path));
+      setState(() => image.file = File(savedImage.path));
       widget.image(image.file);
     } on PlatformException catch (e) {
       debugPrint('error:$e');

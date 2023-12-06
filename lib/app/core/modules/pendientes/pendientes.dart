@@ -3,8 +3,15 @@ import 'package:isar/isar.dart';
 part 'pendientes.g.dart';
 
 @collection
-class Pendiente {
+class PendienteIsar {
+  PendienteIsar({this.storeUuid, this.pendiente});
   Id id = Isar.autoIncrement;
+  String? storeUuid;
+  Pendiente? pendiente;
+}
+
+@embedded
+class Pendiente {
   int? estado; // 0 no enviado, 1 enviado, 2 error
   String? idProyecto;
   String? idUsuario;

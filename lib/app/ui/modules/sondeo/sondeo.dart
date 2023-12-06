@@ -273,8 +273,8 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
       showProgress(context: context, title: 'Guardando progreso');
       await Future.delayed(const Duration(seconds: 1));
       //Build Pending
-      await ref.read(sondeoController.notifier).buildPending(
-          widget.sondeosList[0], widget.store, ref, widget.storeUuid);
+      await ref.read(sondeoController.notifier).buildFinalPending(
+          widget.sondeosList.first, widget.store, ref, widget.storeUuid);
 
       navigator.pop();
       ref.read(mainIndex.notifier).setIndex(1);

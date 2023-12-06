@@ -9,11 +9,542 @@ part of 'pendientes.dart';
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetPendienteCollection on Isar {
-  IsarCollection<Pendiente> get pendientes => this.collection();
+extension GetPendienteIsarCollection on Isar {
+  IsarCollection<PendienteIsar> get pendienteIsars => this.collection();
 }
 
-const PendienteSchema = CollectionSchema(
+const PendienteIsarSchema = CollectionSchema(
+  name: r'PendienteIsar',
+  id: -189596544701500651,
+  properties: {
+    r'pendiente': PropertySchema(
+      id: 0,
+      name: r'pendiente',
+      type: IsarType.object,
+      target: r'Pendiente',
+    ),
+    r'storeUuid': PropertySchema(
+      id: 1,
+      name: r'storeUuid',
+      type: IsarType.string,
+    )
+  },
+  estimateSize: _pendienteIsarEstimateSize,
+  serialize: _pendienteIsarSerialize,
+  deserialize: _pendienteIsarDeserialize,
+  deserializeProp: _pendienteIsarDeserializeProp,
+  idName: r'id',
+  indexes: {},
+  links: {},
+  embeddedSchemas: {
+    r'Pendiente': PendienteSchema,
+    r'Contenido': ContenidoSchema,
+    r'Respuestas': RespuestasSchema,
+    r'Info': InfoSchema,
+    r'Config': ConfigSchema
+  },
+  getId: _pendienteIsarGetId,
+  getLinks: _pendienteIsarGetLinks,
+  attach: _pendienteIsarAttach,
+  version: '3.1.0+1',
+);
+
+int _pendienteIsarEstimateSize(
+  PendienteIsar object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  {
+    final value = object.pendiente;
+    if (value != null) {
+      bytesCount += 3 +
+          PendienteSchema.estimateSize(
+              value, allOffsets[Pendiente]!, allOffsets);
+    }
+  }
+  {
+    final value = object.storeUuid;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  return bytesCount;
+}
+
+void _pendienteIsarSerialize(
+  PendienteIsar object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeObject<Pendiente>(
+    offsets[0],
+    allOffsets,
+    PendienteSchema.serialize,
+    object.pendiente,
+  );
+  writer.writeString(offsets[1], object.storeUuid);
+}
+
+PendienteIsar _pendienteIsarDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = PendienteIsar(
+    pendiente: reader.readObjectOrNull<Pendiente>(
+      offsets[0],
+      PendienteSchema.deserialize,
+      allOffsets,
+    ),
+    storeUuid: reader.readStringOrNull(offsets[1]),
+  );
+  object.id = id;
+  return object;
+}
+
+P _pendienteIsarDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readObjectOrNull<Pendiente>(
+        offset,
+        PendienteSchema.deserialize,
+        allOffsets,
+      )) as P;
+    case 1:
+      return (reader.readStringOrNull(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+Id _pendienteIsarGetId(PendienteIsar object) {
+  return object.id;
+}
+
+List<IsarLinkBase<dynamic>> _pendienteIsarGetLinks(PendienteIsar object) {
+  return [];
+}
+
+void _pendienteIsarAttach(
+    IsarCollection<dynamic> col, Id id, PendienteIsar object) {
+  object.id = id;
+}
+
+extension PendienteIsarQueryWhereSort
+    on QueryBuilder<PendienteIsar, PendienteIsar, QWhere> {
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterWhere> anyId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+}
+
+extension PendienteIsarQueryWhere
+    on QueryBuilder<PendienteIsar, PendienteIsar, QWhereClause> {
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterWhereClause> idEqualTo(
+      Id id) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterWhereClause> idNotEqualTo(
+      Id id) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            )
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            )
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterWhereClause> idGreaterThan(
+      Id id,
+      {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.greaterThan(lower: id, includeLower: include),
+      );
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterWhereClause> idLessThan(
+      Id id,
+      {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.lessThan(upper: id, includeUpper: include),
+      );
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterWhereClause> idBetween(
+    Id lowerId,
+    Id upperId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension PendienteIsarQueryFilter
+    on QueryBuilder<PendienteIsar, PendienteIsar, QFilterCondition> {
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition> idEqualTo(
+      Id value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      idGreaterThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition> idLessThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition> idBetween(
+    Id lower,
+    Id upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      pendienteIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'pendiente',
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      pendienteIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'pendiente',
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      storeUuidIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'storeUuid',
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      storeUuidIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'storeUuid',
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      storeUuidEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'storeUuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      storeUuidGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'storeUuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      storeUuidLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'storeUuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      storeUuidBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'storeUuid',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      storeUuidStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'storeUuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      storeUuidEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'storeUuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      storeUuidContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'storeUuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      storeUuidMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'storeUuid',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      storeUuidIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'storeUuid',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition>
+      storeUuidIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'storeUuid',
+        value: '',
+      ));
+    });
+  }
+}
+
+extension PendienteIsarQueryObject
+    on QueryBuilder<PendienteIsar, PendienteIsar, QFilterCondition> {
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterFilterCondition> pendiente(
+      FilterQuery<Pendiente> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'pendiente');
+    });
+  }
+}
+
+extension PendienteIsarQueryLinks
+    on QueryBuilder<PendienteIsar, PendienteIsar, QFilterCondition> {}
+
+extension PendienteIsarQuerySortBy
+    on QueryBuilder<PendienteIsar, PendienteIsar, QSortBy> {
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterSortBy> sortByStoreUuid() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'storeUuid', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterSortBy>
+      sortByStoreUuidDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'storeUuid', Sort.desc);
+    });
+  }
+}
+
+extension PendienteIsarQuerySortThenBy
+    on QueryBuilder<PendienteIsar, PendienteIsar, QSortThenBy> {
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterSortBy> thenById() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterSortBy> thenByIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterSortBy> thenByStoreUuid() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'storeUuid', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PendienteIsar, PendienteIsar, QAfterSortBy>
+      thenByStoreUuidDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'storeUuid', Sort.desc);
+    });
+  }
+}
+
+extension PendienteIsarQueryWhereDistinct
+    on QueryBuilder<PendienteIsar, PendienteIsar, QDistinct> {
+  QueryBuilder<PendienteIsar, PendienteIsar, QDistinct> distinctByStoreUuid(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'storeUuid', caseSensitive: caseSensitive);
+    });
+  }
+}
+
+extension PendienteIsarQueryProperty
+    on QueryBuilder<PendienteIsar, PendienteIsar, QQueryProperty> {
+  QueryBuilder<PendienteIsar, int, QQueryOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<PendienteIsar, Pendiente?, QQueryOperations>
+      pendienteProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'pendiente');
+    });
+  }
+
+  QueryBuilder<PendienteIsar, String?, QQueryOperations> storeUuidProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'storeUuid');
+    });
+  }
+}
+
+// **************************************************************************
+// IsarEmbeddedGenerator
+// **************************************************************************
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+const PendienteSchema = Schema(
   name: r'Pendiente',
   id: 4424482951307846262,
   properties: {
@@ -75,19 +606,6 @@ const PendienteSchema = CollectionSchema(
   serialize: _pendienteSerialize,
   deserialize: _pendienteDeserialize,
   deserializeProp: _pendienteDeserializeProp,
-  idName: r'id',
-  indexes: {},
-  links: {},
-  embeddedSchemas: {
-    r'Contenido': ContenidoSchema,
-    r'Respuestas': RespuestasSchema,
-    r'Info': InfoSchema,
-    r'Config': ConfigSchema
-  },
-  getId: _pendienteGetId,
-  getLinks: _pendienteGetLinks,
-  attach: _pendienteAttach,
-  version: '3.1.0+1',
 );
 
 int _pendienteEstimateSize(
@@ -220,7 +738,6 @@ Pendiente _pendienteDeserialize(
     quien: reader.readStringOrNull(offsets[8]),
     tipo: reader.readStringOrNull(offsets[9]),
   );
-  object.id = id;
   return object;
 }
 
@@ -265,95 +782,6 @@ P _pendienteDeserializeProp<P>(
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
-  }
-}
-
-Id _pendienteGetId(Pendiente object) {
-  return object.id;
-}
-
-List<IsarLinkBase<dynamic>> _pendienteGetLinks(Pendiente object) {
-  return [];
-}
-
-void _pendienteAttach(IsarCollection<dynamic> col, Id id, Pendiente object) {
-  object.id = id;
-}
-
-extension PendienteQueryWhereSort
-    on QueryBuilder<Pendiente, Pendiente, QWhere> {
-  QueryBuilder<Pendiente, Pendiente, QAfterWhere> anyId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(const IdWhereClause.any());
-    });
-  }
-}
-
-extension PendienteQueryWhere
-    on QueryBuilder<Pendiente, Pendiente, QWhereClause> {
-  QueryBuilder<Pendiente, Pendiente, QAfterWhereClause> idEqualTo(Id id) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterWhereClause> idNotEqualTo(Id id) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
-            )
-            .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
-            );
-      } else {
-        return query
-            .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
-            )
-            .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
-            );
-      }
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterWhereClause> idGreaterThan(Id id,
-      {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.greaterThan(lower: id, includeLower: include),
-      );
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterWhereClause> idLessThan(Id id,
-      {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.lessThan(upper: id, includeUpper: include),
-      );
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterWhereClause> idBetween(
-    Id lowerId,
-    Id upperId, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
-    });
   }
 }
 
@@ -749,59 +1177,6 @@ extension PendienteQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'fecha',
         value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterFilterCondition> idEqualTo(
-      Id value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterFilterCondition> idGreaterThan(
-    Id value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterFilterCondition> idLessThan(
-    Id value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterFilterCondition> idBetween(
-    Id lower,
-    Id upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
       ));
     });
   }
@@ -1438,318 +1813,6 @@ extension PendienteQueryObject
     });
   }
 }
-
-extension PendienteQueryLinks
-    on QueryBuilder<Pendiente, Pendiente, QFilterCondition> {}
-
-extension PendienteQuerySortBy on QueryBuilder<Pendiente, Pendiente, QSortBy> {
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByConteo() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'conteo', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByConteoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'conteo', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByEstado() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'estado', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByEstadoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'estado', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByFecha() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'fecha', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByFechaDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'fecha', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByIdProyecto() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'idProyecto', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByIdProyectoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'idProyecto', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByIdUsuario() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'idUsuario', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByIdUsuarioDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'idUsuario', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByQuien() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'quien', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByQuienDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'quien', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByTipo() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'tipo', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> sortByTipoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'tipo', Sort.desc);
-    });
-  }
-}
-
-extension PendienteQuerySortThenBy
-    on QueryBuilder<Pendiente, Pendiente, QSortThenBy> {
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByConteo() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'conteo', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByConteoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'conteo', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByEstado() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'estado', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByEstadoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'estado', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByFecha() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'fecha', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByFechaDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'fecha', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenById() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByIdProyecto() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'idProyecto', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByIdProyectoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'idProyecto', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByIdUsuario() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'idUsuario', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByIdUsuarioDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'idUsuario', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByQuien() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'quien', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByQuienDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'quien', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByTipo() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'tipo', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QAfterSortBy> thenByTipoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'tipo', Sort.desc);
-    });
-  }
-}
-
-extension PendienteQueryWhereDistinct
-    on QueryBuilder<Pendiente, Pendiente, QDistinct> {
-  QueryBuilder<Pendiente, Pendiente, QDistinct> distinctByConteo(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'conteo', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QDistinct> distinctByEstado() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'estado');
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QDistinct> distinctByFecha(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'fecha', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QDistinct> distinctByIdProyecto(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'idProyecto', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QDistinct> distinctByIdUsuario(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'idUsuario', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QDistinct> distinctByQuien(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'quien', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<Pendiente, Pendiente, QDistinct> distinctByTipo(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'tipo', caseSensitive: caseSensitive);
-    });
-  }
-}
-
-extension PendienteQueryProperty
-    on QueryBuilder<Pendiente, Pendiente, QQueryProperty> {
-  QueryBuilder<Pendiente, int, QQueryOperations> idProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'id');
-    });
-  }
-
-  QueryBuilder<Pendiente, Config?, QQueryOperations> configProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'config');
-    });
-  }
-
-  QueryBuilder<Pendiente, Contenido?, QQueryOperations> contenidoProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'contenido');
-    });
-  }
-
-  QueryBuilder<Pendiente, String?, QQueryOperations> conteoProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'conteo');
-    });
-  }
-
-  QueryBuilder<Pendiente, int?, QQueryOperations> estadoProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'estado');
-    });
-  }
-
-  QueryBuilder<Pendiente, String?, QQueryOperations> fechaProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'fecha');
-    });
-  }
-
-  QueryBuilder<Pendiente, String?, QQueryOperations> idProyectoProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'idProyecto');
-    });
-  }
-
-  QueryBuilder<Pendiente, String?, QQueryOperations> idUsuarioProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'idUsuario');
-    });
-  }
-
-  QueryBuilder<Pendiente, Info?, QQueryOperations> infoProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'info');
-    });
-  }
-
-  QueryBuilder<Pendiente, String?, QQueryOperations> quienProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'quien');
-    });
-  }
-
-  QueryBuilder<Pendiente, String?, QQueryOperations> tipoProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'tipo');
-    });
-  }
-}
-
-// **************************************************************************
-// IsarEmbeddedGenerator
-// **************************************************************************
 
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types

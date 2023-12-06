@@ -1,5 +1,8 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:emetrix_flutter/app/core/modules/pendientes/service.dart';
+import 'package:emetrix_flutter/app/core/providers/providers.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,10 +17,21 @@ final onlyFirstProvider = StateProvider<bool>((ref) => true);
 final finishedSondeos = StateProvider<List<int>>((ref) => []);
 
 //Controller
-final sondeoController = StateNotifierProvider<Auth, dynamic>((_) => Auth(''));
+final sondeoController = StateNotifierProvider<Auth, SondeoState>((ref) {
+  final service = ref.watch(pendingsServiceProvider);
+  return Auth(service);
+});
 
-class Auth extends StateNotifier {
-  Auth(super.state);
+class Auth extends StateNotifier<SondeoState> {
+  Auth(this.pendingsService) : super(const SondeoState());
+  final PendingsService pendingsService;
+
+  Future<Resp> _getUserInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? userData = prefs.getString('loginInfo');
+    final userInfo = Resp.fromRawJson(userData ?? '');
+    return userInfo;
+  }
 
   List<RespM> reorderList(List<RespM> list) {
     List<(int, RespM)> list2 = List.empty(growable: true);
@@ -45,11 +59,72 @@ class Auth extends StateNotifier {
     return reorderList;
   }
 
-  Future<void> buildPending(
+//   Future<void> buildPending({
+//     required RespM sondeoItem,
+//     required Store2 store,
+//     required WidgetRef ref,
+//     required String storeUuid,
+//     required String tipo,
+//     required File image,
+//   }) async {
+//     final Resp userInfo = await _getUserInfo();
+//     final storeIsar =
+//         await ref.read(databaseProvider).getStoreByUuid(storeUuid: storeUuid);
+//     final List<Respuestas> responses = [];
+
+//     responses.add(Respuestas(
+//       idPregunta: '1', //Checkin 1
+//       tipo: "asistencia", //checkin
+//       respuesta: "",
+//       size: null,
+//     ));
+
+// //Arma pendiente
+//     final pending = Pendiente(
+//       // idProyecto: '',
+//       estado: 0,
+//       idProyecto: userInfo.proyectos.first.id,
+//       idUsuario: userInfo.usuario.id,
+//       quien: Platform.isAndroid ? 'Android' : 'IOS',
+//       fecha: DateTime.now().toString(),
+//       tipo: tipo, //checkin / checkout
+//       conteo: '1/1',
+//       contenido: Contenido(
+//         idSondeo: sondeoItem.id,
+//         idTienda: store.id,
+//         estadoTienda: '2', //0 sin visitar, 1 medio visitar, 2 completamente
+//         latitud: storeIsar?.checkOut?.latitud,
+//         longitud: storeIsar?.checkOut?.longitud,
+//         respuestas: responses,
+//       ),
+//       config: Config(
+//         rangoTienda: store.rangoGPS.toString(),
+//         sondeoObligatorio: sondeoItem.obligatorio.toString(),
+//         gpsProyecto: userInfo.proyectos.first.gps.toString(),
+//         gpsTienda: store.checkGPS.toString(),
+//         resolucionImagen: '1024',
+//       ),
+//       info: Info(
+//         bateria: '80%',
+//         brillo: '80%',
+//         conexion: 'Datos',
+//         datos: '--Sin permiso?--',
+//         gps2: '1',
+//         gps: '1',
+//         hotspot: 'false',
+//         imei: '',
+//         tag: tipo, //checkin / checkout
+//         // version: userInfo.versiones.first.toString(),
+//         version: '1.0',
+//       ),
+//     );
+
+//     await pendingsService.setCheckInOutImages(pending: pending, image: image);
+//   }
+
+  Future<void> buildFinalPending(
       RespM sondeoItem, Store2 store, WidgetRef ref, String storeUuid) async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? userData = prefs.getString('loginInfo');
-    final userInfo = Resp.fromRawJson(userData ?? '');
+    final userInfo = await _getUserInfo();
     final savedStore =
         await ref.read(databaseProvider).getStoreByUuid(storeUuid: storeUuid);
     final List<Respuestas> responses = [];
@@ -73,7 +148,7 @@ class Auth extends StateNotifier {
       idUsuario: userInfo.usuario.id,
       quien: Platform.isAndroid ? 'Android' : 'IOS',
       fecha: DateTime.now().toString(),
-      tipo: 'Sondeo',
+      tipo: 'Sondeo', //checkin / checkout
       conteo: '1/1',
       contenido: Contenido(
         idSondeo: sondeoItem.id,
@@ -99,13 +174,15 @@ class Auth extends StateNotifier {
         gps: '1',
         hotspot: 'false',
         imei: '',
-        tag: 'sondeo',
+        tag: 'sondeo', //checkin / checkout
         // version: userInfo.versiones.first.toString(),
         version: '1.0',
       ),
     );
 
+    final pendient = PendienteIsar(pendiente: pending, storeUuid: storeUuid);
+
     //Guardarlo a bd
-    await ref.read(databaseProvider).savePending(pending);
+    await ref.read(databaseProvider).savePending(pendient);
   }
 }

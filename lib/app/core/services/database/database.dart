@@ -25,7 +25,7 @@ class Database {
       return await Isar.open([
         SondeosFromStoreSchema,
         StoreGeneralSchema,
-        PendienteSchema,
+        PendienteIsarSchema,
         ProductosIsarSchema,
       ], directory: dir.path);
     }
@@ -236,17 +236,17 @@ class Database {
   }
 
   //SavePending
-  Future<void> savePending(Pendiente pending) async {
+  Future<void> savePending(PendienteIsar pending) async {
     final isar = await database;
     await isar.writeTxn(() async {
-      await isar.pendientes.put(pending); // insert & update
+      await isar.pendienteIsars.put(pending); // insert & update
     });
   }
 
   //GetAllPendings
-  Future<List<Pendiente>> getAllPendings() async {
+  Future<List<PendienteIsar>> getAllPendings() async {
     final isar = await database;
-    final list = await isar.pendientes.where().findAll();
+    final list = await isar.pendienteIsars.where().findAll();
     if (list.isNotEmpty) {
       return list;
     }
@@ -258,13 +258,13 @@ class Database {
     final isar = await database;
     bool deleted = false;
     await isar.writeTxn(() async {
-      final lenght = await isar.pendientes.count();
+      final lenght = await isar.pendienteIsars.count();
       if (lenght <= 1) {
-        deleted = await isar.pendientes.delete(id);
-        await isar.pendientes.clear();
+        deleted = await isar.pendienteIsars.delete(id);
+        await isar.pendienteIsars.clear();
         return deleted;
       }
-      deleted = await isar.pendientes.delete(id);
+      deleted = await isar.pendienteIsars.delete(id);
     });
     return deleted;
   }

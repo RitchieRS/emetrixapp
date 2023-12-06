@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$PendingsState {
-  List<Pendiente> get data => throw _privateConstructorUsedError;
+  List<PendienteIsar> get data => throw _privateConstructorUsedError;
   States get state => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -30,7 +30,7 @@ abstract class $PendingsStateCopyWith<$Res> {
           PendingsState value, $Res Function(PendingsState) then) =
       _$PendingsStateCopyWithImpl<$Res, PendingsState>;
   @useResult
-  $Res call({List<Pendiente> data, States state});
+  $Res call({List<PendienteIsar> data, States state});
 }
 
 /// @nodoc
@@ -53,7 +53,7 @@ class _$PendingsStateCopyWithImpl<$Res, $Val extends PendingsState>
       data: null == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as List<Pendiente>,
+              as List<PendienteIsar>,
       state: null == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -70,7 +70,7 @@ abstract class _$$PendingsImplCopyWith<$Res>
       __$$PendingsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<Pendiente> data, States state});
+  $Res call({List<PendienteIsar> data, States state});
 }
 
 /// @nodoc
@@ -91,7 +91,7 @@ class __$$PendingsImplCopyWithImpl<$Res>
       data: null == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
-              as List<Pendiente>,
+              as List<PendienteIsar>,
       state: null == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -104,13 +104,13 @@ class __$$PendingsImplCopyWithImpl<$Res>
 
 class _$PendingsImpl implements _Pendings {
   const _$PendingsImpl(
-      {final List<Pendiente> data = const [], this.state = States.loading})
+      {final List<PendienteIsar> data = const [], this.state = States.loading})
       : _data = data;
 
-  final List<Pendiente> _data;
+  final List<PendienteIsar> _data;
   @override
   @JsonKey()
-  List<Pendiente> get data {
+  List<PendienteIsar> get data {
     if (_data is EqualUnmodifiableListView) return _data;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_data);
@@ -146,11 +146,11 @@ class _$PendingsImpl implements _Pendings {
 }
 
 abstract class _Pendings implements PendingsState {
-  const factory _Pendings({final List<Pendiente> data, final States state}) =
-      _$PendingsImpl;
+  const factory _Pendings(
+      {final List<PendienteIsar> data, final States state}) = _$PendingsImpl;
 
   @override
-  List<Pendiente> get data;
+  List<PendienteIsar> get data;
   @override
   States get state;
   @override
