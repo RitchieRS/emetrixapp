@@ -8,13 +8,13 @@ class PendingsService {
   final PendingsRepository repository;
   PendingsService(this.repository);
 
-  Future<PendienteResp> setCheckInOutImages({
+  Future setCheckInOutImages({
     required Pendiente pending,
     required File image,
   }) async {
-    final result =
-        await repository.setCheckInOutImages(pending: pending, image: image);
-    return result;
+    //   final result =
+    await repository.setCheckInOutImages(pending: pending, image: image);
+    // return result;
   }
 
   Future<PendienteResp> sendPendings(Pendiente pendiente) async {

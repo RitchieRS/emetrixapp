@@ -1,4 +1,6 @@
+import 'package:emetrix_flutter/app/ui/modules/out_of_route/out_of_route.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -38,6 +40,15 @@ class EmptyList extends StatelessWidget {
                     'Añade tus ruta/s en el apartado "Fuera de Ruta" para comenzar tus visitaciones.',
                     style: t.text2,
                     textAlign: TextAlign.left),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: ElevatedButton(
+                      onPressed: () => Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => const OutOfRoutePage())),
+                      child: const Text('Añadir Rutas')),
+                ),
               ],
             ),
           ),

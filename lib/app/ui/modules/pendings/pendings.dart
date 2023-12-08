@@ -57,7 +57,8 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
                               width: size.width * 0.95,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
-                                color: c.primary100.withOpacity(0.6),
+                                border: Border.all(color: c.primary300),
+                                color: c.primary200.withOpacity(0.2),
                               ),
                               child: ListTile(
                                 onTap: () => checkNetwork(item, index),
@@ -69,12 +70,11 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
                                     color: c.primary500),
                                 trailing: const Icon(Icons.send, size: 20),
                                 title: Text(item.pendiente?.tipo ?? '',
-                                    style: t.mediumDark),
+                                    style: t.mediumBold),
                                 subtitle: Text(
-                                  _textToTime(DateTime.parse(
-                                      item.pendiente?.fecha ?? '')),
-                                  style: t.text,
-                                ),
+                                    _textToTime(DateTime.parse(
+                                        item.pendiente?.fecha ?? '')),
+                                    style: t.textDisabled2),
                               ),
                             ),
                           ),
@@ -248,7 +248,7 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
 //----
 
   String _textToTime(DateTime hour) {
-    return DateFormat.jm().format(hour);
+    return 'Enviado: ${DateFormat.jm().format(hour)}';
   }
 
   Future<bool> showMessage() async {

@@ -1,4 +1,5 @@
 import 'package:emetrix_flutter/app/core/global/core.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,8 +32,7 @@ class SingleSondeoPage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _SondeosBuilderState();
 }
 
-class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
-    with AutomaticKeepAliveClientMixin {
+class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
   SondeosFromStore? store;
   TextEditingController? answerController;
   //* List Responses
@@ -57,20 +57,17 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   List<bool> mandatoryComponents = [];
   bool validate = false;
   bool startTextAsignation = false;
+  final ids = <(String, String)>[];
 
   @override
   void initState() {
     super.initState();
     idenifyComponents();
-    getTempResponses()
-        // .whenComplete(() => setState(() => startTextAsignation = true))
-        ;
-    //Traer los datos de la bd, para pasarlos a los widgets hijos
+    getTempResponses();
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final finishedSections = ref.watch(finishedSondeos);
 
     return PopScope(
@@ -275,6 +272,17 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     );
   }
 
+  void _disposeControllers() {
+    final text = ['abierta', 'numerico', 'email', 'decimal'];
+
+    for (var id in ids) {
+      //Dispose text
+      if (text.contains(id.$2)) {
+        ref.watch(textEditingControllerProvider(int.parse(id.$1))).clear();
+      }
+    }
+  }
+
   void onExit(bool didpop) async {
     final store = await ref
         .read(databaseProvider)
@@ -335,6 +343,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
         return;
       }
       mandatoryComponents.add(false);
+      ids.add((sondeo.id!, sondeo.tipo!));
     });
   }
 
@@ -375,11 +384,6 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
               print(element?.response);
               print('--------------');
               //Identificar el tipo de componente
-              // await Future.delayed(const Duration(milliseconds: 800));
-
-              // print(element?.response); // Esta es la respuesta guardada anteriormente
-              // print(element2.tipo);
-              // print(answerController?.text); //Este es el valor del textfield
               if (element?.response != null) {
                 indentifyHints(element?.response, element2.tipo!, index!);
                 setState(() {});
@@ -392,9 +396,6 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       } catch (error) {
         logger.e(error);
         return;
-
-
-
       }
     }
   }
@@ -447,6 +448,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
 
   Future<void> validateAllComponents(
       List<int> finishedSections, WidgetRef ref) async {
+    final navigator = Navigator.of(context);
     FocusManager.instance.primaryFocus?.unfocus();
     buildResponses();
 
@@ -482,11 +484,9 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     }
     double progress =
         questionsResponded / (questionsResponses.length / 10) * 10;
-
-    //Armar el pendiente y guardar todas las preguntas a la Base de datos
     print('Preguntas obligatorias contestadas');
+
     _showLoading();
-    //Insert data to save0
     await ref.read(databaseProvider).saveStepData(
           storeUuid: widget.storeUuid,
           progress: progress,
@@ -494,10 +494,9 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
           stepUuid: widget.stepUuid,
           sondeoQuestionResponses: questionsResponses,
         );
-    // Navigator.pop(context);
-    await Future.delayed(const Duration(milliseconds: 500)).whenComplete(() {
-      Navigator.pop(context);
-    });
+    await Future.delayed(const Duration(seconds: 2));
+    navigator.pop();
+    _disposeControllers();
     await finalize(finishedSections);
   }
 
@@ -531,8 +530,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     ref.read(onlyFirstProvider.notifier).update((state) => false);
 
     printResponses();
-    await Future.delayed(const Duration(milliseconds: 800))
-        .whenComplete(() => Navigator.pop(context));
+    Navigator.pop(context);
   }
 
   void printResponses() {
@@ -545,9 +543,6 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       debugPrint('*************************');
     }
   }
-
-  @override
-  bool get wantKeepAlive => true;
 
   //
 }

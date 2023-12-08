@@ -1,3 +1,6 @@
+import 'package:emetrix_flutter/app/core/modules/pendientes/pendientes.dart';
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -142,44 +145,88 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(14), topRight: Radius.circular(14))),
         builder: (context) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                    top: size.height * 0.02, bottom: size.height * 0.01),
-                child: Text('Precaución', style: t.subtitle2),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.height * 0.03),
-                child: Text(
-                    'Borraremos tu sesión activa de este dispositivo.\nNo te preocupes, tu información no se borrará. ',
-                    style: t.medium),
-              ),
-              Padding(
-                padding: EdgeInsets.all(size.height * 0.01),
-                child: Text('¿Continuar?', style: t.medium),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: size.height * 0.03),
-                child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                        foregroundColor: c.error,
-                        minimumSize:
-                            Size(size.width * 0.9, size.height * 0.052)),
-                    onPressed: () => closeSession(isDark),
-                    child: Text('Cerrar Sesión', style: t.textError)),
-              )
-            ],
-          );
+          bool pendings = false;
+          bool sondeos = false;
+
+          return StatefulBuilder(builder: (context, setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: size.height * 0.02, bottom: size.height * 0.01),
+                  child: Text('Precaución', style: t.subtitle2),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.height * 0.03),
+                  child: Text(
+                      'Borraremos tu sesión activa de este dispositivo.',
+                      style: t.medium),
+                ),
+                CheckboxListTile(
+                  value: sondeos,
+                  onChanged: (newValue) {
+                    setState(() => sondeos = newValue!);
+                  },
+                  title: Text('Borrar mis sondeos',
+                      style: sondeos ? t.textError : t.textDisabledBold),
+                  subtitle: Text('Eliminar Sondeos permanentemente',
+                      style: t.textDisabled2),
+                ),
+                CheckboxListTile(
+                  value: pendings,
+                  onChanged: (newValue) {
+                    setState(() => pendings = newValue!);
+                  },
+                  title: Text('Borrar mis pendientes',
+                      style: pendings ? t.textError : t.textDisabledBold),
+                  subtitle: Text('Eliminar Pendientes permanentemente',
+                      style: t.textDisabled2),
+                ),
+                // Padding(
+                //   padding: EdgeInsets.all(size.height * 0.01),
+                //   child: Text('¿Continuar?', style: t.medium),
+                // ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: size.height * 0.03),
+                  child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                          foregroundColor: c.error,
+                          minimumSize:
+                              Size(size.width * 0.9, size.height * 0.052)),
+                      onPressed: () => closeSession(
+                          isDark: isDark,
+                          deletePendings: pendings,
+                          deleteSondeos: sondeos),
+                      child: Text('Cerrar Sesión', style: t.textError)),
+                )
+              ],
+            );
+          });
         });
   }
 
-  Future closeSession(bool isDark) async {
+  Future closeSession(
+      {required bool isDark,
+      required bool deletePendings,
+      required bool deleteSondeos}) async {
     final navigator = Navigator.of(context);
     navigator.pop();
     showProgress(context: context, title: 'Cerrando Sesión');
     await Future.delayed(const Duration(seconds: 2));
+
+    if (deletePendings) {
+      final db = await ref.read(databaseProvider).database;
+      await db.writeTxn(() async {
+        await db.pendienteIsars.clear();
+      });
+    }
+    if (deleteSondeos) {
+      final db = await ref.read(databaseProvider).database;
+      await db.writeTxn(() async {
+        await db.sondeosFromStores.clear();
+      });
+    }
 
     final prefs = await SharedPreferences.getInstance();
     ref.read(mainIndex.notifier).setIndex(0);

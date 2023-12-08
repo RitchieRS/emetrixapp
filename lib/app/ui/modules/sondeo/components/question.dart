@@ -53,15 +53,15 @@ class _QuestionState extends ConsumerState<Question>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.sendController(controller);
       // controller.text = 'tipo';
-      setState(() {});
+      // setState(() {});
     });
   }
 
-  @override
-  void dispose() {
-    // controller.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   controller.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

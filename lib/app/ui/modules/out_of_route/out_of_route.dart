@@ -42,49 +42,56 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
 
     switch (state.state) {
       case States.succes:
-        return Scaffold(
-          appBar: const GeneralTitle(title: 'Fuera de Ruta'),
-          body: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              //
-              Container(
-                height: size.height * 0.87,
-                width: size.width,
-                color: Theme.of(context).dialogBackgroundColor,
-                child: CustomScrollView(
-                  slivers: [
-                    SliverList.separated(
-                      separatorBuilder: (context, index) =>
-                          SizedBox(height: buttonHeight * 0.2),
-                      itemCount: storesMain.length,
-                      itemBuilder: (context, index) => MyCard(
-                          onChanged: (index) => selectedStores(index),
-                          canceled: ref.watch(cardProvider),
-                          index: index,
-                          resp: _toStore(storesMain[index])),
-                    )
-                  ],
+        return PopScope(
+          onPopInvoked: (didPop) {
+            if (didPop) {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            }
+          },
+          child: Scaffold(
+            appBar: const GeneralTitle(title: 'Fuera de Ruta'),
+            body: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                //
+                Container(
+                  height: size.height * 0.87,
+                  width: size.width,
+                  color: Theme.of(context).dialogBackgroundColor,
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverList.separated(
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: buttonHeight * 0.2),
+                        itemCount: storesMain.length,
+                        itemBuilder: (context, index) => MyCard(
+                            onChanged: (index) => selectedStores(index),
+                            canceled: ref.watch(cardProvider),
+                            index: index,
+                            resp: _toStore(storesMain[index])),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: storesSelected.isNotEmpty
-                      ? Padding(
-                          padding: EdgeInsets.only(top: size.height * 0.7),
-                          child: Center(
-                            child: ButonDimentions(
-                                background: c.primary600,
-                                title:
-                                    'Descargar ${storesSelected.length <= 1 ? '' : storesSelected.length} Ruta${storesSelected.length <= 1 ? '' : 's'}',
-                                style: t.mediumLight,
-                                onTap: () => _start(),
-                                width: buttonWidth,
-                                height: buttonHeight),
-                          ),
-                        )
-                      : const SizedBox()),
-            ],
+                AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: storesSelected.isNotEmpty
+                        ? Padding(
+                            padding: EdgeInsets.only(top: size.height * 0.7),
+                            child: Center(
+                              child: ButonDimentions(
+                                  background: c.primary600,
+                                  title:
+                                      'Descargar ${storesSelected.length <= 1 ? '' : storesSelected.length} Ruta${storesSelected.length <= 1 ? '' : 's'}',
+                                  style: t.mediumLight,
+                                  onTap: () => _start(),
+                                  width: buttonWidth,
+                                  height: buttonHeight),
+                            ),
+                          )
+                        : const SizedBox()),
+              ],
+            ),
           ),
         );
       case States.error:
@@ -119,11 +126,10 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
   }
 
   Future<void> showInitialMessage() async {
-    await Future.delayed(const Duration(seconds: 1)).whenComplete(() => ref
-        .read(messagesProvider.notifier)
-        .showMessage(
+    await Future.delayed(const Duration(milliseconds: 500)).whenComplete(() =>
+        ref.read(messagesProvider.notifier).showMessage(
             context: context,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(milliseconds: 1500),
             message: 'Selecciona las tiendas que visitarás.',
             icon: Icons.store));
   }

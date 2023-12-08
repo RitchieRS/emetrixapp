@@ -47,84 +47,83 @@ class _MyCardState extends ConsumerState<MyCard2> {
       child: Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              width: width,
+          child: Container(
+            width: width,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
               color: c.primary200.withOpacity(0.2),
-              child: Dismissible(
-                key: UniqueKey(),
-                background: backWidget,
-                direction: DismissDirection.endToStart,
-                confirmDismiss: (direction) => confirmDimiss(),
-                onDismissed: (direction) => widget.onDeleted(),
-                child: ExpansionPanelList.radio(
-                  expandedHeaderPadding: const EdgeInsets.all(0),
-                  elevation: 0,
-                  animationDuration: const Duration(milliseconds: 350),
-                  children: [
-                    ExpansionPanelRadio(
-                        backgroundColor: c.surface,
-                        canTapOnHeader: false, // True
-                        value: widget.store ?? Store(),
-                        headerBuilder: (context, isExpanded) {
-                          return ListTile(
-                            onTap: () async {
-                              print(widget.store?.store?.checkGPS);
-                              if (widget.store?.store?.checkGPS == '1' ||
-                                  widget.store?.store?.checkGPS == 1) {
-                                final gps = await verifyGps();
+              border: Border.all(color: c.primary300),
+            ),
+            child: Dismissible(
+              key: UniqueKey(),
+              background: backWidget,
+              direction: DismissDirection.endToStart,
+              confirmDismiss: (direction) => confirmDimiss(),
+              onDismissed: (direction) => widget.onDeleted(),
+              child: ExpansionPanelList.radio(
+                expandedHeaderPadding: const EdgeInsets.all(0),
+                elevation: 0,
+                animationDuration: const Duration(milliseconds: 350),
+                children: [
+                  ExpansionPanelRadio(
+                      backgroundColor: c.surface,
+                      canTapOnHeader: false, // True
+                      value: widget.store ?? Store(),
+                      headerBuilder: (context, isExpanded) {
+                        return ListTile(
+                          onTap: () async {
+                            print(widget.store?.store?.checkGPS);
+                            if (widget.store?.store?.checkGPS == '1' ||
+                                widget.store?.store?.checkGPS == 1) {
+                              final gps = await verifyGps();
 
-                                if (!gps) return;
-                              }
-                              await showMsj2();
-                            },
-                            minVerticalPadding: 0,
-                            leading: Icon(Icons.storefront_outlined,
-                                color: iconColor),
-                            title: Text('${widget.store?.store?.tienda}',
-                                style: t.mediumBold,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis),
-                            subtitle: Text(
-                                'Progreso: ${(widget.store?.totalProgress?.toStringAsFixed(2) ?? 0)}%',
-                                style: progress == 0
-                                    ? t.textDisabled2
-                                    : t.textBlue),
-                          );
-                        },
-                        body: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  left: size.width * 0.2, top: 0),
-                              child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                        'Cadena: ${widget.store?.store?.idCadena}',
-                                        style: t.text),
-                                    Text(
-                                        'Grupo: ${widget.store?.store?.idGrupo}',
-                                        style: t.text),
-                                  ]),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(right: size.width * 0.1),
-                              child: TextButton.icon(
-                                  label: const Text('Maps'),
-                                  onPressed: () => goMaps(),
-                                  icon: Icon(Icons.location_on,
-                                      color: c.primary.withOpacity(0.8),
-                                      size: size.height * 0.03)),
-                            )
-                          ],
-                        )),
-                  ],
-                ),
+                              if (!gps) return;
+                            }
+                            await showMsj2();
+                          },
+                          minVerticalPadding: 0,
+                          leading:
+                              Icon(Icons.storefront_outlined, color: iconColor),
+                          title: Text('${widget.store?.store?.tienda}',
+                              style: t.mediumBold,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis),
+                          subtitle: Text(
+                              'Progreso: ${(widget.store?.totalProgress?.toStringAsFixed(2) ?? 0)}%',
+                              style:
+                                  progress == 0 ? t.textDisabled2 : t.textBlue),
+                        );
+                      },
+                      body: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding:
+                                EdgeInsets.only(left: size.width * 0.2, top: 0),
+                            child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      'Cadena: ${widget.store?.store?.idCadena}',
+                                      style: t.text),
+                                  Text('Grupo: ${widget.store?.store?.idGrupo}',
+                                      style: t.text),
+                                ]),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(right: size.width * 0.1),
+                            child: TextButton.icon(
+                                label: const Text('Maps'),
+                                onPressed: () => goMaps(),
+                                icon: Icon(Icons.location_on,
+                                    color: c.primary.withOpacity(0.8),
+                                    size: size.height * 0.03)),
+                          )
+                        ],
+                      )),
+                ],
               ),
             ),
           ),

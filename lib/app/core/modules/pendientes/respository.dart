@@ -8,7 +8,7 @@ import 'package:emetrix_flutter/app/core/modules/pendientes/pendings_resp.dart';
 
 class PendingsRepository {
   //
-  Future<PendienteResp> setCheckInOutImages(
+  Future setCheckInOutImages(
       {required Pendiente pending, required File image}) async {
     String fileName = image.path.split('/').last;
     final pendingJson = jsonEncode(pending);
@@ -19,13 +19,14 @@ class PendingsRepository {
 
     try {
       final response = await dio.post('/enviar_pendiente.php', data: formData);
+      logger.d('CheckInOut data: ${response.data}');
       logger.d('CheckInOut StatusCode: ${response.statusCode}');
-      final result = PendienteResp.fromJson(jsonDecode(response.data));
-      return result;
+      // final result = PendienteResp.fromJson(jsonDecode(response.data));
+      // return result;
       //
     } catch (error) {
       logger.e('Error Send CheckInOut: ${error.toString()}');
-      return PendienteResp(idError: 1, resp: '');
+      // return PendienteResp(idError: 1, resp: '');
     }
     //
   }
@@ -39,6 +40,7 @@ class PendingsRepository {
     try {
       final response = await dio.postUri(url);
       logger.d('Pendings StatusCode: ${response.statusCode}');
+      logger.d('Pendings data: ${response.data}');
       final result = PendienteResp.fromJson(jsonDecode(response.data));
       return result;
       //
