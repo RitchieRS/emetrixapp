@@ -173,8 +173,11 @@ class _MyCardState extends ConsumerState<MyCard2> {
     final startSondeo = await showMsj(
       context: context,
       title: widget.store?.store?.tienda ?? '',
-      content:
-          'Cadena: ${widget.store?.store?.idCadena}\nGrupo: ${widget.store?.store?.idGrupo}',
+      content: ''' 
+          Verifica GPS: ${widget.store?.store?.checkGPS == '1' || widget.store?.store?.checkGPS == 1 ? 'Si' : 'No'}
+          \nCadena: ${widget.store?.store?.idCadena}
+          \nGrupo: ${widget.store?.store?.idGrupo}
+      ''',
       buttonLabel: 'Comenzar',
       destructive: false,
       onlyOk: true,
