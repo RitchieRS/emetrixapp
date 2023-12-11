@@ -72,13 +72,9 @@ class _MyCardState extends ConsumerState<MyCard2> {
                       headerBuilder: (context, isExpanded) {
                         return ListTile(
                           onTap: () async {
-                            print(widget.store?.store?.checkGPS);
-                            if (widget.store?.store?.checkGPS == '1' ||
-                                widget.store?.store?.checkGPS == 1) {
-                              final gps = await verifyGps();
+                            final gps = await verifyGps();
+                            if (!gps) return;
 
-                              if (!gps) return;
-                            }
                             await showMsj2();
                           },
                           minVerticalPadding: 0,
