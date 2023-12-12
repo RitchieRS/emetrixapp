@@ -1,12 +1,10 @@
-import 'package:emetrix_flutter/app/core/modules/pendientes/pendientes.dart';
-import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:emetrix_flutter/app/core/global/app_info.dart';
+import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:emetrix_flutter/app/core/services/assets/assets.dart';
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
@@ -145,8 +143,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(14), topRight: Radius.circular(14))),
         builder: (context) {
-          bool pendings = false;
-          bool sondeos = false;
+          // bool pendings = false;
+          // bool sondeos = false;
 
           return StatefulBuilder(builder: (context, setState) {
             return Column(
@@ -160,32 +158,32 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: size.height * 0.03),
                   child: Text(
-                      'Borraremos tu sesión activa de este dispositivo.',
+                      'Borraremos tu sesión activa de este dispositivo.\n \nSe borrarán tu información guardada como: \n-Sondeos\n-Tiendas\n',
                       style: t.medium),
                 ),
-                CheckboxListTile(
-                  value: sondeos,
-                  onChanged: (newValue) {
-                    setState(() => sondeos = newValue!);
-                  },
-                  title: Text('Borrar mis sondeos',
-                      style: sondeos ? t.textError : t.textDisabledBold),
-                  subtitle: Text('Eliminar Sondeos permanentemente',
-                      style: t.textDisabled2),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.height * 0.03),
+                  child: Text('¿Continuar?', style: t.medium),
                 ),
-                CheckboxListTile(
-                  value: pendings,
-                  onChanged: (newValue) {
-                    setState(() => pendings = newValue!);
-                  },
-                  title: Text('Borrar mis pendientes',
-                      style: pendings ? t.textError : t.textDisabledBold),
-                  subtitle: Text('Eliminar Pendientes permanentemente',
-                      style: t.textDisabled2),
-                ),
-                // Padding(
-                //   padding: EdgeInsets.all(size.height * 0.01),
-                //   child: Text('¿Continuar?', style: t.medium),
+                // CheckboxListTile(
+                //   value: sondeos,
+                //   onChanged: (newValue) {
+                //     setState(() => sondeos = newValue!);
+                //   },
+                //   title: Text('Borrar mis sondeos',
+                //       style: sondeos ? t.textError : t.textDisabledBold),
+                //   subtitle: Text('Eliminar Sondeos permanentemente',
+                //       style: t.textDisabled2),
+                // ),
+                // CheckboxListTile(
+                //   value: pendings,
+                //   onChanged: (newValue) {
+                //     setState(() => pendings = newValue!);
+                //   },
+                //   title: Text('Borrar mis pendientes',
+                //       style: pendings ? t.textError : t.textDisabledBold),
+                //   subtitle: Text('Eliminar Pendientes permanentemente',
+                //       style: t.textDisabled2),
                 // ),
                 Padding(
                   padding: EdgeInsets.only(bottom: size.height * 0.03),
@@ -195,9 +193,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           minimumSize:
                               Size(size.width * 0.9, size.height * 0.052)),
                       onPressed: () => closeSession(
-                          isDark: isDark,
-                          deletePendings: pendings,
-                          deleteSondeos: sondeos),
+                            isDark: isDark,
+                            deletePendings: false, //pendings
+                            deleteSondeos: true, //sondeos
+                            deleteStores: true,
+                          ),
                       child: Text('Cerrar Sesión', style: t.textError)),
                 )
               ],
@@ -206,26 +206,25 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         });
   }
 
-  Future closeSession(
-      {required bool isDark,
-      required bool deletePendings,
-      required bool deleteSondeos}) async {
+  Future closeSession({
+    required bool isDark,
+    required bool deletePendings,
+    required bool deleteSondeos,
+    required bool deleteStores,
+  }) async {
     final navigator = Navigator.of(context);
     navigator.pop();
     showProgress(context: context, title: 'Cerrando Sesión');
     await Future.delayed(const Duration(seconds: 2));
 
     if (deletePendings) {
-      final db = await ref.read(databaseProvider).database;
-      await db.writeTxn(() async {
-        await db.pendienteIsars.clear();
-      });
+      await ref.read(databaseProvider).clearPendings();
     }
     if (deleteSondeos) {
-      final db = await ref.read(databaseProvider).database;
-      await db.writeTxn(() async {
-        await db.sondeosFromStores.clear();
-      });
+      await ref.read(databaseProvider).clearSondeos();
+    }
+    if (deleteStores) {
+      await ref.read(databaseProvider).clearStores();
     }
 
     final prefs = await SharedPreferences.getInstance();
@@ -243,6 +242,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     //await ref.read(databaseProvider).clearDatabase();
     await vibrate();
+    navigator.pop();
     navigator.pushAndRemoveUntil(MaterialPageRoute(builder: (context) {
       return const LoginPage();
     }), (route) => false);

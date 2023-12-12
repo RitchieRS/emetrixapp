@@ -160,7 +160,7 @@ class _MapViewState extends ConsumerState<MapView> {
                 await setEntrance(finishedSections);
               }
             } catch (e) {
-              showProgress(context: context, title: 'Error de Calculo');
+              _showMessage('Error', 'Error de Calculo');
             }
             await setEntrance(finishedSections);
           },

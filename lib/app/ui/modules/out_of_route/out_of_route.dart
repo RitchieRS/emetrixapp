@@ -22,14 +22,14 @@ class OutOfRoutePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<OutOfRoutePage> {
-  List<StoreGeneral> storesMain = [];
+  // List<StoreGeneral> storesMain = [];
   List<StoreGeneral> storesSelected = [];
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await getStoresDB();
+      await ref.read(outORControllerProvider.notifier).verifyStores(ref);
     });
   }
 
@@ -63,12 +63,13 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
                       SliverList.separated(
                         separatorBuilder: (context, index) =>
                             SizedBox(height: buttonHeight * 0.2),
-                        itemCount: storesMain.length,
+                        itemCount: state.homeData?.length,
                         itemBuilder: (context, index) => MyCard(
-                            onChanged: (index) => selectedStores(index),
+                            onChanged: (index) => selectedStores(index, state),
                             canceled: ref.watch(cardProvider),
                             index: index,
-                            resp: _toStore(storesMain[index])),
+                            resp: _toStore(
+                                state.homeData?[index] ?? StoreGeneral())),
                       )
                     ],
                   ),
@@ -98,7 +99,8 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
         return Scaffold(
           appBar: const GeneralTitle(title: 'Fuera de Ruta'),
           body: RefreshIndicator(
-            onRefresh: () => getStoresDB(),
+            onRefresh: () =>
+                ref.read(outORControllerProvider.notifier).verifyStores(ref),
             child: const ErrorView(),
           ),
         );
@@ -136,23 +138,14 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
 
   //-----
 
-  void selectedStores(int? index) {
+  void selectedStores(int? index, OutOfRouteState state) {
     if (index != null) {
-      storesSelected.add(storesMain[index]);
+      storesSelected.add(state.homeData?[index] ?? StoreGeneral());
       setState(() {});
       return;
     }
     storesSelected.removeAt(index ?? 0);
     setState(() {});
-  }
-
-  Future<void> getStoresDB() async {
-    final list =
-        await ref.read(outORControllerProvider.notifier).getAllStoresIsar(ref);
-    if (list.isNotEmpty) {
-      setState(() => storesMain = list);
-      await showInitialMessage();
-    }
   }
 
   Future<void> _start() async {

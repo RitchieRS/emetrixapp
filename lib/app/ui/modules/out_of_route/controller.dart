@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:emetrix_flutter/app/core/modules/stores/stores.dart';
+import 'package:emetrix_flutter/app/ui/modules/login/controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
@@ -22,6 +24,20 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
   OutOfRouteControllerNotifier(this.homeService)
       : super(const OutOfRouteState());
 
+  Future<void> verifyStores(WidgetRef ref) async {
+    final stores = await ref.watch(databaseProvider).getAllStores();
+
+    if (stores.isEmpty) {
+      state = state.copyWith(state: States.loading);
+      await getStoresFromApi(ref);
+      final stores = await ref.watch(databaseProvider).getAllStores();
+      state = state.copyWith(state: States.succes, homeData: stores);
+      return;
+    }
+
+    state = state.copyWith(state: States.succes, homeData: stores);
+  }
+
   Future<List<StoreGeneral>> getAllStoresIsar(WidgetRef ref) async {
     List<StoreGeneral> stores = [];
     state = state.copyWith(state: States.loading);
@@ -33,6 +49,24 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
     }
     state = state.copyWith(state: States.error);
     return [];
+  }
+
+  Future<void> getStoresFromApi(WidgetRef ref) async {
+    List<Store> allStores = [];
+    final stores = await ref.read(loginControllerProvider.notifier).getStores();
+    final storesAdditional =
+        await ref.read(loginControllerProvider.notifier).getAditionalStores();
+
+    stores.resp?.forEach((store) {
+      allStores.add(store);
+    });
+    storesAdditional.resp?.forEach((store) {
+      allStores.add(store);
+    });
+
+    await ref
+        .read(loginControllerProvider.notifier)
+        .saveStoresData(allStores, ref);
   }
 
   //----------------------
@@ -104,22 +138,6 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
       throw Exception('Failed get sondeos from api: $e');
     }
   }
-
-  // Future<void> setSondeosToDB(List<String> sondeos) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final List<String>? savedList = prefs.getStringList('sondeos');
-
-  //   if (savedList != null) {
-  //     savedList.addAll(sondeos);
-  //     prefs
-  //         .setStringList('sondeos', savedList)
-  //         .whenComplete(() => debugPrint('Sondeos Added $sondeos'));
-  //   } else {
-  //     prefs
-  //         .setStringList('sondeos', sondeos)
-  //         .whenComplete(() => debugPrint('Sondeos Added FirstTime $sondeos'));
-  //   }
-  // }
 
 //
 }

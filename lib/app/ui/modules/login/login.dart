@@ -240,7 +240,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       allStores.add(store);
     });
 
-    ref.read(loginControllerProvider.notifier).saveStoresData(allStores, ref);
+    await ref
+        .read(loginControllerProvider.notifier)
+        .saveStoresData(allStores, ref);
   }
 
   Future<void> _getProducts() async {

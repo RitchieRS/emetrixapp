@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$OutOfRouteState {
-  Stores? get homeData => throw _privateConstructorUsedError;
+  List<StoreGeneral>? get homeData => throw _privateConstructorUsedError;
   States get state => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -30,7 +30,7 @@ abstract class $OutOfRouteStateCopyWith<$Res> {
           OutOfRouteState value, $Res Function(OutOfRouteState) then) =
       _$OutOfRouteStateCopyWithImpl<$Res, OutOfRouteState>;
   @useResult
-  $Res call({Stores? homeData, States state});
+  $Res call({List<StoreGeneral>? homeData, States state});
 }
 
 /// @nodoc
@@ -53,7 +53,7 @@ class _$OutOfRouteStateCopyWithImpl<$Res, $Val extends OutOfRouteState>
       homeData: freezed == homeData
           ? _value.homeData
           : homeData // ignore: cast_nullable_to_non_nullable
-              as Stores?,
+              as List<StoreGeneral>?,
       state: null == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -70,7 +70,7 @@ abstract class _$$OutOfRouteImplCopyWith<$Res>
       __$$OutOfRouteImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Stores? homeData, States state});
+  $Res call({List<StoreGeneral>? homeData, States state});
 }
 
 /// @nodoc
@@ -89,9 +89,9 @@ class __$$OutOfRouteImplCopyWithImpl<$Res>
   }) {
     return _then(_$OutOfRouteImpl(
       homeData: freezed == homeData
-          ? _value.homeData
+          ? _value._homeData
           : homeData // ignore: cast_nullable_to_non_nullable
-              as Stores?,
+              as List<StoreGeneral>?,
       state: null == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -103,10 +103,20 @@ class __$$OutOfRouteImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$OutOfRouteImpl implements _OutOfRoute {
-  const _$OutOfRouteImpl({this.homeData, this.state = States.loading});
+  const _$OutOfRouteImpl(
+      {final List<StoreGeneral>? homeData, this.state = States.loading})
+      : _homeData = homeData;
 
+  final List<StoreGeneral>? _homeData;
   @override
-  final Stores? homeData;
+  List<StoreGeneral>? get homeData {
+    final value = _homeData;
+    if (value == null) return null;
+    if (_homeData is EqualUnmodifiableListView) return _homeData;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey()
   final States state;
@@ -121,13 +131,13 @@ class _$OutOfRouteImpl implements _OutOfRoute {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$OutOfRouteImpl &&
-            (identical(other.homeData, homeData) ||
-                other.homeData == homeData) &&
+            const DeepCollectionEquality().equals(other._homeData, _homeData) &&
             (identical(other.state, state) || other.state == state));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, homeData, state);
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_homeData), state);
 
   @JsonKey(ignore: true)
   @override
@@ -137,11 +147,12 @@ class _$OutOfRouteImpl implements _OutOfRoute {
 }
 
 abstract class _OutOfRoute implements OutOfRouteState {
-  const factory _OutOfRoute({final Stores? homeData, final States state}) =
-      _$OutOfRouteImpl;
+  const factory _OutOfRoute(
+      {final List<StoreGeneral>? homeData,
+      final States state}) = _$OutOfRouteImpl;
 
   @override
-  Stores? get homeData;
+  List<StoreGeneral>? get homeData;
   @override
   States get state;
   @override

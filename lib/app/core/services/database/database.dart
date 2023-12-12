@@ -32,6 +32,27 @@ class Database {
     return Future.value(Isar.getInstance());
   }
 
+  Future<void> clearSondeos() async {
+    final isar = await database;
+    await isar.writeTxn(() async {
+      await isar.sondeosFromStores.clear();
+    });
+  }
+
+  Future<void> clearPendings() async {
+    final isar = await database;
+    await isar.writeTxn(() async {
+      await isar.pendienteIsars.clear();
+    });
+  }
+
+  Future<void> clearStores() async {
+    final isar = await database;
+    await isar.writeTxn(() async {
+      await isar.storeGenerals.clear();
+    });
+  }
+
   Future<bool> isStoreGeneralsEmpty() async {
     final isar = await database;
     final count = await isar.storeGenerals.count();
