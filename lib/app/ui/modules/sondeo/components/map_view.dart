@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'dart:async';
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:flutter/services.dart' show PlatformException, rootBundle;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -150,11 +151,16 @@ class _MapViewState extends ConsumerState<MapView> {
         bottomNavigationBar: BottomButon(
           onTap: () async {
             // await calculateChekInOut(finishedSections);
-            if (widget.store.checkGPS == '1' || widget.store.checkGPS == 1) {
-              await calculateChekInOut(finishedSections);
-              return;
-            } else {
-              await setEntrance(finishedSections);
+            logger.e("GPS:${widget.store.checkGPS}");
+            try{
+              if (int.parse(widget.store.checkGPS as String) == 1 ) {
+                await calculateChekInOut(finishedSections);
+                return;
+              } else {
+                await setEntrance(finishedSections);
+              }
+            }catch(e){
+               showProgress(context: context, title: 'Error de Calculo');
             }
           },
         ));
