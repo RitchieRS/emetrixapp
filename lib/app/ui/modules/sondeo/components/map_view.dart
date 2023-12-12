@@ -149,13 +149,12 @@ class _MapViewState extends ConsumerState<MapView> {
         ),
         bottomNavigationBar: BottomButon(
           onTap: () async {
-            // await calculateChekInOut(finishedSections);
+            print('GPS: ${widget.store.checkGPS}');
             if (widget.store.checkGPS == '1' || widget.store.checkGPS == 1) {
               await calculateChekInOut(finishedSections);
               return;
-            } else {
-              await setEntrance(finishedSections);
             }
+            await setEntrance(finishedSections);
           },
         ));
   }
@@ -184,6 +183,7 @@ class _MapViewState extends ConsumerState<MapView> {
         Navigator.pop(context);
         await _showMessage('Fuera de rango',
             'No te encuentras a una distancia correcta, Acercate.');
+        return;
       }
     }
   }
@@ -228,7 +228,7 @@ class _MapViewState extends ConsumerState<MapView> {
         destructive: false,
         onlyOk: true,
         canTapOutside: false,
-        buttonLabel: 'Ok');
+        buttonLabel: 'Aceptar');
   }
 
   Future<void> finalize(List<int> finishedSections) async {

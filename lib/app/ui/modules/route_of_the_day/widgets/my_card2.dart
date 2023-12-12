@@ -173,11 +173,24 @@ class _MyCardState extends ConsumerState<MyCard2> {
     final startSondeo = await showMsj(
       context: context,
       title: widget.store?.store?.tienda ?? '',
-      content: ''' 
-          Verifica GPS: ${widget.store?.store?.checkGPS == '1' || widget.store?.store?.checkGPS == 1 ? 'Si' : 'No'}
-          \nCadena: ${widget.store?.store?.idCadena}
-          \nGrupo: ${widget.store?.store?.idGrupo}
-      ''',
+      content: '',
+      // content: '''
+      //     Verifica GPS: ${widget.store?.store?.checkGPS == '1' || widget.store?.store?.checkGPS == 1 ? 'Si' : 'No'}
+      //     \n Cadena: ${widget.store?.store?.idCadena}
+      //     \n Grupo: ${widget.store?.store?.idGrupo}
+      // ''',
+      children: Center(
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                  'Verifica GPS: ${widget.store?.store?.checkGPS == '1' || widget.store?.store?.checkGPS == 1 ? 'Si' : 'No'}'),
+              Text('Cadena: ${widget.store?.store?.idCadena}'),
+              Text('Grupo: ${widget.store?.store?.idGrupo}'),
+            ]),
+      ),
       buttonLabel: 'Comenzar',
       destructive: false,
       onlyOk: true,

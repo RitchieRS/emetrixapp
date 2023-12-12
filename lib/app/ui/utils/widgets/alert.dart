@@ -24,17 +24,18 @@ Future<bool> showMsj(
               overflow: TextOverflow.ellipsis),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (children != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: children,
-                ),
+              if (children != null) children,
+              // Padding(
+              //   padding: const EdgeInsets.only(bottom: 8.0),
+              //   child: children,
+              // ),
               Text(content,
                   style: t.text2,
                   textAlign:
-                      justifyContent ? TextAlign.justify : TextAlign.center),
+                      justifyContent ? TextAlign.justify : TextAlign.left),
             ],
           ),
           actionsAlignment: MainAxisAlignment.center,

@@ -31,7 +31,7 @@ class _Buton2State extends ConsumerState<ButonDimentions> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: widget.padding ?? const EdgeInsets.all(8.0),
+      padding: widget.padding ?? const EdgeInsets.all(0),
       child: Center(
         child: Material(
           elevation: widget.shadow ?? 0,
