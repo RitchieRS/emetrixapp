@@ -1,10 +1,14 @@
 import 'dart:async';
-
+import 'dart:isolate';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
 
 class MyTimer extends ConsumerStatefulWidget {
   const MyTimer({
@@ -32,6 +36,7 @@ class _MyTimerState extends ConsumerState<MyTimer>
   //final Stopwatch _stopwatch = Stopwatch();
   var _lapTimes;
   var _stopwatch;
+
 
   @override
   void dispose() {
