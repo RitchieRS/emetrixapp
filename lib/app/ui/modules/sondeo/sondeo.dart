@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
+import 'package:emetrix_flutter/app/ui/modules/products_sku/products.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -187,14 +188,23 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
                   index: index,
                   storeUuid: widget.storeUuid,
                 )
-              : SingleSondeoPage(
-                  store: widget.store,
-                  sondeoItem: widget.sondeosList[index],
-                  index: index,
-                  stepsLenght: widget.sondeosList.length,
-                  storeUuid: widget.storeUuid,
-                  stepUuid: widget.sondeosList[index].uuid ?? '',
-                );
+              : widget.sondeosList[index].capturaSku == 1
+                  ? ProductsSkuPage(
+                      store: widget.store,
+                      sondeoItem: widget.sondeosList[index],
+                      index: index,
+                      stepsLenght: widget.sondeosList.length,
+                      storeUuid: widget.storeUuid,
+                      stepUuid: widget.sondeosList[index].uuid ?? '',
+                    )
+                  : SingleSondeoPage(
+                      store: widget.store,
+                      sondeoItem: widget.sondeosList[index],
+                      index: index,
+                      stepsLenght: widget.sondeosList.length,
+                      storeUuid: widget.storeUuid,
+                      stepUuid: widget.sondeosList[index].uuid ?? '',
+                    );
     }));
   }
 
