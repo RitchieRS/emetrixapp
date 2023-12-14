@@ -1,7 +1,4 @@
 
-
-import 'dart:js_interop';
-
 import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/modules/productos/productos.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
@@ -9,6 +6,7 @@ import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class ProductosSearchDelegate extends SearchDelegate<ProductosIsar>{
   
@@ -34,7 +32,8 @@ class ProductosSearchDelegate extends SearchDelegate<ProductosIsar>{
   @override
   List<Widget>? buildActions(BuildContext context) {
     // TODO: implement buildActions
-    return [IconButton( 
+    return [
+      IconButton( 
       onPressed:(){
         query='';
        }, icon: const  Icon(Icons.close)
@@ -60,17 +59,20 @@ class ProductosSearchDelegate extends SearchDelegate<ProductosIsar>{
     return Center(
             child: FutureBuilder(
           builder: (context, snapshot) {
-             
-
             if (snapshot.data != null) {
-              List<ProductosIsar>? productList = snapshot.data!;
-             productList.where((p) {
-              logger.d("Filtro Query ${p.productos!.sku?.contains(query.trim().toLowerCase()) ?? false}");
-                  return p.productos!.sku?.contains(query.trim().toLowerCase()) ?? false; 
-                         }
+
+                List<ProductosIsar>? productList = snapshot.data!;
+             
+            productList  = productList.where((p) =>
+             /// logger.d("Filtro Query ${p.productos!.sku}");
+              ///logger.d("Filtro Query $query");
+                   p.productos?.sku!.contains(query.trim().toLowerCase()) ??  false
+                         
                 ).toList();
-              
-              logger.d("Filtro ${productosList}");
+             
+            
+              logger.d("Filtro ${snapshot.data!.length}");
+              logger.d("Filtro ${productList.length}");
               return ListView.builder(
                 itemCount: productList.length,
                 itemBuilder: (context, index) {
@@ -92,12 +94,12 @@ class ProductosSearchDelegate extends SearchDelegate<ProductosIsar>{
                             child: Column(children: [
                               ListTile(
                                 title: Text(
-                                    productList[index].productos?.nombre
+                                    productList![index].productos?.nombre
                                             .toString() ??
                                         '',
                                     style: t.mediumBold),
                                 subtitle: Text(
-                                    productList[index].productos?.sku.toString() ??
+                                    productList![index].productos?.sku.toString() ??
                                         '',
                                     style: t.text),
                                 onTap: () async {
@@ -134,5 +136,16 @@ class ProductosSearchDelegate extends SearchDelegate<ProductosIsar>{
          
         ));
   }
+
+  void _onQRViewCreated(QRViewController controller) {
+  
+  
+  controller.scannedDataStream.listen((Barcode scanData) {
+   
+      query = scanData.code!;
+    
+  });
+ 
+}
 
 }
