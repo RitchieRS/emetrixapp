@@ -248,7 +248,7 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
 //----
 
   String _textToTime(DateTime hour) {
-    return 'Enviado: ${DateFormat.jm().format(hour)}';
+    return 'Completado: ${DateFormat.jm().format(hour)}';
   }
 
   Future<bool> showMessage() async {

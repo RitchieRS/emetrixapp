@@ -391,7 +391,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
             }
           });
         } else {
-          logger.i('Aun no esta en bd jsahjsjs');
+          logger.i('Aun no esta en bd');
         }
       } catch (error) {
         logger.e(error);
@@ -514,7 +514,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
   Future<void> _showLoading() async {
     await showProgress(
       context: context,
-      title: 'Guardando respestas',
+      title: 'Guardando respuestas',
       canTapOutside: false,
     );
   }
@@ -524,9 +524,6 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
     if (!finishedSections.contains(widget.index) || finishedSections.isEmpty) {
       ref.read(finishedSondeos.notifier).state.add(widget.index);
     }
-    ref
-        .read(currentOptionProvider.notifier)
-        .update((state) => state = widget.index + 1);
     ref.read(onlyFirstProvider.notifier).update((state) => false);
 
     printResponses();

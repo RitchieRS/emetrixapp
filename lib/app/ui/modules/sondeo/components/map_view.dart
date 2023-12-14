@@ -150,8 +150,7 @@ class _MapViewState extends ConsumerState<MapView> {
         ),
         bottomNavigationBar: BottomButon(
           onTap: () async {
-            // await calculateChekInOut(finishedSections);
-            logger.e("GPS:${widget.store.checkGPS}");
+            logger.i("GPS:${widget.store.checkGPS}");
             try {
               if (int.parse(widget.store.checkGPS as String) == 1) {
                 await calculateChekInOut(finishedSections);
@@ -162,7 +161,6 @@ class _MapViewState extends ConsumerState<MapView> {
             } catch (e) {
               _showMessage('Error', 'Error de Calculo');
             }
-            await setEntrance(finishedSections);
           },
         ));
   }
@@ -244,9 +242,6 @@ class _MapViewState extends ConsumerState<MapView> {
     if (!finishedSections.contains(widget.index) || finishedSections.isEmpty) {
       ref.read(finishedSondeos.notifier).state.add(widget.index);
     }
-    ref
-        .read(currentOptionProvider.notifier)
-        .update((state) => state = widget.index + 1);
     ref.read(onlyFirstProvider.notifier).update((state) => false);
 
     await Future.delayed(const Duration(milliseconds: 800))

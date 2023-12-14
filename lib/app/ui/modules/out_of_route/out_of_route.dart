@@ -49,7 +49,10 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
             }
           },
           child: Scaffold(
-            appBar: const GeneralTitle(title: 'Fuera de Ruta'),
+            appBar: const GeneralTitle(
+              title: 'Fuera de Ruta',
+              subtitle: 'Descarga de sondeos',
+            ),
             body: Stack(
               alignment: Alignment.bottomCenter,
               children: [

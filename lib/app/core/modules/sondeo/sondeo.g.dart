@@ -29,31 +29,42 @@ const SondeosFromStoreSchema = CollectionSchema(
       type: IsarType.object,
       target: r'CheckInOut',
     ),
-    r'sondeo': PropertySchema(
+    r'finishedSections': PropertySchema(
       id: 2,
+      name: r'finishedSections',
+      type: IsarType.object,
+      target: r'StepsState',
+    ),
+    r'savedToPendings': PropertySchema(
+      id: 3,
+      name: r'savedToPendings',
+      type: IsarType.bool,
+    ),
+    r'sondeo': PropertySchema(
+      id: 4,
       name: r'sondeo',
       type: IsarType.object,
       target: r'SondeoModel',
     ),
     r'store': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'store',
       type: IsarType.object,
       target: r'Store2',
     ),
     r'storeSteps': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'storeSteps',
       type: IsarType.objectList,
       target: r'SondeoCollection',
     ),
     r'totalProgress': PropertySchema(
-      id: 5,
+      id: 7,
       name: r'totalProgress',
       type: IsarType.double,
     ),
     r'uuid': PropertySchema(
-      id: 6,
+      id: 8,
       name: r'uuid',
       type: IsarType.string,
     )
@@ -72,6 +83,7 @@ const SondeosFromStoreSchema = CollectionSchema(
     r'RespM': RespMSchema,
     r'Preguntas': PreguntasSchema,
     r'Opciones': OpcionesSchema,
+    r'StepsState': StepsStateSchema,
     r'SondeoCollection': SondeoCollectionSchema,
     r'QuestionResponse': QuestionResponseSchema
   },
@@ -101,6 +113,14 @@ int _sondeosFromStoreEstimateSize(
       bytesCount += 3 +
           CheckInOutSchema.estimateSize(
               value, allOffsets[CheckInOut]!, allOffsets);
+    }
+  }
+  {
+    final value = object.finishedSections;
+    if (value != null) {
+      bytesCount += 3 +
+          StepsStateSchema.estimateSize(
+              value, allOffsets[StepsState]!, allOffsets);
     }
   }
   {
@@ -159,26 +179,33 @@ void _sondeosFromStoreSerialize(
     CheckInOutSchema.serialize,
     object.checkOut,
   );
-  writer.writeObject<SondeoModel>(
+  writer.writeObject<StepsState>(
     offsets[2],
+    allOffsets,
+    StepsStateSchema.serialize,
+    object.finishedSections,
+  );
+  writer.writeBool(offsets[3], object.savedToPendings);
+  writer.writeObject<SondeoModel>(
+    offsets[4],
     allOffsets,
     SondeoModelSchema.serialize,
     object.sondeo,
   );
   writer.writeObject<Store2>(
-    offsets[3],
+    offsets[5],
     allOffsets,
     Store2Schema.serialize,
     object.store,
   );
   writer.writeObjectList<SondeoCollection>(
-    offsets[4],
+    offsets[6],
     allOffsets,
     SondeoCollectionSchema.serialize,
     object.storeSteps,
   );
-  writer.writeDouble(offsets[5], object.totalProgress);
-  writer.writeString(offsets[6], object.uuid);
+  writer.writeDouble(offsets[7], object.totalProgress);
+  writer.writeString(offsets[8], object.uuid);
 }
 
 SondeosFromStore _sondeosFromStoreDeserialize(
@@ -198,24 +225,30 @@ SondeosFromStore _sondeosFromStoreDeserialize(
       CheckInOutSchema.deserialize,
       allOffsets,
     ),
-    sondeo: reader.readObjectOrNull<SondeoModel>(
+    finishedSections: reader.readObjectOrNull<StepsState>(
       offsets[2],
+      StepsStateSchema.deserialize,
+      allOffsets,
+    ),
+    savedToPendings: reader.readBoolOrNull(offsets[3]),
+    sondeo: reader.readObjectOrNull<SondeoModel>(
+      offsets[4],
       SondeoModelSchema.deserialize,
       allOffsets,
     ),
     store: reader.readObjectOrNull<Store2>(
-      offsets[3],
+      offsets[5],
       Store2Schema.deserialize,
       allOffsets,
     ),
     storeSteps: reader.readObjectList<SondeoCollection>(
-      offsets[4],
+      offsets[6],
       SondeoCollectionSchema.deserialize,
       allOffsets,
       SondeoCollection(),
     ),
-    totalProgress: reader.readDoubleOrNull(offsets[5]),
-    uuid: reader.readStringOrNull(offsets[6]),
+    totalProgress: reader.readDoubleOrNull(offsets[7]),
+    uuid: reader.readStringOrNull(offsets[8]),
   );
   object.id = id;
   return object;
@@ -241,27 +274,35 @@ P _sondeosFromStoreDeserializeProp<P>(
         allOffsets,
       )) as P;
     case 2:
+      return (reader.readObjectOrNull<StepsState>(
+        offset,
+        StepsStateSchema.deserialize,
+        allOffsets,
+      )) as P;
+    case 3:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 4:
       return (reader.readObjectOrNull<SondeoModel>(
         offset,
         SondeoModelSchema.deserialize,
         allOffsets,
       )) as P;
-    case 3:
+    case 5:
       return (reader.readObjectOrNull<Store2>(
         offset,
         Store2Schema.deserialize,
         allOffsets,
       )) as P;
-    case 4:
+    case 6:
       return (reader.readObjectList<SondeoCollection>(
         offset,
         SondeoCollectionSchema.deserialize,
         allOffsets,
         SondeoCollection(),
       )) as P;
-    case 5:
+    case 7:
       return (reader.readDoubleOrNull(offset)) as P;
-    case 6:
+    case 8:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -399,6 +440,24 @@ extension SondeosFromStoreQueryFilter
   }
 
   QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      finishedSectionsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'finishedSections',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      finishedSectionsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'finishedSections',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
       idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -450,6 +509,34 @@ extension SondeosFromStoreQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      savedToPendingsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'savedToPendings',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      savedToPendingsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'savedToPendings',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      savedToPendingsEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'savedToPendings',
+        value: value,
       ));
     });
   }
@@ -853,6 +940,13 @@ extension SondeosFromStoreQueryObject
   }
 
   QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      finishedSections(FilterQuery<StepsState> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'finishedSections');
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
       sondeo(FilterQuery<SondeoModel> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'sondeo');
@@ -879,6 +973,20 @@ extension SondeosFromStoreQueryLinks
 
 extension SondeosFromStoreQuerySortBy
     on QueryBuilder<SondeosFromStore, SondeosFromStore, QSortBy> {
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
+      sortBySavedToPendings() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'savedToPendings', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
+      sortBySavedToPendingsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'savedToPendings', Sort.desc);
+    });
+  }
+
   QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
       sortByTotalProgress() {
     return QueryBuilder.apply(this, (query) {
@@ -923,6 +1031,20 @@ extension SondeosFromStoreQuerySortThenBy
   }
 
   QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
+      thenBySavedToPendings() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'savedToPendings', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
+      thenBySavedToPendingsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'savedToPendings', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
       thenByTotalProgress() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalProgress', Sort.asc);
@@ -952,6 +1074,13 @@ extension SondeosFromStoreQuerySortThenBy
 
 extension SondeosFromStoreQueryWhereDistinct
     on QueryBuilder<SondeosFromStore, SondeosFromStore, QDistinct> {
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QDistinct>
+      distinctBySavedToPendings() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'savedToPendings');
+    });
+  }
+
   QueryBuilder<SondeosFromStore, SondeosFromStore, QDistinct>
       distinctByTotalProgress() {
     return QueryBuilder.apply(this, (query) {
@@ -986,6 +1115,20 @@ extension SondeosFromStoreQueryProperty
       checkOutProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'checkOut');
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, StepsState?, QQueryOperations>
+      finishedSectionsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'finishedSections');
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, bool?, QQueryOperations>
+      savedToPendingsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'savedToPendings');
     });
   }
 
@@ -2423,6 +2566,281 @@ extension CheckInOutQueryFilter
 
 extension CheckInOutQueryObject
     on QueryBuilder<CheckInOut, CheckInOut, QFilterCondition> {}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+const StepsStateSchema = Schema(
+  name: r'StepsState',
+  id: -3602760759720597459,
+  properties: {
+    r'completedSections': PropertySchema(
+      id: 0,
+      name: r'completedSections',
+      type: IsarType.longList,
+    ),
+    r'firstOption': PropertySchema(
+      id: 1,
+      name: r'firstOption',
+      type: IsarType.bool,
+    )
+  },
+  estimateSize: _stepsStateEstimateSize,
+  serialize: _stepsStateSerialize,
+  deserialize: _stepsStateDeserialize,
+  deserializeProp: _stepsStateDeserializeProp,
+);
+
+int _stepsStateEstimateSize(
+  StepsState object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  {
+    final value = object.completedSections;
+    if (value != null) {
+      bytesCount += 3 + value.length * 8;
+    }
+  }
+  return bytesCount;
+}
+
+void _stepsStateSerialize(
+  StepsState object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeLongList(offsets[0], object.completedSections);
+  writer.writeBool(offsets[1], object.firstOption);
+}
+
+StepsState _stepsStateDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = StepsState(
+    completedSections: reader.readLongList(offsets[0]),
+    firstOption: reader.readBoolOrNull(offsets[1]),
+  );
+  return object;
+}
+
+P _stepsStateDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readLongList(offset)) as P;
+    case 1:
+      return (reader.readBoolOrNull(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+extension StepsStateQueryFilter
+    on QueryBuilder<StepsState, StepsState, QFilterCondition> {
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      completedSectionsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'completedSections',
+      ));
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      completedSectionsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'completedSections',
+      ));
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      completedSectionsElementEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'completedSections',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      completedSectionsElementGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'completedSections',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      completedSectionsElementLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'completedSections',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      completedSectionsElementBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'completedSections',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      completedSectionsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'completedSections',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      completedSectionsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'completedSections',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      completedSectionsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'completedSections',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      completedSectionsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'completedSections',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      completedSectionsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'completedSections',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      completedSectionsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'completedSections',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      firstOptionIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'firstOption',
+      ));
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      firstOptionIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'firstOption',
+      ));
+    });
+  }
+
+  QueryBuilder<StepsState, StepsState, QAfterFilterCondition>
+      firstOptionEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'firstOption',
+        value: value,
+      ));
+    });
+  }
+}
+
+extension StepsStateQueryObject
+    on QueryBuilder<StepsState, StepsState, QFilterCondition> {}
 
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types

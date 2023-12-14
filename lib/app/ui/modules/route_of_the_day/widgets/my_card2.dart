@@ -191,7 +191,8 @@ class _MyCardState extends ConsumerState<MyCard2> {
               Text('Grupo: ${widget.store?.store?.idGrupo}'),
             ]),
       ),
-      buttonLabel: 'Comenzar',
+      buttonLabel:
+          widget.store?.finishedSections != null ? 'Ver sondeo' : 'Comenzar',
       destructive: false,
       onlyOk: true,
       justifyContent: false,

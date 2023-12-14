@@ -7,7 +7,6 @@ import 'package:emetrix_flutter/app/core/global/app_info.dart';
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:emetrix_flutter/app/core/services/assets/assets.dart';
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
 import 'package:emetrix_flutter/app/ui/global/ui.dart';
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/login/login.dart';
@@ -229,7 +228,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     final prefs = await SharedPreferences.getInstance();
     ref.read(mainIndex.notifier).setIndex(0);
-    ref.read(currentOptionProvider.notifier).update((state) => 0);
 
     if (isDark) {
       await ref.read(themeProvider.notifier).setLightTheme();

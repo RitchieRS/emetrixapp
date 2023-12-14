@@ -73,6 +73,49 @@ class Database {
     }
   }
 
+  Future<void> setFinisedFlagOnStore({required String storeUuid}) async {
+    final isar = await database;
+
+    await isar.writeTxn(() async {
+      final store = await isar.sondeosFromStores
+          .filter()
+          .uuidEqualTo(storeUuid)
+          .findFirst();
+
+      if (store == null) return;
+
+      store.savedToPendings = true;
+
+      //Save data the sondeos on db
+      store.storeSteps = [...?store.storeSteps];
+      await isar.sondeosFromStores.put(store);
+
+      //
+    });
+  }
+
+  Future<void> saveStepsState(
+      {required String storeUuid, required StepsState state}) async {
+    final isar = await database;
+
+    await isar.writeTxn(() async {
+      final store = await isar.sondeosFromStores
+          .filter()
+          .uuidEqualTo(storeUuid)
+          .findFirst();
+
+      if (store == null) return;
+
+      store.finishedSections = state;
+
+      //Save data the sondeos on db
+      store.storeSteps = [...?store.storeSteps];
+      await isar.sondeosFromStores.put(store);
+
+      //
+    });
+  }
+
   //
   // Save SondeosFromStore
   Future<void> saveStores(

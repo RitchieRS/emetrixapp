@@ -24,8 +24,7 @@ class TypeSondeo extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
-    const int animationDuration = 1400;
-    final currentOption = ref.watch(currentOptionProvider);
+    const int animationDuration = 250;
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     final enebledColor = c.primary500;
     final disabledColor =
@@ -131,7 +130,7 @@ class TypeSondeo extends ConsumerWidget {
                         curve: Curves.easeInOut,
                         tween: Tween<double>(
                           begin: 0,
-                          end: currentOption > 0 ? 1 : 0, //
+                          end: 1, //
                           // end: enebled ? 1 : 0, //
                         ),
                         builder: (context, value, _) => Container(

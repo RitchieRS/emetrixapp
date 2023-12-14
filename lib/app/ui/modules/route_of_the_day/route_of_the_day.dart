@@ -19,7 +19,7 @@ class RouteOfTheDayPage extends ConsumerStatefulWidget {
 
 class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
     with AutomaticKeepAliveClientMixin {
-  List<SondeosFromStore> list = [];
+  // List<SondeosFromStore> list = [];
 
   @override
   void initState() {
@@ -38,16 +38,16 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
       case States.succes:
         return SafeArea(
           child: Scaffold(
-            appBar: MyTitle(sondeos: list),
+            appBar: MyTitle(sondeos: state.data),
             body: RefreshIndicator(
               onRefresh: () => getList(),
               child: ListView.builder(
-                  itemCount: list.length,
+                  itemCount: state.data.length,
                   itemBuilder: (context, index) {
                     return MyCard2(
                       index: index,
-                      store: list[index],
-                      onDeleted: () => onDeleted(index),
+                      store: state.data[index],
+                      onDeleted: () => onDeleted(index, state.data),
                     );
                   }),
             ),
@@ -55,7 +55,7 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
         );
       case States.error:
         return Scaffold(
-          appBar: MyTitle(sondeos: list),
+          appBar: MyTitle(sondeos: state.data),
           // drawer: const MyDrawer(),
           body: RefreshIndicator(
             onRefresh: () => getList(),
@@ -65,22 +65,21 @@ class _RouteOfTheDayPageState extends ConsumerState<RouteOfTheDayPage>
 
       case States.loading:
         return Scaffold(
-          appBar: MyTitle(sondeos: list),
+          appBar: MyTitle(sondeos: state.data),
           // drawer: MyDrawer(),
           body: const GeneralLoading(loadingCards: 3),
         );
     }
   }
 
-  void onDeleted(int index) async {
-    await ref.read(routeOTD.notifier).deleteItem(list[index].id, ref);
-    list.removeAt(index);
+  void onDeleted(int index, List<SondeosFromStore> state) async {
+    await ref.read(routeOTD.notifier).deleteItem(state[index].id, ref);
+    state.removeAt(index);
     setState(() {});
   }
 
   Future<void> getList() async {
-    list = await ref.read(routeOTD.notifier).getStoresFromIsar(ref);
-    setState(() {});
+    await ref.read(routeOTD.notifier).getStoresFromIsar(ref);
   }
 
   @override

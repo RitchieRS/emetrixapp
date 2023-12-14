@@ -1,4 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:emetrix_flutter/app/core/services/database/database.dart';
+import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,7 +41,10 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
   @override
   void initState() {
     super.initState();
-    identifyRequiredSteps();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _getStepsState();
+      identifyRequiredSteps();
+    });
   }
 
   @override
@@ -71,7 +76,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
       toolbarHeight: size.height * 0.11,
       actions: [
         IconButton(
-            onPressed: () => onExit(finishedSections, true),
+            onPressed: () => onExit(finishedSections, true, onlyFirst),
             icon: Icon(Icons.exit_to_app,
                 color: completeAll ? c.error : Theme.of(context).hintColor)),
       ],
@@ -82,7 +87,15 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
 
     return PopScope(
       canPop: finishedSections.isEmpty ? true : false,
-      onPopInvoked: (didPop) {},
+      onPopInvoked: (didPop) async {
+        if (finishedSections.isNotEmpty) {
+          final state = StepsState(
+              completedSections: finishedSections, firstOption: onlyFirst);
+          await ref
+              .read(databaseProvider)
+              .saveStepsState(storeUuid: widget.storeUuid, state: state);
+        }
+      },
       child: Scaffold(
         appBar: appbar,
         body: CustomScrollView(
@@ -100,10 +113,12 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
 
                 return FadeIn(
                   child: TypeSondeo(
-                    onTap: () {
+                    onTap: () async {
+                      if (widget.mainStore?.finishedSections != null) return;
+
                       try {
                         if (!enabled) {
-                          navigateToSondeo(index, finishedSections);
+                          await navigateToSondeo(index, finishedSections);
                           return;
                         }
                       } catch (error) {
@@ -125,14 +140,6 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
       ),
     );
   }
-
-  // @override
-  // Future<bool> onWillPop() async {
-  //   // Custom logic when back button is pressed
-  //   print('Back button pressed!');
-  //   // Return true to allow the default back button behavior, or false to prevent it
-  //   return true;
-  // }
 
   Future<bool> _messaje(
       String title, String content, String? butonLabel) async {
@@ -188,13 +195,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
                   storeUuid: widget.storeUuid,
                   stepUuid: widget.sondeosList[index].uuid ?? '',
                 );
-    })
-        // PageTransition(
-        //     duration: const Duration(milliseconds: 350),
-        //     type: PageTransitionType.rightToLeft,
-        //     child:
-        //         )
-        );
+    }));
   }
 
   void identifyRequiredSteps() {
@@ -227,19 +228,29 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
         });
       }
     }
-
-    // for (final index in finishedSections) {
-    //   for (final step in mandatorySteps) {
-    //     if (index == step.$2) {
-    //       missingSteps--;
-    //     } else {
-    //       missingSteps++;
-    //     }
-    //   }
-    // }
   }
 
-  Future<void> onExit(List<int> finishedSections, bool isIcon) async {
+  Future<void> _getStepsState() async {
+    if (widget.mainStore?.finishedSections != null) {
+      ref.read(onlyFirstProvider.notifier).update(
+          (state) => widget.mainStore?.finishedSections?.firstOption ?? true);
+      ref.read(finishedSondeos.notifier).update((state) =>
+          widget.mainStore?.finishedSections?.completedSections ?? []);
+      setState(() {});
+    } else {
+      ref.read(onlyFirstProvider.notifier).update((state) => true);
+      ref.read(finishedSondeos.notifier).update((state) => []);
+      setState(() {});
+    }
+  }
+
+  Future<void> onExit(
+      List<int> finishedSections, bool isIcon, bool onlyFirst) async {
+    if (widget.mainStore?.savedToPendings != null) {
+      Navigator.pop(context);
+      return;
+    }
+
     final navigator = Navigator.of(context);
     verifyIsFinished(finishedSections);
     if (finishedSections.isEmpty) return;
@@ -266,8 +277,6 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
     );
 
     if (option) {
-      ref.read(currentOptionProvider.notifier).update((state) => 0);
-      ref.read(onlyFirstProvider.notifier).update((state) => true);
       ref.read(finishedSondeos.notifier).update((state) => []); //
 
       showProgress(context: context, title: 'Guardando progreso');
@@ -278,13 +287,22 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
 
       navigator.pop();
       ref.read(mainIndex.notifier).setIndex(1);
+      await ref.read(databaseProvider).saveStepsState(
+          storeUuid: widget.storeUuid,
+          state: StepsState(
+            completedSections: finishedSections,
+            firstOption: onlyFirst,
+          ));
+      await ref
+          .read(databaseProvider)
+          .setFinisedFlagOnStore(storeUuid: widget.storeUuid);
+
+      //get the stores in the home to refresh state
       navigator.pop();
+      await ref.read(routeOTD.notifier).getStoresFromIsar(ref);
       return;
-      // return true;
     }
-    // if (isIcon == true) Navigator.pop(context);
     return;
-    // return false;
   }
 
   @override

@@ -13,6 +13,8 @@ class SondeosFromStore {
   CheckInOut? checkOut;
   double? totalProgress;
   SondeoModel? sondeo;
+  StepsState? finishedSections;
+  bool? savedToPendings;
   List<SondeoCollection>? storeSteps;
 
   SondeosFromStore({
@@ -22,6 +24,8 @@ class SondeosFromStore {
     this.checkIn,
     this.checkOut,
     this.sondeo,
+    this.savedToPendings,
+    this.finishedSections,
     this.storeSteps,
   });
 }
@@ -62,6 +66,16 @@ class CheckInOut {
   String? latitud;
   String? longitud;
   String? picture;
+}
+
+@embedded
+class StepsState {
+  StepsState({
+    this.completedSections,
+    this.firstOption,
+  });
+  final bool? firstOption;
+  final List<int>? completedSections;
 }
 
 //---------
