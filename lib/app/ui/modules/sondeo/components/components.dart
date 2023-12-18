@@ -11,3 +11,4 @@ export 'info_question.dart';
 export 'map_view.dart';
 export 'timer.dart';
 export 'scanner.dart';
+export 'carrusel.dart';

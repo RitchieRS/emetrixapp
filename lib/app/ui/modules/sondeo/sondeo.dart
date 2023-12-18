@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
+import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/products_sku/products.dart';
 import 'package:flutter/cupertino.dart';
@@ -115,11 +116,16 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
                 return FadeIn(
                   child: TypeSondeo(
                     onTap: () async {
-                      if (widget.mainStore?.finishedSections != null) return;
+                      if (widget.mainStore?.finishedSections != null) {
+                        MesagessService().showWarning(
+                            context: context, message: 'Sondeo Completado');
+                        return;
+                      }
 
                       try {
                         if (!enabled) {
                           await navigateToSondeo(index, finishedSections);
+                          setState(() {});
                           return;
                         }
                       } catch (error) {

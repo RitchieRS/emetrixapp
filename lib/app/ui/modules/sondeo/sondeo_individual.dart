@@ -84,6 +84,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
                       itemBuilder: (context, index) {
                         // final item = widget.sondeoItem.preguntas?[index];
 
+                        print(widget.sondeoItem.preguntas?[index].tipo);
+
                         return QuestionBuilder(
                           mandatory:
                               validate ? mandatoryComponents[index] : false,

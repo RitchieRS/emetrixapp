@@ -25,7 +25,7 @@ class MesagessService extends ChangeNotifier {
   void showWarning({required BuildContext context, required String message}) {
     final snackbar = SnackBar(
       content: Text(message),
-      backgroundColor: Colors.yellow,
+      backgroundColor: Colors.yellow[700],
       duration: const Duration(seconds: _duration),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackbar);

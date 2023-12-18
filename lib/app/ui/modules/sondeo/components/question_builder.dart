@@ -180,6 +180,24 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           mandatory: widget.mandatory,
         );
 
+      case 'imagen':
+        return SelectPicture(
+          pregunta: widget.pregunta,
+          image: (image) {
+            widget.image(image);
+          },
+          mandatory: widget.mandatory,
+        );
+
+      case 'carrusel':
+        return ImagesCarrusel(
+          pregunta: widget.pregunta,
+          image: (image) {
+            widget.image(image);
+          },
+          mandatory: widget.mandatory,
+        );
+
       case 'gps':
         return Gps(
           pregunta: widget.pregunta.pregunta ?? 'NoData',
@@ -195,15 +213,6 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           pregunta: widget.pregunta.pregunta ?? 'NoData',
           preguntawid: widget.pregunta,
           times: widget.pregunta.capturaNTiempos ?? 1,
-          mandatory: widget.mandatory,
-        );
-
-      case 'imagen':
-        return SelectPicture(
-          pregunta: widget.pregunta,
-          image: (image) {
-            widget.image(image);
-          },
           mandatory: widget.mandatory,
         );
 

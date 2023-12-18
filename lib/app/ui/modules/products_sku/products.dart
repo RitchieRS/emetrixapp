@@ -1,20 +1,20 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:emetrix_flutter/app/core/modules/productos/productos.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/products_sku/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/products_sku/productos_search_delegate.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 // import 'package:emetrix_flutter/app/core/services/database/database.dart';
 
-
 class ProductsSkuPage extends ConsumerStatefulWidget {
-  const ProductsSkuPage({super.key,required this.sondeoItem,
+  const ProductsSkuPage({
+    super.key,
+    required this.sondeoItem,
     required this.index,
     required this.stepsLenght,
     required this.store,
@@ -53,33 +53,28 @@ class _ProductsSkuPageState extends ConsumerState<ProductsSkuPage> {
     return productosArr;
   }
 
- 
-
   @override
-  
   Widget build(BuildContext context) {
     late Future<List<ProductosIsar>?> listProductos = getAllProducts();
     return Scaffold(
-        appBar: 
-              AppBar(
-                automaticallyImplyLeading: false,
-                
-                title: ListTile( 
-                  onTap: (){
-                    showSearch(context: context, delegate: 
-                    ProductosSearchDelegate(listProductos,
-                                  
-                                                  widget.index,
-                                                  widget.stepsLenght,
-                                                  widget.store,
-                                                  widget.storeUuid,
-                                                  widget.sondeoItem.uuid ?? '',
-                                                  widget.sondeoItem,
-                                                  ));
-                  },
-                  title: const Text('Buscar',style: TextStyle(color: Colors.grey))
-                  )
-              ),
+        appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: ListTile(
+                onTap: () {
+                  showSearch(
+                      context: context,
+                      delegate: ProductosSearchDelegate(
+                        listProductos,
+                        widget.index,
+                        widget.stepsLenght,
+                        widget.store,
+                        widget.storeUuid,
+                        widget.sondeoItem.uuid ?? '',
+                        widget.sondeoItem,
+                      ));
+                },
+                title: const Text('Buscar',
+                    style: TextStyle(color: Colors.grey)))),
         body: Center(
             child: FutureBuilder(
           builder: (context, snapshot) {
@@ -115,17 +110,18 @@ class _ProductsSkuPageState extends ConsumerState<ProductsSkuPage> {
                                         '',
                                     style: t.text),
                                 onTap: () async {
-                                await Navigator.push(context, CupertinoPageRoute(builder: (context) {
-                                      return // sondeosList2[index].preguntas?.first.tipo == 'asistencia'
-                                              SingleSondeoPage(
-                                                  store: widget.store,
-                                                  sondeoItem: widget.sondeoItem,
-                                                  index: index,
-                                                  stepsLenght: widget.stepsLenght,
-                                                  storeUuid: widget.storeUuid,
-                                                  stepUuid: widget.sondeoItem.uuid ?? '',
-                                                );
-                                }));
+                                  await Navigator.push(context,
+                                      CupertinoPageRoute(builder: (context) {
+                                    return // sondeosList2[index].preguntas?.first.tipo == 'asistencia'
+                                        SingleSondeoPage(
+                                      store: widget.store,
+                                      sondeoItem: widget.sondeoItem,
+                                      index: index,
+                                      stepsLenght: widget.stepsLenght,
+                                      storeUuid: widget.storeUuid,
+                                      stepUuid: widget.sondeoItem.uuid ?? '',
+                                    );
+                                  }));
                                 },
                                 trailing: const Icon(Icons.arrow_forward_ios,
                                     size: 18),
