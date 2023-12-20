@@ -524,7 +524,19 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
   Future<void> finalize(List<int> finishedSections) async {
     //Save all progress and data to db
     if (!finishedSections.contains(widget.index) || finishedSections.isEmpty) {
-      ref.read(finishedSondeos.notifier).state.add(widget.index);
+      var listAux = ref.read(finishedSondeos.notifier).state;
+      listAux = listAux.toList();
+      listAux.add(widget.index);
+      ref.read(finishedSondeos.notifier).update((state) =>
+          listAux);
+     
+      final state = StepsState(
+              completedSections: listAux, firstOption: false);
+          await ref
+              .read(databaseProvider)
+              .saveStepsState(storeUuid: widget.storeUuid, state: state);
+      
+     //// ref.read(finishedSondeos.notifier).state.add(widget.index);
     }
     ref.read(onlyFirstProvider.notifier).update((state) => false);
 

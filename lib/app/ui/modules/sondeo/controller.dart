@@ -13,7 +13,9 @@ import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 
 //* Pagina de sondeos en general
 final onlyFirstProvider = StateProvider<bool>((ref) => true);
-final finishedSondeos = StateProvider<List<int>>((ref) => []);
+var finishedSondeos = StateProvider<List<int>>((ref) => []);
+
+
 
 //Controller
 final sondeoController = StateNotifierProvider<Auth, SondeoState>((ref) {
@@ -121,4 +123,6 @@ class Auth extends StateNotifier<SondeoState> {
     //Guardarlo a bd
     await ref.read(databaseProvider).savePending(pendient);
   }
+
+
 }
