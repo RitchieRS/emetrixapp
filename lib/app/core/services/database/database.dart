@@ -298,6 +298,18 @@ class Database {
     if (store == null) return null;
     return store;
   }
+//GetASpecificStoreByUuid
+  Future<SondeosFromStore?> getStoreById({required int id}) async {
+    final isar = await database;
+    final store = await isar.sondeosFromStores
+        .where().idEqualTo(id)
+        .findFirst();
+
+    if (store == null) return null;
+    return store;
+  }
+
+  
 
   //SavePending
   Future<void> savePending(PendienteIsar pending) async {
