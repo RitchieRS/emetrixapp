@@ -15,12 +15,10 @@ class ImagesCarrusel extends ConsumerStatefulWidget {
   const ImagesCarrusel({
     super.key,
     required this.pregunta,
-    this.saveCopy = false,
     this.mandatory = false,
     required this.image,
   });
   final Preguntas pregunta;
-  final bool saveCopy;
   final bool mandatory;
   final Function(File?) image;
 
@@ -60,13 +58,23 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
           ),
           SizedBox(height: size.height * 0.01),
           AnimatedSwitcher(
-            duration: const Duration(milliseconds: 600),
+            duration: const Duration(milliseconds: 800),
             child: images.isEmpty
                 ? Center(
-                    child: TextButton.icon(
-                        onPressed: () => selectCameraType(),
-                        icon: const Icon(Icons.add),
-                        label: const Text('Añadir\nimagen')),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton.icon(
+                            onPressed: () => pickImage(ImageSource.gallery),
+                            icon: const Icon(Icons.add),
+                            label: const Text('Añadir imagen')),
+                        TextButton.icon(
+                            onPressed: () => pickImage(ImageSource.camera),
+                            icon: const Icon(Icons.add),
+                            label: const Text('Tomar Foto')),
+                      ],
+                    ),
                   )
                 : SizedBox(
                     height: side,
@@ -76,10 +84,23 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
                       scrollDirection: Axis.horizontal,
                       children: [
                         Center(
-                          child: TextButton.icon(
-                              onPressed: () => selectCameraType(),
-                              icon: const Icon(Icons.add),
-                              label: const Text('Añadir\nimagen')),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextButton.icon(
+                                  onPressed: () =>
+                                      pickImage(ImageSource.gallery),
+                                  icon: Icon(Icons.image, color: c.primary),
+                                  label: const Text('Añadir')),
+                              TextButton.icon(
+                                  onPressed: () =>
+                                      pickImage(ImageSource.camera),
+                                  icon:
+                                      Icon(Icons.camera_alt, color: c.primary),
+                                  label: const Text('Añadir')),
+                            ],
+                          ),
                         ),
                         ListView.builder(
                             itemCount: images.length,
@@ -141,16 +162,6 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
                     ),
                   ),
           ),
-          if (widget.saveCopy)
-            CheckboxListTile(
-              value: widget.saveCopy,
-              onChanged: null,
-              // onChanged: (newvalue) {},
-              title: const Text('Guardar copia'),
-              activeColor: c.primary500,
-              checkboxShape: const CircleBorder(),
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
           SizedBox(height: size.height * 0.02),
         ],
       ),
@@ -171,10 +182,10 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
       pickImage(ImageSource.gallery);
       return;
     }
-    if (widget.pregunta.tipo == 'carrusel') {
-      pickImage(ImageSource.gallery);
-      return;
-    }
+    // if (widget.pregunta.tipo == 'carrusel') {
+    //   pickImage(ImageSource.gallery);
+    //   return;
+    // }
   }
 
   Future<void> pickImage(ImageSource source) async {
