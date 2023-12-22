@@ -30,13 +30,21 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
       : super(const LoginState());
 
   Future<bool> sendRequest(String name, String pass) async {
+    final prefs = await SharedPreferences.getInstance();
     final Login response = await loginService.sendAccess(name, pass);
+     
+     if(prefs.containsKey("lastUserId")){
+         prefs.remove("lastUserId");
+     }
+       
     if (response.idError != 0) {
       state = state.copyWith(state: States.error);
       logger.d('ERROR: ${response.idError}');
       return false;
     } else {
       final resp = response.resp;
+      prefs.setString("lastUserId", resp.usuario.id.toString());
+      
       final obj = resp.toRawJson();
       await _saveUserDataToDB(obj);
       await _setSessionActive();

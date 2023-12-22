@@ -10,6 +10,7 @@ import 'package:emetrix_flutter/app/ui/utils/widgets/general_loading.dart';
 import 'package:emetrix_flutter/app/ui/main/main_screen.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/global/ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'controller.dart';
 import 'state.dart';
 import 'widgets/my_card.dart';
@@ -141,9 +142,24 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
 
   //-----
 
-  void selectedStores(int? index, OutOfRouteState state) {
+  void selectedStores(int? index, OutOfRouteState state) async {
+    final prefs = await SharedPreferences.getInstance();
+    var userStore = prefs.getString("lastUserId");
+    List<String>listIdAux = [];
+    var existList = prefs.containsKey(userStore ?? '');
+    
+
     if (index != null) {
       storesSelected.add(state.homeData?[index] ?? StoreGeneral());
+      listIdAux.add(state.homeData![index].id ?? '');
+      if(!existList){
+        prefs.setStringList(userStore ?? '',listIdAux);
+      }else{
+        List<String> setList = prefs.getStringList(userStore ?? '' ) ?? [];
+        setList =  (setList + listIdAux);
+        prefs.setStringList(userStore ?? '',setList);
+      }
+     
       setState(() {});
       return;
     }
