@@ -194,7 +194,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       onPressed: () => closeSession(
                             isDark: isDark,
                             deletePendings: false, //pendings
-                            deleteSondeos: true, //sondeos
+                            deleteSondeos: false, //sondeos
                             deleteStores: true,
                           ),
                       child: Text('Cerrar Sesión', style: t.textError)),
@@ -237,6 +237,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     //Excepto "sondeos"
     await prefs.remove('sesionStarted');
     await prefs.remove('isDarkMode');
+    await prefs.remove("lasUserId");
 
     //await ref.read(databaseProvider).clearDatabase();
     await vibrate();
