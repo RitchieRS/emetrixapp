@@ -119,7 +119,10 @@ class Database {
   //
   // Save SondeosFromStore
   Future<void> saveStores(
-      List<StoreGeneral> routes, List<SondeoModel> sondeos) async {
+    List<StoreGeneral> routes,
+    List<SondeoModel> sondeos,
+    int userID,
+  ) async {
     final isar = await database;
     final List<SondeosFromStore> list = [];
 
@@ -139,6 +142,7 @@ class Database {
         tienda: store.tienda,
       );
       final isarStore = SondeosFromStore(
+        userID: userID,
         store: storeG,
         totalProgress: 0,
         uuid: uuidU.v4(),
@@ -154,9 +158,11 @@ class Database {
   }
 
   //Get all sondeosFromStore
-  Future<List<SondeosFromStore>> getStores() async {
+  Future<List<SondeosFromStore>> getStores({required int userID}) async {
     final isar = await database;
-    final list = await isar.sondeosFromStores.where().findAll();
+    final list =
+        await isar.sondeosFromStores.filter().userIDEqualTo(userID).findAll();
+    // .findAll();
     if (list.isNotEmpty) {
       return list;
     }
@@ -298,18 +304,16 @@ class Database {
     if (store == null) return null;
     return store;
   }
+
 //GetASpecificStoreByUuid
   Future<SondeosFromStore?> getStoreById({required int id}) async {
     final isar = await database;
-    final store = await isar.sondeosFromStores
-        .where().idEqualTo(id)
-        .findFirst();
+    final store =
+        await isar.sondeosFromStores.where().idEqualTo(id).findFirst();
 
     if (store == null) return null;
     return store;
   }
-
-  
 
   //SavePending
   Future<void> savePending(PendienteIsar pending) async {

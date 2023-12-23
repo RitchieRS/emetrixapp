@@ -1,7 +1,10 @@
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:emetrix_flutter/app/core/modules/login/login.dart';
 import 'package:emetrix_flutter/app/ui/modules/out_of_route/widgets/error_view.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
@@ -142,24 +145,9 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
 
   //-----
 
-  void selectedStores(int? index, OutOfRouteState state) async {
-    final prefs = await SharedPreferences.getInstance();
-    var userStore = prefs.getString("lastUserId");
-    List<String>listIdAux = [];
-    var existList = prefs.containsKey(userStore ?? '');
-    
-
+  void selectedStores(int? index, OutOfRouteState state) {
     if (index != null) {
       storesSelected.add(state.homeData?[index] ?? StoreGeneral());
-      listIdAux.add(state.homeData![index].id ?? '');
-      if(!existList){
-        prefs.setStringList(userStore ?? '',listIdAux);
-      }else{
-        List<String> setList = prefs.getStringList(userStore ?? '' ) ?? [];
-        setList =  (setList + listIdAux);
-        prefs.setStringList(userStore ?? '',setList);
-      }
-     
       setState(() {});
       return;
     }
@@ -167,9 +155,39 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     setState(() {});
   }
 
+  // void selectedStores(int? index, OutOfRouteState state) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   var userStore = prefs.getString("lastUserId");
+  //   List<String>listIdAux = [];
+  //   var existList = prefs.containsKey(userStore ?? '');
+
+  //   if (index != null) {
+  //     storesSelected.add(state.homeData?[index] ?? StoreGeneral());
+  //     listIdAux.add(state.homeData![index].id ?? '');
+  //     if(!existList){
+  //       prefs.setStringList(userStore ?? '',listIdAux);
+  //     }else{
+  //       List<String> setList = prefs.getStringList(userStore ?? '' ) ?? [];
+  //       setList =  (setList + listIdAux);
+  //       prefs.setStringList(userStore ?? '',setList);
+  //     }
+
+  //     setState(() {});
+  //     return;
+  //   }
+  //   storesSelected.removeAt(index ?? 0);
+  //   setState(() {});
+  // }
+
   Future<void> _start() async {
     final navigator = Navigator.of(context);
     final networkResult = await (Connectivity().checkConnectivity());
+
+    //Get User ID
+    final prefs = await SharedPreferences.getInstance();
+    final String? userData = prefs.getString('loginInfo');
+    final userInfo = Resp.fromRawJson(userData ?? '');
+    final userID = int.parse(userInfo.usuario.id);
 
     if (networkResult == ConnectivityResult.none) {
       if (!context.mounted) return;
@@ -191,7 +209,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
       await _showMessage();
       return;
     } else {
-      await _setStores(sondeos);
+      await _setStores(sondeos, userID);
     }
   }
 
@@ -215,12 +233,15 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     );
   }
 
-  Future<void> _setStores(List<SondeoModel> sondeos) async {
+  Future<void> _setStores(List<SondeoModel> sondeos, int userID) async {
     final navigator = Navigator.of(context);
 
-    await ref
-        .read(outORControllerProvider.notifier)
-        .saveStoresToIsar(storesSelected, sondeos, ref);
+    await ref.read(outORControllerProvider.notifier).saveStoresToIsar(
+          userID,
+          storesSelected,
+          sondeos,
+          ref,
+        );
 
     // await ref.read(outORControllerProvider.notifier).setSondeosToDB(sondeos);
     ref.read(cardProvider.notifier).update((state) => !state);

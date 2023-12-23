@@ -14,6 +14,7 @@ class LoginRepository {
       final response = await dio.getUri(url);
       logger.d('Login StatusCode: ${response.statusCode}');
       final responseLogin = Login.fromRawJson(response.data);
+      logger.d(responseLogin.resp.usuario.id);
       return responseLogin;
       //
     } catch (error) {

@@ -71,7 +71,7 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
 
   //----------------------
 
-  List<RespM> reorderList(List<RespM> list) {
+  List<RespM> _reorderList(List<RespM> list) {
     List<(int, RespM)> list2 = List.empty(growable: true);
     List<RespM> reorderList = List.empty(growable: true);
 
@@ -101,7 +101,7 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
     final List<SondeoModel> reorderStoreList = [];
 
     for (var element in sondeos) {
-      final reorderList = this.reorderList(element.resp ?? []);
+      final reorderList = _reorderList(element.resp ?? []);
       final temp = SondeoModel(resp: reorderList);
       reorderStoreList.add(temp);
     }
@@ -109,10 +109,14 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
     return reorderStoreList;
   }
 
-  Future<void> saveStoresToIsar(List<StoreGeneral> routes,
-      List<SondeoModel> sondeos, WidgetRef ref) async {
+  Future<void> saveStoresToIsar(
+    int userID,
+    List<StoreGeneral> routes,
+    List<SondeoModel> sondeos,
+    WidgetRef ref,
+  ) async {
     final reorderSondeos = reorderSteps(sondeos);
-    await ref.watch(databaseProvider).saveStores(routes, reorderSondeos);
+    await ref.read(databaseProvider).saveStores(routes, reorderSondeos, userID);
   }
 
   //----------------------

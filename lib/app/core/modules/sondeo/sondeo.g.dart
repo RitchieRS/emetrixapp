@@ -63,8 +63,13 @@ const SondeosFromStoreSchema = CollectionSchema(
       name: r'totalProgress',
       type: IsarType.double,
     ),
-    r'uuid': PropertySchema(
+    r'userID': PropertySchema(
       id: 8,
+      name: r'userID',
+      type: IsarType.long,
+    ),
+    r'uuid': PropertySchema(
+      id: 9,
       name: r'uuid',
       type: IsarType.string,
     )
@@ -205,7 +210,8 @@ void _sondeosFromStoreSerialize(
     object.storeSteps,
   );
   writer.writeDouble(offsets[7], object.totalProgress);
-  writer.writeString(offsets[8], object.uuid);
+  writer.writeLong(offsets[8], object.userID);
+  writer.writeString(offsets[9], object.uuid);
 }
 
 SondeosFromStore _sondeosFromStoreDeserialize(
@@ -248,7 +254,8 @@ SondeosFromStore _sondeosFromStoreDeserialize(
       SondeoCollection(),
     ),
     totalProgress: reader.readDoubleOrNull(offsets[7]),
-    uuid: reader.readStringOrNull(offsets[8]),
+    userID: reader.readLongOrNull(offsets[8]),
+    uuid: reader.readStringOrNull(offsets[9]),
   );
   object.id = id;
   return object;
@@ -303,6 +310,8 @@ P _sondeosFromStoreDeserializeProp<P>(
     case 7:
       return (reader.readDoubleOrNull(offset)) as P;
     case 8:
+      return (reader.readLongOrNull(offset)) as P;
+    case 9:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -769,6 +778,80 @@ extension SondeosFromStoreQueryFilter
   }
 
   QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      userIDIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'userID',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      userIDIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'userID',
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      userIDEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'userID',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      userIDGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'userID',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      userIDLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'userID',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
+      userIDBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'userID',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterFilterCondition>
       uuidIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1001,6 +1084,20 @@ extension SondeosFromStoreQuerySortBy
     });
   }
 
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
+      sortByUserID() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userID', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
+      sortByUserIDDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userID', Sort.desc);
+    });
+  }
+
   QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy> sortByUuid() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'uuid', Sort.asc);
@@ -1058,6 +1155,20 @@ extension SondeosFromStoreQuerySortThenBy
     });
   }
 
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
+      thenByUserID() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userID', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy>
+      thenByUserIDDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userID', Sort.desc);
+    });
+  }
+
   QueryBuilder<SondeosFromStore, SondeosFromStore, QAfterSortBy> thenByUuid() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'uuid', Sort.asc);
@@ -1085,6 +1196,13 @@ extension SondeosFromStoreQueryWhereDistinct
       distinctByTotalProgress() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'totalProgress');
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, SondeosFromStore, QDistinct>
+      distinctByUserID() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'userID');
     });
   }
 
@@ -1156,6 +1274,12 @@ extension SondeosFromStoreQueryProperty
       totalProgressProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'totalProgress');
+    });
+  }
+
+  QueryBuilder<SondeosFromStore, int?, QQueryOperations> userIDProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'userID');
     });
   }
 

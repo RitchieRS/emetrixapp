@@ -38,6 +38,19 @@ Contraseña: wer
 
 
  Versón de Flutter
-• Flutter 3.16.0
+• Flutter 3.16.
 • Dart 3.2.0 
 • App Version 1.0.0
+
+
+
+
+### Pendiente
+
+- Hard Reset al final del dia (3AM/12AM)
+  * Eliminar tiendas ruta del dia
+  * Tiendas descargadas
+  * Pendientes
+
+- Verificar la correcta persistencia y eliminacion de las tiendas de ruta del dia 
+- Ligar las tiendas, al id de usuario. 

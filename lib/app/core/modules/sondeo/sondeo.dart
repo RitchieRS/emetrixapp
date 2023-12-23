@@ -7,6 +7,7 @@ part 'sondeo.g.dart';
 @collection
 class SondeosFromStore {
   Id id = Isar.autoIncrement;
+  int? userID;
   String? uuid;
   Store2? store;
   CheckInOut? checkIn;
@@ -18,6 +19,7 @@ class SondeosFromStore {
   List<SondeoCollection>? storeSteps;
 
   SondeosFromStore({
+    this.userID,
     this.store,
     this.totalProgress,
     this.uuid,
