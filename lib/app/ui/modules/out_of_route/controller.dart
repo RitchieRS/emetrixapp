@@ -115,8 +115,8 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
     List<SondeoModel> sondeos,
     WidgetRef ref,
   ) async {
-    // final reorderSondeos = reorderSteps(sondeos);
-    await ref.read(databaseProvider).saveStores(routes, sondeos, userID);
+    final reorderSondeos = reorderSteps(sondeos);
+    await ref.read(databaseProvider).saveStores(routes, reorderSondeos, userID);
   }
 
   //----------------------

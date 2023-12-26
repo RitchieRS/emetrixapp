@@ -157,8 +157,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: size.height * 0.03),
                   child: Text(
-                      'Borraremos tu sesión activa de este dispositivo.\n \nSe borrarán tu información guardada como: \n-Sondeos\n-Tiendas\n',
+                      'Borraremos tu sesión activa de este dispositivo.',
                       style: t.medium),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.height * 0.03),
+                  child: Text('''
+                      \nNOTA: \nCompleta tus tiendas durante el dia. Al no completarlas despues de 24hrs, se borrarán, y no podras verlas despues.  
+                      ''', style: t.textDisabled),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: size.height * 0.03),

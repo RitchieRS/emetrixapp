@@ -35,7 +35,8 @@ class _HomePageState extends ConsumerState<MainPage> {
   Widget build(BuildContext context) {
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     final indexMain = ref.watch(mainIndex);
-    final unselectedColor = Theme.of(context).textTheme.bodyLarge?.color;
+    final unselectedColor =
+        Theme.of(context).textTheme.bodyLarge?.color!.withOpacity(0.5);
 
     return
         // DefaultTabController(

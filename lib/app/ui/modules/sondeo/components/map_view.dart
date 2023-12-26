@@ -167,7 +167,7 @@ class _MapViewState extends ConsumerState<MapView> {
 
   Future<void> calculateChekInOut(List<int> finishedSections) async {
 //Crear Calculo de Check-In / CheckOut
-    showProgress(context: context, title: 'Calculando');
+    showProgress(context: context, title: 'Verificando distancia...');
     final storePosition =
         (widget.store.latitud ?? 0, widget.store.longitud ?? 0);
     position = await Geolocator.getCurrentPosition(
@@ -180,8 +180,8 @@ class _MapViewState extends ConsumerState<MapView> {
           position!.longitude, storePosition.$1, storePosition.$2);
       final rango = double.parse(widget.store.rangoGPS.toString());
 
-     /// if (distance <= rango) {
-      if (distance >= rango) {
+      if (distance <= rango) {
+        // if (distance >= rango) {
         //SI Pasa
         Navigator.pop(context);
         await setEntrance(finishedSections);
