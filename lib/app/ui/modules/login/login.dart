@@ -180,15 +180,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   Future<void> _requestAccess() async {
     final prefs = await SharedPreferences.getInstance();
-    // final isDark = prefs.containsKey('isDarkMode');
-    final haveData = prefs.containsKey('loginInfo');
+    final firstTime = prefs.containsKey('firstTimeLogging');
     final navigator = Navigator.of(context);
 
     bool loginSucces = await ref
         .read(loginControllerProvider.notifier)
         .sendRequest(user.text, password.text);
 
-    if (loginSucces == true && haveData == false) {
+    if (loginSucces == true && firstTime == false) {
+      await prefs.setBool('firstTimeLogging', false);
       await _verifyDatabase();
       await vibrate();
       navigator.pushReplacementNamed('onboard');
@@ -197,7 +197,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       setState(() => switchButton = false);
       return;
     }
-    if (loginSucces == true && haveData == true) {
+    if (loginSucces == true && firstTime == true) {
       await _verifyDatabase();
       navigator.pushReplacementNamed('home'); //home
       user.clear();

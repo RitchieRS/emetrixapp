@@ -1,19 +1,17 @@
 // ignore_for_file: use_build_context_synchronously
-import 'dart:ffi';
 
-import 'package:emetrix_flutter/app/core/services/database/database.dart';
-import 'package:emetrix_flutter/app/core/services/services.dart';
-import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
-import 'package:emetrix_flutter/app/ui/modules/products_sku/products.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
 
+import 'package:emetrix_flutter/app/core/services/database/database.dart';
+import 'package:emetrix_flutter/app/core/services/services.dart';
+import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
+import 'package:emetrix_flutter/app/ui/modules/products_sku/products.dart';
 import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
-import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/components.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
@@ -59,7 +57,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
     final onlyFirst = ref.watch(onlyFirstProvider);
     final finishedSections = ref.watch(finishedSondeos);
     final completeAll = finishedSections.length == widget.sondeosList.length;
-   
+
     final appbar = AppBar(
       automaticallyImplyLeading: false,
       title: Column(
@@ -119,9 +117,11 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
                 return FadeIn(
                   child: TypeSondeo(
                     onTap: () async {
-                       //logger.e("no hay : $index y ${widget.mainStore!.finishedSections!.completedSections}");
+                      //logger.e("no hay : $index y ${widget.mainStore!.finishedSections!.completedSections}");
                       if (widget.mainStore?.finishedSections != null) {
-                        if(widget.mainStore!.finishedSections!.completedSections!.contains(index)){
+                        if (widget
+                            .mainStore!.finishedSections!.completedSections!
+                            .contains(index)) {
                           MesagessService().showWarning(
                               context: context, message: 'Sondeo Completado');
                           return;
@@ -167,7 +167,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
   }
 
   Future<void> navigateToSondeo(int index, List<int> finishedSections) async {
-   var uuiaxu = widget.sondeosList[index].uuid;
+    var uuiaxu = widget.sondeosList[index].uuid;
     validateProgress(uuiaxu!);
     if (widget.sondeosList[index].sondeo == 'Asistencia') {
       if (finishedSections.contains(index)) {
@@ -310,7 +310,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
           widget.sondeosList.first, widget.store, ref, widget.storeUuid);
 
       navigator.pop();
-       logger.i('Si hay $finishedSections');
+      logger.i('Si hay $finishedSections');
       ref.read(mainIndex.notifier).setIndex(1);
       await ref.read(databaseProvider).saveStepsState(
           storeUuid: widget.storeUuid,
@@ -331,21 +331,20 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
   }
 
   void validateProgress(String id) async {
-    final store = await ref
-        .read(databaseProvider)
-        .getStoreByUuid(storeUuid: id);
-        //logger.i('No hay pasos para el id $id con info ${store?.storeSteps}');
+    final store =
+        await ref.read(databaseProvider).getStoreByUuid(storeUuid: id);
+    //logger.i('No hay pasos para el id $id con info ${store?.storeSteps}');
 
-      logger.i('No hay id $id');
+    logger.i('No hay id $id');
     //if (store?.storeSteps == null) {
-        logger.i('No hay ${store?.finishedSections}');
-        /*element.storeSteps?.forEach((el) {
+    logger.i('No hay ${store?.finishedSections}');
+    /*element.storeSteps?.forEach((el) {
           logger.i('No hay ${el.}');
          });*/
-      //save responses from this step
-   // }
-      return;
-    }
+    //save responses from this step
+    // }
+    return;
+  }
 
   @override
   bool get wantKeepAlive => true;

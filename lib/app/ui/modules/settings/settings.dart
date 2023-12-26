@@ -238,7 +238,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     await prefs.remove('sesionStarted');
     await prefs.remove('isDarkMode');
     await prefs.remove("loginInfo");
-    await prefs.remove("lasUserId");
+    //await prefs.remove("lasUserId");
 
     //await ref.read(databaseProvider).clearDatabase();
     await vibrate();

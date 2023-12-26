@@ -72,8 +72,8 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
   //----------------------
 
   List<RespM> _reorderList(List<RespM> list) {
-    List<(int, RespM)> list2 = List.empty(growable: true);
-    List<RespM> reorderList = List.empty(growable: true);
+    List<(int, RespM)> list2 = [];
+    List<RespM> reorderList = [];
 
     //Clonacion de asistencia para checkout
     final checkin =
@@ -115,8 +115,8 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
     List<SondeoModel> sondeos,
     WidgetRef ref,
   ) async {
-    final reorderSondeos = reorderSteps(sondeos);
-    await ref.read(databaseProvider).saveStores(routes, reorderSondeos, userID);
+    // final reorderSondeos = reorderSteps(sondeos);
+    await ref.read(databaseProvider).saveStores(routes, sondeos, userID);
   }
 
   //----------------------

@@ -187,7 +187,6 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     final prefs = await SharedPreferences.getInstance();
     final String? userData = prefs.getString('loginInfo');
     final userInfo = Resp.fromRawJson(userData ?? '');
-    final userID = int.parse(userInfo.usuario.id);
 
     if (networkResult == ConnectivityResult.none) {
       if (!context.mounted) return;
@@ -209,7 +208,7 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
       await _showMessage();
       return;
     } else {
-      await _setStores(sondeos, userID);
+      await _setStores(sondeos, userInfo.usuario.id);
     }
   }
 
@@ -233,11 +232,18 @@ class _HomePageState extends ConsumerState<OutOfRoutePage> {
     );
   }
 
-  Future<void> _setStores(List<SondeoModel> sondeos, int userID) async {
+  Future<void> _setStores(List<SondeoModel> sondeos, String userID) async {
     final navigator = Navigator.of(context);
+    final userIDint = int.tryParse(userID);
+
+    if (userIDint == null) {
+      logger.e('error user id$userIDint');
+      return;
+    }
+    logger.i(userIDint);
 
     await ref.read(outORControllerProvider.notifier).saveStoresToIsar(
-          userID,
+          userIDint,
           storesSelected,
           sondeos,
           ref,
