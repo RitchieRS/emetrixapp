@@ -62,21 +62,38 @@ class StopwatchProvider with ChangeNotifier {
   int _minutes = 0;
   int _seconds = 0;
   int _milliseconds = 0;
-
+    late Isolate _isolate;
+  late ReceivePort _receivePort;
+  bool _isRunning = false;
+  Duration _elapsedTime = Duration(seconds: 0);
+  
   StopwatchProvider({required this.id});
 
   Stopwatch get stopwatch => _stopwatch;
 
-  void start() {
-    if (!_stopwatch.isRunning) {
-      _stopwatch.start();
-      Timer.periodic(const Duration(milliseconds: 10), (timer) {
-        _minutes = _stopwatch.elapsed.inMinutes % 60;
-        _seconds = _stopwatch.elapsed.inSeconds % 60;
-        _milliseconds = _stopwatch.elapsedMilliseconds;
+  void start() async {
+
+    _receivePort = ReceivePort();
+    _isolate = await Isolate.spawn(_isolateEntryPoint, _receivePort.sendPort);
+    _receivePort.listen((data) {
+       _isRunning = true;
+      if (data is int) {
+        _elapsedTime = Duration(seconds: data);
+        _minutes = _elapsedTime.inHours  % 60;
+        _seconds = _elapsedTime.inMinutes  % 60;
+        _milliseconds = _elapsedTime.inSeconds  % 60;
         notifyListeners();
-      });
-    }
+      }
+    });
+  }
+
+   static void _isolateEntryPoint(SendPort sendPort) {
+    int elapsedSeconds=0;
+    
+    Timer.periodic(Duration(milliseconds: 10), (Timer timer) {
+      elapsedSeconds++;
+      sendPort.send(elapsedSeconds);
+    });
   }
 
   int minutes() {
@@ -92,19 +109,35 @@ class StopwatchProvider with ChangeNotifier {
   }
 
   bool isRunning() {
-    return _stopwatch.isRunning;
+    return _isRunning;
   }
 
   void reset() {
+    _isRunning = false;
+    _isolate.kill(priority: Isolate.immediate);
+     start();
     _stopwatch.reset();
   }
 
+  void awaitIso() {
+    _isRunning = false;
+    _isolate.kill(priority: Isolate.immediate);
+    _minutes = 0;
+    _seconds = 0;
+    _milliseconds = 0;
+  }
+
   void stop() {
-    _stopwatch.stop();
+    _isRunning = false;
+    _isolate.kill(priority: Isolate.immediate);
+     _minutes = 0;
+    _seconds = 0;
+    _milliseconds = 0;
   }
 
   void stopStopwatch() {
     _timer?.cancel();
+     _isolate.kill(priority: Isolate.immediate);
   }
 
   void resetStopwatch() {

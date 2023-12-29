@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:isolate';
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
@@ -46,9 +47,14 @@ class _MyTimerState extends ConsumerState<MyTimer>
 
   @override
   Widget build(BuildContext context) {
+   
     final size = MediaQuery.of(context).size;
     _stopwatch = ref.watch(stopwatchProviderFamily(int.parse(widget.preguntawid.id ?? '0')));
     _lapTimes = ref.watch(stringListProvider(int.parse(widget.preguntawid.id ?? '0')));
+    if (_stopwatch.isRunning() ) {
+      _startTimer();
+    }
+   
     return GestureDetector(
       onTap: () => _handleLaps(),
       // onTap: () {
@@ -76,8 +82,10 @@ class _MyTimerState extends ConsumerState<MyTimer>
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _lapTimes.length,
               itemBuilder: (BuildContext context, int index) {
+                
                 return ListTile(
                   title: Text(_lapTimes[index]),
+                  onTap: () => _resetLaps(),
                 );
               },
             )
@@ -88,34 +96,54 @@ class _MyTimerState extends ConsumerState<MyTimer>
   }
 
   void _handleLaps() {
+    
     if (!_stopwatch.isRunning()) {
       _resetLaps();
       _startTimer();
       return;
     }
-    if (_stopwatch.isRunning() && _lapTimes.length < widget.times) {
+    if (_stopwatch.isRunning() && (_lapTimes.length + 1 )== widget.times) {
+      
+      _stopTimer();
+      //_stopwatch.awaitIso();
+      return;
+    }
+     else if (_stopwatch.isRunning() && _lapTimes.length < widget.times) {
       _takeLap();
       _restartTimer();
     }
-    if (_stopwatch.isRunning() && _lapTimes.length == widget.times) {
-      _stopTimer();
-      return;
-    }
+    logger.d("Timer Stop ${_lapTimes.length} ${widget.times}");
+    
   }
 
   void _resetLaps() {
     setState(() {
       // _laps = 0;
       _lapTimes.clear();
+      _restartTimer();
     });
   }
 
   void _startTimer() {
+    
     if (!_stopwatch.isRunning()) {
       _stopwatch.start();
       Timer.periodic(const Duration(milliseconds: 10), (timer) {
         if (!mounted) return;
         setState(() {
+         
+          _minutes = _stopwatch.minutes();
+          _seconds = _stopwatch.seconds();
+          _milliseconds = _stopwatch.milliseconds();
+        });
+      });
+    }
+    else
+    {
+      Timer.periodic(const Duration(milliseconds: 10), (timer) {
+        if (!mounted) return;
+        setState(() {
+          
           _minutes = _stopwatch.minutes();
           _seconds = _stopwatch.seconds();
           _milliseconds = _stopwatch.milliseconds();
@@ -125,12 +153,17 @@ class _MyTimerState extends ConsumerState<MyTimer>
   }
 
   void _takeLap() {
+    if (_stopwatch.isRunning()) {
+      _stopwatch.reset();
+    }
     // _laps++;
+    logger.d("Timer takelap");
     _lapTimes.add(_formatTime(_minutes, _seconds, _milliseconds));
     setState(() {});
   }
 
   void _restartTimer() {
+    logger.d("Timer reStart");
     if (_stopwatch.isRunning()) {
       _stopwatch.reset();
     }
@@ -142,9 +175,11 @@ class _MyTimerState extends ConsumerState<MyTimer>
   }
 
   void _stopTimer() {
-    _stopwatch.reset();
-    _stopwatch.stop();
+    logger.d("Timer Stop");
+    //_stopwatch.reset();
     setState(() {
+    _lapTimes.add(_formatTime(_minutes, _seconds, _milliseconds));
+    _stopwatch.stop();
       _milliseconds = 0;
       _minutes = 0;
       _seconds = 0;
