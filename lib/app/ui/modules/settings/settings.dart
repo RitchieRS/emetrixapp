@@ -200,7 +200,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       onPressed: () => closeSession(
                             isDark: isDark,
                             deletePendings: false,
-                            deleteSondeos: false,
+                            deleteSondeos: true,
                             deleteStores: false,
                           ),
                       child: Text('Cerrar Sesión', style: t.textError)),
