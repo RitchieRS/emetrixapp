@@ -118,6 +118,11 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
                   child: TypeSondeo(
                     onTap: () async {
                       //logger.e("no hay : $index y ${widget.mainStore!.finishedSections!.completedSections}");
+                      final gps = await ref
+                          .read(sondeoController.notifier)
+                          .verifyGps(context);
+                      if (!gps) return;
+
                       if (widget.mainStore?.finishedSections != null) {
                         if (widget
                             .mainStore!.finishedSections!.completedSections!

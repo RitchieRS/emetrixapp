@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -140,8 +140,9 @@ class _MyCardState extends ConsumerState<MyCard2> {
               'Actíva la ubicación de tu dispositivo para poder continuar.',
           buttonLabel: 'Aceptar',
           destructive: false,
-          children:
-              Icon(Icons.location_on_outlined, size: 50, color: c.primary500),
+          children: Center(
+              child: Icon(Icons.location_on_outlined,
+                  size: 50, color: c.primary500)),
           onlyOk: true);
       return false;
     }

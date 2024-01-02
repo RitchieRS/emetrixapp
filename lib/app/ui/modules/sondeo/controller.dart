@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'package:emetrix_flutter/app/core/modules/pendientes/service.dart';
 import 'package:emetrix_flutter/app/core/providers/providers.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/state.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:emetrix_flutter/app/core/modules/login/login.dart';
@@ -15,8 +18,6 @@ import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 final onlyFirstProvider = StateProvider<bool>((ref) => true);
 var finishedSondeos = StateProvider<List<int>>((ref) => []);
 
-
-
 //Controller
 final sondeoController = StateNotifierProvider<Auth, SondeoState>((ref) {
   final service = ref.watch(pendingsServiceProvider);
@@ -26,6 +27,27 @@ final sondeoController = StateNotifierProvider<Auth, SondeoState>((ref) {
 class Auth extends StateNotifier<SondeoState> {
   Auth(this.pendingsService) : super(const SondeoState());
   final PendingsService pendingsService;
+
+  Future<bool> verifyGps(BuildContext context) async {
+    final permission = await Geolocator.isLocationServiceEnabled();
+    if (permission) {
+      return true;
+    } else {
+      if (!context.mounted) return false;
+      await showMsj(
+          context: context,
+          title: 'Gps',
+          content:
+              'Actíva la ubicación de tu dispositivo para poder continuar.',
+          buttonLabel: 'Aceptar',
+          destructive: false,
+          children: Center(
+              child: Icon(Icons.location_on_outlined,
+                  size: 50, color: c.primary500)),
+          onlyOk: true);
+      return false;
+    }
+  }
 
   Future<Resp> _getUserInfo() async {
     final prefs = await SharedPreferences.getInstance();
@@ -123,6 +145,4 @@ class Auth extends StateNotifier<SondeoState> {
     //Guardarlo a bd
     await ref.read(databaseProvider).savePending(pendient);
   }
-
-
 }
