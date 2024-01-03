@@ -59,6 +59,7 @@ class StopwatchProvider with ChangeNotifier {
   final Stopwatch _stopwatch = Stopwatch();
   Timer? _timer;
   final int id;
+  int _hours = 0;
   int _minutes = 0;
   int _seconds = 0;
   int _milliseconds = 0;
@@ -79,9 +80,10 @@ class StopwatchProvider with ChangeNotifier {
        _isRunning = true;
       if (data is int) {
         _elapsedTime = Duration(seconds: data);
-        _minutes = _elapsedTime.inHours  % 60;
-        _seconds = _elapsedTime.inMinutes  % 60;
-        _milliseconds = _elapsedTime.inSeconds  % 60;
+        _hours = _elapsedTime.inHours % 60;
+        _minutes = _elapsedTime.inMinutes % 60;
+        _seconds = _elapsedTime.inSeconds % 60;
+        _milliseconds = _elapsedTime.inMilliseconds;
         notifyListeners();
       }
     });
@@ -90,10 +92,14 @@ class StopwatchProvider with ChangeNotifier {
    static void _isolateEntryPoint(SendPort sendPort) {
     int elapsedSeconds=0;
     
-    Timer.periodic(Duration(milliseconds: 10), (Timer timer) {
+    Timer.periodic(Duration(seconds: 1), (Timer timer) {
       elapsedSeconds++;
       sendPort.send(elapsedSeconds);
     });
+  }
+
+  int hours() {
+    return _hours;
   }
 
   int minutes() {

@@ -30,6 +30,7 @@ class MyTimer extends ConsumerStatefulWidget {
 
 class _MyTimerState extends ConsumerState<MyTimer>
     with SingleTickerProviderStateMixin {
+  int _hours = 0;
   int _minutes = 0;
   int _seconds = 0;
   int _milliseconds = 0;
@@ -75,7 +76,7 @@ class _MyTimerState extends ConsumerState<MyTimer>
             SizedBox(height: size.height * 0.01),
             Text(
               style: const TextStyle(fontSize: 48.0),
-              _formatTime(_minutes, _seconds, _milliseconds),
+              _formatTime(_hours,_minutes, _seconds, _milliseconds),
             ),
             ListView.builder(
               shrinkWrap: true,
@@ -128,10 +129,10 @@ class _MyTimerState extends ConsumerState<MyTimer>
     
     if (!_stopwatch.isRunning()) {
       _stopwatch.start();
-      Timer.periodic(const Duration(milliseconds: 10), (timer) {
+      Timer.periodic(const Duration(seconds: 1), (timer) {
         if (!mounted) return;
         setState(() {
-         
+          _hours    = _stopwatch.hours();
           _minutes = _stopwatch.minutes();
           _seconds = _stopwatch.seconds();
           _milliseconds = _stopwatch.milliseconds();
@@ -140,10 +141,10 @@ class _MyTimerState extends ConsumerState<MyTimer>
     }
     else
     {
-      Timer.periodic(const Duration(milliseconds: 10), (timer) {
+      Timer.periodic(const Duration(seconds: 1), (timer) {
         if (!mounted) return;
         setState(() {
-          
+          _hours    = _stopwatch.hours();
           _minutes = _stopwatch.minutes();
           _seconds = _stopwatch.seconds();
           _milliseconds = _stopwatch.milliseconds();
@@ -158,7 +159,7 @@ class _MyTimerState extends ConsumerState<MyTimer>
     }
     // _laps++;
     logger.d("Timer takelap");
-    _lapTimes.add(_formatTime(_minutes, _seconds, _milliseconds));
+    _lapTimes.add(_formatTime(_hours,_minutes, _seconds, _milliseconds));
     setState(() {});
   }
 
@@ -168,6 +169,7 @@ class _MyTimerState extends ConsumerState<MyTimer>
       _stopwatch.reset();
     }
     setState(() {
+      _hours    = 0;
       _milliseconds = 0;
       _minutes = 0;
       _seconds = 0;
@@ -178,21 +180,22 @@ class _MyTimerState extends ConsumerState<MyTimer>
     logger.d("Timer Stop");
     //_stopwatch.reset();
     setState(() {
-    _lapTimes.add(_formatTime(_minutes, _seconds, _milliseconds));
+    _lapTimes.add(_formatTime(_hours,_minutes, _seconds, _milliseconds));
     _stopwatch.stop();
+      _hours    = 0;
       _milliseconds = 0;
       _minutes = 0;
       _seconds = 0;
     });
   }
 
-  String _formatTime(int minutos, int segundos, int milisegundos) {
+  String _formatTime(int horas,int minutos, int segundos, int milisegundos) {
     milisegundos = milisegundos % 1000;
-
+    String horasStr = (horas < 10) ? '0$horas' : horas.toString();
     String minutosStr = (minutos < 10) ? '0$minutos' : minutos.toString();
     String segundosStr = (segundos < 10) ? '0$segundos' : segundos.toString();
     String milisegundosStr =
         (milisegundos < 10) ? '0$milisegundos' : milisegundos.toString();
-    return '$minutosStr:$segundosStr:$milisegundosStr';
+    return '$horasStr:$minutosStr:$segundosStr';
   }
 }
