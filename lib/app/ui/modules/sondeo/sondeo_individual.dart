@@ -1,4 +1,5 @@
 import 'package:emetrix_flutter/app/core/global/core.dart';
+import 'package:emetrix_flutter/app/core/services/notifications/notifications.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,8 @@ class SingleSondeoPage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _SondeosBuilderState();
 }
 
-class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
+class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
+    with WidgetsBindingObserver {
   SondeosFromStore? store;
   TextEditingController? answerController;
   //* List Responses
@@ -62,8 +64,39 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     idenifyComponents();
     getTempResponses();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.paused) {
+      debugPrint('APP ------> RUNING ON THE BACKK');
+
+      NotificationService().showNotification(
+        title: 'Sondeo en Progreso',
+        body: 'NO ELIMINES LA APP',
+      );
+
+      //
+    } else if (state == AppLifecycleState.resumed) {
+      debugPrint('APP ------> RUNING ON MAIN');
+
+      //
+    } else if (state == AppLifecycleState.inactive) {
+      debugPrint('APP ------> RUNING BELOW A MESSAGE');
+    } else if (state == AppLifecycleState.detached) {
+      debugPrint('APP ------> KILLED');
+    }
   }
 
   @override
@@ -527,16 +560,14 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage> {
       var listAux = ref.read(finishedSondeos.notifier).state;
       listAux = listAux.toList();
       listAux.add(widget.index);
-      ref.read(finishedSondeos.notifier).update((state) =>
-          listAux);
-     
-      final state = StepsState(
-              completedSections: listAux, firstOption: false);
-          await ref
-              .read(databaseProvider)
-              .saveStepsState(storeUuid: widget.storeUuid, state: state);
-      
-     //// ref.read(finishedSondeos.notifier).state.add(widget.index);
+      ref.read(finishedSondeos.notifier).update((state) => listAux);
+
+      final state = StepsState(completedSections: listAux, firstOption: false);
+      await ref
+          .read(databaseProvider)
+          .saveStepsState(storeUuid: widget.storeUuid, state: state);
+
+      //// ref.read(finishedSondeos.notifier).state.add(widget.index);
     }
     ref.read(onlyFirstProvider.notifier).update((state) => false);
 

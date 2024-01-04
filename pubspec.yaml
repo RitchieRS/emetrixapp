@@ -39,6 +39,7 @@ dependencies:
   salomon_bottom_bar: ^3.3.2
   uuid: ^4.1.0
   wakelock: ^0.6.2
+  flutter_local_notifications: ^16.3.0
   # app_bar_with_search_switch: ^1.6.0
   # flutter_barcode_scanner: ^2.0.0
 

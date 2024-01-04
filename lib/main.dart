@@ -1,3 +1,4 @@
+import 'package:emetrix_flutter/app/core/services/notifications/notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -6,9 +7,10 @@ import 'package:emetrix_flutter/app/core/global/routes.dart';
 import 'package:emetrix_flutter/app/ui/modules/splash/splash.dart';
 import 'package:wakelock/wakelock.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Wakelock.enable();
+  await NotificationService().initNotification();
+  await Wakelock.enable();
   runApp(const ProviderScope(child: MainApp()));
 }
 
