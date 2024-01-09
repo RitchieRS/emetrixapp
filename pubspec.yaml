@@ -40,6 +40,7 @@ dependencies:
   uuid: ^4.1.0
   wakelock: ^0.6.2
   flutter_local_notifications: ^16.3.0
+  lecle_flutter_absolute_path: ^0.0.2+1
   # app_bar_with_search_switch: ^1.6.0
   # flutter_barcode_scanner: ^2.0.0
 

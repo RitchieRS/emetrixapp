@@ -2,17 +2,18 @@
 
 import 'dart:io';
 import 'dart:async';
-import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:flutter/services.dart' show PlatformException, rootBundle;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:lecle_flutter_absolute_path/lecle_flutter_absolute_path.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/bottom_buton.dart';
@@ -181,7 +182,7 @@ class _MapViewState extends ConsumerState<MapView> {
       final rango = double.parse(widget.store.rangoGPS.toString());
 
       ///if (distance <= rango) {
-       if (distance >= rango) {
+      if (distance >= rango) {
         //SI Pasa
         Navigator.pop(context);
         await setEntrance(finishedSections);
@@ -200,10 +201,15 @@ class _MapViewState extends ConsumerState<MapView> {
     if (image == null) return;
     showProgress(context: context, title: 'Calculando');
     final tempImage = File(image.path);
-    final directory =
-        await getApplicationDocumentsDirectory(); // AppData folder path
-    final savedImagePath = '${directory.path}/${DateTime.now()}.jpg';
-    File savedImage = await tempImage.copy(savedImagePath);
+    // final directory =
+    //     await getApplicationDocumentsDirectory(); // AppData folder path
+    // final savedImagePath = '${directory.path}/${DateTime.now()}.jpg';
+    // File savedImage = await tempImage.copy(savedImagePath);
+
+    final savedImage = await ImageGallerySaver.saveFile(tempImage.path);
+    String savedImgPath = savedImage['filePath'];
+    String? filePath =
+        await LecleFlutterAbsolutePath.getAbsolutePath(uri: savedImgPath);
 
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best,
@@ -216,7 +222,7 @@ class _MapViewState extends ConsumerState<MapView> {
             storeUuid: widget.storeUuid,
             lat: position?.latitude.toString() ?? '',
             long: position?.longitude.toString() ?? '',
-            pic: savedImage.path,
+            pic: filePath ?? '',
             isCheckin: widget.index == 0 ? true : false,
           );
       Navigator.pop(context);

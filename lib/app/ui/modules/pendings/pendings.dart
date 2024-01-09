@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -182,6 +183,9 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
         }
       }
     });
+    //Ver la lista de imagenes
+    logger.i('Imagenes');
+    logger.i(images);
 
     navigator.pop();
     showProgress(context: context, title: 'Enviando..');
@@ -189,6 +193,9 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
     //-----
     //1.- Todas las imagenes se envian aparte
     //2.- Todo los demas se envia en el pendiente normal
+
+    logger.i('Checkin imagen');
+    logger.i(storeIsar?.checkIn?.picture! ?? 'NoImage');
 
     await ref.read(pendingsController.notifier).sendCheckInOutImages(
           storeIsar: storeIsar!,
@@ -213,6 +220,9 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
     final result = await ref
         .read(pendingsController.notifier)
         .sendPendings(item.pendiente!);
+
+    logger.i('Checkout imagen');
+    logger.i(storeIsar.checkOut?.picture! ?? 'NoImage');
 
     await ref.read(pendingsController.notifier).sendCheckInOutImages(
           storeIsar: storeIsar,

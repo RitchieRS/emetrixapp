@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lecle_flutter_absolute_path/lecle_flutter_absolute_path.dart';
 import 'package:path_provider/path_provider.dart';
 
 // import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
@@ -193,14 +194,16 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
       final image2 = await ImagePicker().pickImage(source: source);
       if (image2 == null) return;
       final tempImage = File(image2.path);
-      final directory =
-          await getApplicationDocumentsDirectory(); // AppData folder path
-      final savedImagePath = '${directory.path}/${DateTime.now()}.jpg';
-      File savedImage = await tempImage.copy(savedImagePath);
-
-      // setState(() => image.file = File(savedImage.path));
-      setState(() => images.add(File(savedImage.path)));
-      // widget.image(image.file);
+      // final directory =
+      //     await getApplicationDocumentsDirectory(); // AppData folder path
+      // final savedImagePath = '${directory.path}/${DateTime.now()}.jpg';
+      // File savedImage = await tempImage.copy(savedImagePath);
+      final savedImage = await ImageGallerySaver.saveFile(tempImage.path);
+      String savedImgPath = savedImage['filePath'];
+      String? filePath =
+          await LecleFlutterAbsolutePath.getAbsolutePath(uri: savedImgPath);
+      setState(() => images.add(File(filePath ?? '')));
+      widget.image(File(filePath ?? ''));
     } on PlatformException catch (e) {
       debugPrint('error:$e');
       widget.image(null);

@@ -6,13 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
 
+import 'package:emetrix_flutter/app/core/services/notifications/notifications.dart';
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
+import 'package:emetrix_flutter/app/core/global/core.dart';
+import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/route_of_the_day/controller.dart';
 import 'package:emetrix_flutter/app/ui/modules/products_sku/products.dart';
-import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/ui/main/controller.dart';
-import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/components.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/controller.dart';
@@ -36,17 +37,50 @@ class SondeoPage extends ConsumerStatefulWidget {
 }
 
 class _SondeoPageState extends ConsumerState<SondeoPage>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
   List<(String, int)> mandatorySteps = [];
   int missingSteps = 0;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _getStepsState();
       identifyRequiredSteps();
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.paused) {
+      debugPrint('APP ------> RUNING ON THE BACKK');
+      final finishedSections = ref.watch(finishedSondeos);
+      if (finishedSections.isNotEmpty) {
+        NotificationService().showNotification(
+          title: 'Sondeo en Progreso',
+          body: 'NO ELIMINES LA APP',
+        );
+      }
+
+      //
+    } else if (state == AppLifecycleState.resumed) {
+      debugPrint('APP ------> RUNING ON MAIN');
+
+      //
+    } else if (state == AppLifecycleState.inactive) {
+      debugPrint('APP ------> RUNING BELOW A MESSAGE');
+    } else if (state == AppLifecycleState.detached) {
+      debugPrint('APP ------> KILLED');
+    }
   }
 
   @override
@@ -118,32 +152,44 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
                   child: TypeSondeo(
                     onTap: () async {
                       //logger.e("no hay : $index y ${widget.mainStore!.finishedSections!.completedSections}");
-                      final gps = await ref
-                          .read(sondeoController.notifier)
-                          .verifyGps(context);
-                      if (!gps) return;
+                      if (widget.sondeosList[index].noAsistencia != 1) {
+                        final gps = await ref
+                            .read(sondeoController.notifier)
+                            .verifyGps(context);
+                        if (!gps) return;
 
-                      if (widget.mainStore?.finishedSections != null) {
-                        if (widget
-                            .mainStore!.finishedSections!.completedSections!
-                            .contains(index)) {
-                          MesagessService().showWarning(
-                              context: context, message: 'Sondeo Completado');
-                          return;
+                        if (widget.mainStore?.finishedSections != null) {
+                          if (widget
+                              .mainStore!.finishedSections!.completedSections!
+                              .contains(index)) {
+                            MesagessService().showWarning(
+                                context: context, message: 'Sondeo Completado');
+                            return;
+                          }
                         }
-                      }
 
-                      try {
-                        if (!enabled) {
+                        try {
+                          if (!enabled) {
+                            await navigateToSondeo(index, finishedSections);
+                            setState(() {});
+                            return;
+                          }
+                        } catch (error) {
+                          logger.e(error);
+                        }
+                      } else {
+                        try {
                           await navigateToSondeo(index, finishedSections);
                           setState(() {});
                           return;
+                        } catch (error) {
+                          logger.e(error);
                         }
-                      } catch (error) {
-                        logger.e(error);
                       }
                     },
-                    enebled: !enabled,
+                    enebled: widget.sondeosList[index].noAsistencia == 1
+                        ? true
+                        : !enabled,
                     sondeoItem: widget.sondeosList[index],
                     index: index,
                     isLast:

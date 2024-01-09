@@ -7,7 +7,7 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> initNotification() async {
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const android = AndroidInitializationSettings('@mipmap/launcher_icon');
     final ios = DarwinInitializationSettings(
         requestAlertPermission: true,
         requestBadgePermission: true,

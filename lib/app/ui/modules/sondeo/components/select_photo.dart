@@ -1,14 +1,15 @@
 import 'dart:io';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:lecle_flutter_absolute_path/lecle_flutter_absolute_path.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SelectPicture extends ConsumerStatefulWidget {
@@ -136,12 +137,15 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
       final image2 = await ImagePicker().pickImage(source: source);
       if (image2 == null) return;
       final tempImage = File(image2.path);
-      final directory =
-          await getApplicationDocumentsDirectory(); // AppData folder path
-      final savedImagePath = '${directory.path}/${DateTime.now()}.jpg';
-      File savedImage = await tempImage.copy(savedImagePath);
-
-      setState(() => image.file = File(savedImage.path));
+      // final directory =
+      //     await getApplicationDocumentsDirectory(); // AppData folder path
+      // final savedImagePath = '${directory.path}/${DateTime.now()}.jpg';
+      // File savedImage = await tempImage.copy(savedImagePath);
+      final savedImage = await ImageGallerySaver.saveFile(tempImage.path);
+      String savedImgPath = savedImage['filePath'];
+      String? filePath =
+          await LecleFlutterAbsolutePath.getAbsolutePath(uri: savedImgPath);
+      setState(() => image.file = File(filePath ?? ''));
       widget.image(image.file);
     } on PlatformException catch (e) {
       debugPrint('error:$e');
