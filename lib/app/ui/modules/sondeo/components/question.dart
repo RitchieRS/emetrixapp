@@ -1,8 +1,8 @@
-import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 
 class Question extends ConsumerStatefulWidget {
@@ -84,7 +84,7 @@ class _QuestionState extends ConsumerState<Question>
           Padding(
             padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
             child:
-                Text('widget.pregunta.pregunta' ?? 'NoData', style: t.subtitle),
+                Text(widget.pregunta.pregunta ?? 'NoData', style: t.subtitle),
           ),
           SizedBox(height: size.height * 0.01),
           Center(
