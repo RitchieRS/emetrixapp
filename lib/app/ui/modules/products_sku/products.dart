@@ -116,7 +116,7 @@ class _ProductsSkuPageState extends ConsumerState<ProductsSkuPage> {
                                         SingleSondeoPage(
                                       store: widget.store,
                                       sondeoItem: widget.sondeoItem,
-                                      index: index,
+                                      index: int.parse( productosObj?.productos?.sku ?? '0'),
                                       stepsLenght: widget.stepsLenght,
                                       storeUuid: widget.storeUuid,
                                       stepUuid: widget.sondeoItem.uuid ?? '',

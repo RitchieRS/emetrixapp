@@ -2,6 +2,7 @@
 import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/modules/productos/productos.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/scanner.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,8 +36,8 @@ class ProductosSearchDelegate extends SearchDelegate<ProductosIsar>{
     return [
       IconButton( 
       onPressed:(){
-        query='';
-       }, icon: const  Icon(Icons.close)
+        _openScanner(context);
+       }, icon: const  Icon(Icons.qr_code)
        )
     ];
   }
@@ -52,9 +53,8 @@ class ProductosSearchDelegate extends SearchDelegate<ProductosIsar>{
         icon: AnimatedIcons.menu_arrow,
         progress: transitionAnimation,
       ),
-      onPressed: () {
-      },
-      
+      onPressed: 
+        () => Navigator.of(context).pop(),
     );
   }
 
@@ -120,7 +120,7 @@ class ProductosSearchDelegate extends SearchDelegate<ProductosIsar>{
                                               SingleSondeoPage(
                                                   store: store,
                                                   sondeoItem: sondeoItem,
-                                                  index: index,
+                                                  index: int.parse(productList![index].productos?.sku ?? '0'),
                                                   stepsLenght: stepsLenght,
                                                   storeUuid: storeUuid,
                                                   stepUuid: sondeoItem.uuid ?? '',
@@ -149,15 +149,16 @@ class ProductosSearchDelegate extends SearchDelegate<ProductosIsar>{
         ));
   }
 
-  void _onQRViewCreated(QRViewController controller) {
-  
-  
-  controller.scannedDataStream.listen((Barcode scanData) {
-   
-      query = scanData.code!;
+ Future<void> _openScanner(BuildContext context) async {
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ScannerFullPage(),
+        ));
     
-  });
- 
-}
+      query = result;
+    
+    // widget.getSignature(result);
+  }
 
 }
