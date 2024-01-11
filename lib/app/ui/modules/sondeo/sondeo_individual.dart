@@ -336,7 +336,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       logger.i('guardamos el paso actual');
       return;
     }
-
+//_stopwatch = ref.watch(stopwatchProviderFamily(int.parse(widget.preguntawid.id ?? '0')));
     logger.i('Si hay pasos');
     store?.storeSteps?.forEach((element) async {
       //identify every list
@@ -532,7 +532,40 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     await Future.delayed(const Duration(seconds: 2));
     navigator.pop();
     _disposeControllers();
+    removeProviderIndex(widget.sondeoItem.preguntas);
     await finalize(finishedSections);
+  }
+
+  void removeProviderIndex(List<Preguntas>? preguntas){
+  
+   
+    for(var pregunta in preguntas!){
+      
+       if(pregunta.tipo == 'abierta' || pregunta.tipo == 'numerico' ||pregunta.tipo == 'decimal' || pregunta.tipo == 'email' ) {
+         var provider =  ref.watch(textEditingControllerProvider( int.parse(pregunta.id ?? '0')));
+         if(provider.value.text != '' ){
+             provider.value = TextEditingValue.empty;
+         }
+       }
+       logger.i("Tipopregunta: ${pregunta.tipo}");
+       if(pregunta.tipo == 'foto' || pregunta.tipo ==  'fotoGuardarCopia' || pregunta.tipo ==  'imagen'){
+        var provider  =  ref.watch(imageFileProviderFamily(int.parse(pregunta.id ?? '0')));
+       
+          if(provider?.file != null ){
+            provider?.file = null;
+          }
+       }
+
+       if(pregunta.tipo == 'tiempo'){
+        logger.d("MATAR TIEMPO");
+        var provider = ref.watch(stopwatchProviderFamily(int.parse(pregunta.id ?? '0')));
+          if(provider.isRunning() ){
+            provider.stop();
+          }
+       }
+
+    }
+
   }
 
   Future<void> _showUnfinishedMessage(int missingAnswers) async {

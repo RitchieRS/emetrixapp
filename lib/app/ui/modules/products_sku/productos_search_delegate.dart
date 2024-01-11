@@ -7,6 +7,7 @@ import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class ProductosSearchDelegate extends SearchDelegate<ProductosIsar>{
@@ -42,6 +43,14 @@ class ProductosSearchDelegate extends SearchDelegate<ProductosIsar>{
     ];
   }
 
+    @override
+  void dispose() {
+    //_stopwatch.stop();
+    super.dispose();
+  }
+
+
+
   @override
   Widget? buildLeading(BuildContext context) {
 
@@ -74,17 +83,33 @@ class ProductosSearchDelegate extends SearchDelegate<ProductosIsar>{
             if (snapshot.data != null) {
 
                 List<ProductosIsar>? productList = snapshot.data!;
-             
-            productList  = productList.where((p) =>
-             /// logger.d("Filtro Query ${p.productos!.sku}");
-              ///logger.d("Filtro Query $query");
-                   p.productos?.sku!.contains(query.trim().toLowerCase()) ??  false
+            logger.d("Filtro ${snapshot.data!.length}");
+            logger.d("Filtro ${productList.length}");
+            
+            try{
+              int.parse(query);
+               productList  = productList.where((p) =>
+                
+                   p.productos?.sku!.contains(query.trim().toLowerCase())  ??  false
                          
                 ).toList();
+            }
+            catch(e){
+
+               productList  = productList!.where((p) =>
+                
+                   p.productos?.nombre!.toLowerCase().trim().contains(query.trim().toLowerCase())  ??  false
+                         
+                ).toList();
+
+
+            }
+            
+           
+                
              
             
-              logger.d("Filtro ${snapshot.data!.length}");
-              logger.d("Filtro ${productList.length}");
+              
               return ListView.builder(
                 itemCount: productList.length,
                 itemBuilder: (context, index) {
@@ -160,5 +185,7 @@ class ProductosSearchDelegate extends SearchDelegate<ProductosIsar>{
     
     // widget.getSignature(result);
   }
+
+ 
 
 }

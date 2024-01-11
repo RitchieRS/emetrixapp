@@ -66,7 +66,7 @@ class _QuestionState extends ConsumerState<Question>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    controller = ref.watch(textEditingControllerProvider(widget.index));
+    controller = ref.watch(textEditingControllerProvider( int.parse(widget.pregunta.id ?? '0')));
     final size = MediaQuery.of(context).size;
     Color color2 = Theme.of(context).hintColor.withOpacity(0.3);
     final defaultBorder = OutlineInputBorder(
@@ -84,7 +84,7 @@ class _QuestionState extends ConsumerState<Question>
           Padding(
             padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
             child:
-                Text('widget.pregunta.pregunta' ?? 'NoData', style: t.subtitle),
+                Text(widget.pregunta.pregunta ?? 'NoData', style: t.subtitle),
           ),
           SizedBox(height: size.height * 0.01),
           Center(

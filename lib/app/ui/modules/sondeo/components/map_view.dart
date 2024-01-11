@@ -181,7 +181,7 @@ class _MapViewState extends ConsumerState<MapView> {
           position!.longitude, storePosition.$1, storePosition.$2);
       final rango = double.parse(widget.store.rangoGPS.toString());
 
-      ///if (distance <= rango) {
+      //if (distance <= rango) {
       if (distance >= rango) {
         //SI Pasa
         Navigator.pop(context);
