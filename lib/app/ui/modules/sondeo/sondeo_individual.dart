@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/services/notifications/notifications.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
@@ -450,7 +452,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     }
   }
 
-  void buildResponses() {
+  void buildResponses() async{
     Map<String, ResponseIndex?> typeResponses = {
       'abierta': textResponse,
       'numerico': numericResponse,
@@ -469,16 +471,26 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       'hora': timeResponse,
     };
 
-    //Guardar las respuestas
     for (var question in questionsResponses) {
+      
       final response = typeResponses[question.question?.tipo];
+       logger.e("Respuesta pas1: ${question.response}");
       if (response != null) {
-        if (question.indexSondeo == response.index) {
+        if (question.indexSondeo == response.index && question.question?.tipo != 'foto') {
           question.response = response.response;
+        }
+        else{
+          var image = ref
+        .watch(imageFileProviderFamily(int.parse(question.question?.id ?? '0')));
+          question.response = image?.file?.path;
         }
       }
     }
-    setState(() {});
+
+    //Guardar las respuestas
+    setState(() {
+    
+    });
   }
 
   Future<void> validateAllComponents(
@@ -491,6 +503,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     //Ver si las respuestas obligatorias estan vacias
     for (var questionMandatory in mandatoryQuestions) {
       for (var response in questionsResponses) {
+        logger.e("mandatiorios:${response.response}");
         if (questionMandatory.$2 == response.indexSondeo) {
           if (response.response != null) {
             mandatoryComponents[response.indexSondeo!] = false;

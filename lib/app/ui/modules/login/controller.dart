@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:emetrix_flutter/app/core/modules/productos/productos.dart';
 import 'package:emetrix_flutter/app/core/modules/productos/service.dart';
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
@@ -92,6 +94,22 @@ class LoginControllerNotifier extends StateNotifier<LoginState> {
     } else {
       state = state.copyWith(state: States.succes);
       return response;
+    }
+  }
+
+  Future<List<Stores>> getAllStoresFromDB() async {
+    List<Stores> stores = [];
+    final prefs = await SharedPreferences.getInstance();
+    final List<String>? storesData = prefs.getStringList('storesData');
+    if (storesData != null) {
+      for (String store in storesData) {
+        stores.add(Stores.fromJson(jsonDecode(store)));
+      }
+      state = state.copyWith(state: States.succes);
+      return stores;
+    } else {
+      state = state.copyWith(state: States.error);
+      return [];
     }
   }
 

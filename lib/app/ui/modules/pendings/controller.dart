@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/modules/login/login.dart';
 import 'package:emetrix_flutter/app/core/modules/pendientes/pendientes.dart';
 import 'package:emetrix_flutter/app/core/modules/pendientes/pendings_resp.dart';
@@ -39,6 +40,7 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
   }
 
   Future<PendienteResp> sendPendings(Pendiente pending) async {
+    ///logger.i('Checkin imagen sendPendings ${pending.contenido?.respuestas}' );
     final response = await pendingsService.sendPendings(pending);
     return response;
   }

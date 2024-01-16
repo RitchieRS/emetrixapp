@@ -134,7 +134,7 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
 
   Future<void> pickImage(ImageSource source) async {
     try {
-      final image2 = await ImagePicker().pickImage(source: source);
+      final image2 = await ImagePicker().pickImage(source: source,imageQuality: 30);
       if (image2 == null) return;
       final tempImage = File(image2.path);
       // final directory =

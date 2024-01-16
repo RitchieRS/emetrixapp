@@ -158,7 +158,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
                             .verifyGps(context);
                         if (!gps) return;
 
-                        if (widget.mainStore?.finishedSections != null) {
+                       /* if (widget.mainStore?.finishedSections != null) {
                           if (widget
                               .mainStore!.finishedSections!.completedSections!
                               .contains(index)) {
@@ -166,7 +166,7 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
                                 context: context, message: 'Sondeo Completado');
                             return;
                           }
-                        }
+                        }*/
 
                         try {
                           if (!enabled) {

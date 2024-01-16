@@ -17,6 +17,8 @@ class PendingsRepository {
       "file": await MultipartFile.fromFile(image.path, filename: fileName),
     });
 
+    logger.d('CheckInOut data: ${image.path}');
+
     try {
       final response = await dio.post('/enviar_pendiente.php', data: formData);
       logger.d('CheckInOut data: ${response.data}');
@@ -32,6 +34,7 @@ class PendingsRepository {
   }
 
   Future<PendienteResp> sendPendings({required Pendiente pending}) async {
+    logger.i('Checkin imagen sendPendings ${pending.contenido?.toJson()}' );
     final pendingJson = jsonEncode(pending);
     final url = Uri.parse('/enviar_pendiente.php').replace(queryParameters: {
       'params': pendingJson,

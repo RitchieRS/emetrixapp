@@ -14,7 +14,7 @@ class Store {
   final int? definirNombre;
   final String? clasificacion;
   final int? rangoGPS;
-  final String? checkGPS;
+  late final String? checkGPS;
 
   Store(
       {this.id,

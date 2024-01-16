@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -221,8 +222,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _verifyDatabase() async {
     final products = await ref.read(databaseProvider).isProductsEmpty();
     final stores = await ref.read(databaseProvider).isStoreGeneralsEmpty();
-    if (products && stores) {
+    if (stores) {
       await _getStores();
+    }else{
+      _getUpdateStores();
+    }
+    if(products){
       await _getProducts();
     }
   }
@@ -243,6 +248,42 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     await ref
         .read(loginControllerProvider.notifier)
         .saveStoresData(allStores, ref);
+  }
+
+   Future<void> _getUpdateStores() async {
+    List<Store> allStores = [];
+    final storesfromsrv = await ref.read(loginControllerProvider.notifier).getStores();
+    var storesfromdb =
+        await ref.read(loginControllerProvider.notifier).getAllStoresFromDB();
+
+    /*stores.resp?.forEach((store) {
+      if(store.)
+      allStores.add(store);
+    });*/
+
+    for(Stores storefdb in storesfromdb){
+      for(Store store in storefdb.resp!.toList()){
+         storesfromsrv.resp?.forEach((storesrv) {
+            if(store.id == storesrv.id){
+              if(store.checkGPS !=  storesrv.checkGPS){
+                 store.checkGPS = storesrv.checkGPS;
+                 allStores.add(store);
+                 }
+           }else{
+            allStores.add(storesrv);
+           }
+    });
+           
+      }
+    }
+    try{
+    await ref.read(databaseProvider).clearStores();
+    await ref
+        .read(loginControllerProvider.notifier)
+        .saveStoresData(allStores, ref);
+    }catch(e){
+      logger.e(e);
+    }
   }
 
   Future<void> _getProducts() async {
