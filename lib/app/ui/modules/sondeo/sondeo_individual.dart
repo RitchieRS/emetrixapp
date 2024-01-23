@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:emetrix_flutter/app/core/global/core.dart';
+import 'package:emetrix_flutter/app/core/modules/pendientes/pendientes.dart';
 import 'package:emetrix_flutter/app/core/services/notifications/notifications.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/foundation.dart';
@@ -62,7 +63,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   bool validate = false;
   bool startTextAsignation = false;
   final ids = <(String, String)>[];
-
+  final List<Respuestas> responses = [];
   @override
   void initState() {
     super.initState();
@@ -321,13 +322,15 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   }
 
   void onExit(bool didpop) async {
+
+    logger.i('RespM ${widget.sondeoItem}');
     final store = await ref
         .read(databaseProvider)
         .getStoreByUuid(storeUuid: widget.storeUuid);
     if (store?.storeSteps == null) {
       logger.i('No hay pasos');
       //save responses from this step
-      buildResponses();
+        buildResponses();
       await ref.read(databaseProvider).saveStepData(
             storeUuid: widget.storeUuid,
             progress: 0,
@@ -350,6 +353,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
             storeUuid: widget.storeUuid,
             stepUuid: widget.stepUuid);
         logger.i('Actualizamos las respuestas que hay');
+         
         return;
       } else {
         //save responses from this step
@@ -363,7 +367,11 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
             );
         logger.i('guardamos el paso actual');
       }
+      //Build Pending
+      
     });
+
+    
   }
 
   void idenifyComponents() {
@@ -472,6 +480,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     };
 
     for (var question in questionsResponses) {
+
+      
       
       final response = typeResponses[question.question?.tipo];
        logger.e("Respuesta pas1: ${question.response}");
@@ -484,13 +494,20 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
         .watch(imageFileProviderFamily(int.parse(question.question?.id ?? '0')));
           question.response = image?.file?.path;
         }
+        final resp = Respuestas(
+          idPregunta: question.question?.idPreguntaRespuesta,
+          respuesta: question.response,
+          tipo: question.question?.tipo,
+        );
+        responses.add(resp);
       }
     }
 
-    //Guardar las respuestas
     setState(() {
     
     });
+    //Guardar las respuestas
+    
   }
 
   Future<void> validateAllComponents(
@@ -543,6 +560,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
           sondeoQuestionResponses: questionsResponses,
         );
     await Future.delayed(const Duration(seconds: 2));
+    await ref.read(sondeoController.notifier).buildPending(
+          widget.sondeoItem, widget.store, ref,responses,widget.storeUuid);
     navigator.pop();
     _disposeControllers();
     removeProviderIndex(widget.sondeoItem.preguntas);

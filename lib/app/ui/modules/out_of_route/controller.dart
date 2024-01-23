@@ -83,10 +83,16 @@ class OutOfRouteControllerNotifier extends StateNotifier<OutOfRouteState> {
     checkin2.sondeo = 'Salida';
     checkin2.orden = '1000';
     list.add(checkin2);
-
+    var orden_ext=1; 
     for (var element in list) {
-      final number = int.parse(element.orden ?? '');
-      list2.add((number, element));
+     if(element.orden != "" || element.orden != null ){
+          final number = int.parse(element.orden ?? '');
+          list2.add((number, element));
+      }else{
+        final number = orden_ext;
+        list2.add((number, element));
+      }
+      orden_ext++;
     }
     list2.sort((a, b) => a.$1.compareTo(b.$1));
 

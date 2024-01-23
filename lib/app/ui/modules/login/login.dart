@@ -252,6 +252,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
    Future<void> _getUpdateStores() async {
     List<Store> allStores = [];
+    try{
     final storesfromsrv = await ref.read(loginControllerProvider.notifier).getStores();
     var storesfromdb =
         await ref.read(loginControllerProvider.notifier).getAllStoresFromDB();
@@ -260,7 +261,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       if(store.)
       allStores.add(store);
     });*/
-
+  
     for(Stores storefdb in storesfromdb){
       for(Store store in storefdb.resp!.toList()){
          storesfromsrv.resp?.forEach((storesrv) {
@@ -276,7 +277,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
            
       }
     }
-    try{
+    
     await ref.read(databaseProvider).clearStores();
     await ref
         .read(loginControllerProvider.notifier)

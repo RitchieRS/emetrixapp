@@ -333,7 +333,7 @@ class Store2 {
   final int? definirNombre;
   final String? clasificacion;
   final int? rangoGPS;
-  final String? checkGPS;
+  String? checkGPS;
 
   Store2(
       {this.id,

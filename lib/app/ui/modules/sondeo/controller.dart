@@ -145,4 +145,55 @@ class Auth extends StateNotifier<SondeoState> {
     //Guardarlo a bd
     await ref.read(databaseProvider).savePending(pendient);
   }
+   Future<void> buildPending(
+      RespM sondeoItem, Store2 store, WidgetRef ref, List<Respuestas> responses, String storeUuid) async {
+    final userInfo = await _getUserInfo();
+    final savedStore =
+        await ref.read(databaseProvider).getStoreByUuid(storeUuid: storeUuid);
+//Arma pendiente
+    final pending = Pendiente(
+      // idProyecto: '',
+      estado: 0,
+      idProyecto: userInfo.proyectos.first.id,
+      idUsuario: userInfo.usuario.id,
+      quien: Platform.isAndroid ? 'Android' : 'IOS',
+      fecha: DateTime.now().toString(),
+      tipo: 'Sondeo', //checkin / checkout
+      conteo: '1/1',
+      contenido: Contenido(
+        idSondeo: sondeoItem.id,
+        idTienda: store.id,
+        estadoTienda: '2', //0 sin visitar, 1 medio visitar, 2 completamente
+        latitud: savedStore?.checkOut?.latitud,
+        longitud: savedStore?.checkOut?.longitud,
+        respuestas: responses
+      ),
+      config: Config(
+        rangoTienda: store.rangoGPS.toString(),
+        sondeoObligatorio: sondeoItem.obligatorio.toString(),
+        gpsProyecto: userInfo.proyectos.first.gps.toString(),
+        gpsTienda: store.checkGPS.toString(),
+        resolucionImagen: '1024',
+      ),
+      info: Info(
+        bateria: '80%',
+        brillo: '80%',
+        conexion: 'Datos',
+        datos: '--Sin permiso?--',
+        gps2: '1',
+        gps: '1',
+        hotspot: 'false',
+        imei: '',
+        tag: 'sondeo', //checkin / checkout
+        // version: userInfo.versiones.first.toString(),
+        version: '1.0',
+      ),
+    );
+
+    final pendient = PendienteIsar(pendiente: pending, storeUuid: storeUuid);
+
+    //Guardarlo a bd
+    await ref.read(databaseProvider).savePending(pendient);
+  }
 }
+

@@ -227,10 +227,10 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
       }
     }
     if (widget.sondeosList[index].sondeo == 'Salida') {
-      if (finishedSections.contains(index)) {
+      /*if (finishedSections.contains(index)) {
         await _messaje('Cuidado', 'Ya hicíste checkOut.', null);
         return;
-      }
+      }*/
 
       verifyIsFinished(finishedSections);
       setState(() {});
@@ -325,9 +325,11 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
       Navigator.pop(context);
       return;
     }
-
+    
     final navigator = Navigator.of(context);
     verifyIsFinished(finishedSections);
+    logger.i('Si hay $finishedSections');
+    //finishedSections = [0, 2, 10];
     if (finishedSections.isEmpty) return;
 
     String message = missingSteps <= 1
@@ -357,8 +359,8 @@ class _SondeoPageState extends ConsumerState<SondeoPage>
       showProgress(context: context, title: 'Guardando progreso');
       await Future.delayed(const Duration(seconds: 1));
       //Build Pending
-      await ref.read(sondeoController.notifier).buildFinalPending(
-          widget.sondeosList.first, widget.store, ref, widget.storeUuid);
+      /*await ref.read(sondeoController.notifier).buildFinalPending(
+          widget.sondeosList.first, widget.store, ref, widget.storeUuid);*/
 
       navigator.pop();
       logger.i('Si hay $finishedSections');

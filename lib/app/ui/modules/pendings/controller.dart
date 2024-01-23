@@ -9,6 +9,7 @@ import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:emetrix_flutter/app/core/providers/providers.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'state.dart';
 
@@ -55,16 +56,31 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
     required SondeosFromStore storeIsar,
   }) async {
     final Resp userInfo = await _getUserInfo();
+    var _tipo;
     // final storeIsar =
     //     await ref.read(databaseProvider).getStoreByUuid(storeUuid: storeUuid);
     final List<Respuestas> responses = [];
+    String sizeImg =  image.lengthSync().toString();
+    /*responses.add(Respuestas(
+      idPregunta: '1', //Checkin 1
+      tipo: "asistencia", //checkin
+      respuesta: "",
+      size: sizeImg,
+    ));*/
 
+    if(tipo=='CheckIn'){
+    _tipo='CheckIn';
     responses.add(Respuestas(
       idPregunta: '1', //Checkin 1
       tipo: "asistencia", //checkin
       respuesta: "",
-      size: null,
+      size: sizeImg,
     ));
+    }else{
+      _tipo=tipo;
+    }
+
+    DateFormat formatoFecha = DateFormat("yyyy-MM-dd HH:mm:ss");
 
 //Arma pendiente
     final pending = Pendiente(
@@ -73,9 +89,8 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
       idProyecto: userInfo.proyectos.first.id,
       idUsuario: userInfo.usuario.id,
       quien: Platform.isAndroid ? 'Android' : 'IOS',
-      fecha: DateTime.now().toString(),
-      tipo: tipo, //checkin / checkout
-      conteo: '1/1',
+      fecha: formatoFecha.format(DateTime.now()),
+      tipo: _tipo, //checkin / checkout
       contenido: Contenido(
         idSondeo: storeIsar.sondeo?.resp?.first.id,
         idTienda: storeIsar.store?.id,
@@ -83,6 +98,7 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
         latitud: storeIsar.checkOut?.latitud,
         longitud: storeIsar.checkOut?.longitud,
         respuestas: responses,
+        sku: ""
       ),
       config: Config(
         rangoTienda: storeIsar.store?.rangoGPS.toString(),
@@ -90,6 +106,7 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
         gpsProyecto: userInfo.proyectos.first.gps.toString(),
         gpsTienda: storeIsar.store?.checkGPS.toString(),
         resolucionImagen: '1024',
+        capturaSku: "0"
       ),
       info: Info(
         bateria: '80%',
@@ -100,7 +117,7 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
         gps: '1',
         hotspot: 'false',
         imei: '',
-        tag: tipo, //checkin / checkout
+        tag:  _tipo, //checkin / checkout
         // version: userInfo.versiones.first.toString(),
         version: '1.0',
       ),

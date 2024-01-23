@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -70,7 +72,20 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
                   height: side,
                   width: side,
                   color: backColor,
-                  child: image.file != null
+                  child: widget.pregunta.respuesta != null && widget.pregunta.tipo=='imagen' ?
+                      Image.network(
+                          widget.pregunta.respuesta.toString(),
+                          fit: BoxFit.contain, 
+                          frameBuilder:
+                              (context, child, frame, wasSynchronouslyLoaded) {
+                            return frame == null
+                                ? const Center(
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2))
+                                : child;
+                          },
+                      ): 
+                      image.file != null
                       ? Image.file(
                           image.file ?? File(''),
                           fit: BoxFit.cover,
@@ -127,7 +142,8 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
       return;
     }
     if (widget.pregunta.tipo == 'imagen') {
-      pickImage(ImageSource.gallery);
+      //pickImage(ImageSource.gallery);
+      imageDialog('', widget.pregunta.respuesta , context);
       return;
     }
   }
@@ -152,6 +168,45 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
       widget.image(null);
     }
   }
+
+  Widget imageDialog(text, path, context) {
+return Dialog(
+  // backgroundColor: Colors.transparent,
+  // elevation: 0,
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '$text',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: Icon(Icons.close_rounded),
+              color: Colors.redAccent,
+            ),
+          ],
+        ),
+      ),
+      Container(
+        width: 220,
+        height: 200,
+        child: Image.network(
+          '$path',
+          fit: BoxFit.cover,
+        ),
+      ),
+    ],
+  ),
+);}
 
   Future<void> saveImageOnGallery() async {
     final directory = await getApplicationDocumentsDirectory();
