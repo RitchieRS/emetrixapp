@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lecle_flutter_absolute_path/lecle_flutter_absolute_path.dart';
 
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
-import 'package:lecle_flutter_absolute_path/lecle_flutter_absolute_path.dart';
-import 'package:path_provider/path_provider.dart';
 
 class SelectPicture extends ConsumerStatefulWidget {
   const SelectPicture({
@@ -134,7 +133,10 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
 
   Future<void> pickImage(ImageSource source) async {
     try {
-      final image2 = await ImagePicker().pickImage(source: source);
+      final image2 = await ImagePicker().pickImage(
+        source: source,
+        preferredCameraDevice: CameraDevice.rear,
+      );
       if (image2 == null) return;
       final tempImage = File(image2.path);
       // final directory =
@@ -145,20 +147,22 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
       String savedImgPath = savedImage['filePath'];
       String? filePath =
           await LecleFlutterAbsolutePath.getAbsolutePath(uri: savedImgPath);
-      setState(() => image.file = File(filePath ?? ''));
-      widget.image(image.file);
+      final finalImage = File(filePath ?? '');
+
+      setState(() => image.file = finalImage);
+      widget.image(finalImage);
     } on PlatformException catch (e) {
       debugPrint('error:$e');
       widget.image(null);
     }
   }
 
-  Future<void> saveImageOnGallery() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final path = '${directory.path}/image.jpg';
-    await File(path).writeAsBytes(await image.readAsBytes());
-    await ImageGallerySaver.saveFile(image.path);
-  }
+  // Future<void> saveImageOnGallery() async {
+  //   final directory = await getApplicationDocumentsDirectory();
+  //   final path = '${directory.path}/image.jpg';
+  //   await File(path).writeAsBytes(await image.readAsBytes());
+  //   await ImageGallerySaver.saveFile(image.path);
+  // }
 
   @override
   bool get wantKeepAlive => true;
