@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:emetrix_flutter/app/core/global/core.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,6 +58,7 @@ class _ProductsSkuPageState extends ConsumerState<ProductsSkuPage> {
   @override
   Widget build(BuildContext context) {
     late Future<List<ProductosIsar>?> listProductos = getAllProducts();
+    
     return Scaffold(
         appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -110,6 +113,7 @@ class _ProductsSkuPageState extends ConsumerState<ProductsSkuPage> {
                                         '',
                                     style: t.text),
                                 onTap: () async {
+                                  removeProviderIndex(widget.sondeoItem.preguntas);
                                   await Navigator.push(context,
                                       CupertinoPageRoute(builder: (context) {
                                     return // sondeosList2[index].preguntas?.first.tipo == 'asistencia'
@@ -143,6 +147,36 @@ class _ProductsSkuPageState extends ConsumerState<ProductsSkuPage> {
           },
           future: getAllProducts(),
         )));
+  }
+
+   @override
+  void dispose() {
+    //_stopwatch.stop();
+    super.dispose();
+  }
+
+   void removeProviderIndex(List<Preguntas>? preguntas){
+  
+   
+    for(var pregunta in preguntas!){
+      
+       if(pregunta.tipo == 'abierta' || pregunta.tipo == 'numerico' ||pregunta.tipo == 'decimal' || pregunta.tipo == 'email' ) {
+         var provider =  ref.watch(textEditingControllerProvider( int.parse(pregunta.id ?? '0')));
+         if(provider.value.text != '' ){
+             provider.value = TextEditingValue.empty;
+         }
+       }
+       logger.i("Tipopregunta: ${pregunta.tipo}");
+       if(pregunta.tipo == 'foto' || pregunta.tipo ==  'fotoGuardarCopia' || pregunta.tipo ==  'imagen'){
+        var provider  =  ref.watch(imageFileProviderFamily(int.parse(pregunta.id ?? '0')));
+       
+          if(provider?.file != null ){
+            provider?.file = null;
+          }
+       }
+
+    }
+
   }
 
   //List productos_iterable = getAllProducts();

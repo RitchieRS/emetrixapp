@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lecle_flutter_absolute_path/lecle_flutter_absolute_path.dart';
@@ -10,6 +12,7 @@ import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SelectPicture extends ConsumerStatefulWidget {
   const SelectPicture({
@@ -69,10 +72,11 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
                   height: side,
                   width: side,
                   color: backColor,
-                  child: image.file != null
-                      ? Image.file(
-                          image.file ?? File(''),
-                          fit: BoxFit.cover,
+                  child: widget.pregunta.respuesta != null &&
+                          widget.pregunta.tipo == 'imagen'
+                      ? Image.network(
+                          widget.pregunta.respuesta.toString(),
+                          fit: BoxFit.contain,
                           frameBuilder:
                               (context, child, frame, wasSynchronouslyLoaded) {
                             return frame == null
@@ -82,18 +86,31 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
                                 : child;
                           },
                         )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.camera,
-                              color: c.disabled.withOpacity(0.8),
-                              size: size.height * 0.06,
+                      : image.file != null
+                          ? Image.file(
+                              image.file ?? File(''),
+                              fit: BoxFit.cover,
+                              frameBuilder: (context, child, frame,
+                                  wasSynchronouslyLoaded) {
+                                return frame == null
+                                    ? const Center(
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 2))
+                                    : child;
+                              },
+                            )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.camera,
+                                  color: c.disabled.withOpacity(0.8),
+                                  size: size.height * 0.06,
+                                ),
+                                Text('Selecciona imagen', style: t.text),
+                              ],
                             ),
-                            Text('Selecciona imagen', style: t.text),
-                          ],
-                        ),
                 ),
               ),
             ),
@@ -126,17 +143,16 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
       return;
     }
     if (widget.pregunta.tipo == 'imagen') {
-      pickImage(ImageSource.gallery);
+      //pickImage(ImageSource.gallery);
+      imageDialog('', widget.pregunta.respuesta, context);
       return;
     }
   }
 
   Future<void> pickImage(ImageSource source) async {
     try {
-      final image2 = await ImagePicker().pickImage(
-        source: source,
-        preferredCameraDevice: CameraDevice.rear,
-      );
+      final image2 =
+          await ImagePicker().pickImage(source: source, imageQuality: 30);
       if (image2 == null) return;
       final tempImage = File(image2.path);
       // final directory =
@@ -157,12 +173,52 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
     }
   }
 
-  // Future<void> saveImageOnGallery() async {
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   final path = '${directory.path}/image.jpg';
-  //   await File(path).writeAsBytes(await image.readAsBytes());
-  //   await ImageGallerySaver.saveFile(image.path);
-  // }
+  Widget imageDialog(text, path, context) {
+    return Dialog(
+      // backgroundColor: Colors.transparent,
+      // elevation: 0,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '$text',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: const Icon(Icons.close_rounded),
+                  color: Colors.redAccent,
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 220,
+            height: 200,
+            child: Image.network(
+              '$path',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> saveImageOnGallery() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = '${directory.path}/image.jpg';
+    await File(path).writeAsBytes(await image.readAsBytes());
+    await ImageGallerySaver.saveFile(image.path);
+  }
 
   @override
   bool get wantKeepAlive => true;

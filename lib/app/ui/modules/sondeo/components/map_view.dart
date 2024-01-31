@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'dart:async';
+import 'package:emetrix_flutter/app/core/modules/pendientes/pendientes.dart';
 import 'package:flutter/services.dart' show PlatformException, rootBundle;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,7 +46,7 @@ class _MapViewState extends ConsumerState<MapView> {
   String? _darkMapStyle;
   Position? position;
   LocationPermission? geolocator;
-
+  final List<Respuestas> responses = [];
   final CameraPosition _defaultMexico = const CameraPosition(
     target: LatLng(19.451054, -99.125519),
     zoom: 11,
@@ -151,15 +152,24 @@ class _MapViewState extends ConsumerState<MapView> {
         ),
         bottomNavigationBar: BottomButon(
           onTap: () async {
-            logger.i("GPS:${widget.store.checkGPS}");
+            
             try {
-              if (int.parse(widget.store.checkGPS as String) == 1) {
+
+              logger.i("GPS1:${widget.store.checkGPS}");
+              logger.i("GPS2:${widget.store.checkGPS == '1'}");
+              if (widget.store.checkGPS == '1') {
+                
                 await calculateChekInOut(finishedSections);
+                
                 return;
-              } else {
+              }
+               else {
+                 
                 await setEntrance(finishedSections);
+               
               }
             } catch (e) {
+              logger.e("error:$e");
               _showMessage('Error', 'Error de Calculo');
             }
           },
@@ -181,12 +191,12 @@ class _MapViewState extends ConsumerState<MapView> {
           position!.longitude, storePosition.$1, storePosition.$2);
       final rango = double.parse(widget.store.rangoGPS.toString());
 
-      ///if (distance <= rango) {
-      if (distance >= rango) {
+      if (distance <= rango) {
+      //if (distance >= rango) {
         //SI Pasa
         Navigator.pop(context);
         await setEntrance(finishedSections);
-      } else {
+      }else {
         //No pasa
         Navigator.pop(context);
         await _showMessage('Fuera de rango',
@@ -210,14 +220,16 @@ class _MapViewState extends ConsumerState<MapView> {
     String savedImgPath = savedImage['filePath'];
     String? filePath =
         await LecleFlutterAbsolutePath.getAbsolutePath(uri: savedImgPath);
-
+   
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best,
         forceAndroidLocationManager: false);
     setState(() {});
     // await _getLocation();
+    //showProgress(context: context, title: 'Guardando Imagen');
     await Future.delayed(const Duration(milliseconds: 1500));
     if (position != null) {
+       
       await ref.read(databaseProvider).setCheckInOut(
             storeUuid: widget.storeUuid,
             lat: position?.latitude.toString() ?? '',
@@ -225,7 +237,21 @@ class _MapViewState extends ConsumerState<MapView> {
             pic: filePath ?? '',
             isCheckin: widget.index == 0 ? true : false,
           );
+        
+        final resp = Respuestas(
+          idPregunta: '0',
+          respuesta: filePath ?? '',
+          tipo: widget.index == 0 ? "CheckIn" : "CheckOut",
+        );
+        
+        
+        responses.add(resp);
+         await ref.read(sondeoController.notifier).buildPending(
+          widget.sondeoItem, widget.store, ref,responses,widget.storeUuid);
+          
+         
       Navigator.pop(context);
+      
       await finalize(finishedSections);
     } else {
       Navigator.pop(context);

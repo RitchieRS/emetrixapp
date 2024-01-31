@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
@@ -40,8 +39,8 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
       appBar: const GeneralTitle(title: 'Pendientes', showMenu: true),
       body: FadeIn(
           child: RefreshIndicator(
-              onRefresh: () =>
-                  ref.read(pendingsController.notifier).getPendings(ref),
+              onRefresh: () => ref.read(pendingsController.notifier).getPendings(ref) 
+              ,
               child: FutureBuilder(
                 future: ref.read(pendingsController.notifier).getPendings(ref),
                 builder: (context, snapshot) {
@@ -167,72 +166,89 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
     final sendPending = await showMessage();
     if (!sendPending) return;
 
+    logger.e("Pendiente ${item.pendiente}");
+
     showProgress(context: context, title: 'Preparando..');
     await Future.delayed(const Duration(seconds: 2));
     final images = <String>[];
+    List<List<String>> imagesTypes = [[]];
+    var indicator=0;
     final storeIsar =
         await ref.read(databaseProvider).getStoreByUuid(storeUuid: storeUuid);
 
+    showProgress(context: context, title: 'Enviando..');
     item.pendiente?.contenido?.respuestas?.forEach((response) {
-      if (response.tipo == 'foto' && response.respuesta != null ||
-          response.tipo == 'imagen' && response.respuesta != null ||
+
+       
+
+      if (response.tipo == 'foto'  || response.tipo == 'CheckIn' || response.tipo == 'CheckOut'  && response.respuesta != null ||
           response.respuesta == 'fotoGuardarCopia' &&
               response.respuesta != null) {
-        if (response.respuesta!.isNotEmpty) {
-          images.add(response.respuesta!);
+        if (response.respuesta != null && response.respuesta!.isNotEmpty) {
+            images.add(response.respuesta!);
+            logger.i("Generando Respuestas:");
+
+            ref.read(pendingsController.notifier).sendCheckInOutImages(
+                  storeIsar: storeIsar! ,
+                  tipo: response.tipo!,
+                  ref: ref,
+                  storeUuid: storeUuid,
+                  image: File(response.respuesta!)
+                  );
+           
         }
       }
     });
     //Ver la lista de imagenes
-    logger.i('Imagenes');
-    logger.i(images);
+    
+    logger.i("images: ${images}");
 
     navigator.pop();
-    showProgress(context: context, title: 'Enviando..');
+    
+
+    /*if (imagesTypes.isNotEmpty) {
+          for (int i = 0; i < imagesTypes.length; i++) {
+            logger.i('Checkin imagen for' );
+            await ref.read(pendingsController.notifier).sendCheckInOutImages(
+                  storeIsar: storeIsar! ,
+                  tipo: imagesTypes[i][1],
+                  ref: ref,
+                  storeUuid: storeUuid,
+                  image: File(imagesTypes[i][0]),
+                );
+          }
+      }*/
 
     //-----
     //1.- Todas las imagenes se envian aparte
     //2.- Todo los demas se envia en el pendiente normal
 
     logger.i('Checkin imagen');
-    logger.i(storeIsar?.checkIn?.picture! ?? 'NoImage');
+    logger.i('Checkin imagen ${storeIsar?.checkIn?.picture! ?? 'NoImage'}' );
 
-    await ref.read(pendingsController.notifier).sendCheckInOutImages(
-          storeIsar: storeIsar!,
-          tipo: 'checkin',
-          ref: ref,
-          storeUuid: storeUuid,
-          image: File(storeIsar.checkIn!.picture!),
-        );
-
-    if (images.isNotEmpty) {
-      for (var images in images) {
-        await ref.read(pendingsController.notifier).sendCheckInOutImages(
-              storeIsar: storeIsar,
-              tipo: 'imagen',
-              ref: ref,
-              storeUuid: storeUuid,
-              image: File(images),
-            );
-      }
-    }
-
+  
+    
+    
+  logger.i('Checkin imagen pendiente${item.pendiente!.toJson()}');
     final result = await ref
         .read(pendingsController.notifier)
         .sendPendings(item.pendiente!);
 
-    logger.i('Checkout imagen');
-    logger.i(storeIsar.checkOut?.picture! ?? 'NoImage');
-
+    
+/*logger.i('Checkin imagen for checkout' );
     await ref.read(pendingsController.notifier).sendCheckInOutImages(
           storeIsar: storeIsar,
           tipo: 'checkout',
           ref: ref,
           storeUuid: storeUuid,
           image: File(storeIsar.checkOut!.picture!),
-        );
-
-    Navigator.pop(context);
+        );*/
+/*logger.i('Checkin imagen pendiente${item.pendiente!.toJson()}');
+    final result = await ref
+        .read(pendingsController.notifier)
+        .sendPendings(item.pendiente!);
+    Navigator.pop(context);*/
+    logger.i('Result ${result.idError}' );
     if (result.idError == 0) {
       await showMsj(
           context: context,

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:io';
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 // Copyright 2017 The Chromium Authors. All rights reserved.
@@ -134,7 +135,9 @@ class StopwatchProvider with ChangeNotifier {
   }
 
   void stop() {
+    logger.i("Timer Cancel ");
     _isRunning = false;
+    _timer?.cancel();
     _isolate.kill(priority: Isolate.immediate);
      _minutes = 0;
     _seconds = 0;

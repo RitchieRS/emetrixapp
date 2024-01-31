@@ -5,6 +5,7 @@ import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
@@ -24,6 +25,8 @@ class MyTimer extends ConsumerStatefulWidget {
   final bool mandatory;
   final Preguntas preguntawid;
 
+  
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MyTimerState();
 }
@@ -38,6 +41,7 @@ class _MyTimerState extends ConsumerState<MyTimer>
   //final Stopwatch _stopwatch = Stopwatch();
   var _lapTimes;
   var _stopwatch;
+  Timer? timerlocal;
 
 
   @override
@@ -118,18 +122,20 @@ class _MyTimerState extends ConsumerState<MyTimer>
   }
 
   void _resetLaps() {
+    
     setState(() {
       // _laps = 0;
-      _lapTimes.clear();
       _restartTimer();
+      _lapTimes.clear();
+      
     });
   }
 
   void _startTimer() {
-    
+    SystemSound.play(SystemSoundType.click);
     if (!_stopwatch.isRunning()) {
       _stopwatch.start();
-      Timer.periodic(const Duration(seconds: 1), (timer) {
+      timerlocal = Timer.periodic(const Duration(seconds: 0), (timer) {
         if (!mounted) return;
         setState(() {
           _hours    = _stopwatch.hours();
@@ -141,7 +147,7 @@ class _MyTimerState extends ConsumerState<MyTimer>
     }
     else
     {
-      Timer.periodic(const Duration(seconds: 1), (timer) {
+      timerlocal = Timer.periodic(const Duration(milliseconds: 0), (timer) {
         if (!mounted) return;
         setState(() {
           _hours    = _stopwatch.hours();
@@ -182,6 +188,7 @@ class _MyTimerState extends ConsumerState<MyTimer>
     setState(() {
     _lapTimes.add(_formatTime(_hours,_minutes, _seconds, _milliseconds));
     _stopwatch.stop();
+    timerlocal!.cancel();
       _hours    = 0;
       _milliseconds = 0;
       _minutes = 0;

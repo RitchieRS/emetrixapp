@@ -66,7 +66,7 @@ class _QuestionState extends ConsumerState<Question>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    controller = ref.watch(textEditingControllerProvider(widget.index));
+    controller = ref.watch(textEditingControllerProvider( int.parse(widget.pregunta.id ?? '0')));
     final size = MediaQuery.of(context).size;
     Color color2 = Theme.of(context).hintColor.withOpacity(0.3);
     final defaultBorder = OutlineInputBorder(

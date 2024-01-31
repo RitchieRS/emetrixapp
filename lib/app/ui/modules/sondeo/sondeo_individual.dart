@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:emetrix_flutter/app/core/global/core.dart';
+import 'package:emetrix_flutter/app/core/modules/pendientes/pendientes.dart';
 import 'package:emetrix_flutter/app/core/services/notifications/notifications.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/foundation.dart';
@@ -60,7 +63,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   bool validate = false;
   bool startTextAsignation = false;
   final ids = <(String, String)>[];
-
+  final List<Respuestas> responses = [];
   @override
   void initState() {
     super.initState();
@@ -319,13 +322,15 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   }
 
   void onExit(bool didpop) async {
+
+    logger.i('RespM ${widget.sondeoItem}');
     final store = await ref
         .read(databaseProvider)
         .getStoreByUuid(storeUuid: widget.storeUuid);
     if (store?.storeSteps == null) {
       logger.i('No hay pasos');
       //save responses from this step
-      buildResponses();
+        buildResponses();
       await ref.read(databaseProvider).saveStepData(
             storeUuid: widget.storeUuid,
             progress: 0,
@@ -336,7 +341,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       logger.i('guardamos el paso actual');
       return;
     }
-
+//_stopwatch = ref.watch(stopwatchProviderFamily(int.parse(widget.preguntawid.id ?? '0')));
     logger.i('Si hay pasos');
     store?.storeSteps?.forEach((element) async {
       //identify every list
@@ -348,6 +353,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
             storeUuid: widget.storeUuid,
             stepUuid: widget.stepUuid);
         logger.i('Actualizamos las respuestas que hay');
+         
         return;
       } else {
         //save responses from this step
@@ -361,7 +367,11 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
             );
         logger.i('guardamos el paso actual');
       }
+      //Build Pending
+      
     });
+
+    
   }
 
   void idenifyComponents() {
@@ -450,7 +460,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     }
   }
 
-  void buildResponses() {
+  void buildResponses() async{
     Map<String, ResponseIndex?> typeResponses = {
       'abierta': textResponse,
       'numerico': numericResponse,
@@ -469,16 +479,35 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       'hora': timeResponse,
     };
 
-    //Guardar las respuestas
     for (var question in questionsResponses) {
+
+      
+      
       final response = typeResponses[question.question?.tipo];
+       logger.e("Respuesta pas1: ${question.response}");
       if (response != null) {
-        if (question.indexSondeo == response.index) {
+        if (question.indexSondeo == response.index && question.question?.tipo != 'foto') {
           question.response = response.response;
         }
+        else{
+          var image = ref
+        .watch(imageFileProviderFamily(int.parse(question.question?.id ?? '0')));
+          question.response = image?.file?.path;
+        }
+        final resp = Respuestas(
+          idPregunta: question.question?.idPreguntaRespuesta,
+          respuesta: question.response,
+          tipo: question.question?.tipo,
+        );
+        responses.add(resp);
       }
     }
-    setState(() {});
+
+    setState(() {
+    
+    });
+    //Guardar las respuestas
+    
   }
 
   Future<void> validateAllComponents(
@@ -491,6 +520,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     //Ver si las respuestas obligatorias estan vacias
     for (var questionMandatory in mandatoryQuestions) {
       for (var response in questionsResponses) {
+        logger.e("mandatiorios:${response.response}");
         if (questionMandatory.$2 == response.indexSondeo) {
           if (response.response != null) {
             mandatoryComponents[response.indexSondeo!] = false;
@@ -530,9 +560,44 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
           sondeoQuestionResponses: questionsResponses,
         );
     await Future.delayed(const Duration(seconds: 2));
+    await ref.read(sondeoController.notifier).buildPending(
+          widget.sondeoItem, widget.store, ref,responses,widget.storeUuid);
     navigator.pop();
     _disposeControllers();
+    removeProviderIndex(widget.sondeoItem.preguntas);
     await finalize(finishedSections);
+  }
+
+  void removeProviderIndex(List<Preguntas>? preguntas){
+  
+   
+    for(var pregunta in preguntas!){
+      
+       if(pregunta.tipo == 'abierta' || pregunta.tipo == 'numerico' ||pregunta.tipo == 'decimal' || pregunta.tipo == 'email' ) {
+         var provider =  ref.watch(textEditingControllerProvider( int.parse(pregunta.id ?? '0')));
+         if(provider.value.text != '' ){
+             provider.value = TextEditingValue.empty;
+         }
+       }
+       logger.i("Tipopregunta: ${pregunta.tipo}");
+       if(pregunta.tipo == 'foto' || pregunta.tipo ==  'fotoGuardarCopia' || pregunta.tipo ==  'imagen'){
+        var provider  =  ref.watch(imageFileProviderFamily(int.parse(pregunta.id ?? '0')));
+       
+          if(provider?.file != null ){
+            provider?.file = null;
+          }
+       }
+
+       if(pregunta.tipo == 'tiempo'){
+        logger.d("MATAR TIEMPO");
+        var provider = ref.watch(stopwatchProviderFamily(int.parse(pregunta.id ?? '0')));
+          if(provider.isRunning() ){
+            provider.stop();
+          }
+       }
+
+    }
+
   }
 
   Future<void> _showUnfinishedMessage(int missingAnswers) async {
