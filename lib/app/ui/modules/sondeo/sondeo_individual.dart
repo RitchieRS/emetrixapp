@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:emetrix_flutter/app/core/global/core.dart';
@@ -12,6 +13,7 @@ import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/bottom_buton.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/custom_title.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 import 'components/components.dart';
 import 'controller.dart';
 
@@ -64,12 +66,20 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   bool startTextAsignation = false;
   final ids = <(String, String)>[];
   final List<Respuestas> responses = [];
+  List<Preguntas> preguntasfn = [];
+  List<Preguntas> preguntasdep = [];
+    
+
+  
+
   @override
   void initState() {
     super.initState();
+    preguntasOrganizer();
     WidgetsBinding.instance.addObserver(this);
     idenifyComponents();
     getTempResponses();
+    
   }
 
   @override
@@ -104,7 +114,35 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
 
   @override
   Widget build(BuildContext context) {
+
+    
     final finishedSections = ref.watch(finishedSondeos);
+
+        QuestionContain containsQuestion(List<Preguntas> q1, idPregunta ){
+        for(var i =0;i  <  q1.length;i++){
+          logger.i("IsOn ${q1[i].dependePregunta} y $idPregunta");
+                   if(q1[i].dependePregunta==idPregunta){
+                    return QuestionContain(i,true);
+                   }
+            }
+        return QuestionContain(0,false);
+      }
+      void updateData(String? idPregunta,String? response) {
+            var checkIsOn = containsQuestion(preguntasfn,idPregunta);
+            if(checkIsOn.yesornot==true){
+              preguntasfn.removeAt(checkIsOn.position);
+            }
+            //logger.i("Id from CB $idPregunta y $response");
+            var checkPreguntas = preguntasdep.where((p) => p.dependePregunta == idPregunta && p.dependeRespuesta== response ).toList();
+            //logger.i("CB ${checkPreguntas.toList()}");
+           if(checkPreguntas.isNotEmpty){
+              preguntasfn.add(checkPreguntas[0]);
+              preguntasfn.sort((a, b) => int.parse(a.ordenI  ?? '0').compareTo(int.parse(b!.ordenI ?? '1')));
+           }
+           setState(()=>{});
+      }
+
+     
 
     return PopScope(
       onPopInvoked: (didPop) => onExit(didPop),
@@ -114,13 +152,13 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             child: CustomScrollView(
               slivers: [
-                if (widget.sondeoItem.preguntas != null)
+                if ( preguntasfn != null)
                   SliverList.builder(
-                      itemCount: widget.sondeoItem.preguntas?.length,
+                      itemCount:  preguntasfn.length,
                       itemBuilder: (context, index) {
                         // final item = widget.sondeoItem.preguntas?[index];
 
-                        print(widget.sondeoItem.preguntas?[index].tipo);
+                        print( preguntasfn[index].tipo);
 
                         return QuestionBuilder(
                           mandatory:
@@ -138,7 +176,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                             // if (!startTextAsignation) return;
 
                             if (uuid ==
-                                widget.sondeoItem.preguntas?[index].uuid) {
+                                 preguntasfn?[index].uuid) {
                               // if (textResponse != null) {
                               setState(() => answerController = controller);
                               //   print('RESPONSE');
@@ -151,6 +189,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                               //     textResponse?.response.toString() ?? '');
                             }
                           },
+                          callback: updateData
+                          ,
                           answer: (response) async {
                             setState(() {
                               validate = false;
@@ -293,8 +333,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                           },
                           index: index,
                           store: widget.store,
-                          pregunta: widget.sondeoItem.preguntas?[index] ??
-                              Preguntas(),
+                          pregunta:  preguntasfn[index],
                         );
                       })
                 else
@@ -308,6 +347,24 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
             await validateAllComponents(finishedSections, ref);
           })),
     );
+  }
+List<Preguntas> preguntasOrganizer(){
+    List<Preguntas>? preguntasorigen = widget.sondeoItem.preguntas;
+   
+    for(var p =0;p  < preguntasorigen!.length;p++){
+       if(preguntasorigen[p].dependePregunta =="" && preguntasorigen[p].dependeRespuesta =="" ){
+          preguntasorigen[p].ordenI = p.toString();
+          preguntasfn.add(preguntasorigen[p]);
+       }else{
+          preguntasorigen[p].ordenI = p.toString();
+          preguntasdep.add(preguntasorigen[p]);
+       }
+    }
+
+    preguntasdep.forEach((p) {
+      logger.i("Preguntas:${p.id} y ${p.dependePregunta}");
+    });
+    return preguntasfn;
   }
 
   void _disposeControllers() {
@@ -484,9 +541,11 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       
       
       final response = typeResponses[question.question?.tipo];
-       logger.e("Respuesta pas1: ${question.response}");
+       logger.e("Respuesta pas1: ${question.question?.respuesta.toString()}");
       if (response != null) {
-        if (question.indexSondeo == response.index && question.question?.tipo != 'foto') {
+        if (question.indexSondeo == response.index && 
+            question.question?.tipo != 'foto' && 
+            question.question?.tipo != 'foto') {
           question.response = response.response;
         }
         else{
@@ -494,6 +553,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
         .watch(imageFileProviderFamily(int.parse(question.question?.id ?? '0')));
           question.response = image?.file?.path;
         }
+
         final resp = Respuestas(
           idPregunta: question.question?.idPreguntaRespuesta,
           respuesta: question.response,
@@ -582,7 +642,6 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
        logger.i("Tipopregunta: ${pregunta.tipo}");
        if(pregunta.tipo == 'foto' || pregunta.tipo ==  'fotoGuardarCopia' || pregunta.tipo ==  'imagen'){
         var provider  =  ref.watch(imageFileProviderFamily(int.parse(pregunta.id ?? '0')));
-       
           if(provider?.file != null ){
             provider?.file = null;
           }
@@ -663,4 +722,11 @@ final class ResponseIndex {
   int index;
   bool error;
   dynamic response;
+}
+
+class QuestionContain {
+  final int position;
+  final bool yesornot;
+
+  QuestionContain(this.position, this.yesornot);
 }

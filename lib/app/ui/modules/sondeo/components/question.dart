@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
-
+import "package:flutter/services.dart";
 class Question extends ConsumerStatefulWidget {
   const Question({
     super.key,
@@ -46,6 +46,8 @@ class _QuestionState extends ConsumerState<Question>
   String textValue = '';
   // final controller = TextEditingController();
   var controller;
+
+  List<TextInputFormatter> formatOnly = [ ];
 
   @override
   void initState() {
@@ -109,10 +111,8 @@ class _QuestionState extends ConsumerState<Question>
                 //   validateAndSave(textValue);
                 // },
                 maxLines: 1,
-                keyboardType:
-                    widget.type == 'numerico' || widget.type == 'decimal'
-                        ? TextInputType.phone
-                        : TextInputType.emailAddress,
+                keyboardType:keyboardType(widget.type),
+                inputFormatters: formatOnly,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.only(
                       left: 12, bottom: 0, top: size.height * 0.06 / 2),
@@ -158,6 +158,21 @@ class _QuestionState extends ConsumerState<Question>
     widget.answer(value);
     return;
   }
+
+  TextInputType? keyboardType(String questionType){
+
+    switch(questionType) {
+        case 'numerico' :
+               formatOnly.add(FilteringTextInputFormatter.digitsOnly);
+              return TextInputType.number;
+        case  'decimal':
+              return const TextInputType.numberWithOptions(decimal: true);
+        default :
+             return TextInputType.emailAddress;
+      }
+  }
+
+
 
   String? selectValidation(String? value) {
     if (widget.type == 'numerico') {

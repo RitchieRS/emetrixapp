@@ -18,10 +18,12 @@ class ImagesCarrusel extends ConsumerStatefulWidget {
     required this.pregunta,
     this.mandatory = false,
     required this.image,
+    required this.multiple
   });
   final Preguntas pregunta;
   final bool mandatory;
   final Function(File?) image;
+  final bool multiple;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SelectPictureState();
@@ -67,11 +69,11 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TextButton.icon(
-                            onPressed: () => pickImage(ImageSource.gallery),
+                            onPressed: () => pickImage(ImageSource.gallery,widget.multiple),
                             icon: const Icon(Icons.add),
                             label: const Text('Añadir imagen')),
                         TextButton.icon(
-                            onPressed: () => pickImage(ImageSource.camera),
+                            onPressed: () => pickImage(ImageSource.camera,widget.multiple),
                             icon: const Icon(Icons.add),
                             label: const Text('Tomar Foto')),
                       ],
@@ -91,12 +93,12 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
                             children: [
                               TextButton.icon(
                                   onPressed: () =>
-                                      pickImage(ImageSource.gallery),
+                                      pickImage(ImageSource.gallery,widget.multiple),
                                   icon: Icon(Icons.image, color: c.primary),
                                   label: const Text('Añadir')),
                               TextButton.icon(
                                   onPressed: () =>
-                                      pickImage(ImageSource.camera),
+                                      pickImage(ImageSource.camera,widget.multiple),
                                   icon:
                                       Icon(Icons.camera_alt, color: c.primary),
                                   label: const Text('Añadir')),
@@ -171,16 +173,16 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
 
   void selectCameraType() async {
     if (widget.pregunta.tipo == 'foto') {
-      pickImage(ImageSource.camera);
+      pickImage(ImageSource.camera,widget.multiple);
       return;
     }
     if (widget.pregunta.tipo == 'fotoGuardarCopia') {
-      pickImage(ImageSource.camera);
+      pickImage(ImageSource.camera,widget.multiple);
       //await saveImageOnGallery();
       return;
     }
     if (widget.pregunta.tipo == 'imagen') {
-      pickImage(ImageSource.gallery);
+      pickImage(ImageSource.gallery,widget.multiple);
       return;
     }
     // if (widget.pregunta.tipo == 'carrusel') {
@@ -189,7 +191,7 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
     // }
   }
 
-  Future<void> pickImage(ImageSource source) async {
+  Future<void> pickImage(ImageSource source, bool multiple) async {
     try {
       final image2 = await ImagePicker().pickImage(source: source);
       if (image2 == null) return;
@@ -202,8 +204,16 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
       String savedImgPath = savedImage['filePath'];
       String? filePath =
           await LecleFlutterAbsolutePath.getAbsolutePath(uri: savedImgPath);
-      setState(() => images.add(File(filePath ?? '')));
+      setState(() { 
+        if(multiple){
+          images.add(File(filePath ?? ''));
+        }else{
+           images.clear();
+          images.add(File(filePath ?? ''));
+        }
+      });
       widget.image(File(filePath ?? ''));
+                     
     } on PlatformException catch (e) {
       debugPrint('error:$e');
       widget.image(null);

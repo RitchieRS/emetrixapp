@@ -181,6 +181,8 @@ class _MapViewState extends ConsumerState<MapView> {
     showProgress(context: context, title: 'Verificando distancia...');
     final storePosition =
         (widget.store.latitud ?? 0, widget.store.longitud ?? 0);
+
+    logger.i("Rango store: $storePosition PUNTOS lat ${widget.store.latitud} ${widget.store.longitud} ");
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best,
         forceAndroidLocationManager: false);
@@ -190,7 +192,7 @@ class _MapViewState extends ConsumerState<MapView> {
       final distance = Geolocator.distanceBetween(position!.latitude,
           position!.longitude, storePosition.$1, storePosition.$2);
       final rango = double.parse(widget.store.rangoGPS.toString());
-
+      logger.i("Rango GSP:$distance rango $rango PUNTOS ${position!.latitude} ${position!.longitude}");
       if (distance <= rango) {
       //if (distance >= rango) {
         //SI Pasa

@@ -27,6 +27,7 @@ class QuestionBuilder extends ConsumerStatefulWidget {
     required this.photo,
     required this.selectionMultiple,
     required this.answerController,
+    required this.callback,
   });
   final Preguntas pregunta;
   final Store2 store;
@@ -46,6 +47,7 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Function(File?) image;
   final Function(File?) photo;
   final Function(File?) signature;
+  final Function(String?,String?) callback;
   final Function(TextEditingController controller, String uuid)
       answerController;
 
@@ -54,7 +56,16 @@ class QuestionBuilder extends ConsumerStatefulWidget {
       _QuestionBuilderState();
 }
 
+ // Callback function to be called by the child
+
+
+
 class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
+
+  String respuestaDependiente = '';
+  void updateData(String? idPregunta,String? response) {
+      widget.callback(idPregunta,response!);
+  }
   @override
   Widget build(BuildContext context) {
     switch (widget.pregunta.tipo) {
@@ -62,13 +73,21 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
       //   return MapView(store: widget.store);
 
       case 'unicaRadio':
-        return Selection(
+        /*return Selection(
           pregunta: widget.pregunta,
           question: widget.pregunta,
           answer: (String? response) {
             widget.answerRadio(response);
           },
           mandatory: widget.mandatory,
+        );*/
+         return SelectionMultiple(
+          question: widget.pregunta,
+          selectedItems: (selectedItems) {
+            widget.selectionMultiple(selectedItems);
+          },
+          mandatory: widget.mandatory,
+          callback: updateData,
         );
 
       case 'fotoGuardarCopia':
@@ -149,7 +168,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         );
 
       case 'sino':
-        return Selection(
+       /* return Selection(
           pregunta: widget.pregunta,
           question: widget.pregunta,
           yesNo: true,
@@ -157,6 +176,14 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             widget.yesnoRadio(response);
           },
           mandatory: widget.mandatory,
+        );*/
+         return SelectionMultiple(
+          question: widget.pregunta,
+          selectedItems: (selectedItems) {
+            widget.selectionMultiple(selectedItems);
+          },
+          mandatory: widget.mandatory,
+          callback: updateData,
         );
 
       case 'multiple':
@@ -166,20 +193,21 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             widget.selectionMultiple(selectedItems);
           },
           mandatory: widget.mandatory,
+          callback: updateData,
         );
 
       case 'informativo':
         return InfoQuestion(pregunta: widget.pregunta.pregunta ?? 'NoData');
 
       case 'foto':
-        return SelectPicture(
+        return ImagesCarrusel(
           pregunta: widget.pregunta,
           image: (image) {
-            widget.photo(image);
+            widget.image(image);
           },
           mandatory: widget.mandatory,
+          multiple: false,
         );
-
       case 'imagen':
         return SelectPicture(
           pregunta: widget.pregunta,
@@ -196,6 +224,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             widget.image(image);
           },
           mandatory: widget.mandatory,
+          multiple: true,
         );
 
       case 'gps':

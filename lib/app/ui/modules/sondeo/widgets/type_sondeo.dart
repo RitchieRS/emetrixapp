@@ -78,7 +78,7 @@ class TypeSondeo extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      sondeoItem.obligatorio == 1
+                      sondeoItem.obligatorio != 0  
                           ? Container(
                               color: c.surface,
                               width: size.width * 0.4,

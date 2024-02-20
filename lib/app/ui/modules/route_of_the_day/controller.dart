@@ -41,7 +41,11 @@ class RouteOTDControllerNotifier extends StateNotifier<RouteOTDState> {
 
       stores.forEach((element) {
         storesfromsrv.resp?.forEach((storesrv) {
-             element.store!.checkGPS = storesrv.checkGPS; 
+             element.store!.checkGPS = storesrv.checkGPS;
+             if(element.store!.id == storesrv.id ){
+                 element.store!.rangoGPS = storesrv.rangoGPS; 
+             }
+             
         });
       });
     

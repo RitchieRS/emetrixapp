@@ -332,7 +332,7 @@ class Store2 {
   final String? idCadena;
   final int? definirNombre;
   final String? clasificacion;
-  final int? rangoGPS;
+  int? rangoGPS;
   String? checkGPS;
 
   Store2(
