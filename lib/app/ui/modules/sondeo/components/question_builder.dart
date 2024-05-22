@@ -1,12 +1,15 @@
 // ignore_for_file: avoid_print
 import 'dart:io';
+import 'package:emetrix_flutter/app/core/global/core.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/area.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/areas_multiples.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/components.dart';
 
 class QuestionBuilder extends ConsumerStatefulWidget {
-  const QuestionBuilder({
+  QuestionBuilder({
     super.key,
     this.mandatory = false,
     required this.pregunta,
@@ -28,6 +31,9 @@ class QuestionBuilder extends ConsumerStatefulWidget {
     required this.selectionMultiple,
     required this.answerController,
     required this.callback,
+    required this.preguntasdep,
+    required this.area,
+    this.indexPreguntaDependiente,
   });
   final Preguntas pregunta;
   final Store2 store;
@@ -47,25 +53,27 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Function(File?) image;
   final Function(File?) photo;
   final Function(File?) signature;
-  final Function(String?,String?) callback;
+  final Function(String? response) area;
+  final Function(String?, String?) callback;
   final Function(TextEditingController controller, String uuid)
       answerController;
+  final Function(int?)? indexPreguntaDependiente;
+
+  List<Preguntas> preguntasdep = [];
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _QuestionBuilderState();
 }
 
- // Callback function to be called by the child
-
-
+// Callback function to be called by the child
 
 class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
-
   String respuestaDependiente = '';
-  void updateData(String? idPregunta,String? response) {
-      widget.callback(idPregunta,response!);
+  void updateData(String? idPregunta, String? response) {
+    widget.callback(idPregunta, response!);
   }
+
   @override
   Widget build(BuildContext context) {
     switch (widget.pregunta.tipo) {
@@ -81,10 +89,10 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           },
           mandatory: widget.mandatory,
         );*/
-         return SelectionMultiple(
+        return SelectionMultiple(
           question: widget.pregunta,
           selectedItems: (selectedItems) {
-            widget.selectionMultiple(selectedItems);
+            widget.answerRadio(selectedItems.toString());
           },
           mandatory: widget.mandatory,
           callback: updateData,
@@ -168,7 +176,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         );
 
       case 'sino':
-       /* return Selection(
+        return Selection(
           pregunta: widget.pregunta,
           question: widget.pregunta,
           yesNo: true,
@@ -176,8 +184,9 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             widget.yesnoRadio(response);
           },
           mandatory: widget.mandatory,
-        );*/
-         return SelectionMultiple(
+        );
+      /*
+        return SelectionMultiple(
           question: widget.pregunta,
           selectedItems: (selectedItems) {
             widget.selectionMultiple(selectedItems);
@@ -185,6 +194,8 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           mandatory: widget.mandatory,
           callback: updateData,
         );
+
+        */
 
       case 'multiple':
         return SelectionMultiple(
@@ -291,6 +302,45 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         return Scanner(
           pregunta: widget.pregunta.pregunta ?? 'NoData',
           mandatory: widget.mandatory,
+        );
+
+      case 'areas':
+        return AreasMultiples(
+          mandatory: widget.mandatory,
+          pregunta: widget.pregunta,
+          listPreguntas: widget.preguntasdep,
+          photo: (photo) {
+            widget.photo(photo);
+          },
+          callback: updateData,
+          orderPreguntaDependiente: (order) {
+            widget.indexPreguntaDependiente!(order);
+          },
+          selectedAreas: (areas) {
+            //widget.indexPreguntaDependiente!();
+            areas?.forEach((area) {
+              widget.decimal(area.toString());
+            });
+          },
+        );
+
+      case 'areasMultiples':
+        return AreasMultiples(
+          mandatory: widget.mandatory,
+          pregunta: widget.pregunta,
+          listPreguntas: widget.preguntasdep,
+          photo: (photo) {
+            widget.photo(photo);
+          },
+          callback: updateData,
+          orderPreguntaDependiente: (order) {
+            widget.indexPreguntaDependiente!(order);
+          },
+          selectedAreas: (areas) {
+            areas?.forEach((area) {
+              widget.decimal(area.toString());
+            });
+          },
         );
     }
 

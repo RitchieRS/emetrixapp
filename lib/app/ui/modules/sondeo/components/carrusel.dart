@@ -13,13 +13,12 @@ import 'package:emetrix_flutter/app/core/services/services.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class ImagesCarrusel extends ConsumerStatefulWidget {
-  const ImagesCarrusel({
-    super.key,
-    required this.pregunta,
-    this.mandatory = false,
-    required this.image,
-    required this.multiple
-  });
+  const ImagesCarrusel(
+      {super.key,
+      required this.pregunta,
+      this.mandatory = false,
+      required this.image,
+      required this.multiple});
   final Preguntas pregunta;
   final bool mandatory;
   final Function(File?) image;
@@ -69,11 +68,13 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TextButton.icon(
-                            onPressed: () => pickImage(ImageSource.gallery,widget.multiple),
+                            onPressed: () =>
+                                pickImage(ImageSource.gallery, widget.multiple),
                             icon: const Icon(Icons.add),
                             label: const Text('Añadir imagen')),
                         TextButton.icon(
-                            onPressed: () => pickImage(ImageSource.camera,widget.multiple),
+                            onPressed: () =>
+                                pickImage(ImageSource.camera, widget.multiple),
                             icon: const Icon(Icons.add),
                             label: const Text('Tomar Foto')),
                       ],
@@ -92,13 +93,13 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               TextButton.icon(
-                                  onPressed: () =>
-                                      pickImage(ImageSource.gallery,widget.multiple),
+                                  onPressed: () => pickImage(
+                                      ImageSource.gallery, widget.multiple),
                                   icon: Icon(Icons.image, color: c.primary),
                                   label: const Text('Añadir')),
                               TextButton.icon(
-                                  onPressed: () =>
-                                      pickImage(ImageSource.camera,widget.multiple),
+                                  onPressed: () => pickImage(
+                                      ImageSource.camera, widget.multiple),
                                   icon:
                                       Icon(Icons.camera_alt, color: c.primary),
                                   label: const Text('Añadir')),
@@ -173,16 +174,16 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
 
   void selectCameraType() async {
     if (widget.pregunta.tipo == 'foto') {
-      pickImage(ImageSource.camera,widget.multiple);
+      pickImage(ImageSource.camera, widget.multiple);
       return;
     }
     if (widget.pregunta.tipo == 'fotoGuardarCopia') {
-      pickImage(ImageSource.camera,widget.multiple);
+      pickImage(ImageSource.camera, widget.multiple);
       //await saveImageOnGallery();
       return;
     }
     if (widget.pregunta.tipo == 'imagen') {
-      pickImage(ImageSource.gallery,widget.multiple);
+      pickImage(ImageSource.gallery, widget.multiple);
       return;
     }
     // if (widget.pregunta.tipo == 'carrusel') {
@@ -200,20 +201,28 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
       //     await getApplicationDocumentsDirectory(); // AppData folder path
       // final savedImagePath = '${directory.path}/${DateTime.now()}.jpg';
       // File savedImage = await tempImage.copy(savedImagePath);
-      final savedImage = await ImageGallerySaver.saveFile(tempImage.path);
-      String savedImgPath = savedImage['filePath'];
+      String savedImgPath;
+      if (Platform.isIOS) {
+        final savedImage = await ImageGallerySaver.saveFile(tempImage.path,
+            isReturnPathOfIOS: true);
+
+        savedImgPath = savedImage['filePath'];
+      } else {
+        final savedImage = await ImageGallerySaver.saveFile(tempImage.path);
+
+        savedImgPath = savedImage['filePath'];
+      }
       String? filePath =
           await LecleFlutterAbsolutePath.getAbsolutePath(uri: savedImgPath);
-      setState(() { 
-        if(multiple){
+      setState(() {
+        if (multiple) {
           images.add(File(filePath ?? ''));
-        }else{
-           images.clear();
+        } else {
+          images.clear();
           images.add(File(filePath ?? ''));
         }
       });
       widget.image(File(filePath ?? ''));
-                     
     } on PlatformException catch (e) {
       debugPrint('error:$e');
       widget.image(null);
@@ -224,7 +233,13 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
     final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/image.jpg';
     await File(path).writeAsBytes(await images[index].readAsBytes());
-    await ImageGallerySaver.saveFile(images[index].path);
+
+    if (Platform.isIOS) {
+      await ImageGallerySaver.saveFile(images[index].path,
+          isReturnPathOfIOS: true);
+    } else {
+      await ImageGallerySaver.saveFile(images[index].path);
+    }
   }
 
   @override

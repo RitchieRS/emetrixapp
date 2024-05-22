@@ -15,18 +15,17 @@ import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
+/// The [SharedPreferences] key to access the alarm fire count.
+const String countKey = 'count';
 
-  /// The [SharedPreferences] key to access the alarm fire count.
-     const String countKey = 'count';
+/// The name associated with the UI isolate's [SendPort].
+const String isolateName = 'isolate';
 
-    /// The name associated with the UI isolate's [SendPort].
-    const String isolateName = 'isolate';
+/// A port used to communicate from a background isolate to the UI isolate.
+ReceivePort port = ReceivePort();
 
-    /// A port used to communicate from a background isolate to the UI isolate.
-    ReceivePort port = ReceivePort();
-
-    /// Global [SharedPreferences] object.
-    SharedPreferences? prefs;
+/// Global [SharedPreferences] object.
+SharedPreferences? prefs;
 
 //Textfilelds
 final textEditingControllerProvider =
@@ -64,21 +63,20 @@ class StopwatchProvider with ChangeNotifier {
   int _minutes = 0;
   int _seconds = 0;
   int _milliseconds = 0;
-    late Isolate _isolate;
+  late Isolate _isolate;
   late ReceivePort _receivePort;
   bool _isRunning = false;
   Duration _elapsedTime = Duration(seconds: 0);
-  
+
   StopwatchProvider({required this.id});
 
   Stopwatch get stopwatch => _stopwatch;
 
   void start() async {
-
     _receivePort = ReceivePort();
     _isolate = await Isolate.spawn(_isolateEntryPoint, _receivePort.sendPort);
     _receivePort.listen((data) {
-       _isRunning = true;
+      _isRunning = true;
       if (data is int) {
         _elapsedTime = Duration(seconds: data);
         _hours = _elapsedTime.inHours % 60;
@@ -90,9 +88,9 @@ class StopwatchProvider with ChangeNotifier {
     });
   }
 
-   static void _isolateEntryPoint(SendPort sendPort) {
-    int elapsedSeconds=0;
-    
+  static void _isolateEntryPoint(SendPort sendPort) {
+    int elapsedSeconds = 0;
+
     Timer.periodic(Duration(seconds: 1), (Timer timer) {
       elapsedSeconds++;
       sendPort.send(elapsedSeconds);
@@ -122,7 +120,7 @@ class StopwatchProvider with ChangeNotifier {
   void reset() {
     _isRunning = false;
     _isolate.kill(priority: Isolate.immediate);
-     start();
+    start();
     _stopwatch.reset();
   }
 
@@ -139,14 +137,14 @@ class StopwatchProvider with ChangeNotifier {
     _isRunning = false;
     _timer?.cancel();
     _isolate.kill(priority: Isolate.immediate);
-     _minutes = 0;
+    _minutes = 0;
     _seconds = 0;
     _milliseconds = 0;
   }
 
   void stopStopwatch() {
     _timer?.cancel();
-     _isolate.kill(priority: Isolate.immediate);
+    _isolate.kill(priority: Isolate.immediate);
   }
 
   void resetStopwatch() {
@@ -192,3 +190,7 @@ class IntManager {
 final radiosMultipleProvider = ProviderFamily<List<String>, int>((ref, id) {
   return <String>[];
 });
+
+//areasMultiple
+
+

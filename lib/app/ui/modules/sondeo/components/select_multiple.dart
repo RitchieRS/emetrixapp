@@ -6,17 +6,16 @@ import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 
 class SelectionMultiple extends ConsumerStatefulWidget {
-  const SelectionMultiple({
-    super.key,
-    required this.question,
-    this.mandatory = false,
-    required this.selectedItems,
-    required this.callback
-  });
+  const SelectionMultiple(
+      {super.key,
+      required this.question,
+      this.mandatory = false,
+      required this.selectedItems,
+      required this.callback});
   final Preguntas question;
   final bool mandatory;
   final Function(List<String>?) selectedItems;
-  final Function(String?,String?) callback;
+  final Function(String?, String?) callback;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SelectionState();
@@ -56,7 +55,8 @@ class _SelectionState extends ConsumerState<SelectionMultiple>
                   return CheckboxListTile(
                     value: selectRadios
                         ?.contains(widget.question.opciones?[index].opcion),
-                    onChanged: (newvalue) => onSelectedTile(newvalue, index,widget.question.opciones!.length),
+                    onChanged: (newvalue) => onSelectedTile(
+                        newvalue, index, widget.question.opciones!.length),
                     title: Text(widget.question.opciones?[index].opcion ?? '',
                         maxLines: 2, overflow: TextOverflow.ellipsis),
                     activeColor: c.primary500,
@@ -70,19 +70,21 @@ class _SelectionState extends ConsumerState<SelectionMultiple>
     );
   }
 
-  void onSelectedTile(bool? newvalue, int index, int lenght){
+  void onSelectedTile(bool? newvalue, int index, int lenght) {
     setState(() {
-      if(lenght==2 || widget.question.tipo=='unicaRadio'){
+      if (lenght == 2 || widget.question.tipo == 'unicaRadio') {
         selectRadios?.clear();
       }
       logger.i("Respesta1:unica radio");
       if (newvalue == true) {
         logger.i("Respesta1:${widget.question.opciones?[index].opcion}");
         selectRadios?.add(widget.question.opciones?[index].opcion ?? '');
-        widget.callback(widget.question.id,widget.question.opciones?[index].id.toString() ?? "");
+        widget.callback(widget.question.id,
+            widget.question.opciones?[index].id.toString() ?? "");
       } else {
         selectRadios?.remove(widget.question.opciones?[index].opcion ?? '');
-        widget.callback(widget.question.id,widget.question.opciones?[index].id.toString() ?? "");
+        widget.callback(widget.question.id,
+            widget.question.opciones?[index].id.toString() ?? "");
         logger.i("Respesta2:${widget.question.opciones?[index].opcion}");
         if (selectRadios?.isEmpty == true) {
           logger.i("Respesta3:Empty");

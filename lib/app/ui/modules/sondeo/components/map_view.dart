@@ -88,92 +88,83 @@ class _MapViewState extends ConsumerState<MapView> {
     final finishedSections = ref.watch(finishedSondeos);
 
     return Scaffold(
-        appBar: CustomTitle(title: widget.sondeoItem.sondeo),
-        body: Column(
-          children: [
-            Container(
-              height: size.height * 0.67,
-              width: size.width,
-              color: c.surface,
-              child: permission.isGranted
-                  ? GoogleMap(
-                      mapType: MapType.normal,
-                      initialCameraPosition: current,
-                      markers: {
-                        currentMarker,
-                      },
-                      onMapCreated: (GoogleMapController controller) {
-                        _controller.complete(controller);
-                      },
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Concede los permisos necesarios.',
-                            style: t.text2),
-                        const CircularProgressIndicator(strokeWidth: 2)
-                      ],
-                    ),
+      appBar: CustomTitle(title: widget.sondeoItem.sondeo),
+      body: Column(
+        children: [
+          Container(
+            height: size.height * 0.67,
+            width: size.width,
+            color: c.surface,
+            child: permission.isGranted
+                ? GoogleMap(
+                    mapType: MapType.normal,
+                    initialCameraPosition: current,
+                    markers: {
+                      currentMarker,
+                    },
+                    onMapCreated: (GoogleMapController controller) {
+                      _controller.complete(controller);
+                    },
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Concede los permisos necesarios.', style: t.text2),
+                      const CircularProgressIndicator(strokeWidth: 2)
+                    ],
+                  ),
+          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: FloatingActionButton(
+          //     onPressed: () => _centerMap(),
+          //     backgroundColor: c.onTertiary,
+          //     child: const Icon(Icons.location_searching),
+          //   ),
+          // ),
+          Container(
+            height: size.height * 0.075,
+            width: size.width,
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                          width: size.width * 0.6,
+                          color: c.surface,
+                          child: Text(widget.store.tienda ?? 'México',
+                              style: t.mediumBold)),
+                      Text('Rango Gps: ${widget.store.rangoGPS.toString()}',
+                          style: t.text),
+                    ]),
+                SvgPicture.asset(AppAssets.location2,
+                    height: size.height * 0.1),
+              ],
             ),
-            // Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   child: FloatingActionButton(
-            //     onPressed: () => _centerMap(),
-            //     backgroundColor: c.onTertiary,
-            //     child: const Icon(Icons.location_searching),
-            //   ),
-            // ),
-            Container(
-              height: size.height * 0.12,
-              width: size.width,
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                            width: size.width * 0.5,
-                            color: c.surface,
-                            child: Text(widget.store.tienda ?? 'México',
-                                style: t.mediumBold)),
-                        Text('Rango Gps: ${widget.store.rangoGPS.toString()}',
-                            style: t.text),
-                      ]),
-                  SvgPicture.asset(AppAssets.location2,
-                      height: size.height * 0.1),
-                ],
-              ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: BottomButon(
-          onTap: () async {
-            
-            try {
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomButon(
+        onTap: () async {
+          logger.i("GPS1:${widget.store.checkGPS.toString()}");
+          logger.i("GPS2:${widget.store.checkGPS == '1'}");
+          if (widget.store.checkGPS != null) {
+            if (widget.store.checkGPS == '1') {
+              await calculateChekInOut(finishedSections);
 
-              logger.i("GPS1:${widget.store.checkGPS}");
-              logger.i("GPS2:${widget.store.checkGPS == '1'}");
-              if (widget.store.checkGPS == '1') {
-                
-                await calculateChekInOut(finishedSections);
-                
-                return;
-              }
-               else {
-                 
-                await setEntrance(finishedSections);
-               
-              }
-            } catch (e) {
-              logger.e("error:$e");
-              _showMessage('Error', 'Error de Calculo');
+              return;
+            } else {
+              await setEntrance(finishedSections);
             }
-          },
-        ));
+          }
+        },
+      ),
+    );
   }
 
   Future<void> calculateChekInOut(List<int> finishedSections) async {
@@ -182,7 +173,8 @@ class _MapViewState extends ConsumerState<MapView> {
     final storePosition =
         (widget.store.latitud ?? 0, widget.store.longitud ?? 0);
 
-    logger.i("Rango store: $storePosition PUNTOS lat ${widget.store.latitud} ${widget.store.longitud} ");
+    logger.i(
+        "Rango store: $storePosition PUNTOS lat ${widget.store.latitud} ${widget.store.longitud} ");
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best,
         forceAndroidLocationManager: false);
@@ -192,13 +184,14 @@ class _MapViewState extends ConsumerState<MapView> {
       final distance = Geolocator.distanceBetween(position!.latitude,
           position!.longitude, storePosition.$1, storePosition.$2);
       final rango = double.parse(widget.store.rangoGPS.toString());
-      logger.i("Rango GSP:$distance rango $rango PUNTOS ${position!.latitude} ${position!.longitude}");
+      logger.i(
+          "Rango GSP:$distance rango $rango PUNTOS ${position!.latitude} ${position!.longitude}");
       if (distance <= rango) {
-      //if (distance >= rango) {
+        //if (distance >= rango) {
         //SI Pasa
         Navigator.pop(context);
         await setEntrance(finishedSections);
-      }else {
+      } else {
         //No pasa
         Navigator.pop(context);
         await _showMessage('Fuera de rango',
@@ -213,16 +206,27 @@ class _MapViewState extends ConsumerState<MapView> {
     if (image == null) return;
     showProgress(context: context, title: 'Calculando');
     final tempImage = File(image.path);
+
     // final directory =
     //     await getApplicationDocumentsDirectory(); // AppData folder path
     // final savedImagePath = '${directory.path}/${DateTime.now()}.jpg';
     // File savedImage = await tempImage.copy(savedImagePath);
 
-    final savedImage = await ImageGallerySaver.saveFile(tempImage.path);
-    String savedImgPath = savedImage['filePath'];
+    String savedImgPath;
+    if (Platform.isIOS) {
+      final savedImage = await ImageGallerySaver.saveFile(tempImage.path,
+          isReturnPathOfIOS: true);
+
+      savedImgPath = savedImage['filePath'];
+    } else {
+      final savedImage = await ImageGallerySaver.saveFile(tempImage.path);
+
+      savedImgPath = savedImage['filePath'];
+    }
+
     String? filePath =
         await LecleFlutterAbsolutePath.getAbsolutePath(uri: savedImgPath);
-   
+
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best,
         forceAndroidLocationManager: false);
@@ -231,7 +235,6 @@ class _MapViewState extends ConsumerState<MapView> {
     //showProgress(context: context, title: 'Guardando Imagen');
     await Future.delayed(const Duration(milliseconds: 1500));
     if (position != null) {
-       
       await ref.read(databaseProvider).setCheckInOut(
             storeUuid: widget.storeUuid,
             lat: position?.latitude.toString() ?? '',
@@ -239,21 +242,19 @@ class _MapViewState extends ConsumerState<MapView> {
             pic: filePath ?? '',
             isCheckin: widget.index == 0 ? true : false,
           );
-        
-        final resp = Respuestas(
-          idPregunta: '0',
-          respuesta: filePath ?? '',
-          tipo: widget.index == 0 ? "CheckIn" : "CheckOut",
-        );
-        
-        
-        responses.add(resp);
-         await ref.read(sondeoController.notifier).buildPending(
-          widget.sondeoItem, widget.store, ref,responses,widget.storeUuid);
-          
-         
+
+      final resp = Respuestas(
+        idPregunta: '0',
+        respuesta: filePath ?? '',
+        tipo: widget.index == 0 ? "CheckIn" : "CheckOut",
+      );
+
+      responses.add(resp);
+      await ref.read(sondeoController.notifier).buildPending(
+          widget.sondeoItem, widget.store, ref, responses, widget.storeUuid);
+
       Navigator.pop(context);
-      
+
       await finalize(finishedSections);
     } else {
       Navigator.pop(context);

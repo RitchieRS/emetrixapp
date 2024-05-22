@@ -39,8 +39,8 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
       appBar: const GeneralTitle(title: 'Pendientes', showMenu: true),
       body: FadeIn(
           child: RefreshIndicator(
-              onRefresh: () => ref.read(pendingsController.notifier).getPendings(ref) 
-              ,
+              onRefresh: () =>
+                  ref.read(pendingsController.notifier).getPendings(ref),
               child: FutureBuilder(
                 future: ref.read(pendingsController.notifier).getPendings(ref),
                 builder: (context, snapshot) {
@@ -52,29 +52,32 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
 
                         return FadeInUp(
                           child: Center(
-                            child: Container(
-                              height: size.height * 0.08,
-                              width: size.width * 0.95,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: c.primary300),
-                                color: c.primary200.withOpacity(0.2),
-                              ),
-                              child: ListTile(
-                                onTap: () => checkNetwork(item, index),
-                                visualDensity:
-                                    const VisualDensity(vertical: -3),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
-                                leading: Icon(Icons.task_outlined,
-                                    color: c.primary500),
-                                trailing: const Icon(Icons.send, size: 20),
-                                title: Text(item.pendiente?.tipo ?? '',
-                                    style: t.mediumBold),
-                                subtitle: Text(
-                                    _textToTime(DateTime.parse(
-                                        item.pendiente?.fecha ?? '')),
-                                    style: t.textDisabled2),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: size.height * 0.08,
+                                width: size.width * 0.95,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: c.primary300),
+                                  color: c.primary200.withOpacity(0.2),
+                                ),
+                                child: ListTile(
+                                  onTap: () => checkNetwork(item, index),
+                                  visualDensity:
+                                      const VisualDensity(vertical: -3),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)),
+                                  leading: Icon(Icons.task_outlined,
+                                      color: c.primary500),
+                                  trailing: const Icon(Icons.send, size: 20),
+                                  title: Text(item.pendiente?.tipo ?? '',
+                                      style: t.mediumBold),
+                                  subtitle: Text(
+                                      _textToTime(DateTime.parse(
+                                          item.pendiente?.fecha ?? '')),
+                                      style: t.textDisabled2),
+                                ),
                               ),
                             ),
                           ),
@@ -172,39 +175,36 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
     await Future.delayed(const Duration(seconds: 2));
     final images = <String>[];
     List<List<String>> imagesTypes = [[]];
-    var indicator=0;
+    var indicator = 0;
     final storeIsar =
         await ref.read(databaseProvider).getStoreByUuid(storeUuid: storeUuid);
 
     showProgress(context: context, title: 'Enviando..');
     item.pendiente?.contenido?.respuestas?.forEach((response) {
-
-       
-
-      if (response.tipo == 'foto'  || response.tipo == 'CheckIn' || response.tipo == 'CheckOut'  && response.respuesta != null ||
+      if (response.tipo == 'foto' ||
+          response.tipo == 'CheckIn' ||
+          response.tipo == 'firma' ||
+          response.tipo == 'CheckOut' && response.respuesta != null ||
           response.respuesta == 'fotoGuardarCopia' &&
               response.respuesta != null) {
         if (response.respuesta != null && response.respuesta!.isNotEmpty) {
-            images.add(response.respuesta!);
-            logger.i("Generando Respuestas:");
+          images.add(response.respuesta!);
+          logger.i("Generando Respuestas:");
 
-            ref.read(pendingsController.notifier).sendCheckInOutImages(
-                  storeIsar: storeIsar! ,
-                  tipo: response.tipo!,
-                  ref: ref,
-                  storeUuid: storeUuid,
-                  image: File(response.respuesta!)
-                  );
-           
+          ref.read(pendingsController.notifier).sendCheckInOutImages(
+              storeIsar: storeIsar!,
+              tipo: response.tipo!,
+              ref: ref,
+              storeUuid: storeUuid,
+              image: File(response.respuesta!));
         }
       }
     });
     //Ver la lista de imagenes
-    
+
     logger.i("images: ${images}");
 
     navigator.pop();
-    
 
     /*if (imagesTypes.isNotEmpty) {
           for (int i = 0; i < imagesTypes.length; i++) {
@@ -224,17 +224,13 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
     //2.- Todo los demas se envia en el pendiente normal
 
     logger.i('Checkin imagen');
-    logger.i('Checkin imagen ${storeIsar?.checkIn?.picture! ?? 'NoImage'}' );
+    logger.i('Checkin imagen ${storeIsar?.checkIn?.picture! ?? 'NoImage'}');
 
-  
-    
-    
-  logger.i('Checkin imagen pendiente${item.pendiente!.toJson()}');
+    logger.i('Checkin imagen pendiente${item.pendiente!.toJson()}');
     final result = await ref
         .read(pendingsController.notifier)
         .sendPendings(item.pendiente!);
 
-    
 /*logger.i('Checkin imagen for checkout' );
     await ref.read(pendingsController.notifier).sendCheckInOutImages(
           storeIsar: storeIsar,
@@ -248,7 +244,7 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
         .read(pendingsController.notifier)
         .sendPendings(item.pendiente!);
     Navigator.pop(context);*/
-    logger.i('Result ${result.idError}' );
+    logger.i('Result ${result.idError}');
     if (result.idError == 0) {
       await showMsj(
           context: context,

@@ -5,6 +5,7 @@ import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import "package:flutter/services.dart";
+
 class Question extends ConsumerStatefulWidget {
   const Question({
     super.key,
@@ -47,7 +48,7 @@ class _QuestionState extends ConsumerState<Question>
   // final controller = TextEditingController();
   var controller;
 
-  List<TextInputFormatter> formatOnly = [ ];
+  List<TextInputFormatter> formatOnly = [];
 
   @override
   void initState() {
@@ -68,7 +69,8 @@ class _QuestionState extends ConsumerState<Question>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    controller = ref.watch(textEditingControllerProvider( int.parse(widget.pregunta.id ?? '0')));
+    controller = ref.watch(
+        textEditingControllerProvider(int.parse(widget.pregunta.id ?? '0')));
     final size = MediaQuery.of(context).size;
     Color color2 = Theme.of(context).hintColor.withOpacity(0.3);
     final defaultBorder = OutlineInputBorder(
@@ -111,7 +113,7 @@ class _QuestionState extends ConsumerState<Question>
                 //   validateAndSave(textValue);
                 // },
                 maxLines: 1,
-                keyboardType:keyboardType(widget.type),
+                keyboardType: keyboardType(widget.type),
                 inputFormatters: formatOnly,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.only(
@@ -159,20 +161,17 @@ class _QuestionState extends ConsumerState<Question>
     return;
   }
 
-  TextInputType? keyboardType(String questionType){
-
-    switch(questionType) {
-        case 'numerico' :
-               formatOnly.add(FilteringTextInputFormatter.digitsOnly);
-              return TextInputType.number;
-        case  'decimal':
-              return const TextInputType.numberWithOptions(decimal: true);
-        default :
-             return TextInputType.emailAddress;
-      }
+  TextInputType? keyboardType(String questionType) {
+    switch (questionType) {
+      case 'numerico':
+        formatOnly.add(FilteringTextInputFormatter.digitsOnly);
+        return TextInputType.number;
+      case 'decimal':
+        return const TextInputType.numberWithOptions(decimal: true);
+      default:
+        return TextInputType.emailAddress;
+    }
   }
-
-
 
   String? selectValidation(String? value) {
     if (widget.type == 'numerico') {

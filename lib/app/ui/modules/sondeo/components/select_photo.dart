@@ -159,8 +159,18 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
       //     await getApplicationDocumentsDirectory(); // AppData folder path
       // final savedImagePath = '${directory.path}/${DateTime.now()}.jpg';
       // File savedImage = await tempImage.copy(savedImagePath);
-      final savedImage = await ImageGallerySaver.saveFile(tempImage.path);
-      String savedImgPath = savedImage['filePath'];
+      String savedImgPath;
+      if (Platform.isIOS) {
+        final savedImage = await ImageGallerySaver.saveFile(tempImage.path,
+            isReturnPathOfIOS: true);
+
+        savedImgPath = savedImage['filePath'];
+      } else {
+        final savedImage = await ImageGallerySaver.saveFile(tempImage.path);
+
+        savedImgPath = savedImage['filePath'];
+      }
+
       String? filePath =
           await LecleFlutterAbsolutePath.getAbsolutePath(uri: savedImgPath);
       final finalImage = File(filePath ?? '');

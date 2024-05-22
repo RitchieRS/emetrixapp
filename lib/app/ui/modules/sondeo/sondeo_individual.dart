@@ -1,6 +1,3 @@
-import 'dart:ffi';
-import 'dart:io';
-
 import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/modules/pendientes/pendientes.dart';
 import 'package:emetrix_flutter/app/core/services/notifications/notifications.dart';
@@ -68,9 +65,6 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   final List<Respuestas> responses = [];
   List<Preguntas> preguntasfn = [];
   List<Preguntas> preguntasdep = [];
-    
-
-  
 
   @override
   void initState() {
@@ -79,7 +73,6 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     WidgetsBinding.instance.addObserver(this);
     idenifyComponents();
     getTempResponses();
-    
   }
 
   @override
@@ -114,35 +107,36 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
 
   @override
   Widget build(BuildContext context) {
-
-    
     final finishedSections = ref.watch(finishedSondeos);
 
-        QuestionContain containsQuestion(List<Preguntas> q1, idPregunta ){
-        for(var i =0;i  <  q1.length;i++){
-          logger.i("IsOn ${q1[i].dependePregunta} y $idPregunta");
-                   if(q1[i].dependePregunta==idPregunta){
-                    return QuestionContain(i,true);
-                   }
-            }
-        return QuestionContain(0,false);
+    QuestionContain containsQuestion(List<Preguntas> q1, idPregunta) {
+      for (var i = 0; i < q1.length; i++) {
+        logger.i("IsOn ${q1[i].dependePregunta} y $idPregunta");
+        if (q1[i].dependePregunta == idPregunta) {
+          return QuestionContain(i, true);
+        }
       }
-      void updateData(String? idPregunta,String? response) {
-            var checkIsOn = containsQuestion(preguntasfn,idPregunta);
-            if(checkIsOn.yesornot==true){
-              preguntasfn.removeAt(checkIsOn.position);
-            }
-            //logger.i("Id from CB $idPregunta y $response");
-            var checkPreguntas = preguntasdep.where((p) => p.dependePregunta == idPregunta && p.dependeRespuesta== response ).toList();
-            //logger.i("CB ${checkPreguntas.toList()}");
-           if(checkPreguntas.isNotEmpty){
-              preguntasfn.add(checkPreguntas[0]);
-              preguntasfn.sort((a, b) => int.parse(a.ordenI  ?? '0').compareTo(int.parse(b!.ordenI ?? '1')));
-           }
-           setState(()=>{});
-      }
+      return QuestionContain(0, false);
+    }
 
-     
+    void updateData(String? idPregunta, String? response) {
+      var checkIsOn = containsQuestion(preguntasfn, idPregunta);
+      if (checkIsOn.yesornot == true) {
+        preguntasfn.removeAt(checkIsOn.position);
+      }
+      //logger.i("Id from CB $idPregunta y $response");
+      var checkPreguntas = preguntasdep
+          .where((p) =>
+              p.dependePregunta == idPregunta && p.dependeRespuesta == response)
+          .toList();
+      //logger.i("CB ${checkPreguntas.toList()}");
+      if (checkPreguntas.isNotEmpty) {
+        preguntasfn.add(checkPreguntas[0]);
+        preguntasfn.sort((a, b) =>
+            int.parse(a.ordenI ?? '0').compareTo(int.parse(b!.ordenI ?? '1')));
+      }
+      setState(() => {});
+    }
 
     return PopScope(
       onPopInvoked: (didPop) => onExit(didPop),
@@ -152,13 +146,13 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             child: CustomScrollView(
               slivers: [
-                if ( preguntasfn != null)
+                if (preguntasfn != null)
                   SliverList.builder(
-                      itemCount:  preguntasfn.length,
+                      itemCount: preguntasfn.length,
                       itemBuilder: (context, index) {
                         // final item = widget.sondeoItem.preguntas?[index];
 
-                        print( preguntasfn[index].tipo);
+                        logger.i(preguntasfn[index].tipo);
 
                         return QuestionBuilder(
                           mandatory:
@@ -175,8 +169,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                             // });
                             // if (!startTextAsignation) return;
 
-                            if (uuid ==
-                                 preguntasfn?[index].uuid) {
+                            if (uuid == preguntasfn?[index].uuid) {
                               // if (textResponse != null) {
                               setState(() => answerController = controller);
                               //   print('RESPONSE');
@@ -189,8 +182,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                               //     textResponse?.response.toString() ?? '');
                             }
                           },
-                          callback: updateData
-                          ,
+                          callback: updateData,
                           answer: (response) async {
                             setState(() {
                               validate = false;
@@ -331,9 +323,11 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                               );
                             });
                           },
+                          area: (String? response) {},
                           index: index,
                           store: widget.store,
-                          pregunta:  preguntasfn[index],
+                          pregunta: preguntasfn[index],
+                          preguntasdep: preguntasdep,
                         );
                       })
                 else
@@ -348,17 +342,19 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
           })),
     );
   }
-List<Preguntas> preguntasOrganizer(){
+
+  List<Preguntas> preguntasOrganizer() {
     List<Preguntas>? preguntasorigen = widget.sondeoItem.preguntas;
-   
-    for(var p =0;p  < preguntasorigen!.length;p++){
-       if(preguntasorigen[p].dependePregunta =="" && preguntasorigen[p].dependeRespuesta =="" ){
-          preguntasorigen[p].ordenI = p.toString();
-          preguntasfn.add(preguntasorigen[p]);
-       }else{
-          preguntasorigen[p].ordenI = p.toString();
-          preguntasdep.add(preguntasorigen[p]);
-       }
+
+    for (var p = 0; p < preguntasorigen!.length; p++) {
+      if (preguntasorigen[p].dependePregunta == "" &&
+          preguntasorigen[p].dependeRespuesta == "") {
+        preguntasorigen[p].ordenI = p.toString();
+        preguntasfn.add(preguntasorigen[p]);
+      } else {
+        preguntasorigen[p].ordenI = p.toString();
+        preguntasdep.add(preguntasorigen[p]);
+      }
     }
 
     preguntasdep.forEach((p) {
@@ -379,7 +375,6 @@ List<Preguntas> preguntasOrganizer(){
   }
 
   void onExit(bool didpop) async {
-
     logger.i('RespM ${widget.sondeoItem}');
     final store = await ref
         .read(databaseProvider)
@@ -387,7 +382,7 @@ List<Preguntas> preguntasOrganizer(){
     if (store?.storeSteps == null) {
       logger.i('No hay pasos');
       //save responses from this step
-        buildResponses();
+      buildResponses();
       await ref.read(databaseProvider).saveStepData(
             storeUuid: widget.storeUuid,
             progress: 0,
@@ -410,7 +405,7 @@ List<Preguntas> preguntasOrganizer(){
             storeUuid: widget.storeUuid,
             stepUuid: widget.stepUuid);
         logger.i('Actualizamos las respuestas que hay');
-         
+
         return;
       } else {
         //save responses from this step
@@ -425,10 +420,7 @@ List<Preguntas> preguntasOrganizer(){
         logger.i('guardamos el paso actual');
       }
       //Build Pending
-      
     });
-
-    
   }
 
   void idenifyComponents() {
@@ -517,7 +509,7 @@ List<Preguntas> preguntasOrganizer(){
     }
   }
 
-  void buildResponses() async{
+  void buildResponses() async {
     Map<String, ResponseIndex?> typeResponses = {
       'abierta': textResponse,
       'numerico': numericResponse,
@@ -537,20 +529,15 @@ List<Preguntas> preguntasOrganizer(){
     };
 
     for (var question in questionsResponses) {
-
-      
-      
       final response = typeResponses[question.question?.tipo];
-       logger.e("Respuesta pas1: ${question.question?.respuesta.toString()}");
       if (response != null) {
-        if (question.indexSondeo == response.index && 
-            question.question?.tipo != 'foto' && 
+        if (question.indexSondeo == response.index &&
+            question.question?.tipo != 'foto' &&
             question.question?.tipo != 'foto') {
           question.response = response.response;
-        }
-        else{
-          var image = ref
-        .watch(imageFileProviderFamily(int.parse(question.question?.id ?? '0')));
+        } else {
+          var image = ref.watch(
+              imageFileProviderFamily(int.parse(question.question?.id ?? '0')));
           question.response = image?.file?.path;
         }
 
@@ -563,11 +550,8 @@ List<Preguntas> preguntasOrganizer(){
       }
     }
 
-    setState(() {
-    
-    });
+    setState(() {});
     //Guardar las respuestas
-    
   }
 
   Future<void> validateAllComponents(
@@ -621,42 +605,45 @@ List<Preguntas> preguntasOrganizer(){
         );
     await Future.delayed(const Duration(seconds: 2));
     await ref.read(sondeoController.notifier).buildPending(
-          widget.sondeoItem, widget.store, ref,responses,widget.storeUuid);
+        widget.sondeoItem, widget.store, ref, responses, widget.storeUuid);
     navigator.pop();
     _disposeControllers();
     removeProviderIndex(widget.sondeoItem.preguntas);
     await finalize(finishedSections);
   }
 
-  void removeProviderIndex(List<Preguntas>? preguntas){
-  
-   
-    for(var pregunta in preguntas!){
-      
-       if(pregunta.tipo == 'abierta' || pregunta.tipo == 'numerico' ||pregunta.tipo == 'decimal' || pregunta.tipo == 'email' ) {
-         var provider =  ref.watch(textEditingControllerProvider( int.parse(pregunta.id ?? '0')));
-         if(provider.value.text != '' ){
-             provider.value = TextEditingValue.empty;
-         }
-       }
-       logger.i("Tipopregunta: ${pregunta.tipo}");
-       if(pregunta.tipo == 'foto' || pregunta.tipo ==  'fotoGuardarCopia' || pregunta.tipo ==  'imagen'){
-        var provider  =  ref.watch(imageFileProviderFamily(int.parse(pregunta.id ?? '0')));
-          if(provider?.file != null ){
-            provider?.file = null;
-          }
-       }
+  void removeProviderIndex(List<Preguntas>? preguntas) {
+    for (var pregunta in preguntas!) {
+      if (pregunta.tipo == 'abierta' ||
+          pregunta.tipo == 'numerico' ||
+          pregunta.tipo == 'decimal' ||
+          pregunta.tipo == 'email') {
+        var provider = ref.watch(
+            textEditingControllerProvider(int.parse(pregunta.id ?? '0')));
+        if (provider.value.text != '') {
+          provider.value = TextEditingValue.empty;
+        }
+      }
+      logger.i("Tipopregunta: ${pregunta.tipo}");
+      if (pregunta.tipo == 'foto' ||
+          pregunta.tipo == 'fotoGuardarCopia' ||
+          pregunta.tipo == 'imagen') {
+        var provider =
+            ref.watch(imageFileProviderFamily(int.parse(pregunta.id ?? '0')));
+        if (provider?.file != null) {
+          provider?.file = null;
+        }
+      }
 
-       if(pregunta.tipo == 'tiempo'){
+      if (pregunta.tipo == 'tiempo') {
         logger.d("MATAR TIEMPO");
-        var provider = ref.watch(stopwatchProviderFamily(int.parse(pregunta.id ?? '0')));
-          if(provider.isRunning() ){
-            provider.stop();
-          }
-       }
-
+        var provider =
+            ref.watch(stopwatchProviderFamily(int.parse(pregunta.id ?? '0')));
+        if (provider.isRunning()) {
+          provider.stop();
+        }
+      }
     }
-
   }
 
   Future<void> _showUnfinishedMessage(int missingAnswers) async {
