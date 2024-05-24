@@ -4,9 +4,8 @@ import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
-import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,16 +14,16 @@ import 'dart:ui' as ui;
 import 'package:image/image.dart' as img;
 
 class Coordinate {
-  final double x;
-  final double y;
+  final double x0;
+  final double y0;
   final double xf;
   final double yf;
   final double porcentaje;
   final String idPregunta;
 
   Coordinate({
-    required this.x,
-    required this.y,
+    required this.x0,
+    required this.y0,
     required this.xf,
     required this.yf,
     required this.porcentaje,
@@ -33,7 +32,7 @@ class Coordinate {
 
   @override
   String toString() {
-    return '[$x, $y, $xf, $yf]';
+    return '{"idPregunta": "$idPregunta","porcentaje": $porcentaje,"x0": $x0,"y0": $y0,"xf": $xf,"yf": $yf}';
   }
 }
 
@@ -46,7 +45,9 @@ class Areas extends ConsumerStatefulWidget {
   final Preguntas preguntaSeleccionada;
   final Function(String?, String?) callback;
   final Function(File?) photo;
-  final Function(List<Coordinate>?) selectedAreas;
+  final Function(Coordinate) newArea;
+  final Function(int?) removeArea;
+  final bool multiple;
 
   const Areas(
       {super.key,
@@ -54,7 +55,9 @@ class Areas extends ConsumerStatefulWidget {
       required this.preguntaSeleccionada,
       required this.callback,
       required this.photo,
-      required this.selectedAreas,
+      required this.newArea,
+      required this.removeArea,
+      required this.multiple,
       required this.mandatory});
 
   @override
@@ -71,14 +74,6 @@ class _AreasState extends ConsumerState<Areas> {
   List<Coordinate> areasSeleccionadas = [];
   int? indexSelected;
   late AnimationController controller;
-
-  @override
-  void dispose() {
-    // Llamamos a widget.selectedAreas con null cuando el widget ya no está en el árbol de widgets.
-    widget.selectedAreas(areasSeleccionadas);
-    logger.i("Areas sin ver");
-    super.dispose();
-  }
 
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile = await ImagePicker().pickImage(source: source);
@@ -154,8 +149,8 @@ class _AreasState extends ConsumerState<Areas> {
       double areaPercentage = areaWidth * areaHeight;
 
       final newArea = Coordinate(
-        x: realX0,
-        y: realY0,
+        x0: realX0,
+        y0: realY0,
         xf: realXf,
         yf: realYf,
         idPregunta: widget.preguntaSeleccionada.id!,
@@ -168,6 +163,8 @@ class _AreasState extends ConsumerState<Areas> {
               .notifier)
           .state
           .add(newArea);
+
+      widget.newArea(newArea);
       setState(() {
         //_selectedAreaPercentage = areaPercentage;
 
@@ -207,10 +204,10 @@ class _AreasState extends ConsumerState<Areas> {
 
   void _drawSelectedArea(Coordinate coordinate) {
     setState(() {
-      _x = coordinate.x * _imageWidth.toDouble();
-      _y = coordinate.y * _imageHeight.toDouble();
-      _width = (coordinate.xf - coordinate.x) * _imageWidth.toDouble();
-      _height = (coordinate.yf - coordinate.y) * _imageHeight.toDouble();
+      _x = coordinate.x0 * _imageWidth.toDouble();
+      _y = coordinate.y0 * _imageHeight.toDouble();
+      _width = (coordinate.xf - coordinate.x0) * _imageWidth.toDouble();
+      _height = (coordinate.yf - coordinate.y0) * _imageHeight.toDouble();
 
       _width += _x;
       _height += _y;
@@ -270,6 +267,8 @@ class _AreasState extends ConsumerState<Areas> {
                             .notifier)
                         .state
                         .removeAt(index);
+
+                    widget.removeArea(index);
 
                     final coordinates = ref.watch(selectedAreasProvider(
                         int.parse((widget.pregunta.id! +
@@ -352,12 +351,12 @@ class _AreasState extends ConsumerState<Areas> {
             child: Stack(
               children: [
                 if (imageFile != null)
-                  Container(
+                  SizedBox(
                     width: size.width,
                     height: size.width,
                     child: Image.file(imageFile),
                   ),
-                Container(
+                SizedBox(
                   width: size.width,
                   height: size.width,
                   child: CustomPaint(
@@ -379,7 +378,22 @@ class _AreasState extends ConsumerState<Areas> {
             ? Center(
                 child: TextButton.icon(
                   onPressed: () {
-                    _addSelectedArea(_x, _y, _width, _height);
+                    int listLength = ref
+                        .watch(selectedAreasProvider(int.parse(
+                            (widget.pregunta.id! +
+                                widget.preguntaSeleccionada.id!))))
+                        .length;
+                    if (listLength == 0 || widget.multiple) {
+                      _addSelectedArea(_x, _y, _width, _height);
+                    } else {
+                      showMsj(
+                          context: context,
+                          title: "Ups!",
+                          content: "Se alcanzó el limite de areas",
+                          destructive: true,
+                          buttonLabel: "OK",
+                          onlyOk: true);
+                    }
                   },
                   icon: const Icon(Icons.add),
                   label: const Text('Agregar Area'),
@@ -435,7 +449,7 @@ class AreaFullPage extends ConsumerStatefulWidget {
   final Function(String?, String?) callback;
   final Function(File?) photo;
   final Function(List<Coordinate>?) selectedAreas;
-  final Function(int) orderPreguntaDependiente;
+  final bool multiple;
 
   const AreaFullPage({
     super.key,
@@ -444,7 +458,7 @@ class AreaFullPage extends ConsumerStatefulWidget {
     required this.callback,
     required this.photo,
     required this.selectedAreas,
-    required this.orderPreguntaDependiente,
+    required this.multiple,
     this.depen,
   });
 
@@ -453,13 +467,9 @@ class AreaFullPage extends ConsumerStatefulWidget {
 }
 
 class _AreaFullPageState extends ConsumerState<AreaFullPage> {
-  List<Coordinate>? listAreas;
-  File? file;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+  int areasGuardadas = 0;
+  List<Coordinate> listAreas = [];
+  File? fileImg;
 
   @override
   Widget build(BuildContext context) {
@@ -472,14 +482,7 @@ class _AreaFullPageState extends ConsumerState<AreaFullPage> {
     void _select(Preguntas pregunta) {
       setState(() {
         ref.read(preguntaSelectedProvider.notifier).state = pregunta;
-        //_questionSelected = pregunta;
-        logger.d("ID pregunta seleccionada ${_questionSelected.id}");
-        logger.d("ID pregunta seleccionada** ${_questionSelected.ordenI}");
-        widget.orderPreguntaDependiente(int.parse(_questionSelected.ordenI!));
       });
-      if (listAreas?.length != null) {
-        widget.selectedAreas(listAreas);
-      }
     }
 
     return Scaffold(
@@ -502,6 +505,26 @@ class _AreaFullPageState extends ConsumerState<AreaFullPage> {
                 }).toList();
               },
             ),
+            CupertinoButton(
+              onPressed: () {
+                setState(() {
+                  areasGuardadas = listAreas.length;
+                  widget.photo(fileImg);
+                  widget.selectedAreas(listAreas);
+                  Navigator.pop(context);
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 5, right: 5),
+                child: Icon(
+                  Icons.save,
+                  size: 22.0,
+                  color: areasGuardadas == listAreas.length
+                      ? Colors.black26
+                      : Colors.lightGreen,
+                ),
+              ),
+            )
           ],
           systemOverlayStyle:
               isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
@@ -513,14 +536,26 @@ class _AreaFullPageState extends ConsumerState<AreaFullPage> {
                 preguntaSeleccionada: _questionSelected,
                 mandatory: widget.mandatory,
                 photo: (photo) {
-                  //file = photo;
-                  widget.photo(photo);
+                  fileImg = photo;
+                  listAreas.clear();
                 },
                 callback: widget.callback,
-                selectedAreas: (areas) {
-                  widget.selectedAreas(areas);
-                },
+                newArea: (area) => listAreas.add(area),
+                removeArea: (index) => listAreas.removeAt(index!),
+                multiple: widget.multiple,
               )
             : Container());
   }
 }
+
+/* Generar color aleatorio
+Color generarColorAleatorio() {
+  final Random random = Random();
+  return Color.fromARGB(
+    255,
+    random.nextInt(256),
+    random.nextInt(256),
+    random.nextInt(256),
+  );
+}
+*/

@@ -54,6 +54,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   ResponseIndex? dateResponse;
   ResponseIndex? dateTimeResponse;
   ResponseIndex? timeResponse;
+  ResponseIndex? areasResponse;
+  ResponseIndex? areasMultiplesResponse;
   //ThisSondeo
   List<QuestionResponse> questionsResponses = [];
   List<(String, int)> mandatoryQuestions = [];
@@ -323,7 +325,26 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                               );
                             });
                           },
-                          area: (String? response) {},
+                          areas: (response) {
+                            setState(() {
+                              validate = false;
+                              areasResponse = ResponseIndex(
+                                index: index,
+                                response: response,
+                                error: false,
+                              );
+                            });
+                          },
+                          areasMultiples: (response) {
+                            setState(() {
+                              validate = false;
+                              areasMultiplesResponse = ResponseIndex(
+                                index: index,
+                                response: response,
+                                error: false,
+                              );
+                            });
+                          },
                           index: index,
                           store: widget.store,
                           pregunta: preguntasfn[index],
@@ -526,6 +547,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       'fecha': dateResponse,
       'fechaHora': dateTimeResponse,
       'hora': timeResponse,
+      'areas': areasResponse,
+      'areasMultiples': areasMultiplesResponse,
     };
 
     for (var question in questionsResponses) {
@@ -533,6 +556,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       if (response != null) {
         if (question.indexSondeo == response.index &&
             question.question?.tipo != 'foto' &&
+            question.question?.tipo != 'firma' &&
             question.question?.tipo != 'foto') {
           question.response = response.response;
         } else {

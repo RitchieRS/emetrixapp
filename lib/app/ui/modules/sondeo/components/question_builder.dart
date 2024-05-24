@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 import 'dart:io';
-import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/area.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/areas_multiples.dart';
 import 'package:flutter/material.dart';
@@ -32,8 +31,8 @@ class QuestionBuilder extends ConsumerStatefulWidget {
     required this.answerController,
     required this.callback,
     required this.preguntasdep,
-    required this.area,
-    this.indexPreguntaDependiente,
+    required this.areas,
+    required this.areasMultiples,
   });
   final Preguntas pregunta;
   final Store2 store;
@@ -53,11 +52,11 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Function(File?) image;
   final Function(File?) photo;
   final Function(File?) signature;
-  final Function(String? response) area;
+  final Function(List<Coordinate>) areas;
+  final Function(List<Coordinate>) areasMultiples;
   final Function(String?, String?) callback;
   final Function(TextEditingController controller, String uuid)
       answerController;
-  final Function(int?)? indexPreguntaDependiente;
 
   List<Preguntas> preguntasdep = [];
 
@@ -310,18 +309,13 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           pregunta: widget.pregunta,
           listPreguntas: widget.preguntasdep,
           photo: (photo) {
-            widget.photo(photo);
+            //widget.photo(photo);
           },
           callback: updateData,
-          orderPreguntaDependiente: (order) {
-            widget.indexPreguntaDependiente!(order);
-          },
           selectedAreas: (areas) {
-            //widget.indexPreguntaDependiente!();
-            areas?.forEach((area) {
-              widget.decimal(area.toString());
-            });
+            widget.areas(areas!);
           },
+          multiple: false,
         );
 
       case 'areasMultiples':
@@ -330,17 +324,13 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           pregunta: widget.pregunta,
           listPreguntas: widget.preguntasdep,
           photo: (photo) {
-            widget.photo(photo);
+            //widget.photo(photo);
           },
           callback: updateData,
-          orderPreguntaDependiente: (order) {
-            widget.indexPreguntaDependiente!(order);
-          },
           selectedAreas: (areas) {
-            areas?.forEach((area) {
-              widget.decimal(area.toString());
-            });
+            widget.areasMultiples(areas!);
           },
+          multiple: true,
         );
     }
 

@@ -22,8 +22,7 @@ class AreasMultiples extends ConsumerStatefulWidget {
     required this.callback,
     required this.photo,
     required this.selectedAreas,
-    required this.orderPreguntaDependiente,
-    this.multiple,
+    required this.multiple,
   });
 
   final bool mandatory;
@@ -32,8 +31,7 @@ class AreasMultiples extends ConsumerStatefulWidget {
   final Function(String?, String?) callback;
   final Function(File?) photo;
   final Function(List<Coordinate>?) selectedAreas;
-  final bool? multiple;
-  final Function(int) orderPreguntaDependiente;
+  final bool multiple;
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _AreasMultiplesState();
 }
@@ -78,9 +76,7 @@ class _AreasMultiplesState extends ConsumerState<AreasMultiples>
                       selectedAreas: (areas) {
                         widget.selectedAreas(areas);
                       },
-                      orderPreguntaDependiente: (order) {
-                        widget.orderPreguntaDependiente(order);
-                      },
+                      multiple: widget.multiple,
                     ),
                   ),
                 );
