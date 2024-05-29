@@ -44,7 +44,7 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Function(String? response) email;
   final Function(String?) answerRadio;
   final Function(String?) yesnoRadio;
-  final Function(List<String>?) selectionMultiple;
+  final Function(String?) selectionMultiple;
   final Function(String?) positionGPS;
   final Function(String?) date;
   final Function(String?) dateTime;
@@ -91,7 +91,11 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         return SelectionMultiple(
           question: widget.pregunta,
           selectedItems: (selectedItems) {
-            widget.answerRadio(selectedItems.toString());
+            String formattedList = "";
+            if (selectedItems != null) {
+              formattedList = selectedItems.join(', ');
+            }
+            widget.answerRadio(formattedList);
           },
           mandatory: widget.mandatory,
           callback: updateData,
@@ -200,7 +204,11 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         return SelectionMultiple(
           question: widget.pregunta,
           selectedItems: (selectedItems) {
-            widget.selectionMultiple(selectedItems);
+            String formattedList = "";
+            if (selectedItems != null) {
+              formattedList = selectedItems.join(', ');
+            }
+            widget.selectionMultiple(formattedList);
           },
           mandatory: widget.mandatory,
           callback: updateData,
