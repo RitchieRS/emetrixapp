@@ -1,11 +1,11 @@
 // ignore_for_file: avoid_print
 import 'dart:io';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/components/area.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/areas_multiples.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/components.dart';
+import 'package:intl/intl.dart';
 
 class QuestionBuilder extends ConsumerStatefulWidget {
   QuestionBuilder({
@@ -46,9 +46,9 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Function(String?) yesnoRadio;
   final Function(List<String>?) selectionMultiple;
   final Function(String?) positionGPS;
-  final Function(DateTime?) date;
-  final Function(DateTime?) dateTime;
-  final Function(DateTime?) time;
+  final Function(String?) date;
+  final Function(String?) dateTime;
+  final Function(String?) time;
   final Function(File?) image;
   final Function(File?) photo;
   final Function(File?) signature;
@@ -268,7 +268,8 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
       case 'fecha':
         return PickerDT(
           getDateTime: (date) {
-            widget.date(date);
+            String dateOnly = DateFormat('yyyy-MM-dd').format(date!);
+            widget.date(dateOnly.toString());
           },
           pregunta: widget.pregunta.pregunta ?? 'NoData',
           preguntaId: widget.pregunta,
@@ -279,7 +280,10 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
       case 'fechaHora':
         return PickerDT(
           getDateTime: (dateTime) {
-            widget.dateTime(dateTime);
+            DateTime datetime = DateTime.parse(dateTime.toString());
+            String formattedDateTime =
+                DateFormat('yyyy-MM-dd HH:mm:ss').format(datetime);
+            widget.dateTime(formattedDateTime);
           },
           preguntaId: widget.pregunta,
           pregunta: widget.pregunta.pregunta ?? 'NoData',
@@ -289,7 +293,8 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
       case 'hora':
         return PickerDT(
           getDateTime: (time) {
-            widget.time(time);
+            String formattedDateTime = DateFormat('HH:mm:ss').format(time!);
+            widget.time(formattedDateTime);
           },
           preguntaId: widget.pregunta,
           pregunta: widget.pregunta.pregunta ?? 'NoData',

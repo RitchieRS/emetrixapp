@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
@@ -17,15 +16,13 @@ class MyTimer extends ConsumerStatefulWidget {
     super.key,
     required this.pregunta,
     required this.times,
-    this.mandatory = false, 
+    this.mandatory = false,
     required this.preguntawid,
   });
   final String pregunta;
   final int times;
   final bool mandatory;
   final Preguntas preguntawid;
-
-  
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MyTimerState();
@@ -43,7 +40,6 @@ class _MyTimerState extends ConsumerState<MyTimer>
   var _stopwatch;
   Timer? timerlocal;
 
-
   @override
   void dispose() {
     //_stopwatch.stop();
@@ -52,14 +48,15 @@ class _MyTimerState extends ConsumerState<MyTimer>
 
   @override
   Widget build(BuildContext context) {
-   
     final size = MediaQuery.of(context).size;
-    _stopwatch = ref.watch(stopwatchProviderFamily(int.parse(widget.preguntawid.id ?? '0')));
-    _lapTimes = ref.watch(stringListProvider(int.parse(widget.preguntawid.id ?? '0')));
-    if (_stopwatch.isRunning() ) {
+    _stopwatch = ref.watch(
+        stopwatchProviderFamily(int.parse(widget.preguntawid.id ?? '0')));
+    _lapTimes =
+        ref.watch(stringListProvider(int.parse(widget.preguntawid.id ?? '0')));
+    if (_stopwatch.isRunning()) {
       _startTimer();
     }
-   
+
     return GestureDetector(
       onTap: () => _handleLaps(),
       // onTap: () {
@@ -80,14 +77,13 @@ class _MyTimerState extends ConsumerState<MyTimer>
             SizedBox(height: size.height * 0.01),
             Text(
               style: const TextStyle(fontSize: 48.0),
-              _formatTime(_hours,_minutes, _seconds, _milliseconds),
+              _formatTime(_hours, _minutes, _seconds, _milliseconds),
             ),
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _lapTimes.length,
               itemBuilder: (BuildContext context, int index) {
-                
                 return ListTile(
                   title: Text(_lapTimes[index]),
                   onTap: () => _resetLaps(),
@@ -101,33 +97,27 @@ class _MyTimerState extends ConsumerState<MyTimer>
   }
 
   void _handleLaps() {
-    
     if (!_stopwatch.isRunning()) {
       _resetLaps();
       _startTimer();
       return;
     }
-    if (_stopwatch.isRunning() && (_lapTimes.length + 1 )== widget.times) {
-      
+    if (_stopwatch.isRunning() && (_lapTimes.length + 1) == widget.times) {
       _stopTimer();
       //_stopwatch.awaitIso();
       return;
-    }
-     else if (_stopwatch.isRunning() && _lapTimes.length < widget.times) {
+    } else if (_stopwatch.isRunning() && _lapTimes.length < widget.times) {
       _takeLap();
       _restartTimer();
     }
     logger.d("Timer Stop ${_lapTimes.length} ${widget.times}");
-    
   }
 
   void _resetLaps() {
-    
     setState(() {
       // _laps = 0;
       _restartTimer();
       _lapTimes.clear();
-      
     });
   }
 
@@ -138,19 +128,17 @@ class _MyTimerState extends ConsumerState<MyTimer>
       timerlocal = Timer.periodic(const Duration(seconds: 0), (timer) {
         if (!mounted) return;
         setState(() {
-          _hours    = _stopwatch.hours();
+          _hours = _stopwatch.hours();
           _minutes = _stopwatch.minutes();
           _seconds = _stopwatch.seconds();
           _milliseconds = _stopwatch.milliseconds();
         });
       });
-    }
-    else
-    {
+    } else {
       timerlocal = Timer.periodic(const Duration(milliseconds: 0), (timer) {
         if (!mounted) return;
         setState(() {
-          _hours    = _stopwatch.hours();
+          _hours = _stopwatch.hours();
           _minutes = _stopwatch.minutes();
           _seconds = _stopwatch.seconds();
           _milliseconds = _stopwatch.milliseconds();
@@ -165,7 +153,7 @@ class _MyTimerState extends ConsumerState<MyTimer>
     }
     // _laps++;
     logger.d("Timer takelap");
-    _lapTimes.add(_formatTime(_hours,_minutes, _seconds, _milliseconds));
+    _lapTimes.add(_formatTime(_hours, _minutes, _seconds, _milliseconds));
     setState(() {});
   }
 
@@ -175,7 +163,7 @@ class _MyTimerState extends ConsumerState<MyTimer>
       _stopwatch.reset();
     }
     setState(() {
-      _hours    = 0;
+      _hours = 0;
       _milliseconds = 0;
       _minutes = 0;
       _seconds = 0;
@@ -186,17 +174,17 @@ class _MyTimerState extends ConsumerState<MyTimer>
     logger.d("Timer Stop");
     //_stopwatch.reset();
     setState(() {
-    _lapTimes.add(_formatTime(_hours,_minutes, _seconds, _milliseconds));
-    _stopwatch.stop();
-    timerlocal!.cancel();
-      _hours    = 0;
+      _lapTimes.add(_formatTime(_hours, _minutes, _seconds, _milliseconds));
+      _stopwatch.stop();
+      timerlocal!.cancel();
+      _hours = 0;
       _milliseconds = 0;
       _minutes = 0;
       _seconds = 0;
     });
   }
 
-  String _formatTime(int horas,int minutos, int segundos, int milisegundos) {
+  String _formatTime(int horas, int minutos, int segundos, int milisegundos) {
     milisegundos = milisegundos % 1000;
     String horasStr = (horas < 10) ? '0$horas' : horas.toString();
     String minutosStr = (minutos < 10) ? '0$minutos' : minutos.toString();
