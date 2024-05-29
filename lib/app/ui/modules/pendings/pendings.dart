@@ -169,8 +169,6 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
     final sendPending = await showMessage();
     if (!sendPending) return;
 
-    logger.e("Pendiente ${item.pendiente}");
-
     showProgress(context: context, title: 'Preparando..');
     await Future.delayed(const Duration(seconds: 2));
     final images = <String>[];
@@ -181,12 +179,14 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
 
     showProgress(context: context, title: 'Enviando..');
     item.pendiente?.contenido?.respuestas?.forEach((response) {
+      logger.t("respinse es tipo: ${response.tipo}");
       if (response.tipo == 'foto' ||
           response.tipo == 'CheckIn' ||
           response.tipo == 'firma' ||
           response.tipo == 'CheckOut' && response.respuesta != null ||
           response.respuesta == 'fotoGuardarCopia' &&
               response.respuesta != null) {
+        logger.t("es tipo foto: $response");
         if (response.respuesta != null && response.respuesta!.isNotEmpty) {
           images.add(response.respuesta!);
           logger.i("Generando Respuestas:");
@@ -202,7 +202,7 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
     });
     //Ver la lista de imagenes
 
-    logger.i("images: ${images}");
+    logger.i("images: $images");
 
     navigator.pop();
 
@@ -226,7 +226,7 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
     logger.i('Checkin imagen');
     logger.i('Checkin imagen ${storeIsar?.checkIn?.picture! ?? 'NoImage'}');
 
-    logger.i('Checkin imagen pendiente${item.pendiente!.toJson()}');
+    logger.f('Checkin imagen pendiente${item.pendiente!.toString()}');
     final result = await ref
         .read(pendingsController.notifier)
         .sendPendings(item.pendiente!);

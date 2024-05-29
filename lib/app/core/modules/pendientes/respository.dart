@@ -12,38 +12,39 @@ class PendingsRepository {
       {required Pendiente pending, required File image}) async {
     String fileName = image.path.split('/').last;
     final pendingJson = jsonEncode(pending);
-    if(await image.exists()){
-        FormData formData = FormData.fromMap({
-          "params": pendingJson,
-          "file": await MultipartFile.fromFile(image.path, filename: fileName),
-        });
-    
+    if (await image.exists()) {
+      FormData formData = FormData.fromMap({
+        "params": pendingJson,
+        "file": await MultipartFile.fromFile(image.path, filename: fileName),
+      });
 
-    logger.d('Pendiente data image: ${pending.toJson()} ${fileName}');
+      logger.d('Pendiente data image: ${pending.toJson()} ${fileName}');
 
-    try {
-      final response = await dio.post('/enviar_pendiente.php', data: formData);
-      logger.d('CheckInOut data: ${response.data}');
-      logger.d('CheckInOut StatusCode: ${response.statusCode}');
-      // final result = PendienteResp.fromJson(jsonDecode(response.data));
-      // return result;
-      //
-    } catch (error) {
-      logger.e('Error Send CheckInOut: ${error.toString()}');
-      // return PendienteResp(idError: 1, resp: '');
-    }
+      try {
+        final response =
+            await dio.post('/enviar_pendiente.php', data: formData);
+        logger.d('CheckInOut data: ${response.data}');
+        logger.d('CheckInOut StatusCode: ${response.statusCode}');
+        // final result = PendienteResp.fromJson(jsonDecode(response.data));
+        // return result;
+        //
+      } catch (error) {
+        logger.e('Error Send CheckInOut: ${error.toString()}');
+        // return PendienteResp(idError: 1, resp: '');
+      }
     }
     //
   }
 
   Future<PendienteResp> sendPendings({required Pendiente pending}) async {
-    logger.i('Checkin imagen sendPendings ${pending.contenido?.toJson()}' );
+    logger.i('Checkin imagen sendPendings ${pending.contenido?.toJson()}');
     final pendingJson = jsonEncode(pending);
+    logger.i(pendingJson);
     final url = Uri.parse('/enviar_pendiente.php').replace(queryParameters: {
       'params': pendingJson,
     });
 
-     logger.d('Pendiente data: ${pending.toJson()}');
+    logger.d('Pendiente data: ${pending.toJson()}');
 
     try {
       final response = await dio.postUri(url);

@@ -7,6 +7,7 @@ import 'package:emetrix_flutter/app/ui/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:emetrix_flutter/app/core/modules/login/login.dart';
@@ -100,20 +101,22 @@ class Auth extends StateNotifier<SondeoState> {
       });
     });
 
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
 //Arma pendiente
     final pending = Pendiente(
       // idProyecto: '',
       estado: 0,
       idProyecto: userInfo.proyectos.first.id,
       idUsuario: userInfo.usuario.id,
-      quien: Platform.isAndroid ? 'Android' : 'IOS',
-      fecha: DateTime.now().toString(),
+      quien: Platform.isAndroid ? 'Android' : 'iOS',
+      fecha: formattedDate.toString(),
       tipo: 'Sondeo', //checkin / checkout
       conteo: '1/1',
       contenido: Contenido(
         idSondeo: sondeoItem.id,
         idTienda: store.id,
-        estadoTienda: '2', //0 sin visitar, 1 medio visitar, 2 completamente
+        estadoTienda: '1', //0 sin visitar, 1 medio visitar, 2 completamente
         latitud: savedStore?.checkOut?.latitud,
         longitud: savedStore?.checkOut?.longitud,
         respuestas: responses,
@@ -126,15 +129,15 @@ class Auth extends StateNotifier<SondeoState> {
         resolucionImagen: '1024',
       ),
       info: Info(
-        bateria: '80%',
-        brillo: '80%',
+        bateria: '80',
+        brillo: '80.0',
         conexion: 'Datos',
         datos: '--Sin permiso?--',
         gps2: '1',
         gps: '1',
-        hotspot: 'false',
+        hotspot: "false",
         imei: '',
-        tag: 'sondeo', //checkin / checkout
+        tag: 'Sondeo', //checkin / checkout
         // version: userInfo.versiones.first.toString(),
         version: '1.0',
       ),
@@ -145,46 +148,51 @@ class Auth extends StateNotifier<SondeoState> {
     //Guardarlo a bd
     await ref.read(databaseProvider).savePending(pendient);
   }
-   Future<void> buildPending(
-      RespM sondeoItem, Store2 store, WidgetRef ref, List<Respuestas> responses, String storeUuid) async {
+
+  Future<void> buildPending(RespM sondeoItem, Store2 store, WidgetRef ref,
+      List<Respuestas> responses, String storeUuid) async {
     final userInfo = await _getUserInfo();
     final savedStore =
         await ref.read(databaseProvider).getStoreByUuid(storeUuid: storeUuid);
+
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
 //Arma pendiente
     final pending = Pendiente(
       // idProyecto: '',
       estado: 0,
       idProyecto: userInfo.proyectos.first.id,
       idUsuario: userInfo.usuario.id,
-      quien: Platform.isAndroid ? 'Android' : 'IOS',
-      fecha: DateTime.now().toString(),
+      quien: Platform.isAndroid ? 'Android' : 'iOS',
+      fecha: formattedDate.toString(),
       tipo: 'Sondeo', //checkin / checkout
-      conteo: '1/1',
+      conteo: '1\/2',
       contenido: Contenido(
-        idSondeo: sondeoItem.id,
-        idTienda: store.id,
-        estadoTienda: '2', //0 sin visitar, 1 medio visitar, 2 completamente
-        latitud: savedStore?.checkOut?.latitud,
-        longitud: savedStore?.checkOut?.longitud,
-        respuestas: responses
-      ),
+          idSondeo: sondeoItem.id,
+          idTienda: store.id,
+          estadoTienda: '1', //0 sin visitar, 1 medio visitar, 2 completamente
+          sku: "",
+          latitud: '',
+          longitud: '',
+          respuestas: responses),
       config: Config(
         rangoTienda: store.rangoGPS.toString(),
         sondeoObligatorio: sondeoItem.obligatorio.toString(),
         gpsProyecto: userInfo.proyectos.first.gps.toString(),
         gpsTienda: store.checkGPS.toString(),
         resolucionImagen: '1024',
+        capturaSku: "0",
       ),
       info: Info(
-        bateria: '80%',
-        brillo: '80%',
+        bateria: '80',
+        brillo: '80',
         conexion: 'Datos',
         datos: '--Sin permiso?--',
         gps2: '1',
         gps: '1',
-        hotspot: 'false',
-        imei: '',
-        tag: 'sondeo', //checkin / checkout
+        hotspot: "false",
+        imei: '50497718d1b961e2',
+        tag: 'Sondeo', //checkin / checkout
         // version: userInfo.versiones.first.toString(),
         version: '1.0',
       ),
@@ -196,4 +204,3 @@ class Auth extends StateNotifier<SondeoState> {
     await ref.read(databaseProvider).savePending(pendient);
   }
 }
-

@@ -116,14 +116,14 @@ class Contenido {
 class Respuestas {
   String? idPregunta;
   String? tipo;
-  String? size;
+  //String? size;
   String? respuesta;
-  Respuestas({this.idPregunta, this.tipo, this.size, this.respuesta});
+  Respuestas({this.idPregunta, this.tipo, this.respuesta});
 
   Respuestas.fromJson(Map<String, dynamic> json) {
     idPregunta = json['idPregunta'];
     tipo = json['tipo'];
-    size = json['size'];
+    // size = json['size'];
     respuesta = json['respuesta'];
   }
 
@@ -131,7 +131,7 @@ class Respuestas {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['idPregunta'] = idPregunta;
     data['tipo'] = tipo;
-    data['size'] = size;
+    //data['size'] = size;
     data['respuesta'] = respuesta;
     return data;
   }

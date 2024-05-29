@@ -555,9 +555,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       final response = typeResponses[question.question?.tipo];
       if (response != null) {
         if (question.indexSondeo == response.index &&
-            question.question?.tipo != 'foto' &&
-            question.question?.tipo != 'firma' &&
-            question.question?.tipo != 'foto') {
+            question.question!.tipo != 'foto' &&
+            question.question!.tipo != 'firma') {
           question.response = response.response;
         } else {
           var image = ref.watch(
@@ -566,11 +565,21 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
         }
 
         final resp = Respuestas(
-          idPregunta: question.question?.idPreguntaRespuesta,
+          idPregunta: question.question?.id,
           respuesta: question.response,
           tipo: question.question?.tipo,
         );
-        responses.add(resp);
+
+        if (resp.respuesta != null) {
+          int index =
+              responses.indexWhere((r) => r.idPregunta == resp.idPregunta);
+
+          if (index != -1) {
+            responses[index] = resp;
+          } else {
+            responses.add(resp);
+          }
+        }
       }
     }
 

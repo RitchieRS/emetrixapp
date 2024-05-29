@@ -52,8 +52,8 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Function(File?) image;
   final Function(File?) photo;
   final Function(File?) signature;
-  final Function(List<Coordinate>) areas;
-  final Function(List<Coordinate>) areasMultiples;
+  final Function(String) areas;
+  final Function(String) areasMultiples;
   final Function(String?, String?) callback;
   final Function(TextEditingController controller, String uuid)
       answerController;
@@ -135,7 +135,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             //
           },
           answer: (String? answer) {
-            widget.numeric(answer);
+            widget.numeric(answer.toString());
           },
           valueMin: widget.pregunta.valorMinimo,
           valueMax: widget.pregunta.valorMaximo,
@@ -242,7 +242,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           pregunta: widget.pregunta.pregunta ?? 'NoData',
           preguntawid: widget.pregunta,
           answer: (position) {
-            widget.positionGPS(position);
+            widget.positionGPS(position!.toString());
           },
           mandatory: widget.mandatory,
         );
@@ -313,7 +313,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           },
           callback: updateData,
           selectedAreas: (areas) {
-            widget.areas(areas!);
+            widget.areas(areas.toString());
           },
           multiple: false,
         );
@@ -328,7 +328,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           },
           callback: updateData,
           selectedAreas: (areas) {
-            widget.areasMultiples(areas!);
+            widget.areasMultiples(areas.toString());
           },
           multiple: true,
         );

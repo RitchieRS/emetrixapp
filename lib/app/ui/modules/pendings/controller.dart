@@ -60,7 +60,7 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
     // final storeIsar =
     //     await ref.read(databaseProvider).getStoreByUuid(storeUuid: storeUuid);
     final List<Respuestas> responses = [];
-    String sizeImg =  image.lengthSync().toString();
+    String sizeImg = image.lengthSync().toString();
     /*responses.add(Respuestas(
       idPregunta: '1', //Checkin 1
       tipo: "asistencia", //checkin
@@ -68,20 +68,20 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
       size: sizeImg,
     ));*/
 
-    if(tipo=='CheckIn'){
-    _tipo='CheckIn';
-    responses.add(Respuestas(
-      idPregunta: '1', //Checkin 1
-      tipo: "asistencia", //checkin
-      respuesta: "",
-      size: sizeImg,
-    ));
-    }else{
-      _tipo=tipo;
+    if (tipo == 'CheckIn') {
+      _tipo = 'CheckIn';
+      responses.add(Respuestas(
+        idPregunta: '1', //Checkin 1
+        tipo: "asistencia", //checkin
+        respuesta: "",
+        //size: sizeImg,
+      ));
+    } else {
+      _tipo = tipo;
     }
 
     DateFormat formatoFecha = DateFormat("yyyy-MM-dd HH:mm:ss");
-
+    String tipoCapitalizado = '${_tipo[0].toUpperCase()}${_tipo.substring(1)}';
 //Arma pendiente
     final pending = Pendiente(
       // idProyecto: '',
@@ -90,34 +90,33 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
       idUsuario: userInfo.usuario.id,
       quien: Platform.isAndroid ? 'Android' : 'IOS',
       fecha: formatoFecha.format(DateTime.now()),
-      tipo: _tipo, //checkin / checkout
+      tipo: tipoCapitalizado, //checkin / checkout
       contenido: Contenido(
-        idSondeo: storeIsar.sondeo?.resp?.first.id,
-        idTienda: storeIsar.store?.id,
-        estadoTienda: '2', //0 sin visitar, 1 medio visitar, 2 completamente
-        latitud: storeIsar.checkOut?.latitud,
-        longitud: storeIsar.checkOut?.longitud,
-        respuestas: responses,
-        sku: ""
-      ),
+          idSondeo: storeIsar.sondeo?.resp?.first.id,
+          idTienda: storeIsar.store?.id,
+          estadoTienda: '1', //0 sin visitar, 1 medio visitar, 2 completamente
+          latitud: storeIsar.checkOut?.latitud,
+          longitud: storeIsar.checkOut?.longitud,
+          respuestas: responses,
+          sku: ""),
       config: Config(
-        rangoTienda: storeIsar.store?.rangoGPS.toString(),
-        sondeoObligatorio: storeIsar.sondeo?.resp?.first.obligatorio.toString(),
-        gpsProyecto: userInfo.proyectos.first.gps.toString(),
-        gpsTienda: storeIsar.store?.checkGPS.toString(),
-        resolucionImagen: '1024',
-        capturaSku: "0"
-      ),
+          rangoTienda: storeIsar.store?.rangoGPS.toString(),
+          sondeoObligatorio: "1",
+          //storeIsar.sondeo?.resp?.first.obligatorio.toString(),
+          gpsProyecto: userInfo.proyectos.first.gps.toString(),
+          gpsTienda: storeIsar.store?.checkGPS.toString(),
+          resolucionImagen: '1024',
+          capturaSku: "0"),
       info: Info(
-        bateria: '80%',
-        brillo: '80%',
+        bateria: '80',
+        brillo: '80',
         conexion: 'Datos',
         datos: '--Sin permiso?--',
         gps2: '1',
         gps: '1',
-        hotspot: 'false',
+        hotspot: "false",
         imei: '',
-        tag:  _tipo, //checkin / checkout
+        tag: tipoCapitalizado, //checkin / checkout
         // version: userInfo.versiones.first.toString(),
         version: '1.0',
       ),
