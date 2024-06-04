@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
-import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/core/services/theme/theme.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/area.dart';
@@ -9,9 +8,7 @@ import 'package:emetrix_flutter/app/ui/utils/colors.dart';
 import 'package:emetrix_flutter/app/ui/utils/text_styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:logger/logger.dart';
 
 class AreasMultiples extends ConsumerStatefulWidget {
   const AreasMultiples({
@@ -20,7 +17,6 @@ class AreasMultiples extends ConsumerStatefulWidget {
     required this.pregunta,
     required this.listPreguntas,
     required this.callback,
-    this.photo,
     required this.selectedAreas,
     required this.multiple,
   });
@@ -29,7 +25,6 @@ class AreasMultiples extends ConsumerStatefulWidget {
   final Preguntas pregunta;
   final List<Preguntas> listPreguntas;
   final Function(String?, String?) callback;
-  final Function(File?)? photo;
   final Function(List<Coordinate>?) selectedAreas;
   final bool multiple;
   @override
@@ -70,9 +65,6 @@ class _AreasMultiplesState extends ConsumerState<AreasMultiples>
                       mandatory: widget.mandatory,
                       depen: depen,
                       callback: widget.callback,
-                      photo: (photo) {
-                        //widget.photo!(photo);
-                      },
                       selectedAreas: (areas) {
                         widget.selectedAreas(areas);
                       },

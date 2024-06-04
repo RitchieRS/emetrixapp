@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/modules/pendientes/pendientes.dart';
 import 'package:emetrix_flutter/app/core/services/notifications/notifications.dart';
@@ -265,12 +267,12 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                               );
                             });
                           },
-                          photo: (photo) {
+                          foto: (photo) {
                             setState(() {
                               validate = false;
                               photoResponse = ResponseIndex(
                                 index: index,
-                                response: photo.toString(),
+                                response: photo,
                                 error: false,
                               );
                             });
@@ -530,6 +532,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     }
   }
 
+  //Aquí empiezan los metodos para construir las respuestas
+
   void buildResponses() async {
     Map<String, ResponseIndex?> typeResponses = {
       'abierta': textResponse,
@@ -554,38 +558,104 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     for (var question in questionsResponses) {
       final response = typeResponses[question.question?.tipo];
       if (response != null) {
-        if (question.indexSondeo == response.index &&
-            question.question!.tipo != 'foto' &&
-            question.question!.tipo != 'firma') {
-          question.response = response.response;
-        } else {
-          var image = ref.watch(
-              imageFileProviderFamily(int.parse(question.question?.id ?? '0')));
-          question.response = image?.file?.path;
+        if (_isStandardResponse(question, response)) {
+          _handleStandardResponse(question, response);
+        } else if (_isSpecialResponse(question)) {
+          _handleSpecialResponse(question, response);
         }
-
-        final resp = Respuestas(
-          idPregunta: question.question?.id,
-          respuesta: question.response,
-          tipo: question.question?.tipo,
-        );
-
-        if (resp.respuesta != null) {
-          int index =
-              responses.indexWhere((r) => r.idPregunta == resp.idPregunta);
-
-          if (index != -1) {
-            responses[index] = resp;
-          } else {
-            responses.add(resp);
-          }
-        }
+        _saveResponse(question);
       }
     }
 
+    logger.f(responses.toString());
+
     setState(() {});
-    //Guardar las respuestas
   }
+
+  bool _isStandardResponse(var question, ResponseIndex? response) {
+    return question.indexSondeo == response?.index &&
+        question.question!.tipo != 'foto' &&
+        question.question!.tipo != 'firma';
+  }
+
+  void _handleStandardResponse(var question, ResponseIndex? response) {
+    if (question.question!.tipo == 'areas' ||
+        question.question!.tipo == 'areasMultiples') {
+      var image =
+          ref.watch(imageFileProviderFamily(int.parse(question.question!.id!)));
+      if (image != null) {
+        _addResponse(question.question!.id!, image.file!.path.toString(),
+            question.question!.tipo);
+      }
+    }
+    question.response = response?.response.toString();
+  }
+
+  bool _isSpecialResponse(var question) {
+    return question.question!.tipo == 'foto' ||
+        question.question!.tipo == 'firma';
+  }
+
+  void _handleSpecialResponse(var question, ResponseIndex? response) {
+    File image = File(response!.response.toString());
+    if (image.path != "") {
+      _addOrUpdateResponse(question.question!.id!, image.path.toString(),
+          question.question!.tipo);
+    }
+  }
+
+  void _addResponse(String idPregunta, String respuesta, String tipo) {
+    final resp = Respuestas(
+      idPregunta: idPregunta,
+      respuesta: respuesta,
+      tipo: tipo,
+    );
+    if (resp.respuesta != null) {
+      responses.add(resp);
+    }
+  }
+
+  void _addOrUpdateResponse(String idPregunta, String respuesta, String tipo) {
+    final resp = Respuestas(
+      idPregunta: idPregunta,
+      respuesta: respuesta,
+      tipo: tipo,
+    );
+    int index = responses
+        .indexWhere((r) => r.idPregunta == idPregunta && r.tipo == tipo);
+    if (index != -1) {
+      responses[index] = resp;
+    } else {
+      if (resp.respuesta != null) {
+        responses.add(resp);
+      }
+    }
+  }
+
+  void _saveResponse(var question) {
+    final resp = Respuestas(
+      idPregunta: question.question?.id,
+      respuesta: question.response,
+      tipo: question.question?.tipo,
+    );
+
+    if (resp.respuesta != null && resp.respuesta != "null") {
+      int index = responses.indexWhere(
+          (r) => r.idPregunta == resp.idPregunta && r.tipo == resp.tipo);
+
+      if (index != -1) {
+        if (resp.tipo != 'areas' && resp.tipo != 'areasMultiples') {
+          responses[index] = resp;
+        } else {
+          responses.add(resp);
+        }
+      } else {
+        responses.add(resp);
+      }
+    }
+  }
+
+  //Aquí terminan los metodos para construir las respuestas
 
   Future<void> validateAllComponents(
       List<int> finishedSections, WidgetRef ref) async {

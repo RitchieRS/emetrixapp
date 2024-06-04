@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
@@ -178,9 +179,9 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
         await ref.read(databaseProvider).getStoreByUuid(storeUuid: storeUuid);
 
     showProgress(context: context, title: 'Enviando..');
-    item.pendiente?.contenido?.respuestas?.forEach((response) {
+    item.pendiente?.contenido?.respuestas?.forEach((response) async {
       logger.t("respinse es tipo: ${response.tipo}");
-      if (response.tipo == 'foto' ||
+      if (response.tipo == 'areasMultiples' ||
           response.tipo == 'CheckIn' ||
           response.tipo == 'firma' ||
           response.tipo == 'CheckOut' && response.respuesta != null ||
@@ -190,13 +191,16 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
         if (response.respuesta != null && response.respuesta!.isNotEmpty) {
           images.add(response.respuesta!);
           logger.i("Generando Respuestas:");
-
-          ref.read(pendingsController.notifier).sendCheckInOutImages(
-              storeIsar: storeIsar!,
-              tipo: response.tipo!,
-              ref: ref,
-              storeUuid: storeUuid,
-              image: File(response.respuesta!));
+          File file = File(response.respuesta ?? '');
+          if (file.path != "") {
+            await ref.read(pendingsController.notifier).sendCheckInOutImages(
+                storeIsar: storeIsar!,
+                tipo: response.tipo!,
+                ref: ref,
+                idPregunta: response.idPregunta,
+                storeUuid: storeUuid,
+                image: File(response.respuesta!));
+          }
         }
       }
     });

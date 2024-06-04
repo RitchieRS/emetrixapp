@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/area.dart';
 import 'package:isar/isar.dart';
 part 'pendientes.g.dart';
 
@@ -131,8 +132,17 @@ class Respuestas {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['idPregunta'] = idPregunta;
     data['tipo'] = tipo;
-    //data['size'] = size;
-    data['respuesta'] = respuesta;
+
+    if (tipo == 'areasMultiples' || tipo == 'areas') {
+      if (respuesta != null && respuesta!.isNotEmpty && respuesta != "null") {
+        List<dynamic> jsonData = json.decode(respuesta!);
+        List<Coordinate> coordinates =
+            jsonData.map((item) => Coordinate.fromJson(item)).toList();
+        data['respuesta'] = coordinates;
+      }
+    } else {
+      data['respuesta'] = respuesta;
+    }
     return data;
   }
 }

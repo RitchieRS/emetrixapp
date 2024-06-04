@@ -52,6 +52,7 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
     required String storeUuid,
     required String tipo,
     required File image,
+    String? idPregunta,
     required SondeosFromStore storeIsar,
   }) async {
     final Resp userInfo = await _getUserInfo();
@@ -79,8 +80,28 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
       _tipo = tipo;
     }
 
+    if (tipo == 'areasMultiples' ||
+        tipo == 'areas' ||
+        tipo == 'foto' ||
+        tipo == 'firma') {
+      _tipo = tipo;
+      responses.add(Respuestas(
+        idPregunta: idPregunta, //Checkin 1
+        tipo: tipo, //checkin
+        respuesta: "",
+        //size: sizeImg,
+      ));
+    } else {
+      _tipo = tipo;
+    }
+
     DateFormat formatoFecha = DateFormat("yyyy-MM-dd HH:mm:ss");
     String tipoCapitalizado = '${_tipo[0].toUpperCase()}${_tipo.substring(1)}';
+    if (tipoCapitalizado == 'Foto' ||
+        tipoCapitalizado == 'AreasMultiples' ||
+        tipoCapitalizado == 'Areas') {
+      tipoCapitalizado = "SondeoFoto";
+    }
 //Arma pendiente
     final pending = Pendiente(
       // idProyecto: '',
@@ -90,12 +111,13 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
       quien: Platform.isAndroid ? 'Android' : 'IOS',
       fecha: formatoFecha.format(DateTime.now()),
       tipo: tipoCapitalizado, //checkin / checkout
+      conteo: '2\/2',
       contenido: Contenido(
           idSondeo: storeIsar.sondeo?.resp?.first.id,
           idTienda: storeIsar.store?.id,
           estadoTienda: '1', //0 sin visitar, 1 medio visitar, 2 completamente
-          latitud: storeIsar.checkOut?.latitud,
-          longitud: storeIsar.checkOut?.longitud,
+          latitud: storeIsar.checkOut?.latitud ?? '',
+          longitud: storeIsar.checkOut?.longitud ?? '',
           respuestas: responses,
           sku: ""),
       config: Config(
@@ -114,7 +136,7 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
         gps2: '1',
         gps: '1',
         hotspot: "false",
-        imei: '',
+        imei: '50497718d1b961e2',
         tag: tipoCapitalizado, //checkin / checkout
         // version: userInfo.versiones.first.toString(),
         version: '1.0',

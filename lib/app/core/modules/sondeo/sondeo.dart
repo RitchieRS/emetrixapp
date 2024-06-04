@@ -56,6 +56,11 @@ class QuestionResponse {
   Preguntas? question;
   String? response;
   int? indexSondeo;
+
+  @override
+  String toString() {
+    return 'QuestionResponse{id: $indexSondeo, question: "$question", response: "$response"}';
+  }
 }
 
 @embedded

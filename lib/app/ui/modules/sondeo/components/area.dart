@@ -30,6 +30,28 @@ class Coordinate {
     required this.idPregunta,
   });
 
+  factory Coordinate.fromJson(Map<String, dynamic> json) {
+    return Coordinate(
+      idPregunta: json['idPregunta'],
+      porcentaje: json['porcentaje'],
+      x0: json['x0'],
+      y0: json['y0'],
+      xf: json['xf'],
+      yf: json['yf'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'idPregunta': idPregunta,
+      'porcentaje': porcentaje,
+      'x0': x0,
+      'y0': y0,
+      'xf': xf,
+      'yf': yf,
+    };
+  }
+
   @override
   String toString() {
     return '{"idPregunta": "$idPregunta","porcentaje": $porcentaje,"x0": $x0,"y0": $y0,"xf": $xf,"yf": $yf}';
@@ -44,7 +66,6 @@ class Areas extends ConsumerStatefulWidget {
   final bool mandatory;
   final Preguntas preguntaSeleccionada;
   final Function(String?, String?) callback;
-  final Function(File?) photo;
   final Function(Coordinate) newArea;
   final Function(int?) removeArea;
   final bool multiple;
@@ -54,7 +75,6 @@ class Areas extends ConsumerStatefulWidget {
       required this.pregunta,
       required this.preguntaSeleccionada,
       required this.callback,
-      required this.photo,
       required this.newArea,
       required this.removeArea,
       required this.multiple,
@@ -100,11 +120,18 @@ class _AreasState extends ConsumerState<Areas> {
 
         img.Image croppedImage =
             img.copyCrop(resizedImage, x: x, y: y, width: 1024, height: 1024);
-        // Guarda la imagen recortada en la misma ruta que la original
+
+// Guarda la imagen recortada con un nuevo nombre generado dinámicamente
         String originalPath = imageFile.path;
         String extension =
             originalPath.substring(originalPath.lastIndexOf('.'));
-        String resizedPath = originalPath.replaceAll(extension, '_resized.jpg');
+
+// Genera un nuevo nombre dinámico (por ejemplo, usando timestamp)
+        String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+        String newFileName = "flutter_$timestamp.jpeg";
+        String resizedPath =
+            originalPath.replaceAll(originalPath.split('/').last, newFileName);
+
         File resizedFile = File(resizedPath);
         resizedFile.writeAsBytesSync(img.encodeJpg(croppedImage));
 
@@ -114,7 +141,7 @@ class _AreasState extends ConsumerState<Areas> {
             .file = resizedFile;
         setWidthHeightImage();
 
-        widget.photo(resizedFile);
+        logger.i("**ID FOTO: ${widget.pregunta.id.toString()}");
 
         setState(() {});
       }
@@ -447,7 +474,6 @@ class AreaFullPage extends ConsumerStatefulWidget {
   final bool mandatory;
   final List<Preguntas>? depen;
   final Function(String?, String?) callback;
-  final Function(File?) photo;
   final Function(List<Coordinate>?) selectedAreas;
   final bool multiple;
 
@@ -456,7 +482,6 @@ class AreaFullPage extends ConsumerStatefulWidget {
     required this.pregunta,
     required this.mandatory,
     required this.callback,
-    required this.photo,
     required this.selectedAreas,
     required this.multiple,
     this.depen,
@@ -469,7 +494,6 @@ class AreaFullPage extends ConsumerStatefulWidget {
 class _AreaFullPageState extends ConsumerState<AreaFullPage> {
   int areasGuardadas = 0;
   List<Coordinate> listAreas = [];
-  File? fileImg;
 
   @override
   Widget build(BuildContext context) {
@@ -509,7 +533,6 @@ class _AreaFullPageState extends ConsumerState<AreaFullPage> {
               onPressed: () {
                 setState(() {
                   areasGuardadas = listAreas.length;
-                  widget.photo(fileImg);
                   widget.selectedAreas(listAreas);
                   Navigator.pop(context);
                 });
@@ -535,10 +558,6 @@ class _AreaFullPageState extends ConsumerState<AreaFullPage> {
                 pregunta: widget.pregunta,
                 preguntaSeleccionada: _questionSelected,
                 mandatory: widget.mandatory,
-                photo: (photo) {
-                  fileImg = photo;
-                  listAreas.clear();
-                },
                 callback: widget.callback,
                 newArea: (area) => listAreas.add(area),
                 removeArea: (index) => listAreas.removeAt(index!),

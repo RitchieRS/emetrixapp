@@ -1,6 +1,9 @@
 // ignore_for_file: avoid_print
 import 'dart:io';
+import 'package:emetrix_flutter/app/core/global/core.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/area.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/areas_multiples.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
@@ -26,7 +29,7 @@ class QuestionBuilder extends ConsumerStatefulWidget {
     required this.decimal,
     required this.email,
     required this.yesnoRadio,
-    required this.photo,
+    required this.foto,
     required this.selectionMultiple,
     required this.answerController,
     required this.callback,
@@ -50,10 +53,10 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Function(String?) dateTime;
   final Function(String?) time;
   final Function(File?) image;
-  final Function(File?) photo;
+  final Function(String) foto;
   final Function(File?) signature;
-  final Function(String) areas;
-  final Function(String) areasMultiples;
+  final Function(String?) areas;
+  final Function(List<Coordinate>?) areasMultiples;
   final Function(String?, String?) callback;
   final Function(TextEditingController controller, String uuid)
       answerController;
@@ -221,7 +224,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         return ImagesCarrusel(
           pregunta: widget.pregunta,
           image: (image) {
-            widget.image(image);
+            widget.foto(image?.path.toString() ?? '');
           },
           mandatory: widget.mandatory,
           multiple: false,
@@ -321,9 +324,6 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           mandatory: widget.mandatory,
           pregunta: widget.pregunta,
           listPreguntas: widget.preguntasdep,
-          photo: (photo) {
-            //widget.photo(photo);
-          },
           callback: updateData,
           selectedAreas: (areas) {
             widget.areas(areas.toString());
@@ -336,12 +336,10 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           mandatory: widget.mandatory,
           pregunta: widget.pregunta,
           listPreguntas: widget.preguntasdep,
-          photo: (photo) {
-            //widget.photo(photo);
-          },
           callback: updateData,
           selectedAreas: (areas) {
-            widget.areasMultiples(areas.toString());
+            widget.areasMultiples(areas);
+            logger.i(areas.toString());
           },
           multiple: true,
         );
