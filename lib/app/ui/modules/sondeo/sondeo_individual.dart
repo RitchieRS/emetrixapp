@@ -56,6 +56,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   ResponseIndex? dateResponse;
   ResponseIndex? dateTimeResponse;
   ResponseIndex? timeResponse;
+  ResponseIndex? tiempoResponse;
   ResponseIndex? areasResponse;
   ResponseIndex? areasMultiplesResponse;
   //ThisSondeo
@@ -327,6 +328,16 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                               );
                             });
                           },
+                          tiempo: (tiempo) {
+                            setState(() {
+                              validate = false;
+                              tiempoResponse = ResponseIndex(
+                                index: index,
+                                response: tiempo,
+                                error: false,
+                              );
+                            });
+                          },
                           areas: (response) {
                             setState(() {
                               validate = false;
@@ -551,6 +562,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       'fecha': dateResponse,
       'fechaHora': dateTimeResponse,
       'hora': timeResponse,
+      'tiempo': tiempoResponse,
       'areas': areasResponse,
       'areasMultiples': areasMultiplesResponse,
     };

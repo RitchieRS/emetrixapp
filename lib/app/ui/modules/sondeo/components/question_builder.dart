@@ -30,6 +30,7 @@ class QuestionBuilder extends ConsumerStatefulWidget {
     required this.email,
     required this.yesnoRadio,
     required this.foto,
+    required this.tiempo,
     required this.selectionMultiple,
     required this.answerController,
     required this.callback,
@@ -52,6 +53,7 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Function(String?) date;
   final Function(String?) dateTime;
   final Function(String?) time;
+  final Function(String?) tiempo;
   final Function(File?) image;
   final Function(String) foto;
   final Function(File?) signature;
@@ -209,7 +211,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           selectedItems: (selectedItems) {
             String formattedList = "";
             if (selectedItems != null) {
-              formattedList = selectedItems.join(', ');
+              formattedList = selectedItems.join('<@>|');
             }
             widget.selectionMultiple(formattedList);
           },
@@ -264,6 +266,17 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           preguntawid: widget.pregunta,
           times: widget.pregunta.capturaNTiempos ?? 1,
           mandatory: widget.mandatory,
+          listTimes: (list) {
+            String formattedList = "";
+            if (list.isNotEmpty) {
+              if (list.length > 2) {
+                formattedList = list.join(',');
+              } else {
+                formattedList = list.toString();
+              }
+            }
+            widget.tiempo(formattedList);
+          },
         );
 
       case 'firma':

@@ -12,17 +12,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 class MyTimer extends ConsumerStatefulWidget {
-  const MyTimer({
-    super.key,
-    required this.pregunta,
-    required this.times,
-    this.mandatory = false,
-    required this.preguntawid,
-  });
+  const MyTimer(
+      {super.key,
+      required this.pregunta,
+      required this.times,
+      this.mandatory = false,
+      required this.preguntawid,
+      required this.listTimes});
   final String pregunta;
   final int times;
   final bool mandatory;
   final Preguntas preguntawid;
+  final Function(List<String>) listTimes;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MyTimerState();
@@ -105,6 +106,9 @@ class _MyTimerState extends ConsumerState<MyTimer>
     if (_stopwatch.isRunning() && (_lapTimes.length + 1) == widget.times) {
       _stopTimer();
       //_stopwatch.awaitIso();
+      String _timeTotal = _calculateTotalTime(_lapTimes);
+      _lapTimes.add(_timeTotal);
+      widget.listTimes(_lapTimes);
       return;
     } else if (_stopwatch.isRunning() && _lapTimes.length < widget.times) {
       _takeLap();
@@ -191,6 +195,26 @@ class _MyTimerState extends ConsumerState<MyTimer>
     String segundosStr = (segundos < 10) ? '0$segundos' : segundos.toString();
     String milisegundosStr =
         (milisegundos < 10) ? '0$milisegundos' : milisegundos.toString();
-    return '$horasStr:$minutosStr:$segundosStr';
+    return '$horasStr:$minutosStr:$segundosStr:$milisegundosStr';
+  }
+
+  String _calculateTotalTime(List<String> times) {
+    int totalSeconds = 0;
+
+    for (String time in times) {
+      List<String> parts = time.split(':');
+      int hours = int.parse(parts[0]);
+      int minutes = int.parse(parts[1]);
+      int seconds = int.parse(parts[2]);
+
+      totalSeconds += hours * 3600 + minutes * 60 + seconds;
+    }
+
+    int totalHours = totalSeconds ~/ 3600;
+    totalSeconds = totalSeconds % 3600;
+    int totalMinutes = totalSeconds ~/ 60;
+    totalSeconds = totalSeconds % 60;
+
+    return _formatTime(totalHours, totalMinutes, totalSeconds, _milliseconds);
   }
 }
