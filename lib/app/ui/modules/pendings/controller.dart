@@ -52,7 +52,9 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
     required String storeUuid,
     required String tipo,
     required File image,
+    required String fecha,
     String? idPregunta,
+    required String? idSondeo,
     required SondeosFromStore storeIsar,
   }) async {
     final Resp userInfo = await _getUserInfo();
@@ -74,30 +76,27 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
         idPregunta: '1', //Checkin 1
         tipo: "asistencia", //checkin
         respuesta: "",
-        //size: sizeImg,
+        size: sizeImg,
       ));
     } else {
       _tipo = tipo;
     }
 
-    if (tipo == 'areasMultiples' ||
-        tipo == 'areas' ||
-        tipo == 'foto' ||
-        tipo == 'firma') {
+    if (tipo == 'foto' || tipo == 'firma') {
       _tipo = tipo;
       responses.add(Respuestas(
         idPregunta: idPregunta, //Checkin 1
         tipo: tipo, //checkin
         respuesta: "",
-        //size: sizeImg,
+        size: sizeImg,
       ));
     } else {
       _tipo = tipo;
     }
 
-    DateFormat formatoFecha = DateFormat("yyyy-MM-dd HH:mm:ss");
     String tipoCapitalizado = '${_tipo[0].toUpperCase()}${_tipo.substring(1)}';
     if (tipoCapitalizado == 'Foto' ||
+        tipoCapitalizado == 'Firma' ||
         tipoCapitalizado == 'AreasMultiples' ||
         tipoCapitalizado == 'Areas') {
       tipoCapitalizado = "SondeoFoto";
@@ -109,11 +108,11 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
       idProyecto: userInfo.proyectos.first.id,
       idUsuario: userInfo.usuario.id,
       quien: Platform.isAndroid ? 'Android' : 'IOS',
-      fecha: formatoFecha.format(DateTime.now()),
+      fecha: fecha,
       tipo: tipoCapitalizado, //checkin / checkout
-      conteo: '2\/2',
+      conteo: '2\/1',
       contenido: Contenido(
-          idSondeo: storeIsar.sondeo?.resp?.first.id,
+          idSondeo: idSondeo,
           idTienda: storeIsar.store?.id,
           estadoTienda: '1', //0 sin visitar, 1 medio visitar, 2 completamente
           latitud: storeIsar.checkOut?.latitud ?? '',
@@ -122,7 +121,7 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
           sku: ""),
       config: Config(
           rangoTienda: storeIsar.store?.rangoGPS.toString(),
-          sondeoObligatorio: "1",
+          sondeoObligatorio: "0",
           //storeIsar.sondeo?.resp?.first.obligatorio.toString(),
           gpsProyecto: userInfo.proyectos.first.gps.toString(),
           gpsTienda: storeIsar.store?.checkGPS.toString(),
@@ -136,7 +135,7 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
         gps2: '1',
         gps: '1',
         hotspot: "false",
-        imei: '50497718d1b961e2',
+        imei: 'unknown',
         tag: tipoCapitalizado, //checkin / checkout
         // version: userInfo.versiones.first.toString(),
         version: '1.0',

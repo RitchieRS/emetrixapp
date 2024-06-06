@@ -56,7 +56,7 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Function(String?) tiempo;
   final Function(File?) image;
   final Function(String) foto;
-  final Function(File?) signature;
+  final Function(String?) signature;
   final Function(String?) areas;
   final Function(List<Coordinate>?) areasMultiples;
   final Function(String?, String?) callback;
@@ -284,7 +284,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           pregunta: widget.pregunta.pregunta ?? 'NoData',
           preguntawid: widget.pregunta,
           getSignature: (signatureFile) {
-            widget.signature(signatureFile);
+            widget.signature(signatureFile!.path.toString());
           },
           mandatory: widget.mandatory,
         );

@@ -191,7 +191,7 @@ class Auth extends StateNotifier<SondeoState> {
         gps2: '1',
         gps: '1',
         hotspot: "false",
-        imei: '50497718d1b961e2',
+        imei: 'unknown',
         tag: 'Sondeo', //checkin / checkout
         // version: userInfo.versiones.first.toString(),
         version: '1.0',

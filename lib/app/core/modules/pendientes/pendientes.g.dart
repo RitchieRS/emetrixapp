@@ -3023,8 +3023,13 @@ const RespuestasSchema = Schema(
       name: r'respuesta',
       type: IsarType.string,
     ),
-    r'tipo': PropertySchema(
+    r'size': PropertySchema(
       id: 2,
+      name: r'size',
+      type: IsarType.string,
+    ),
+    r'tipo': PropertySchema(
+      id: 3,
       name: r'tipo',
       type: IsarType.string,
     )
@@ -3054,6 +3059,12 @@ int _respuestasEstimateSize(
     }
   }
   {
+    final value = object.size;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.tipo;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -3070,7 +3081,8 @@ void _respuestasSerialize(
 ) {
   writer.writeString(offsets[0], object.idPregunta);
   writer.writeString(offsets[1], object.respuesta);
-  writer.writeString(offsets[2], object.tipo);
+  writer.writeString(offsets[2], object.size);
+  writer.writeString(offsets[3], object.tipo);
 }
 
 Respuestas _respuestasDeserialize(
@@ -3082,7 +3094,8 @@ Respuestas _respuestasDeserialize(
   final object = Respuestas(
     idPregunta: reader.readStringOrNull(offsets[0]),
     respuesta: reader.readStringOrNull(offsets[1]),
-    tipo: reader.readStringOrNull(offsets[2]),
+    size: reader.readStringOrNull(offsets[2]),
+    tipo: reader.readStringOrNull(offsets[3]),
   );
   return object;
 }
@@ -3099,6 +3112,8 @@ P _respuestasDeserializeProp<P>(
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
+      return (reader.readStringOrNull(offset)) as P;
+    case 3:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -3407,6 +3422,152 @@ extension RespuestasQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'respuesta',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Respuestas, Respuestas, QAfterFilterCondition> sizeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'size',
+      ));
+    });
+  }
+
+  QueryBuilder<Respuestas, Respuestas, QAfterFilterCondition> sizeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'size',
+      ));
+    });
+  }
+
+  QueryBuilder<Respuestas, Respuestas, QAfterFilterCondition> sizeEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'size',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Respuestas, Respuestas, QAfterFilterCondition> sizeGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'size',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Respuestas, Respuestas, QAfterFilterCondition> sizeLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'size',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Respuestas, Respuestas, QAfterFilterCondition> sizeBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'size',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Respuestas, Respuestas, QAfterFilterCondition> sizeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'size',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Respuestas, Respuestas, QAfterFilterCondition> sizeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'size',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Respuestas, Respuestas, QAfterFilterCondition> sizeContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'size',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Respuestas, Respuestas, QAfterFilterCondition> sizeMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'size',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Respuestas, Respuestas, QAfterFilterCondition> sizeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'size',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Respuestas, Respuestas, QAfterFilterCondition> sizeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'size',
         value: '',
       ));
     });

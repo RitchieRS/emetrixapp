@@ -161,50 +161,47 @@ class _AreasState extends ConsumerState<Areas> {
     }
   }
 
-  void _addSelectedArea(double x0, double y0, double xf, double yf) {
-    if (x0 >= 0 &&
-        y0 >= 0 &&
-        xf <= _imageWidth &&
-        yf <= _imageHeight.toDouble()) {
-      double realX0 = x0 / _imageWidth;
-      double realY0 = y0 / _imageHeight;
-      double realXf = xf / _imageWidth;
-      double realYf = yf / _imageHeight;
+  void _addSelectedArea(double x0, double y0, double width, double height,
+      double containerWidth, double containerHeight) {
+    double xf = x0 + width;
+    double yf = y0 + height;
 
-      double areaWidth = (realXf - realX0) * 100;
-      double areaHeight = (realYf - realY0) * 100;
-      double areaPercentage = areaWidth * areaHeight;
+    double realX0 = x0 * 1024 / containerWidth;
+    double realY0 = y0 * 1024 / containerHeight;
+    double realXf = xf * 1024 / containerWidth;
+    double realYf = yf * 1024 / containerHeight;
 
-      final newArea = Coordinate(
-        x0: realX0,
-        y0: realY0,
-        xf: realXf,
-        yf: realYf,
-        idPregunta: widget.preguntaSeleccionada.id!,
-        porcentaje: areaPercentage,
-      );
+    double areaWidth = realXf - realX0;
+    double areaHeight = realYf - realY0;
 
-      ref
-          .read(selectedAreasProvider(int.parse(
-                  (widget.pregunta.id! + widget.preguntaSeleccionada.id!)))
-              .notifier)
-          .state
-          .add(newArea);
+    double areaPercentage = (areaWidth * areaHeight) / (1024 * 1024) * 100;
 
-      widget.newArea(newArea);
-      setState(() {
-        //_selectedAreaPercentage = areaPercentage;
+    areaPercentage = areaPercentage.clamp(0, 100);
 
-        final coordinates = ref.watch(selectedAreasProvider(int.parse(
-            (widget.pregunta.id! + widget.preguntaSeleccionada.id!))));
-        //widget.selectedAreas(coordinates);
-        areasSeleccionadas = coordinates;
-        _x = 0;
-        _y = 0;
-        _width = 0;
-        _height = 0;
-      });
-    }
+    final newArea = Coordinate(
+      x0: realX0,
+      y0: realY0,
+      xf: realXf,
+      yf: realYf,
+      idPregunta: widget.preguntaSeleccionada.id!,
+      porcentaje: areaPercentage,
+    );
+
+    // Agregar la nueva área a la lista de áreas seleccionadas
+    ref
+        .read(selectedAreasProvider(
+            int.parse(widget.pregunta.id! + widget.preguntaSeleccionada.id!)))
+        .add(newArea);
+
+    widget.newArea(newArea);
+    setState(() {
+      areasSeleccionadas = ref.watch(selectedAreasProvider(
+          int.parse(widget.pregunta.id! + widget.preguntaSeleccionada.id!)));
+      _x = 0;
+      _y = 0;
+      _width = 0;
+      _height = 0;
+    });
   }
 
   void _clearAreas() {
@@ -229,15 +226,22 @@ class _AreasState extends ConsumerState<Areas> {
     });
   }
 
-  void _drawSelectedArea(Coordinate coordinate) {
+  void _drawSelectedArea(
+      Coordinate coordinate, double containerWidth, double containerHeight) {
     setState(() {
-      _x = coordinate.x0 * _imageWidth.toDouble();
-      _y = coordinate.y0 * _imageHeight.toDouble();
-      _width = (coordinate.xf - coordinate.x0) * _imageWidth.toDouble();
-      _height = (coordinate.yf - coordinate.y0) * _imageHeight.toDouble();
+      // Calcula las coordenadas relativas al tamaño del contenedor
+      _x = (coordinate.x0 / 1024) * containerWidth;
+      _y = (coordinate.y0 / 1024) * containerHeight;
+      _width = ((coordinate.xf - coordinate.x0) / 1024) * containerWidth;
+      _height = ((coordinate.yf - coordinate.y0) / 1024) * containerHeight;
 
-      _width += _x;
-      _height += _y;
+      // Ajusta el ancho y el alto para que estén dentro del rango del contenedor
+      if (_x + _width > containerWidth) {
+        _width = containerWidth - _x;
+      }
+      if (_y + _height > containerHeight) {
+        _height = containerHeight - _y;
+      }
     });
   }
 
@@ -322,7 +326,8 @@ class _AreasState extends ConsumerState<Areas> {
                         onTap: () {
                           setState(() {
                             indexSelected = index;
-                            _drawSelectedArea(coordinate);
+                            _drawSelectedArea(
+                                coordinate, size.width, size.width);
                           });
                         },
                         child: Container(
@@ -411,7 +416,14 @@ class _AreasState extends ConsumerState<Areas> {
                                 widget.preguntaSeleccionada.id!))))
                         .length;
                     if (listLength == 0 || widget.multiple) {
-                      _addSelectedArea(_x, _y, _width, _height);
+                      _addSelectedArea(
+                        _x,
+                        _y,
+                        _width,
+                        _height,
+                        size.width,
+                        size.width,
+                      );
                     } else {
                       showMsj(
                           context: context,

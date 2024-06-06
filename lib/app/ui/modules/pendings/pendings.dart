@@ -179,10 +179,13 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
         await ref.read(databaseProvider).getStoreByUuid(storeUuid: storeUuid);
 
     showProgress(context: context, title: 'Enviando..');
-    item.pendiente?.contenido?.respuestas?.forEach((response) async {
+    DateFormat formatoFecha = DateFormat("yyyy-MM-dd HH:mm:ss");
+    String fechaActual = formatoFecha.format(DateTime.now());
+
+    for (var response in item.pendiente?.contenido?.respuestas ?? []) {
       logger.t("respinse es tipo: ${response.tipo}");
-      if (response.tipo == 'areasMultiples' ||
-          response.tipo == 'CheckIn' ||
+      if (response.tipo == 'CheckIn' ||
+          response.tipo == 'foto' ||
           response.tipo == 'firma' ||
           response.tipo == 'CheckOut' && response.respuesta != null ||
           response.respuesta == 'fotoGuardarCopia' &&
@@ -194,22 +197,33 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
           File file = File(response.respuesta ?? '');
           if (file.path != "") {
             await ref.read(pendingsController.notifier).sendCheckInOutImages(
-                storeIsar: storeIsar!,
-                tipo: response.tipo!,
-                ref: ref,
-                idPregunta: response.idPregunta,
-                storeUuid: storeUuid,
-                image: File(response.respuesta!));
+                  storeIsar: storeIsar!,
+                  tipo: response.tipo!,
+                  ref: ref,
+                  idPregunta: response.idPregunta,
+                  storeUuid: storeUuid,
+                  image: File(response.respuesta!),
+                  fecha: item.pendiente!.fecha.toString(),
+                  idSondeo: item.pendiente!.contenido!.idSondeo.toString(),
+                );
           }
         }
       }
-    });
+    }
+
     //Ver la lista de imagenes
 
     logger.i("images: $images");
 
-    navigator.pop();
+    if (containsFiles(item)) {
+      await Future.delayed(const Duration(seconds: 3));
+    }
 
+    final result = await ref
+        .read(pendingsController.notifier)
+        .sendPendings(item.pendiente!);
+
+    navigator.pop();
     /*if (imagesTypes.isNotEmpty) {
           for (int i = 0; i < imagesTypes.length; i++) {
             logger.i('Checkin imagen for' );
@@ -230,10 +244,7 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
     logger.i('Checkin imagen');
     logger.i('Checkin imagen ${storeIsar?.checkIn?.picture! ?? 'NoImage'}');
 
-    logger.f('Checkin imagen pendiente${item.pendiente!.toString()}');
-    final result = await ref
-        .read(pendingsController.notifier)
-        .sendPendings(item.pendiente!);
+    //item.pendiente!.fecha = fechaActual.toString();
 
 /*logger.i('Checkin imagen for checkout' );
     await ref.read(pendingsController.notifier).sendCheckInOutImages(
@@ -286,5 +297,19 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
         buttonLabel: 'Enviar');
 
     return Future.value(value);
+  }
+
+  bool containsFiles(dynamic item) {
+    List<int> indices = [];
+    if (item.pendiente?.contenido?.respuestas != null) {
+      for (int i = 0; i < item.pendiente.contenido.respuestas.length; i++) {
+        var respuesta = item.pendiente.contenido.respuestas[i];
+        if (respuesta.tipo == 'foto' || respuesta.tipo == 'firma') {
+          indices.add(i);
+        }
+      }
+    }
+
+    return indices.isNotEmpty;
   }
 }

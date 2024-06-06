@@ -596,8 +596,8 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       var image =
           ref.watch(imageFileProviderFamily(int.parse(question.question!.id!)));
       if (image != null) {
-        _addResponse(question.question!.id!, image.file!.path.toString(),
-            question.question!.tipo);
+        _addResponse(
+            question.question!.id!, image.file!.path.toString(), 'foto');
       }
     }
     question.response = response?.response.toString();
@@ -621,6 +621,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       idPregunta: idPregunta,
       respuesta: respuesta,
       tipo: tipo,
+      size: "",
     );
     if (resp.respuesta != null) {
       responses.add(resp);
@@ -632,6 +633,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       idPregunta: idPregunta,
       respuesta: respuesta,
       tipo: tipo,
+      size: "",
     );
     int index = responses
         .indexWhere((r) => r.idPregunta == idPregunta && r.tipo == tipo);
