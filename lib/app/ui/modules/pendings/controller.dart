@@ -82,7 +82,11 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
       _tipo = tipo;
     }
 
-    if (tipo == 'foto' || tipo == 'firma') {
+    if (tipo == 'foto' ||
+        tipo == 'firma' ||
+        tipo == 'carrusel' ||
+        tipo == 'fotoGuardarCopia' ||
+        tipo == 'imagen') {
       _tipo = tipo;
       responses.add(Respuestas(
         idPregunta: idPregunta, //Checkin 1
@@ -97,8 +101,9 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
     String tipoCapitalizado = '${_tipo[0].toUpperCase()}${_tipo.substring(1)}';
     if (tipoCapitalizado == 'Foto' ||
         tipoCapitalizado == 'Firma' ||
-        tipoCapitalizado == 'AreasMultiples' ||
-        tipoCapitalizado == 'Areas') {
+        tipoCapitalizado == 'Imagen' ||
+        tipoCapitalizado == 'Carrusel' ||
+        tipoCapitalizado == 'FotoGuardarCopia') {
       tipoCapitalizado = "SondeoFoto";
     }
 //Arma pendiente

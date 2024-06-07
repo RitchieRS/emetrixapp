@@ -12,7 +12,6 @@ import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/bottom_buton.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/custom_title.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 import 'components/components.dart';
 import 'controller.dart';
 
@@ -42,23 +41,25 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   SondeosFromStore? store;
   TextEditingController? answerController;
   //* List Responses
-  ResponseIndex? textResponse;
-  ResponseIndex? numericResponse;
-  ResponseIndex? decimalResponse;
-  ResponseIndex? emailResponse;
-  ResponseIndex? radioResponse;
-  ResponseIndex? yesnoRadioResponse;
-  ResponseIndex? multipleResponse;
-  ResponseIndex? imageResponse;
-  ResponseIndex? photoResponse;
-  ResponseIndex? positionGPSResponse;
-  ResponseIndex? signatureResponse;
-  ResponseIndex? dateResponse;
-  ResponseIndex? dateTimeResponse;
-  ResponseIndex? timeResponse;
-  ResponseIndex? tiempoResponse;
-  ResponseIndex? areasResponse;
-  ResponseIndex? areasMultiplesResponse;
+  List<ResponseIndex?> textResponses = [];
+  List<ResponseIndex?> numericResponses = [];
+  List<ResponseIndex?> decimalResponses = [];
+  List<ResponseIndex?> emailResponses = [];
+  List<ResponseIndex?> radioResponses = [];
+  List<ResponseIndex?> yesnoRadioResponses = [];
+  List<ResponseIndex?> multipleResponses = [];
+  List<ResponseIndex?> imageResponses = [];
+  List<ResponseIndex?> photoResponses = [];
+  List<ResponseIndex?> carruselResponses = [];
+  List<ResponseIndex?> positionGPSResponses = [];
+  List<ResponseIndex?> signatureResponses = [];
+  List<ResponseIndex?> dateResponses = [];
+  List<ResponseIndex?> dateTimeResponses = [];
+  List<ResponseIndex?> timeResponses = [];
+  List<ResponseIndex?> escanerResponses = [];
+  List<ResponseIndex?> tiempoResponses = [];
+  List<ResponseIndex?> areasResponses = [];
+  List<ResponseIndex?> areasMultiplesResponses = [];
   //ThisSondeo
   List<QuestionResponse> questionsResponses = [];
   List<(String, int)> mandatoryQuestions = [];
@@ -138,7 +139,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       if (checkPreguntas.isNotEmpty) {
         preguntasfn.add(checkPreguntas[0]);
         preguntasfn.sort((a, b) =>
-            int.parse(a.ordenI ?? '0').compareTo(int.parse(b!.ordenI ?? '1')));
+            int.parse(a.ordenI ?? '0').compareTo(int.parse(b.ordenI ?? '1')));
       }
       setState(() => {});
     }
@@ -151,13 +152,14 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             child: CustomScrollView(
               slivers: [
-                if (preguntasfn != null)
+                if (preguntasfn.isNotEmpty)
                   SliverList.builder(
                       itemCount: preguntasfn.length,
                       itemBuilder: (context, index) {
                         // final item = widget.sondeoItem.preguntas?[index];
 
-                        logger.i(preguntasfn[index].tipo);
+                        logger.i("${preguntasfn[index].tipo}" +
+                            " su index es $index");
 
                         return QuestionBuilder(
                           mandatory:
@@ -174,7 +176,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                             // });
                             // if (!startTextAsignation) return;
 
-                            if (uuid == preguntasfn?[index].uuid) {
+                            if (uuid == preguntasfn[index].uuid) {
                               // if (textResponse != null) {
                               setState(() => answerController = controller);
                               //   print('RESPONSE');
@@ -191,171 +193,191 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                           answer: (response) async {
                             setState(() {
                               validate = false;
-                              textResponse = ResponseIndex(
+                              textResponses.add(ResponseIndex(
                                 index: index,
                                 response: response,
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           numeric: (response) {
                             setState(() {
                               validate = false;
-                              numericResponse = ResponseIndex(
+                              numericResponses.add(ResponseIndex(
                                 index: index,
                                 response: response,
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           decimal: (response) {
                             setState(() {
                               validate = false;
-                              decimalResponse = ResponseIndex(
+                              decimalResponses.add(ResponseIndex(
                                 index: index,
                                 response: response,
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           email: (response) {
                             setState(() {
                               validate = false;
-                              emailResponse = ResponseIndex(
+                              emailResponses.add(ResponseIndex(
                                 index: index,
                                 response: response,
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           answerRadio: (response) {
                             setState(() {
                               validate = false;
-                              radioResponse = ResponseIndex(
+                              radioResponses.add(ResponseIndex(
                                 index: index,
                                 response: response,
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           yesnoRadio: (response) {
                             setState(() {
                               validate = false;
-                              yesnoRadioResponse = ResponseIndex(
+                              yesnoRadioResponses.add(ResponseIndex(
                                 index: index,
                                 response: response,
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           selectionMultiple: (selectedItems) {
                             setState(() {
                               validate = false;
-                              multipleResponse = ResponseIndex(
+                              multipleResponses.add(ResponseIndex(
                                 index: index,
                                 response: selectedItems.toString(),
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           image: (image) {
                             setState(() {
                               validate = false;
-                              imageResponse = ResponseIndex(
+                              imageResponses.add(ResponseIndex(
                                 index: index,
-                                response: image.toString(),
+                                response: image,
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           foto: (photo) {
                             setState(() {
                               validate = false;
-                              photoResponse = ResponseIndex(
+                              photoResponses.add(ResponseIndex(
                                 index: index,
                                 response: photo,
                                 error: false,
-                              );
+                              ));
+                            });
+                          },
+                          carrusel: (response) {
+                            setState(() {
+                              validate = false;
+                              carruselResponses.add(ResponseIndex(
+                                index: index,
+                                response: response,
+                                error: false,
+                              ));
                             });
                           },
                           positionGPS: (positionGPS) {
                             setState(() {
                               validate = false;
-                              positionGPSResponse = ResponseIndex(
+                              positionGPSResponses.add(ResponseIndex(
                                 index: index,
                                 response: positionGPS,
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           signature: (signatureFile) {
                             setState(() {
                               validate = false;
-                              signatureResponse = ResponseIndex(
+                              signatureResponses.add(ResponseIndex(
                                 index: index,
                                 response: signatureFile.toString(),
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           date: (date) {
                             setState(() {
                               validate = false;
-                              dateResponse = ResponseIndex(
+                              dateResponses.add(ResponseIndex(
                                 index: index,
                                 response: date.toString(),
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           dateTime: (dateTime) {
                             setState(() {
                               validate = false;
-                              dateTimeResponse = ResponseIndex(
+                              dateTimeResponses.add(ResponseIndex(
                                 index: index,
                                 response: dateTime.toString(),
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           time: (time) {
                             setState(() {
                               validate = false;
-                              timeResponse = ResponseIndex(
+                              timeResponses.add(ResponseIndex(
                                 index: index,
                                 response: time.toString(),
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           tiempo: (tiempo) {
                             setState(() {
                               validate = false;
-                              tiempoResponse = ResponseIndex(
+                              tiempoResponses.add(ResponseIndex(
                                 index: index,
                                 response: tiempo,
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           areas: (response) {
                             setState(() {
                               validate = false;
-                              areasResponse = ResponseIndex(
+                              areasResponses.add(ResponseIndex(
                                 index: index,
                                 response: response,
                                 error: false,
-                              );
+                              ));
                             });
                           },
                           areasMultiples: (response) {
                             setState(() {
                               validate = false;
-                              areasMultiplesResponse = ResponseIndex(
+                              areasMultiplesResponses.add(ResponseIndex(
                                 index: index,
                                 response: response,
                                 error: false,
-                              );
+                              ));
+                            });
+                          },
+                          escaner: (response) {
+                            setState(() {
+                              validate = false;
+                              escanerResponses.add(ResponseIndex(
+                                index: index,
+                                response: response,
+                                error: false,
+                              ));
                             });
                           },
                           index: index,
@@ -458,21 +480,21 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   }
 
   void idenifyComponents() {
-    widget.sondeoItem.preguntas?.forEach((sondeo) {
-      final index = widget.sondeoItem.preguntas?.indexOf(sondeo);
+    for (var sondeo in preguntasfn) {
+      final index = preguntasfn.indexOf(sondeo);
       questionsResponses.add(
-        QuestionResponse(question: sondeo, response: null, indexSondeo: index!),
+        QuestionResponse(question: sondeo, response: null, indexSondeo: index),
       );
       setState(() {});
 
       if (sondeo.obligatorio == 1) {
         mandatoryComponents.add(true);
         mandatoryQuestions.add((sondeo.tipo ?? '', index));
-        return;
+        continue;
       }
       mandatoryComponents.add(false);
       ids.add((sondeo.id!, sondeo.tipo!));
-    });
+    }
   }
 
   Future<void> getTempResponses() async {
@@ -546,36 +568,40 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   //Aquí empiezan los metodos para construir las respuestas
 
   void buildResponses() async {
-    Map<String, ResponseIndex?> typeResponses = {
-      'abierta': textResponse,
-      'numerico': numericResponse,
-      'decimal': decimalResponse,
-      'email': emailResponse,
-      'unicaRadio': radioResponse,
-      'sino': yesnoRadioResponse,
-      'imagen': imageResponse,
-      'foto': photoResponse,
-      'fotoGuardarCopia': imageResponse,
-      'multiple': multipleResponse,
-      'gps': positionGPSResponse,
-      'firma': signatureResponse,
-      'fecha': dateResponse,
-      'fechaHora': dateTimeResponse,
-      'hora': timeResponse,
-      'tiempo': tiempoResponse,
-      'areas': areasResponse,
-      'areasMultiples': areasMultiplesResponse,
+    Map<String, List<ResponseIndex?>> typeResponses = {
+      'abierta': textResponses,
+      'numerico': numericResponses,
+      'decimal': decimalResponses,
+      'email': emailResponses,
+      'unicaRadio': radioResponses,
+      'sino': yesnoRadioResponses,
+      'imagen': imageResponses,
+      'foto': photoResponses,
+      'carrusel': carruselResponses,
+      'fotoGuardarCopia': imageResponses,
+      'multiple': multipleResponses,
+      'gps': positionGPSResponses,
+      'firma': signatureResponses,
+      'fecha': dateResponses,
+      'fechaHora': dateTimeResponses,
+      'hora': timeResponses,
+      'tiempo': tiempoResponses,
+      'areas': areasResponses,
+      'areasMultiples': areasMultiplesResponses,
+      'scannerQR': escanerResponses,
     };
 
     for (var question in questionsResponses) {
-      final response = typeResponses[question.question?.tipo];
-      if (response != null) {
-        if (_isStandardResponse(question, response)) {
-          _handleStandardResponse(question, response);
-        } else if (_isSpecialResponse(question)) {
-          _handleSpecialResponse(question, response);
+      final responsesMap = typeResponses[question.question?.tipo];
+      if (responsesMap != null) {
+        for (var response in responsesMap) {
+          if (_isStandardResponse(question, response)) {
+            _handleStandardResponse(question, response);
+          } else if (_isSpecialResponse(question)) {
+            _handleSpecialResponse(question, response);
+          }
+          _saveResponse(question);
         }
-        _saveResponse(question);
       }
     }
 
@@ -587,7 +613,9 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   bool _isStandardResponse(var question, ResponseIndex? response) {
     return question.indexSondeo == response?.index &&
         question.question!.tipo != 'foto' &&
-        question.question!.tipo != 'firma';
+        question.question!.tipo != 'firma' &&
+        question.question!.tipo != 'imagen' &&
+        question.question!.tipo != 'carrusel';
   }
 
   void _handleStandardResponse(var question, ResponseIndex? response) {
@@ -605,7 +633,9 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
 
   bool _isSpecialResponse(var question) {
     return question.question!.tipo == 'foto' ||
-        question.question!.tipo == 'firma';
+        question.question!.tipo == 'firma' ||
+        question.question!.tipo == 'imagen' ||
+        question.question!.tipo == 'carrusel';
   }
 
   void _handleSpecialResponse(var question, ResponseIndex? response) {
@@ -658,7 +688,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
           (r) => r.idPregunta == resp.idPregunta && r.tipo == resp.tipo);
 
       if (index != -1) {
-        if (resp.tipo != 'areas' && resp.tipo != 'areasMultiples') {
+        if (resp.tipo != 'carrusel') {
           responses[index] = resp;
         } else {
           responses.add(resp);

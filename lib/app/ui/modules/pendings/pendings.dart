@@ -178,15 +178,22 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
     final storeIsar =
         await ref.read(databaseProvider).getStoreByUuid(storeUuid: storeUuid);
 
+    final result = await ref
+        .read(pendingsController.notifier)
+        .sendPendings(item.pendiente!);
     showProgress(context: context, title: 'Enviando..');
-    DateFormat formatoFecha = DateFormat("yyyy-MM-dd HH:mm:ss");
-    String fechaActual = formatoFecha.format(DateTime.now());
+
+    if (containsFiles(item)) {
+      await Future.delayed(const Duration(seconds: 2));
+    }
 
     for (var response in item.pendiente?.contenido?.respuestas ?? []) {
       logger.t("respinse es tipo: ${response.tipo}");
       if (response.tipo == 'CheckIn' ||
           response.tipo == 'foto' ||
           response.tipo == 'firma' ||
+          response.tipo == 'carrusel' ||
+          response.tipo == 'imagen' ||
           response.tipo == 'CheckOut' && response.respuesta != null ||
           response.respuesta == 'fotoGuardarCopia' &&
               response.respuesta != null) {
@@ -206,6 +213,7 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
                   fecha: item.pendiente!.fecha.toString(),
                   idSondeo: item.pendiente!.contenido!.idSondeo.toString(),
                 );
+            await Future.delayed(const Duration(seconds: 1));
           }
         }
       }
@@ -216,12 +224,8 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
     logger.i("images: $images");
 
     if (containsFiles(item)) {
-      await Future.delayed(const Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 1));
     }
-
-    final result = await ref
-        .read(pendingsController.notifier)
-        .sendPendings(item.pendiente!);
 
     navigator.pop();
     /*if (imagesTypes.isNotEmpty) {
@@ -260,7 +264,7 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
         .sendPendings(item.pendiente!);
     Navigator.pop(context);*/
     logger.i('Result ${result.idError}');
-    if (result.idError == 0) {
+    if (result.idError == 0 || result.idError == 1) {
       await showMsj(
           context: context,
           title: 'Pendiente enviado',
@@ -270,6 +274,7 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
           buttonLabel: 'Aceptar');
       await ref.read(pendingsController.notifier).deletePending(index, ref);
       await ref.read(pendingsController.notifier).getPendings(ref);
+      navigator.pop();
       setState(() {});
       return;
     }
@@ -304,7 +309,10 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
     if (item.pendiente?.contenido?.respuestas != null) {
       for (int i = 0; i < item.pendiente.contenido.respuestas.length; i++) {
         var respuesta = item.pendiente.contenido.respuestas[i];
-        if (respuesta.tipo == 'foto' || respuesta.tipo == 'firma') {
+        if (respuesta.tipo == 'foto' ||
+            respuesta.tipo == 'firma' ||
+            respuesta.tipo == 'imagen' ||
+            respuesta.tipo == 'fotoGuardarCopia') {
           indices.add(i);
         }
       }

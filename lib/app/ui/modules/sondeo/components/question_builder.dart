@@ -1,9 +1,6 @@
-// ignore_for_file: avoid_print
-import 'dart:io';
 import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/area.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/areas_multiples.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
@@ -30,12 +27,14 @@ class QuestionBuilder extends ConsumerStatefulWidget {
     required this.email,
     required this.yesnoRadio,
     required this.foto,
+    required this.carrusel,
     required this.tiempo,
     required this.selectionMultiple,
     required this.answerController,
     required this.callback,
     required this.preguntasdep,
     required this.areas,
+    required this.escaner,
     required this.areasMultiples,
   });
   final Preguntas pregunta;
@@ -54,11 +53,13 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Function(String?) dateTime;
   final Function(String?) time;
   final Function(String?) tiempo;
-  final Function(File?) image;
+  final Function(String?) image;
   final Function(String) foto;
+  final Function(String) carrusel;
   final Function(String?) signature;
   final Function(String?) areas;
   final Function(List<Coordinate>?) areasMultiples;
+  final Function(String?) escaner;
   final Function(String?, String?) callback;
   final Function(TextEditingController controller, String uuid)
       answerController;
@@ -112,7 +113,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           saveCopy: true,
           image: (image) {
             print('Image: $image');
-            widget.image(image);
+            widget.image(image!.path.toString());
           },
           mandatory: widget.mandatory,
         );
@@ -127,7 +128,9 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
             widget.answerController(controller, widget.pregunta.uuid ?? '');
           },
           answer: (String? answer) {
-            widget.answer(answer);
+            setState(() {
+              widget.answer(answer);
+            });
             //Get the value of the textfield and save it to validate and send to endpoint;
           },
           charactersMin: widget.pregunta.valorMinimo,
@@ -235,7 +238,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         return SelectPicture(
           pregunta: widget.pregunta,
           image: (image) {
-            widget.image(image);
+            widget.image(image!.path.toString());
           },
           mandatory: widget.mandatory,
         );
@@ -244,7 +247,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         return ImagesCarrusel(
           pregunta: widget.pregunta,
           image: (image) {
-            widget.image(image);
+            widget.carrusel(image!.path.toString());
           },
           mandatory: widget.mandatory,
           multiple: true,
@@ -330,6 +333,9 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         return Scanner(
           pregunta: widget.pregunta.pregunta ?? 'NoData',
           mandatory: widget.mandatory,
+          getCode: (code) {
+            widget.escaner(code);
+          },
         );
 
       case 'areas':

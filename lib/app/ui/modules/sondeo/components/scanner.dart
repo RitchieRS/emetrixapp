@@ -4,16 +4,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class Scanner extends ConsumerStatefulWidget {
   const Scanner({
     super.key,
     required this.pregunta,
+    required this.getCode,
     this.mandatory = false,
   });
   final String pregunta;
   final bool mandatory;
+  final Function(String?) getCode;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ScannerState();
@@ -68,6 +71,7 @@ class _ScannerState extends ConsumerState<Scanner>
         ));
     setState(() {
       text = result;
+      widget.getCode(text);
     });
     // widget.getSignature(result);
   }

@@ -197,7 +197,7 @@ class _SignatureFullPageState extends ConsumerState<SignatureFullPage> {
     );
   }
 
-  Future _createImage(Size size, bool saveToGallery) async {
+  Future<void> _createImage(Size size, bool saveToGallery) async {
     try {
       if (!control.isFilled) {
         ref
@@ -205,33 +205,39 @@ class _SignatureFullPageState extends ConsumerState<SignatureFullPage> {
             .showError(context, 'Dibuja tu firma');
         return;
       }
-      final imageBytes = await control.toImage();
-      final buffer = imageBytes?.buffer;
-      Directory tempDir = await getTemporaryDirectory();
-      String tempPath = tempDir.path;
-      final filePath = '$tempPath/firma.png';
 
-      final img = await File(filePath).writeAsBytes(buffer!.asUint8List(
-          imageBytes?.offsetInBytes ?? 0, imageBytes?.lengthInBytes));
-      signatureImage = img;
-      setState(() {});
+      final ByteData? imageBytes = await control.toImage(
+        color: Colors.black,
+        background: Colors.white,
+      );
 
-      //Save To Gallery
+      if (imageBytes == null) {
+        return;
+      }
+
+      final List<int> bytes = imageBytes.buffer.asUint8List();
+
+      final Directory tempDir = await getTemporaryDirectory();
+      final String tempPath = tempDir.path;
+      final String filePath = '$tempPath/firma.png';
+
+      final imgFile = await File(filePath).writeAsBytes(bytes);
+
+      setState(() {
+        signatureImage = imgFile;
+      });
+
       if (saveToGallery) {
         await ImageGallerySaver.saveFile(signatureImage!.path);
         ref.read(messagesProvider.notifier).showSuccess(
             context: context, message: 'Firma descargada en galería');
-        return;
       }
-      //Enviar imagen al widget padre
-      Navigator.pop(context, signatureImage);
 
-      //
+      Navigator.pop(context, signatureImage);
     } catch (error) {
       ref
           .read(messagesProvider.notifier)
-          .showError(context, 'Error inseperado');
-      //
+          .showError(context, 'Error inesperado');
     }
   }
 
