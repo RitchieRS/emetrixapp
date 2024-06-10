@@ -98,11 +98,14 @@ class _MyTimerState extends ConsumerState<MyTimer>
   }
 
   void _handleLaps() {
-    if (!_stopwatch.isRunning()) {
-      _resetLaps();
-      _startTimer();
-      return;
+    if (timerlocal == null || !timerlocal!.isActive) {
+      if (!_stopwatch.isRunning()) {
+        _resetLaps();
+        _startTimer();
+        return;
+      }
     }
+
     if (_stopwatch.isRunning() && (_lapTimes.length + 1) == widget.times) {
       _stopTimer();
       //_stopwatch.awaitIso();

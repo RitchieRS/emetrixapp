@@ -1,9 +1,10 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lecle_flutter_absolute_path/lecle_flutter_absolute_path.dart';
@@ -36,6 +37,8 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
   //File? image;
 
   var image;
+  bool saveCopy = false;
+  String? imageUrl = null;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +51,8 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
         isDark ? Theme.of(context).hintColor : Theme.of(context).highlightColor;
     final labelPadding = EdgeInsets.symmetric(horizontal: size.width * 0.04);
     final side = size.height * 0.25;
+
+    imageUrl = widget.pregunta.respuesta.toString();
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -74,17 +79,49 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
                   color: backColor,
                   child: widget.pregunta.respuesta != null &&
                           widget.pregunta.tipo == 'imagen'
-                      ? Image.network(
-                          widget.pregunta.respuesta.toString(),
-                          fit: BoxFit.contain,
-                          frameBuilder:
-                              (context, child, frame, wasSynchronouslyLoaded) {
-                            return frame == null
-                                ? const Center(
-                                    child: CircularProgressIndicator(
-                                        strokeWidth: 2))
-                                : child;
+                      ? GestureDetector(
+                          onTap: () {
+                            imageUrl = widget.pregunta.respuesta.toString();
+                            setState(() {});
+                            imageDialog('ssksksks',
+                                widget.pregunta.respuesta.toString(), context);
                           },
+                          child: KeyedSubtree(
+                            key: UniqueKey(),
+                            child: GestureDetector(
+                              child: CachedNetworkImage(
+                                imageUrl: imageUrl ?? '',
+                                fit: BoxFit.contain,
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(),
+                                errorWidget: (context, url, error) => Container(
+                                  width: double
+                                      .infinity, // Asegura que el contenedor ocupe todo el ancho disponible
+                                  padding: const EdgeInsets.all(
+                                      16.0), // Agrega padding para asegurar un área tocable
+                                  color: Colors
+                                      .transparent, // Asegura que el contenedor sea clicable
+                                  child: const Column(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .center, // Centra los hijos en el contenedor
+                                    children: [
+                                      Icon(Icons.error,
+                                          size: 48), // Tamaño del icono
+                                      SizedBox(
+                                          height:
+                                              8), // Añade un espacio entre el icono y el texto
+                                      Text(
+                                        'Click para reintentar cargar la imagen',
+                                        style: TextStyle(fontSize: 14),
+                                        textAlign:
+                                            TextAlign.center, // Centra el texto
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         )
                       : image.file != null
                           ? Image.file(
@@ -117,9 +154,12 @@ class _SelectPictureState extends ConsumerState<SelectPicture>
           ),
           widget.saveCopy
               ? CheckboxListTile(
-                  value: widget.saveCopy,
-                  onChanged: null,
-                  // onChanged: (newvalue) {},
+                  value: saveCopy,
+                  onChanged: (bool? newValue) {
+                    setState(() {
+                      saveCopy = newValue ?? false;
+                    });
+                  },
                   title: const Text('Guardar copia'),
                   activeColor: c.primary500,
                   checkboxShape: const CircleBorder(),

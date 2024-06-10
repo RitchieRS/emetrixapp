@@ -27,6 +27,7 @@ class QuestionBuilder extends ConsumerStatefulWidget {
     required this.email,
     required this.yesnoRadio,
     required this.foto,
+    required this.fotoGuardarCopia,
     required this.carrusel,
     required this.tiempo,
     required this.selectionMultiple,
@@ -55,6 +56,7 @@ class QuestionBuilder extends ConsumerStatefulWidget {
   final Function(String?) tiempo;
   final Function(String?) image;
   final Function(String) foto;
+  final Function(String) fotoGuardarCopia;
   final Function(String) carrusel;
   final Function(String?) signature;
   final Function(String?) areas;
@@ -112,8 +114,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
           pregunta: widget.pregunta,
           saveCopy: true,
           image: (image) {
-            print('Image: $image');
-            widget.image(image!.path.toString());
+            widget.fotoGuardarCopia(image!.path.toString());
           },
           mandatory: widget.mandatory,
         );
@@ -228,8 +229,12 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
       case 'foto':
         return ImagesCarrusel(
           pregunta: widget.pregunta,
-          image: (image) {
-            widget.foto(image?.path.toString() ?? '');
+          image: (images) {
+            if (images!.isNotEmpty) {
+              for (final image in images) {
+                widget.foto(image.path.toString());
+              }
+            }
           },
           mandatory: widget.mandatory,
           multiple: false,
@@ -246,8 +251,12 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
       case 'carrusel':
         return ImagesCarrusel(
           pregunta: widget.pregunta,
-          image: (image) {
-            widget.carrusel(image!.path.toString());
+          image: (images) {
+            if (images!.isNotEmpty) {
+              for (final image in images) {
+                widget.carrusel(image.path.toString());
+              }
+            }
           },
           mandatory: widget.mandatory,
           multiple: true,

@@ -8,7 +8,6 @@ import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/services/database/database.dart';
 import 'package:emetrix_flutter/app/core/providers/providers.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'state.dart';
 
@@ -90,7 +89,7 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
       _tipo = tipo;
       responses.add(Respuestas(
         idPregunta: idPregunta, //Checkin 1
-        tipo: tipo, //checkin
+        tipo: tipo == 'fotoGuardarCopia' ? 'foto' : tipo, //checkin
         respuesta: "",
         size: sizeImg,
       ));

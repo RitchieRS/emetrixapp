@@ -178,6 +178,7 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
     final storeIsar =
         await ref.read(databaseProvider).getStoreByUuid(storeUuid: storeUuid);
 
+    navigator.pop();
     final result = await ref
         .read(pendingsController.notifier)
         .sendPendings(item.pendiente!);
@@ -274,7 +275,6 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
           buttonLabel: 'Aceptar');
       await ref.read(pendingsController.notifier).deletePending(index, ref);
       await ref.read(pendingsController.notifier).getPendings(ref);
-      navigator.pop();
       setState(() {});
       return;
     }

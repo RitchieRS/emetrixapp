@@ -44,6 +44,7 @@ dependencies:
   # app_bar_with_search_switch: ^1.6.0
   # flutter_barcode_scanner: ^2.0.0
   image: ^4.0.5
+  cached_network_image: ^3.3.1
 
 dev_dependencies:
   build_runner: ^2.4.6

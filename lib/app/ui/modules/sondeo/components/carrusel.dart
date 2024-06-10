@@ -21,7 +21,7 @@ class ImagesCarrusel extends ConsumerStatefulWidget {
       required this.multiple});
   final Preguntas pregunta;
   final bool mandatory;
-  final Function(File?) image;
+  final Function(List<File>?) image;
   final bool multiple;
 
   @override
@@ -30,7 +30,7 @@ class ImagesCarrusel extends ConsumerStatefulWidget {
 
 class _SelectPictureState extends ConsumerState<ImagesCarrusel>
     with AutomaticKeepAliveClientMixin {
-  final images = <File>[];
+  final List<File> imageFiles = [];
 
   // var image;
 
@@ -61,7 +61,7 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
           SizedBox(height: size.height * 0.01),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 800),
-            child: images.isEmpty
+            child: imageFiles.isEmpty
                 ? Center(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -107,12 +107,12 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
                           ),
                         ),
                         ListView.builder(
-                            itemCount: images.length,
+                            itemCount: imageFiles.length,
                             scrollDirection: Axis.horizontal,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
-                              final item = images[index];
+                              final item = imageFiles[index];
 
                               return Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
@@ -151,7 +151,9 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
                                         child: IconButton(
                                             onPressed: () {
                                               setState(() {
-                                                images.removeAt(index);
+                                                imageFiles.removeAt(index);
+                                                widget.image(
+                                                    List.from(imageFiles));
                                               });
                                             },
                                             icon: const Icon(Icons.close,
@@ -216,13 +218,13 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
           await LecleFlutterAbsolutePath.getAbsolutePath(uri: savedImgPath);
       setState(() {
         if (multiple) {
-          images.add(File(filePath ?? ''));
+          imageFiles.add(File(filePath ?? ''));
         } else {
-          images.clear();
-          images.add(File(filePath ?? ''));
+          imageFiles.clear();
+          imageFiles.add(File(filePath ?? ''));
         }
       });
-      widget.image(File(filePath ?? ''));
+      widget.image(imageFiles);
     } on PlatformException catch (e) {
       debugPrint('error:$e');
       widget.image(null);
@@ -232,13 +234,13 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
   Future<void> saveImageOnGallery(int index) async {
     final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/image.jpg';
-    await File(path).writeAsBytes(await images[index].readAsBytes());
+    await File(path).writeAsBytes(await imageFiles[index].readAsBytes());
 
     if (Platform.isIOS) {
-      await ImageGallerySaver.saveFile(images[index].path,
+      await ImageGallerySaver.saveFile(imageFiles[index].path,
           isReturnPathOfIOS: true);
     } else {
-      await ImageGallerySaver.saveFile(images[index].path);
+      await ImageGallerySaver.saveFile(imageFiles[index].path);
     }
   }
 

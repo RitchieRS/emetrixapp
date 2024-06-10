@@ -12,6 +12,7 @@ import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/bottom_buton.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/widgets/custom_title.dart';
 import 'package:emetrix_flutter/app/ui/utils/widgets/widgets.dart';
+import 'package:path_provider/path_provider.dart';
 import 'components/components.dart';
 import 'controller.dart';
 
@@ -50,6 +51,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   List<ResponseIndex?> multipleResponses = [];
   List<ResponseIndex?> imageResponses = [];
   List<ResponseIndex?> photoResponses = [];
+  List<ResponseIndex?> fotoGuardarCopiaResponses = [];
   List<ResponseIndex?> carruselResponses = [];
   List<ResponseIndex?> positionGPSResponses = [];
   List<ResponseIndex?> signatureResponses = [];
@@ -380,6 +382,16 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
                               ));
                             });
                           },
+                          fotoGuardarCopia: (response) {
+                            setState(() {
+                              validate = false;
+                              fotoGuardarCopiaResponses.add(ResponseIndex(
+                                index: index,
+                                response: response,
+                                error: false,
+                              ));
+                            });
+                          },
                           index: index,
                           store: widget.store,
                           pregunta: preguntasfn[index],
@@ -566,8 +578,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
   }
 
   //Aquí empiezan los metodos para construir las respuestas
-
-  void buildResponses() async {
+  void buildResponses() {
     Map<String, List<ResponseIndex?>> typeResponses = {
       'abierta': textResponses,
       'numerico': numericResponses,
@@ -578,7 +589,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       'imagen': imageResponses,
       'foto': photoResponses,
       'carrusel': carruselResponses,
-      'fotoGuardarCopia': imageResponses,
+      'fotoGuardarCopia': fotoGuardarCopiaResponses,
       'multiple': multipleResponses,
       'gps': positionGPSResponses,
       'firma': signatureResponses,
@@ -595,12 +606,16 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       final responsesMap = typeResponses[question.question?.tipo];
       if (responsesMap != null) {
         for (var response in responsesMap) {
-          if (_isStandardResponse(question, response)) {
-            _handleStandardResponse(question, response);
-          } else if (_isSpecialResponse(question)) {
-            _handleSpecialResponse(question, response);
+          if (response?.index == question.indexSondeo) {
+            if (_isSpecialResponse(question)) {
+              _handleSpecialResponse(question, response);
+            } else {
+              _handleStandardResponse(question, response);
+              question.response = response?.response.toString();
+              _addOrUpdateResponse(question.question!.id!, question.response!,
+                  question.question!.tipo!);
+            }
           }
-          _saveResponse(question);
         }
       }
     }
@@ -610,12 +625,12 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     setState(() {});
   }
 
-  bool _isStandardResponse(var question, ResponseIndex? response) {
-    return question.indexSondeo == response?.index &&
-        question.question!.tipo != 'foto' &&
-        question.question!.tipo != 'firma' &&
-        question.question!.tipo != 'imagen' &&
-        question.question!.tipo != 'carrusel';
+  bool _isSpecialResponse(var question) {
+    return question.question!.tipo == 'foto' ||
+        question.question!.tipo == 'firma' ||
+        question.question!.tipo == 'imagen' ||
+        question.question!.tipo == 'fotoGuardarCopia' ||
+        question.question!.tipo == 'carrusel';
   }
 
   void _handleStandardResponse(var question, ResponseIndex? response) {
@@ -624,37 +639,27 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       var image =
           ref.watch(imageFileProviderFamily(int.parse(question.question!.id!)));
       if (image != null) {
-        _addResponse(
+        _addOrUpdateResponse(
             question.question!.id!, image.file!.path.toString(), 'foto');
       }
     }
     question.response = response?.response.toString();
   }
 
-  bool _isSpecialResponse(var question) {
-    return question.question!.tipo == 'foto' ||
-        question.question!.tipo == 'firma' ||
-        question.question!.tipo == 'imagen' ||
-        question.question!.tipo == 'carrusel';
-  }
-
   void _handleSpecialResponse(var question, ResponseIndex? response) {
     File image = File(response!.response.toString());
     if (image.path != "") {
-      _addOrUpdateResponse(question.question!.id!, image.path.toString(),
-          question.question!.tipo);
-    }
-  }
-
-  void _addResponse(String idPregunta, String respuesta, String tipo) {
-    final resp = Respuestas(
-      idPregunta: idPregunta,
-      respuesta: respuesta,
-      tipo: tipo,
-      size: "",
-    );
-    if (resp.respuesta != null) {
-      responses.add(resp);
+      if (question!.question.tipo == 'fotoGuardarCopia') {
+        saveImageGallery(image.path);
+      }
+      if (question!.question.tipo == 'carrusel') {
+        _addResponse(question!.question.id, response.response.toString(),
+            question!.question.tipo);
+      } else {
+        _addOrUpdateResponse(question.question!.id!, image.path.toString(),
+            question.question!.tipo);
+        question.response = image.path.toString();
+      }
     }
   }
 
@@ -665,8 +670,10 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       tipo: tipo,
       size: "",
     );
+
     int index = responses
         .indexWhere((r) => r.idPregunta == idPregunta && r.tipo == tipo);
+
     if (index != -1) {
       responses[index] = resp;
     } else {
@@ -676,30 +683,19 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     }
   }
 
-  void _saveResponse(var question) {
+  void _addResponse(String idPregunta, String respuesta, String tipo) {
     final resp = Respuestas(
-      idPregunta: question.question?.id,
-      respuesta: question.response,
-      tipo: question.question?.tipo,
+      idPregunta: idPregunta,
+      respuesta: respuesta,
+      tipo: tipo,
+      size: "",
     );
 
-    if (resp.respuesta != null && resp.respuesta != "null") {
-      int index = responses.indexWhere(
-          (r) => r.idPregunta == resp.idPregunta && r.tipo == resp.tipo);
-
-      if (index != -1) {
-        if (resp.tipo != 'carrusel') {
-          responses[index] = resp;
-        } else {
-          responses.add(resp);
-        }
-      } else {
-        responses.add(resp);
-      }
+    if (resp.respuesta!.isNotEmpty) {
+      responses.add(resp);
     }
   }
-
-  //Aquí terminan los metodos para construir las respuestas
+  //Aquí terminan las funciones para construir las respuestas
 
   Future<void> validateAllComponents(
       List<int> finishedSections, WidgetRef ref) async {
@@ -708,19 +704,20 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
     buildResponses();
 
     int missingAnswers = 0;
-    //Ver si las respuestas obligatorias estan vacias
+    QuestionResponse defaultResponse = QuestionResponse();
+
     for (var questionMandatory in mandatoryQuestions) {
-      for (var response in questionsResponses) {
-        logger.e("mandatiorios:${response.response}");
-        if (questionMandatory.$2 == response.indexSondeo) {
-          if (response.response != null) {
-            mandatoryComponents[response.indexSondeo!] = false;
-            missingAnswers--;
-          } else {
-            mandatoryComponents[response.indexSondeo!] = true;
-          }
-          missingAnswers++;
-        }
+      var response = questionsResponses.firstWhere(
+        (r) => r.indexSondeo == questionMandatory.$2,
+        orElse: () => defaultResponse,
+      );
+      if (response != null &&
+          response.response != null &&
+          response.response!.isNotEmpty) {
+        mandatoryComponents[response.indexSondeo!] = false;
+      } else {
+        mandatoryComponents[response.indexSondeo ?? 0] = true;
+        missingAnswers++;
       }
     }
 
@@ -731,7 +728,7 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       return;
     }
 
-    //Calculate progress
+    // Calculate progress
     int questionsResponded = 0;
     for (var element in questionsResponses) {
       if (element.response != null) {
@@ -841,6 +838,25 @@ class _SondeosBuilderState extends ConsumerState<SingleSondeoPage>
       }
       debugPrint('Total Responses: ${questionsResponses.length}');
       debugPrint('*************************');
+    }
+  }
+
+  Future<void> saveImageGallery(String imagePath) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final path = directory.path;
+
+      final File imageFile = File(imagePath);
+      String fileName = imageFile.path.split('/').last;
+      final bytes = await imageFile.readAsBytes();
+
+      final File newImageFile = File('$path/$fileName');
+
+      await newImageFile.writeAsBytes(bytes);
+
+      logger.i('Imagen guardada en: ${newImageFile.path}');
+    } catch (e) {
+      logger.i('Error al guardar la imagen: $e');
     }
   }
 
