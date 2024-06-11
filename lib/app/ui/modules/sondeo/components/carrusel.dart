@@ -67,11 +67,12 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TextButton.icon(
-                            onPressed: () =>
-                                pickImage(ImageSource.gallery, widget.multiple),
-                            icon: const Icon(Icons.add),
-                            label: const Text('Añadir imagen')),
+                        if (widget.pregunta.fotoGaleria == 1)
+                          TextButton.icon(
+                              onPressed: () => pickImage(
+                                  ImageSource.gallery, widget.multiple),
+                              icon: const Icon(Icons.add),
+                              label: const Text('Añadir imagen')),
                         TextButton.icon(
                             onPressed: () =>
                                 pickImage(ImageSource.camera, widget.multiple),
@@ -92,11 +93,12 @@ class _SelectPictureState extends ConsumerState<ImagesCarrusel>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              TextButton.icon(
-                                  onPressed: () => pickImage(
-                                      ImageSource.gallery, widget.multiple),
-                                  icon: Icon(Icons.image, color: c.primary),
-                                  label: const Text('Añadir')),
+                              if (widget.pregunta.fotoGaleria == 1)
+                                TextButton.icon(
+                                    onPressed: () => pickImage(
+                                        ImageSource.gallery, widget.multiple),
+                                    icon: Icon(Icons.image, color: c.primary),
+                                    label: const Text('Añadir')),
                               TextButton.icon(
                                   onPressed: () => pickImage(
                                       ImageSource.camera, widget.multiple),
