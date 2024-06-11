@@ -114,7 +114,7 @@ class PendingsControllerNotifier extends StateNotifier<PendingsState> {
       quien: Platform.isAndroid ? 'Android' : 'IOS',
       fecha: fecha,
       tipo: tipoCapitalizado, //checkin / checkout
-      conteo: '2\/1',
+      conteo: tipo == 'carrusel' ? '3\/4' : '2\/1',
       contenido: Contenido(
           idSondeo: idSondeo,
           idTienda: storeIsar.store?.id,

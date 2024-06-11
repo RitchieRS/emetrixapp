@@ -273,7 +273,7 @@ class _PendingsPageState extends ConsumerState<PendingsPage> {
           destructive: false,
           onlyOk: true,
           buttonLabel: 'Aceptar');
-      await ref.read(pendingsController.notifier).deletePending(index, ref);
+      await ref.read(pendingsController.notifier).deletePending(index + 1, ref);
       await ref.read(pendingsController.notifier).getPendings(ref);
       setState(() {});
       return;

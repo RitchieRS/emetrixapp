@@ -94,6 +94,7 @@ class _AreasState extends ConsumerState<Areas> {
   List<Coordinate> areasSeleccionadas = [];
   int? indexSelected;
   late AnimationController controller;
+  bool isLoadingImg = false;
 
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile = await ImagePicker().pickImage(source: source);
@@ -104,6 +105,9 @@ class _AreasState extends ConsumerState<Areas> {
       img.Image? originalImage = img.decodeImage(bytes);
 
       if (originalImage != null) {
+        setState(() {
+          isLoadingImg = true;
+        });
         int newHeight =
             (originalImage.height * 1024 / originalImage.width).round();
 
@@ -141,9 +145,9 @@ class _AreasState extends ConsumerState<Areas> {
             .file = resizedFile;
         setWidthHeightImage();
 
-        logger.i("**ID FOTO: ${widget.pregunta.id.toString()}");
-
-        setState(() {});
+        setState(() {
+          isLoadingImg = false;
+        });
       }
     }
   }
@@ -388,6 +392,16 @@ class _AreasState extends ConsumerState<Areas> {
                     height: size.width,
                     child: Image.file(imageFile),
                   ),
+                if (isLoadingImg)
+                  Center(
+                    child: Container(
+                      width: size.width,
+                      height: size.width,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  ),
                 SizedBox(
                   width: size.width,
                   height: size.width,
@@ -509,9 +523,7 @@ class _AreaFullPageState extends ConsumerState<AreaFullPage> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
-    final primaryColor = c.primary500;
 
     final Preguntas _questionSelected = ref.watch(preguntaSelectedProvider);
 
@@ -522,71 +534,65 @@ class _AreaFullPageState extends ConsumerState<AreaFullPage> {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: true,
-          foregroundColor: isDark ? c.background : c.black,
-          backgroundColor: c.surface,
-          elevation: 0,
-          title: Text('${widget.pregunta.pregunta}'),
-          centerTitle: true,
-          actions: <Widget>[
-            PopupMenuButton<Preguntas>(
-              onSelected: _select,
-              itemBuilder: (BuildContext context) {
-                return widget.depen!.map((Preguntas pregunta) {
-                  return PopupMenuItem<Preguntas>(
-                    value: pregunta,
-                    child: Text('${pregunta.pregunta}'),
-                  );
-                }).toList();
-              },
-            ),
-            CupertinoButton(
-              onPressed: () {
-                setState(() {
-                  areasGuardadas = listAreas.length;
-                  widget.selectedAreas(listAreas);
-                  Navigator.pop(context);
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(left: 5, right: 5),
-                child: Icon(
-                  Icons.save,
-                  size: 22.0,
-                  color: areasGuardadas == listAreas.length
-                      ? Colors.black26
-                      : Colors.lightGreen,
-                ),
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        foregroundColor: isDark ? c.background : c.black,
+        backgroundColor: c.surface,
+        elevation: 0,
+        title: Text('${widget.pregunta.pregunta}'),
+        centerTitle: true,
+        actions: <Widget>[
+          PopupMenuButton<Preguntas>(
+            onSelected: _select,
+            itemBuilder: (BuildContext context) {
+              return widget.depen!.map((Preguntas pregunta) {
+                return PopupMenuItem<Preguntas>(
+                  value: pregunta,
+                  child: Text('${pregunta.pregunta}'),
+                );
+              }).toList();
+            },
+          ),
+          CupertinoButton(
+            onPressed: () {
+              setState(() {
+                areasGuardadas = listAreas.length;
+                widget.selectedAreas(listAreas);
+                Navigator.pop(context);
+              });
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(left: 5, right: 5),
+              child: Icon(
+                Icons.save,
+                size: 22.0,
+                color: areasGuardadas == listAreas.length
+                    ? Colors.black26
+                    : Colors.lightGreen,
               ),
+            ),
+          )
+        ],
+        systemOverlayStyle:
+            isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+      ),
+      body: _questionSelected.pregunta != null
+          ? Areas(
+              key: UniqueKey(),
+              pregunta: widget.pregunta,
+              preguntaSeleccionada: _questionSelected,
+              mandatory: widget.mandatory,
+              callback: widget.callback,
+              newArea: (area) => listAreas.add(area),
+              removeArea: (index) => listAreas.removeAt(index!),
+              multiple: widget.multiple,
             )
-          ],
-          systemOverlayStyle:
-              isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-        ),
-        body: _questionSelected.pregunta != null
-            ? Areas(
-                key: UniqueKey(),
-                pregunta: widget.pregunta,
-                preguntaSeleccionada: _questionSelected,
-                mandatory: widget.mandatory,
-                callback: widget.callback,
-                newArea: (area) => listAreas.add(area),
-                removeArea: (index) => listAreas.removeAt(index!),
-                multiple: widget.multiple,
-              )
-            : Container());
+          : const Center(
+              child: Text(
+                'Selecciona una sección',
+                textAlign: TextAlign.center,
+              ),
+            ),
+    );
   }
 }
-
-/* Generar color aleatorio
-Color generarColorAleatorio() {
-  final Random random = Random();
-  return Color.fromARGB(
-    255,
-    random.nextInt(256),
-    random.nextInt(256),
-    random.nextInt(256),
-  );
-}
-*/
