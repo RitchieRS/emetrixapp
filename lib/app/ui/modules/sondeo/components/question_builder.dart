@@ -1,6 +1,7 @@
 import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/area.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/areas_multiples.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/object_detect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
@@ -110,14 +111,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         );
 
       case 'fotoGuardarCopia':
-        return SelectPicture(
-          pregunta: widget.pregunta,
-          saveCopy: true,
-          image: (image) {
-            widget.fotoGuardarCopia(image!.path.toString());
-          },
-          mandatory: widget.mandatory,
-        );
+        return ObjectDetect();
 
       // //todo
       case 'abierta':
