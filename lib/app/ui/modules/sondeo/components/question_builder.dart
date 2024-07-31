@@ -2,6 +2,7 @@ import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/area.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/areas_multiples.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/object_detect.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
@@ -84,6 +85,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    final navigator = Navigator.of(context);
     switch (widget.pregunta.tipo) {
       // case 'asistencia':
       //   return MapView(store: widget.store);
@@ -111,7 +113,17 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         );
 
       case 'fotoGuardarCopia':
-        return ObjectDetect();
+        return CupertinoButton(
+            child: Text("Detectar objetos"),
+            onPressed: () {
+              Navigator.push(
+                // ignore: use_build_context_synchronously
+                this.context,
+                MaterialPageRoute(
+                  builder: (context) => ObjectDetect(),
+                ),
+              );
+            });
 
       // //todo
       case 'abierta':

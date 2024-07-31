@@ -1,13 +1,13 @@
+import 'package:camera/camera.dart';
+import 'package:emetrix_flutter/app/core/native/clasificador_channel.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_vision/flutter_vision.dart';
+import 'package:image/image.dart' as img;
 import 'dart:async';
 import 'dart:io';
 import 'dart:io' as io;
 import 'dart:typed_data';
-
-import 'package:camera/camera.dart';
-import 'package:emetrix_flutter/app/core/native/clasificador_channel.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_vision/flutter_vision.dart';
-import 'package:image/image.dart' as img;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:ui' as ui;
@@ -29,6 +29,10 @@ class _ObjectDetectState extends State<ObjectDetect> {
   bool isLoaded = false;
   bool isDetecting = false;
   late List<CameraDescription> cameras;
+  String resultMax = "";
+
+  Map<String, String> _classificationResults = {};
+  final TFLiteClassifier classifier = TFLiteClassifier();
 
   var x = 0.0;
   var y = 0.0;
@@ -59,6 +63,66 @@ class _ObjectDetectState extends State<ObjectDetect> {
         });
       });
     });
+  }
+
+  Uint8List _cropImage(
+      CameraImage image, double x1, double y1, double x2, double y2) {
+    final img.Image convertedImage = _convertYUV420toImage(image);
+
+    final int left = (x1 * convertedImage.width).toInt();
+    final int top = (y1 * convertedImage.height).toInt();
+    final int right = (x2 * convertedImage.width).toInt();
+    final int bottom = (y2 * convertedImage.height).toInt();
+
+    final img.Image croppedImage = img.copyCrop(
+      convertedImage,
+      x: left,
+      y: top,
+      width: right - left,
+      height: bottom - top,
+    );
+
+    return Uint8List.fromList(img.encodeJpg(croppedImage));
+  }
+
+  int getColor(int r, int g, int b) {
+    return (255 << 24) | (r << 16) | (g << 8) | b;
+  }
+
+  img.Image _convertYUV420toImage(CameraImage image) {
+    final int width = image.width;
+    final int height = image.height;
+    final int uvRowStride = image.planes[1].bytesPerRow;
+    final int uvPixelStride = image.planes[1].bytesPerPixel!;
+
+    final img.Image imgImage = img.Image(width: width, height: height);
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        final int uvIndex = (x ~/ 2) * uvPixelStride + (y ~/ 2) * uvRowStride;
+        final int index = y * width + x;
+
+        final int yValue = image.planes[0].bytes[index];
+        final int uValue = image.planes[1].bytes[uvIndex];
+        final int vValue = image.planes[2].bytes[uvIndex];
+
+        final int r = (yValue + 1.4075 * (vValue - 128)).round();
+        final int g =
+            (yValue - 0.3455 * (uValue - 128) - 0.7169 * (vValue - 128))
+                .round();
+        final int b = (yValue + 1.779 * (uValue - 128)).round();
+
+        imgImage.setPixel(
+            x,
+            y,
+            getColor(
+              r.clamp(0, 255),
+              g.clamp(0, 255),
+              b.clamp(0, 255),
+            ) as img.Color);
+      }
+    }
+    return imgImage;
   }
 
   @override
@@ -132,8 +196,8 @@ class _ObjectDetectState extends State<ObjectDetect> {
   Future<void> loadYoloModel() async {
     try {
       await vision.loadYoloModel(
-          labels: 'assets/labels.txt',
-          modelPath: 'assets/model.tflite',
+          labels: 'assets/tflite/labels_detect.txt',
+          modelPath: 'assets/tflite/model_detect.tflite',
           modelVersion: "yolov8",
           numThreads: 4,
           useGpu: true);
@@ -150,9 +214,9 @@ class _ObjectDetectState extends State<ObjectDetect> {
         bytesList: cameraImage.planes.map((plane) => plane.bytes).toList(),
         imageHeight: cameraImage.height,
         imageWidth: cameraImage.width,
-        iouThreshold: 0.4,
-        confThreshold: 0.4,
-        classThreshold: 0.4);
+        iouThreshold: 0.3,
+        confThreshold: 0.3,
+        classThreshold: 0.3);
 
     if (result.isNotEmpty) {
       print(result);
@@ -161,6 +225,69 @@ class _ObjectDetectState extends State<ObjectDetect> {
         yoloResults = result;
       });
     }
+
+    for (var detectedObject in result) {
+      final croppedImage = _cropImage(
+        cameraImage,
+        detectedObject['box'][0],
+        detectedObject['box'][1],
+        detectedObject['box'][2],
+        detectedObject['box'][3],
+      );
+
+      String fileName =
+          DateTime.now().millisecondsSinceEpoch.toString() + '_cropped.png';
+
+      String filePath = (await getTemporaryDirectory()).path + '/' + fileName;
+      await File(filePath).writeAsBytes(croppedImage);
+
+      final List<ClassificationResult> results =
+          await classifier.classifyImage(filePath);
+
+      if (results.isNotEmpty) {
+        String label = results[0].label;
+        double score = results[0].score;
+        results.forEach((result) {
+          if (result.score > score) {
+            label = result.label;
+            score = result.score;
+          }
+        });
+        setState(() {
+          resultMax = "$label - ${score.toStringAsFixed(2)}";
+        });
+      } else {
+        resultMax = "Sin resultados";
+      }
+      print("clasificador: $resultMax");
+
+/*
+      final classificationResults = await _flutterVision.yoloOnImage(
+        bytesList: croppedImage,
+        imageHeight: 640,
+        imageWidth: 640,
+      );
+
+      */
+      setState(() {
+        _classificationResults[detectedObject['tag']] = resultMax;
+      });
+    }
+  }
+
+  static Future<File> _writeToFile(List<int> bytes) async {
+    Directory tempDir = await getTemporaryDirectory();
+    File tempFile = File('${tempDir.path}/las_moras_640.jpg');
+    await tempFile.writeAsBytes(bytes);
+    return tempFile;
+  }
+
+  Future<String> getImageFilePath(String assetPath) async {
+    final byteData = await rootBundle.load(assetPath);
+    final file = File(
+        '${(await getTemporaryDirectory()).path}/${assetPath.split('/').last}');
+    await file.writeAsBytes(byteData.buffer.asUint8List());
+    return file.path;
   }
 
   Future<void> startDetection() async {
@@ -193,7 +320,8 @@ class _ObjectDetectState extends State<ObjectDetect> {
 
     return yoloResults.map((result) {
       final box = result["box"];
-      String label = result["tag"];
+      //String label = result["tag"];
+
       String porcentaje = (box[4] * 100).toStringAsFixed(0);
 
       final int imageWidth = 720;
@@ -207,47 +335,23 @@ class _ObjectDetectState extends State<ObjectDetect> {
       double x2Image = box[2];
       double y2Image = box[3];
 
+      print("Label****");
+      print(label);
       double x1Scaled = x1Image * xRatio;
       double y1Scaled = y1Image * yRatio;
       double x2Scaled = x2Image * xRatio;
       double y2Scaled = y2Image * yRatio;
 
       return Positioned(
-        left: (screenWidth) - (x1Scaled / 0.75),
-        top: (screenHeight) - (y1Scaled / 0.67),
-        width: x2Scaled,
-        height: y2Scaled,
+        left: x1Image * (screen.width / 720),
+        top: y1Image * (screen.width / 1280) + 100,
+        width:
+            (x2Image * (screen.width / 720)) - (x1Image * (screen.width / 720)),
+        height: (y2Image * (screen.width / 1280)) -
+            (y1Image * (screen.width / 1280)) +
+            115,
         child: GestureDetector(
-          onTap: () async {
-            isLoaded = true;
-            stopDetection();
-            final photo = await savePhotho();
-
-            final photo_cropped = await cropImage(
-                photo,
-                (720) - (x1Image / 0.75),
-                (1280) - (y1Image / 0.678),
-                x2Image * 1.3,
-                y2Image);
-
-            String fileName = DateTime.now().millisecondsSinceEpoch.toString() +
-                '_cropped.png';
-            String filePath =
-                (await getTemporaryDirectory()).path + '/' + fileName;
-            await File(filePath).writeAsBytes(photo_cropped);
-            if (filePath == "") {
-              isLoaded = false;
-              return;
-            }
-            vision.closeYoloModel();
-            Navigator.push(
-              // ignore: use_build_context_synchronously
-              this.context,
-              MaterialPageRoute(
-                builder: (context) => ImageViewerScreen(imagePath: filePath),
-              ),
-            );
-          },
+          onTap: () async {},
           child: Stack(
             children: [
               Container(
@@ -260,7 +364,7 @@ class _ObjectDetectState extends State<ObjectDetect> {
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Text(
-                    "$label $porcentaje%",
+                    "${resultMax}",
                     style: const TextStyle(
                       color: Colors.black87,
                       fontSize: 13.0,
@@ -311,95 +415,25 @@ class _ObjectDetectState extends State<ObjectDetect> {
 
     return byteData!.buffer.asUint8List();
   }
-}
 
-class ImageViewerScreen extends StatefulWidget {
-  final String imagePath;
+  Future<String> getClasification(
+      double x1, double y1, double x2, double y2) async {
+    final photo = await savePhotho();
 
-  ImageViewerScreen({required this.imagePath});
+    final photo_cropped = await cropImage(
+        photo, (720) - (x1 / 0.75), (1280) - (y1 / 0.678), x2 * 1.3, y2);
 
-  @override
-  State<ImageViewerScreen> createState() => _ImageViewerScreenState();
-}
+    String fileName =
+        DateTime.now().millisecondsSinceEpoch.toString() + '_cropped.png';
 
-class _ImageViewerScreenState extends State<ImageViewerScreen> {
-  final TFLiteClassifier classifier = TFLiteClassifier();
-  bool isLoaded = false;
-  String resultMax = "";
+    String filePath = (await getTemporaryDirectory()).path + '/' + fileName;
+    await File(filePath).writeAsBytes(photo_cropped);
 
-  @override
-  void initState() {
-    super.initState();
-    init();
-  }
+    String resultMax = "";
 
-  Future<String> _copy(String assetPath) async {
-    final path = '${(await getApplicationSupportDirectory()).path}/$assetPath';
-    await io.Directory(dirname(path)).create(recursive: true);
-    final file = io.File(path);
-    if (!await file.exists()) {
-      final byteData = await rootBundle.load(assetPath);
-      await file.writeAsBytes(byteData.buffer
-          .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-    }
-    return file.path;
-  }
+    print("****");
+    print(resultMax);
 
-  Future<void> init() async {
-    final imagePath = await getImageFilePath('assets/barefoot_pinotnoir.webp');
-    final List<ClassificationResult> results =
-        await classifier.classifyImage(imagePath);
-
-    if (results.isNotEmpty) {
-      String label = results[0].label;
-      double score = results[0].score;
-      results.forEach((result) {
-        if (result.score > score) {
-          label = result.label;
-          score = result.score;
-        }
-      });
-      setState(() {
-        resultMax = "$label - ${score.toStringAsFixed(2)}";
-      });
-    } else {
-      setState(() {
-        resultMax = "Sin resultados";
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Clasificador'),
-      ),
-      body: Column(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.8,
-            child: Center(
-              /*child: Image.file(
-                File('assets/barefoot_pinotnoir.webp'),
-              ), */
-              child: Image.asset('assets/gomichela.webp'),
-            ),
-          ),
-          Center(
-            child: Text("Clase: $resultMax"),
-          )
-        ],
-      ),
-    );
-  }
-
-  Future<String> getImageFilePath(String assetPath) async {
-    final byteData = await rootBundle.load(assetPath);
-    final file = File(
-        '${(await getTemporaryDirectory()).path}/${assetPath.split('/').last}');
-    await file.writeAsBytes(byteData.buffer.asUint8List());
-    return file.path;
+    return resultMax;
   }
 }

@@ -1,5 +1,6 @@
 package com.example.emetrix_flutter
 
+
 import io.flutter.embedding.android.FlutterActivity
 
 import android.content.Context
@@ -7,7 +8,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.annotation.NonNull
-import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -15,10 +15,12 @@ import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.label.Category
 import org.tensorflow.lite.support.label.TensorLabel
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer.createFixedSize
 import java.io.FileInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
+
 
 class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
 
@@ -35,7 +37,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
         if (call.method == "classifyImage") {
             val imagePath = call.argument<String>("imagePath")
             if (imagePath != null) {
-                model = Interpreter(loadModelFile("last_float32.tflite"))
+                model = Interpreter(loadModelFile("model_classifier.tflite"))
                 val bitmap = loadBitmap(imagePath)
                 val top5Categories = classifyImage(bitmap, model)
 
@@ -48,7 +50,6 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
                 resultList.forEach { categoryResult ->
                     resultMap[categoryResult.label] = categoryResult.score
                 }
-
 
                 result.success(resultMap)
             } else {
@@ -68,14 +69,12 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
     }
 
-
     private fun classifyImage(bitmap: Bitmap, model: Interpreter): List<Category> {
         return try {
-            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 64, 64, true)
+            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 640, 640, true)
             val inputImageBuffer = convertBitmapToByteBuffer(resizedBitmap)
 
-            val probabilityBuffer =
-            createFixedSize(intArrayOf(1, 93), org.tensorflow.lite.DataType.FLOAT32)
+            val probabilityBuffer = createFixedSize(intArrayOf(1, 93), org.tensorflow.lite.DataType.FLOAT32)
 
             model.run(inputImageBuffer, probabilityBuffer.buffer.rewind())
 
@@ -94,13 +93,13 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
     }
 
     private fun convertBitmapToByteBuffer(bitmap: Bitmap): ByteBuffer {
-        val byteBuffer = ByteBuffer.allocateDirect(4 * 64 * 64 * 3)
+        val byteBuffer = ByteBuffer.allocateDirect(4 * 640 * 640 * 3)
         byteBuffer.order(ByteOrder.nativeOrder())
-        val intValues = IntArray(64 * 64)
+        val intValues = IntArray(640 * 640)
         bitmap.getPixels(intValues, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
         var pixel = 0
-        for (i in 0 until 64) {
-            for (j in 0 until 64) {
+        for (i in 0 until 640) {
+            for (j in 0 until 640) {
                 val value = intValues[pixel++]
                 byteBuffer.putFloat(((value shr 16) and 0xFF) / 255.0f)
                 byteBuffer.putFloat(((value shr 8) and 0xFF) / 255.0f)

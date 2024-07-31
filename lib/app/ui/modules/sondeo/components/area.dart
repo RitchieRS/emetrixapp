@@ -117,15 +117,12 @@ class _AreasState extends ConsumerState<Areas> {
           height: newHeight,
         );
 
-        // Recorta la imagen para que tenga dimensiones de 1024x1024 centradas
         int x = (resizedImage.width - 1024) ~/ 2;
         int y = (resizedImage.height - 1024) ~/ 2;
-        //img.Image croppedImage = img.copyCrop(resizedImage, x, y, 1024, 1024);
 
         img.Image croppedImage =
             img.copyCrop(resizedImage, x: x, y: y, width: 1024, height: 1024);
 
-// Guarda la imagen recortada con un nuevo nombre generado dinámicamente
         String originalPath = imageFile.path;
         String extension =
             originalPath.substring(originalPath.lastIndexOf('.'));
