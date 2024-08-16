@@ -2,6 +2,7 @@ import 'package:emetrix_flutter/app/core/global/core.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/area.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/areas_multiples.dart';
 import 'package:emetrix_flutter/app/ui/modules/sondeo/components/object_detect.dart';
+import 'package:emetrix_flutter/app/ui/modules/sondeo/components/object_detect_api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -113,7 +114,19 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
         );
 
       case 'fotoGuardarCopia':
-        return CupertinoButton(
+      
+      return CupertinoButton(
+            child: Text("Detectar objetos por API"),
+            onPressed: () {
+              Navigator.push(
+                // ignore: use_build_context_synchronously
+                this.context,
+                MaterialPageRoute(
+                  builder: (context) => ObjectDetectApi(),
+                ),
+              );
+            });
+       /* return CupertinoButton(
             child: Text("Detectar objetos"),
             onPressed: () {
               Navigator.push(
@@ -124,7 +137,7 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
                 ),
               );
             });
-
+*/
       // //todo
       case 'abierta':
         return Question(
