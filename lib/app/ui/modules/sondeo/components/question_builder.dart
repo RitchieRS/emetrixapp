@@ -122,7 +122,11 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
                 // ignore: use_build_context_synchronously
                 this.context,
                 MaterialPageRoute(
-                  builder: (context) => ObjectDetectApi(),
+                  builder: (context) => ObjectDetectApi(
+                                                    question: widget.pregunta,
+                                                    mandatory: widget.mandatory,
+                                                    callback: updateData,
+                                                  ),
                 ),
               );
             });
