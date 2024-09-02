@@ -1,299 +1,217 @@
-import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:camera/camera.dart';
-import 'package:emetrix_flutter/app/core/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo.dart';
-import 'package:emetrix_flutter/app/ui/modules/sondeo/sondeo_individual.dart';
-import 'package:emetrix_flutter/app/ui/utils/colors.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_vision/flutter_vision.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'dart:ui' as ui;
 
-class ObjectDetectApi extends ConsumerStatefulWidget {
-  const ObjectDetectApi({ 
-                        Key? key,
-                        required this.question,
-                        this.mandatory = false,
-                        required this.callback
-                        });
-  final Preguntas question;
-  final bool mandatory;
-  final Function(String?, String?) callback;
-
+class ObjectDetectApi extends StatefulWidget {
+  const ObjectDetectApi({Key? key}) : super(key: key);
 
   @override
-  _ObjectDetectApiState createState() => _ObjectDetectApiState();
+  State<ObjectDetectApi> createState() => _ObjectDetectState();
 }
 
-class _ObjectDetectApiState extends ConsumerState<ObjectDetectApi> {
-  File? _imageFile;
-  final ImagePicker _picker = ImagePicker();
+class _ObjectDetectState extends State<ObjectDetectApi> {
+  late List<Map<String, dynamic>> yoloResults;
+  bool isLoaded = false;
+  File? _selectedImage;
+  late FlutterVision vision;
 
-  Future<void> _openCamera() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-    }
+  @override
+  void initState() {
+    super.initState();
+    init();
   }
 
-  Future<void> _sendImageToApi() async {
-    if (_imageFile != null) {
-      final uri = Uri.parse("http://54.202.132.137/scanImgResponse"); // Cambia esta URL a tu endpoint
-      var request = http.MultipartRequest('POST', uri)
-        ..files.add(await http.MultipartFile.fromPath('file', _imageFile!.path));
-        request.headers.addAll({
-                'Api-Token': 'HfHOm4at0DiuUs7ti8XifqQjZ7o66J38vsBLESMIIxoMyKPswj3rKtB0sDs7Kk1v',
-              });
+  init() async {
+    vision = FlutterVision();
+    await loadYoloModel();
+    setState(() {
+      isLoaded = true;
+      yoloResults = [];
+    });
+  }
 
-      var response = await request.send();
-
-      var responseString = await response.stream.bytesToString();
-      print('RespuestaApi: $responseString');
-  
-  
-  // Decodificar el JSON y crear una instancia de ResponseModel
-      var jsonResponse = jsonDecode(responseString);
-      ImageResponse responseModel = ImageResponse.fromJson(jsonResponse);
-
-      if (response.statusCode == 200) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ResultPage(response: 'Image uploaded successfully!',
-                                                             responseModel: responseModel,
-                                                             question: widget.question,
-                                                              mandatory: widget.mandatory,
-                                                              callback: widget.callback,
-                                                             )),
-        );
-      } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ResultPage(response: 'Failed to upload image!',responseModel: responseModel)),
-        );
-      }
-    }
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final height = Platform.isIOS ? size.height * 0.12 : size.height * 0.1;
-
+    final Size size = MediaQuery.of(context).size;
+    if (!isLoaded) {
+      return const Scaffold(
+        body: Center(child: Text("Cargando...")),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
-        title: Text('Captura el stand'),
+        title: Text("Detección de Objetos"),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center, // Centrar verticalmente los elementos
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: Stack(
         children: [
-          if (_imageFile != null)
-            Image.file(_imageFile!)
-          else
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _openCamera,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: c.primary600,// Color de fondo azul
-              padding: EdgeInsets.only(bottom: Platform.isIOS ? size.height * 0.04 : 0), // Espaciado interno
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8), // Bordes ligeramente redondeados
+          if (_selectedImage != null)
+            Image.file(
+              _selectedImage!,
+              width: size.width,
+              height: size.height * 0.845,
+              fit: BoxFit.cover,
+            ),
+          ...displayBoxesAroundRecognizedObjects(size),
+          Positioned(
+            bottom: 0,
+            width: size.width,
+            child: Container(
+              width: size.width,
+              height: size.height * 0.117,
+              child: Center(
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: selectImage,
+                      child: Text("Seleccionar Imagen"),
+                    ),
+                    if (_selectedImage != null)
+                      ElevatedButton(
+                        onPressed: analyzeImage,
+                        child: Text("Analizar Imagen"),
+                      ),
+                  ],
+                ),
               ),
             ),
-            child: const Icon(
-                Icons.camera_alt,
-                color: Colors.white, // Color del icono blanco
-                size: 24, // Tamaño del icono
-              ),
           ),
-          if (_imageFile != null)
-            ElevatedButton(
-              onPressed: _sendImageToApi,
-             style: ElevatedButton.styleFrom(
-              backgroundColor: c.primary600,// Color de fondo azul
-              padding: EdgeInsets.only(bottom: Platform.isIOS ? size.height * 0.04 : 0), // Espaciado interno
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8), // Bordes ligeramente redondeados
-              ),
-            ),
-            child: const Text('Analizar'
-                              ,style: TextStyle(
-                        color: Colors.white, // Texto blanco
-                      )),
-            )
         ],
       ),
     );
   }
-}
 
-class ResultPage extends StatelessWidget {
-  final String response;
-  final ImageResponse responseModel;
-   
-  final Preguntas question;
-  final bool mandatory;
-  final Function(List<String>?) selectedItems;
-  final Function(String?, String?) callback;
-  const ResultPage({
-                   Key? key, 
-                   required this.response, 
-                   required this.responseModel,
-                   required this.question,
-                   this.mandatory = false,
-                   required this.selectedItems,
-                   required this.callback
-                   }) : super(key: key);
-  
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final height = Platform.isIOS ? size.height * 0.12 : size.height * 0.1;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Imagen de ${responseModel.imgUrl}'),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center, // Centrar verticalmente los elementos
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children:[ CachedNetworkImage(
-          imageUrl: 'http://${responseModel.imgUrl}', // Ruta completa a la imagen
-          placeholder: (context, url) => CircularProgressIndicator(), // Preloader
-          errorWidget: (
-            context, url, error) => Icon(Icons.error), // Manejando errores
-        ),
-         ElevatedButton(
-              onPressed: () async {
-                                /*await Navigator.push(context, CupertinoPageRoute(builder: (context) {
-                                      var sondeoItem= null;
-                                      var  store = null;
-                                      return // sondeosList2[index].preguntas?.first.tipo == 'asistencia'
-                                              SingleSondeoPage(
-                                                  store: store,
-                                                  sondeoItem: sondeoItem,
-                                                  index: 0,
-                                                  stepsLenght: 0,
-                                                  storeUuid: '',
-                                                  stepUuid:  '',
-                                                );
-                                }));*/
-                                },
-             style: ElevatedButton.styleFrom(
-              backgroundColor: c.primary600,// Color de fondo azul
-              padding: EdgeInsets.only(bottom: Platform.isIOS ? size.height * 0.04 : 0), // Espaciado interno
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8), // Bordes ligeramente redondeados
+  Future<void> loadYoloModel() async {
+    try {
+      await vision.loadYoloModel(
+        labels: 'assets/tflite/labels_detect.txt',
+        modelPath: 'assets/tflite/model_detect.tflite',
+        modelVersion: "yolov8",
+        numThreads: 4,
+        useGpu: true,
+      );
+      setState(() {
+        isLoaded = true;
+      });
+    } catch (e) {
+      print("Error al cargar el modelo: $e");
+    }
+  }
+
+  Future<void> selectImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? photo = await picker.pickImage(source: ImageSource.gallery);
+
+    if (photo != null) {
+      setState(() {
+        _selectedImage = File(photo.path);
+        yoloResults.clear();
+      });
+    }
+  }
+
+  Future<void> analyzeImage() async {
+    try {
+      if (_selectedImage == null) return;
+
+      final Uint8List imageBytes = await _selectedImage!.readAsBytes();
+
+      final result = await vision.yoloOnImage(
+        bytesList: imageBytes,
+        imageHeight: 640, // Ajusta esto según sea necesario
+        imageWidth: 640,
+        iouThreshold: 0.3,
+        confThreshold: 0.3,
+        classThreshold: 0.3,
+      );
+
+      setState(() {
+        yoloResults = result;
+        print("Resultados Yolov8 ${yoloResults}");
+      });
+    } catch (e) {
+      print("Error durante la detección: $e");
+    }
+  }
+
+  List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
+    if (yoloResults.isEmpty) return [];
+
+    double screenWidth = screen.width;
+    double screenHeight = screen.height * 0.845;
+
+    return yoloResults.map((result) {
+      final box = result["box"];
+      //String label = result["tag"];
+
+      String porcentaje = (box[4] * 100).toStringAsFixed(0);
+
+      final int imageWidth = 720;
+      final int imageHeight = 1280;
+
+      double xRatio = screenWidth / imageWidth;
+      double yRatio = screenHeight / imageHeight;
+
+      double x1Image = box[0];
+      double y1Image = box[1];
+      double x2Image = box[2];
+      double y2Image = box[3];
+
+      print("Label****");
+     // print(label);
+      double x1Scaled = x1Image * xRatio;
+      double y1Scaled = y1Image * yRatio;
+      double x2Scaled = x2Image * xRatio;
+      double y2Scaled = y2Image * yRatio;
+
+      return Positioned(
+        left: x1Image * (screen.width / 720),
+        top: y1Image * (screen.width / 1280) + 100,
+        width:
+            (x2Image * (screen.width / 720)) - (x1Image * (screen.width / 720)),
+        height: (y2Image * (screen.width / 1280)) -
+            (y1Image * (screen.width / 1280)) +
+            115,
+        child: GestureDetector(
+          onTap: () async {},
+          child: Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10.0),
+                      bottomRight: Radius.circular(10.0),
+                    ),
+                    color: Colors.blue),
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text(
+                    "Bottle",
+                    style: const TextStyle(
+                      color: Colors.black87,
+                      fontSize: 13.0,
+                    ),
+                  ),
+                ),
               ),
-            ),
-            child: const Text('Aceptar',
-                         style: TextStyle(
-                          color: Colors.white, // Texto blanco
-                        )),
-            )
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                  border: Border.all(color: Colors.blue, width: 3.2),
+                ),
+              ),
             ],
-      ),
-    );
-  }
-}
-
-class CoordinateApi {
-  final String category;
-  final int cordBottom;
-  final int cordLeft;
-  final int cordRight;
-  final int cordTop;
-  final int imgNum;
-  final String predictCode;
-
-  CoordinateApi({
-    required this.category,
-    required this.cordBottom,
-    required this.cordLeft,
-    required this.cordRight,
-    required this.cordTop,
-    required this.imgNum,
-    required this.predictCode,
-  });
-
-  // Factory constructor para crear una instancia de Coordinate desde JSON
-  factory CoordinateApi.fromJson(Map<String, dynamic> json) {
-    return CoordinateApi(
-      category: json['category'],
-      cordBottom: json['cord_bottom'],
-      cordLeft: json['cord_left'],
-      cordRight: json['cord_right'],
-      cordTop: json['cord_top'],
-      imgNum: json['img_num'],
-      predictCode: json['predict_code'],
-    );
-  }
-
-  // Método para convertir una instancia de Coordinate a JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'category': category,
-      'cord_bottom': cordBottom,
-      'cord_left': cordLeft,
-      'cord_right': cordRight,
-      'cord_top': cordTop,
-      'img_num': imgNum,
-      'predict_code': predictCode,
-    };
-  }
-}
-
-class Total {
-  final Map<String, int> snCounts;
-
-  Total({required this.snCounts});
-
-  // Factory constructor para crear una instancia de Total desde JSON
-  factory Total.fromJson(Map<String, dynamic> json) {
-    return Total(
-      snCounts: Map<String, int>.from(json),
-    );
-  }
-
-  // Método para convertir una instancia de Total a JSON
-  Map<String, dynamic> toJson() {
-    return Map<String, dynamic>.from(snCounts);
-  }
-}
-
-class ImageResponse {
-  final List<CoordinateApi> coordinates;
-  final String imgUrl;
-  final Total total;
-
-  ImageResponse({
-    required this.coordinates,
-    required this.imgUrl,
-    required this.total,
-  });
-
-  // Factory constructor para crear una instancia de ResponseModel desde JSON
-  factory ImageResponse.fromJson(Map<String, dynamic> json) {
-    return ImageResponse(
-      coordinates: (json['coordinates'] as List)
-          .map((coord) => CoordinateApi.fromJson(coord))
-          .toList(),
-      imgUrl: json['img_url'],
-      total: Total.fromJson(json['total']),
-    );
-  }
-
-  // Método para convertir una instancia de ResponseModel a JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'coordinates': coordinates.map((coord) => coord.toJson()).toList(),
-      'img_url': imgUrl,
-      'total': total.toJson(),
-    };
+          ),
+        ),
+      );
+    }).toList();
   }
 }

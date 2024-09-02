@@ -116,17 +116,13 @@ class _QuestionBuilderState extends ConsumerState<QuestionBuilder> {
       case 'fotoGuardarCopia':
       
       return CupertinoButton(
-            child: Text("Detectar objetos por API"),
+            child: Text("Detectar objetos"),
             onPressed: () {
               Navigator.push(
                 // ignore: use_build_context_synchronously
                 this.context,
                 MaterialPageRoute(
-                  builder: (context) => ObjectDetectApi(
-                                                    question: widget.pregunta,
-                                                    mandatory: widget.mandatory,
-                                                    callback: updateData,
-                                                  ),
+                  builder: (context) => ObjectDetectApi(),
                 ),
               );
             });
