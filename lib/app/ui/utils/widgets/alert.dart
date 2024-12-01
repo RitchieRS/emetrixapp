@@ -1,0 +1,78 @@
+import 'package:flutter/material.dart';
+import 'package:emetrix_flutter/app/ui/utils/utils.dart';
+
+Future<bool> showMsj(
+    {required BuildContext context,
+    required String title,
+    required String content,
+    required bool destructive,
+    required String buttonLabel,
+    bool onlyOk = false,
+    bool justifyContent = false,
+    Widget? children,
+    bool canTapOutside = false}) async {
+  final bool? result = await showDialog(
+      context: context,
+      barrierDismissible: canTapOutside,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          title: Text(title,
+              style: t.subtitle,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (children != null) children,
+              // Padding(
+              //   padding: const EdgeInsets.only(bottom: 8.0),
+              //   child: children,
+              // ),
+              Text(content,
+                  style: t.text2,
+                  textAlign:
+                      justifyContent ? TextAlign.justify : TextAlign.left),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: onlyOk == true
+              ? [
+                  ButonDimentions(
+                    onTap: () => Navigator.pop(context, true),
+                    background: destructive ? c.error : c.primary600,
+                    title: buttonLabel,
+                    style: t.textLight,
+                    width: Dimentions().getWidth() * 0.6,
+                    height: Dimentions().getHeight() * 0.052,
+                  ),
+                ]
+              : [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          style:
+                              TextButton.styleFrom(foregroundColor: c.disabled),
+                          child: Text('Cancelar', style: t.textDisabledBold)),
+                      const SizedBox(width: 12),
+                      ButonDimentions(
+                        background: destructive ? c.error : c.primary600,
+                        title: buttonLabel,
+                        style: t.textLight,
+                        onTap: () => Navigator.pop(context, true),
+                        width: Dimentions().getWidth() * 0.3,
+                        height: Dimentions().getHeight() * 0.052,
+                      ),
+                    ],
+                  )
+                ],
+        );
+      });
+  if (result == null) return false;
+  return Future.value(result);
+}
